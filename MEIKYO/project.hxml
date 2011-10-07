@@ -1,3 +1,13 @@
--js release/main.js
+-js release/bin/Main.js
 -main Main
 -cp construct/src
+-cp construct/src_extern
+-cp construct/src_bpmjs
+-cp construct/src_bpmgl
+
+--next
+
+-js release/bin/Testrunner.js
+-main TestRunner
+-cp construct/src_bpmjs
+-cp construct/src_test
