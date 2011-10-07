@@ -3,7 +3,7 @@ package kumite.stage;
 import js.Lib;
 import js.Dom;
 
-import bpmjs.Event;
+import bpmjs.EventDispatcher;
 
 import haxe.rtti.Infos;
 

@@ -18,8 +18,8 @@ class TestEvent extends TestCase
 	public function testSingleEvent()
 	{
 		var eventDispatcher = new EventDispatcher();
-		eventDispatcher.addEventListener(Event.COMPLETE, incrementCompleteCount);
-		eventDispatcher.dispatchEvent(new Event(Event.COMPLETE));
+		eventDispatcher.addEventListener(Event, incrementCompleteCount);
+		eventDispatcher.dispatchEvent(new Event());
 
 		assertEquals(1, completeCount);
 	}
@@ -27,9 +27,9 @@ class TestEvent extends TestCase
 	public function testDoubleAddListener()
 	{
 		var eventDispatcher = new EventDispatcher();
-		eventDispatcher.addEventListener(Event.COMPLETE, incrementCompleteCount);
-		eventDispatcher.addEventListener(Event.COMPLETE, incrementCompleteCount);
-		eventDispatcher.dispatchEvent(new Event(Event.COMPLETE));
+		eventDispatcher.addEventListener(Event, incrementCompleteCount);
+		eventDispatcher.addEventListener(Event, incrementCompleteCount);
+		eventDispatcher.dispatchEvent(new Event());
 
 		assertEquals(1, completeCount);
 	}
@@ -37,9 +37,9 @@ class TestEvent extends TestCase
 	public function testDoubleDispatch()
 	{
 		var eventDispatcher = new EventDispatcher();
-		eventDispatcher.addEventListener(Event.COMPLETE, incrementCompleteCount);
-		eventDispatcher.dispatchEvent(new Event(Event.COMPLETE));
-		eventDispatcher.dispatchEvent(new Event(Event.COMPLETE));
+		eventDispatcher.addEventListener(Event, incrementCompleteCount);
+		eventDispatcher.dispatchEvent(new Event());
+		eventDispatcher.dispatchEvent(new Event());
 
 		assertEquals(2, completeCount);
 	}
@@ -47,8 +47,8 @@ class TestEvent extends TestCase
 	public function testMyEvent()
 	{
 		var eventDispatcher = new EventDispatcher();
-		eventDispatcher.addEventListener(MyEvent.COMPLETE2, incrementComplete2Count);
-		eventDispatcher.dispatchEvent(new MyEvent(MyEvent.COMPLETE2));
+		eventDispatcher.addEventListener(MyEvent, incrementComplete2Count);
+		eventDispatcher.dispatchEvent(new MyEvent());
 
 		assertEquals(1, complete2Count);
 	}
@@ -66,5 +66,4 @@ class TestEvent extends TestCase
 
 private class MyEvent extends Event
 {
-	public static var COMPLETE2 : String = "complete2";
 }

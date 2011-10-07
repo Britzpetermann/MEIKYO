@@ -19,7 +19,7 @@ class TestFrontController extends SummerTestCase
 		var receivingObject = new ReceivingObject();
 
 		var frontController = new DefaultFrontController();
-		frontController.addDispatcher(dispatchingObject, Event.COMPLETE);
+		frontController.addDispatcher(dispatchingObject);
 		frontController.addReceiver(receivingObject, "handleComplete", Event);
 
 		dispatchingObject.doDispatch();
@@ -33,7 +33,7 @@ class TestFrontController extends SummerTestCase
 		var receivingObject = new CustomReceivingObject();
 
 		var frontController = new DefaultFrontController();
-		frontController.addDispatcher(dispatchingObject, CustomEvent.COMPLETE);
+		frontController.addDispatcher(dispatchingObject);
 		frontController.addReceiver(receivingObject, "handleComplete", CustomEvent);
 
 		dispatchingObject.doDispatch();
@@ -47,7 +47,7 @@ class TestFrontController extends SummerTestCase
 		var receivingObject = new CustomReceivingObject();
 
 		var frontController = new DefaultFrontController();
-		frontController.addDispatcher(dispatchingObject, Event.COMPLETE);
+		frontController.addDispatcher(dispatchingObject);
 		frontController.addReceiver(receivingObject, "handleComplete", CustomEvent);
 
 		dispatchingObject.doDispatch();
@@ -65,7 +65,7 @@ private class DispatchingObject extends EventDispatcher
 
 	public function doDispatch()
 	{
-		dispatchEvent(new Event(Event.COMPLETE));
+		dispatchEvent(new Event());
 	}
 }
 
@@ -91,7 +91,7 @@ private class CustomDispatchingObject extends EventDispatcher
 
 	public function doDispatch()
 	{
-		dispatchEvent(new CustomEvent(CustomEvent.COMPLETE));
+		dispatchEvent(new CustomEvent());
 	}
 }
 
@@ -110,5 +110,4 @@ private class CustomReceivingObject
 
 private class CustomEvent extends Event
 {
-	public static var COMPLETE : String = "complete";
 }

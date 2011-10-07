@@ -3,9 +3,9 @@ import bpmjs.Event;
 
 interface FrontController
 {
-	function addDispatcher(dispatcher : EventDispatcher, type : String) : Void;
+	function addDispatcher(dispatcher : EventDispatcher) : Void;
 
-	function addReceiver(receivingObject : Dynamic, methodName : String, eventClass : Class<Dynamic>) : Void;
+	function addReceiver(receivingObject : Dynamic, methodName : String, type : Class<Dynamic>) : Void;
 }
 
 class DefaultFrontController implements FrontController {
@@ -17,16 +17,16 @@ class DefaultFrontController implements FrontController {
 		receivers = new Array();
 	}
 
-	public function addDispatcher(dispatcher : EventDispatcher, type : String)
+	public function addDispatcher(dispatcher : EventDispatcher)
 	{
-		Log.info(dispatcher, type);
-		dispatcher.addEventListener(type, handleEvent);
+		Log.info(dispatcher);
+		dispatcher.addEventListener(null, handleEvent);
 	}
 
-	public function addReceiver(receivingObject : Dynamic, methodName : String, eventClass : Class<Dynamic>)
+	public function addReceiver(receivingObject : Dynamic, methodName : String, type : Class<Dynamic>)
 	{
-		Log.info(receivingObject + ":" + methodName, Type.getClassName(eventClass));
-		receivers.push(new Receiver(receivingObject, methodName, eventClass));
+		Log.info(receivingObject + ":" + methodName, Type.getClassName(type));
+		receivers.push(new Receiver(receivingObject, methodName, type));
 	}
 
 	function handleEvent(event : Event)
@@ -47,19 +47,19 @@ private class Receiver
 	public var receiver : Dynamic;
 	public var method : Dynamic;
 	public var methodName : String;
-	public var eventClass : Class<Dynamic>;
+	public var type : Class<Dynamic>;
 
-	public function new(receiver : Dynamic, methodName : String, eventClass : Class<Dynamic>)
+	public function new(receiver : Dynamic, methodName : String, type : Class<Dynamic>)
 	{
 		this.receiver = receiver;
-		this.eventClass = eventClass;
+		this.type = type;
 		this.method = Reflect.field(receiver, methodName);
 		this.methodName = methodName;
 	}
 
 	inline public function matches(event : Event)
 	{
-		return Type.getClass(event) == eventClass;
+		return Type.getClass(event) == type;
 	}
 
 	inline public function execute(event : Event)

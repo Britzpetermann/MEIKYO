@@ -47,7 +47,6 @@ class TestMessaging extends SummerTestCase
 
 		assertEquals(1, mockFrontController.addDispatcherCount);
 		assertEquals(context.getObjectByType(A), mockFrontController.lastDispatcher);
-		assertEquals("start", mockFrontController.lastType);
 	}
 
 	public function testReceiverAdded()
@@ -76,8 +75,7 @@ private class MockFrontController implements FrontController
 {
 	public var addDispatcherCount : Int;
 	public var lastDispatcher : EventDispatcher;
-	public var lastType : String;
-
+	
 	public var addReceiverCount : Int;
 	public var lastReceivingObject : Dynamic;
 	public var lastMethodName : String;
@@ -89,12 +87,11 @@ private class MockFrontController implements FrontController
 		addReceiverCount = 0;
 	}
 
-	public function addDispatcher(dispatcher : EventDispatcher, type : String) : Void
+	public function addDispatcher(dispatcher : EventDispatcher) : Void
 	{
 		addDispatcherCount++;
 
 		lastDispatcher = dispatcher;
-		lastType = type;
 	}
 
 	public function addReceiver(receivingObject : Dynamic, methodName : String, eventClass : Class<Dynamic>) : Void
@@ -119,13 +116,13 @@ private class Config implements haxe.rtti.Infos
 	}
 }
 
-@ManagedEvents("start")
+@ManagedEvents()
 private class A extends EventDispatcher
 {
 	@Complete
 	public function handleComplete()
 	{
-		dispatchEvent(new Event(Event.START));
+		dispatchEvent(new Event());
 	}
 }
 

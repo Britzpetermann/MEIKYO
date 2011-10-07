@@ -154,13 +154,9 @@ class ContextBuilder
 	function registerDispatchersForContextObject(contextObject : ContextObject)
 	{
 		var metaDatas = Meta.getType(contextObject.type);
-		var managedEvents : Array<String> = Reflect.field(metaDatas, "ManagedEvents");
-		if (managedEvents != null)
+		if (metaDatas != null && Reflect.hasField(metaDatas, "ManagedEvents"))
 		{
-			for(eventType in managedEvents)
-			{
-				contextConfig.frontController.addDispatcher(contextObject.object, eventType);
-			}
+			contextConfig.frontController.addDispatcher(contextObject.object);
 		}
 	}
 
