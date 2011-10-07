@@ -27,7 +27,7 @@ class Main {
 		}
 		catch(e : Dynamic)
 		{
-			trace("Error building application: " + e);
+			Log.error("Error building application: ");
 		}
 	}
 

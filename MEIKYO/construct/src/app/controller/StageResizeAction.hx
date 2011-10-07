@@ -16,14 +16,14 @@ class StageResizeAction extends EventDispatcher, implements Infos
 	public var windowWidth : Int;
 	public var windowHeight : Int;
 	
-	@Complete
-	public function handleComplete()
+	@Sequence("boot", "initPrepare")
+	public function initPrepare()
 	{
 		updateSize();
 	}
-
-	@MessageHandler
-	public function handleLauncherStart(event : LauncherStart)
+	
+	@Sequence("boot", "startComplete")
+	public function startComplete()
 	{
 		GLAnimationFrame.run(timerUpdate);
 		Lib.window.onresize = onResize;
@@ -40,14 +40,14 @@ class StageResizeAction extends EventDispatcher, implements Infos
 		updateSize();
 		fireUpdate();
 	}
-
+	
 	function updateSize()
 	{
 		windowWidth = Std.int(Lib.window.innerWidth);
 		windowHeight = Std.int(Lib.window.innerHeight);
 	}
 
-	private function fireUpdate()
+	function fireUpdate()
 	{
 		dispatchEvent(new StageResize());
 	}

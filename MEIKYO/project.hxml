@@ -1,9 +1,11 @@
 -js release/bin/Main.js
 -main Main
+-debug
 -cp construct/src
 -cp construct/src_extern
 -cp construct/src_bpmjs
 -cp construct/src_bpmgl
+
 
 --next
 
@@ -11,3 +13,4 @@
 -main TestRunner
 -cp construct/src_bpmjs
 -cp construct/src_test
+

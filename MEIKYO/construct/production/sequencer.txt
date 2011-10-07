@@ -1,0 +1,20 @@
+initPrepare
+init
+initComplete
+
+> compute total duration
+> show progress monitor
+
+startPrepare
+start
+startComplete
+
+----------
+
+shutdownPrepare
+shutdown
+shutdownComplete
+
+exitPrepare
+exit
+exitComplete

@@ -36,7 +36,10 @@ class Log
 	public static function error(?m0 : Dynamic, ?m1 : Dynamic, ?m2 : Dynamic, ?m3 : Dynamic, ?m4 : Dynamic, ?m5 : Dynamic, ?m6 : Dynamic, ?i : haxe.PosInfos)
 	{
 		if (errorEnabled(i))
-			untyped console.error(createMessage([m0, m1, m2, m3, m4, m5, m6], i));
+		{
+			var exception = haxe.Stack.exceptionStack().join("\n");
+			untyped console.error(createMessage([m0, m1, m2, m3, m4, m5, m6], i) + "\nStack:\n" + exception);
+		}
 	}
 	
 	public static function infoEnabled(i : haxe.PosInfos)

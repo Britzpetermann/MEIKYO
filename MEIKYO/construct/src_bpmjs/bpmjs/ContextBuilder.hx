@@ -126,7 +126,10 @@ class ContextBuilder
 					{
 						var type = Type.resolveClass(name);
 						var wiredObject = type == Context ? context :  context.getObjectByType(type);
-						Reflect.setField(contextObject.object, field.name, wiredObject);
+						if (wiredObject == null)
+							Log.warn("Found [Inject] at object " + Type.getClassName(contextObject.type)+ "#" + field.name + " but could not find object to inject.");
+						else
+							Reflect.setField(contextObject.object, field.name, wiredObject);
 					}
 				default:
 					continue;
