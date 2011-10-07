@@ -12,6 +12,7 @@ import bpmjs.TestError;
 import bpmjs.TestFrontController;
 import bpmjs.TestSequencer;
 import bpmjs.integration.TestMessaging;
+import bpmjs.integration.TestMultipleConfigs;
 
 class TestRunner {
 
@@ -26,10 +27,10 @@ class TestRunner {
 	{
 		runner = new haxe.unit.TestRunner();
 
-		//addBPMJSTests();
-		//addContextBuilderTests();
-		//addFrontControllerTests();
-		//addIntegrationTests();
+		addBPMJSTests();
+		addContextBuilderTests();
+		addFrontControllerTests();
+		addIntegrationTests();
 		addSequencerTests();
 
 		var startTime = Date.now().getTime();
@@ -60,6 +61,7 @@ class TestRunner {
 	function addIntegrationTests()
 	{
 		runner.add(new TestMessaging());
+		runner.add(new TestMultipleConfigs());
 	}
 	
 	function addSequencerTests()

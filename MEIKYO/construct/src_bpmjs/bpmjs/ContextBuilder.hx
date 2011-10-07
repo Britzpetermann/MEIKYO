@@ -11,12 +11,16 @@ class ContextBuilder
 
 	public static function build(configClass : Class<Dynamic>, ?contextConfig : ContextConfig) : Context
 	{
+		return buildAll([configClass], contextConfig);
+	}
+
+	public static function buildAll(configClasses : Array<Dynamic>, ?contextConfig : ContextConfig) : Context
+	{
 		var builder = new ContextBuilder();
 		defaultContext = builder.context;
 
 		builder.contextConfig = contextConfig == null ? createDefaultContextConfig() : contextConfig;
-		builder.configClass = configClass;
-		builder.buildInternal();
+		builder.buildInternal(cast configClasses);
 
 		return defaultContext;
 	}
@@ -42,9 +46,7 @@ class ContextBuilder
 
 	var context : Context;
 	var contextConfig : ContextConfig;
-	var configClass : Class<Dynamic>;
-	var config : Dynamic;
-
+	
 	function new()
 	{
 		context = new Context();
@@ -59,20 +61,24 @@ class ContextBuilder
 		doCompleteCallForContextObject(contextObject);
 	}
 
-	function buildInternal()
+	function buildInternal(configClasses : Array<Class<Dynamic>>)
 	{
 		context.contextConfig = contextConfig;
-		config = Type.createInstance(configClass, []);
+		
+		for (configClass in configClasses)
+		{
+			var config = Type.createInstance(configClass, []);
+			createObjects(config, configClass);
+		}
 
-		createObjects();
 		wireInjections();
 		registerDispatchers();
 		registerReceivers();
 		doCompleteCall();
 		doPostCompleteCall();
 	}
-
-	function createObjects()
+	
+	function createObjects(config : Dynamic, configClass : Class<Dynamic>)
 	{
 		if (untyped configClass.__rtti == null)
 			throw createError("Config class must have RTTI enabled!");

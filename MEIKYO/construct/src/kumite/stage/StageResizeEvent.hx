@@ -1,8 +1,8 @@
-package app.event;
+package kumite.stage;
 
 import bpmjs.Event;
 
-class StageResize extends Event
+class StageResizeEvent extends Event
 {
 	public function new()
 	{

@@ -1,15 +1,13 @@
-package app.controller;
-
-import app.event.LauncherStart;
-import bpmjs.Event;
+package kumite.launch;
 
 import haxe.rtti.Infos;
 
-@ManagedEvents("launcherStart")
-class Launcher extends EventDispatcher, implements Infos
+class Launcher implements Infos
 {
 	@Inject
 	public var sequencer : bpmjs.Sequencer;
+	
+	public function new() {}
 	
 	@PostComplete
 	public function handlePostComplete()

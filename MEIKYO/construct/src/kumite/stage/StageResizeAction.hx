@@ -1,7 +1,4 @@
-package app.controller;
-
-import app.event.StageResize;
-import app.event.LauncherStart;
+package kumite.stage;
 
 import js.Lib;
 import js.Dom;
@@ -49,6 +46,6 @@ class StageResizeAction extends EventDispatcher, implements Infos
 
 	function fireUpdate()
 	{
-		dispatchEvent(new StageResize());
+		dispatchEvent(new StageResizeEvent());
 	}
 }
