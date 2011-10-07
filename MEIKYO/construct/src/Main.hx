@@ -11,7 +11,11 @@ class Main {
 
 	static function main()
 	{
-		bpmjs.LogContext.setRedirection();
+		Log.init();
+		Log.addFilter(new ERegFilter(LogLevel.INFO, ~/.*/));
+		//Log.addFilter(new ERegFilter(LogLevel.WARN, ~/bpmjs.*/));
+		//Log.addFilter(new ERegFilter(LogLevel.INFO, ~/bpmjs\.DefaultFrontController\.handle.*/));
+		
 		js.Lib.setErrorHandler(globalErrorHandler);
 	}
 

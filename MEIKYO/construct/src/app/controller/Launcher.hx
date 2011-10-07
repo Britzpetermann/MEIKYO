@@ -11,14 +11,14 @@ class Launcher extends EventDispatcher, implements Infos
 	@PostComplete
 	public function handlePostComplete()
 	{
-		trace("post complete");
+		Log.info();
 		try
 		{
 			dispatchEvent(new LauncherStart());
 		}
 		catch(e : Dynamic)
 		{
-			trace("Could not launch!\n\t" + e);
+			Log.error("Could not launch!\n\t" + e);
 		}
 	}
 }
