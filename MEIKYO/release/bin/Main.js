@@ -60,13 +60,11 @@ if(!kumite.webgl) kumite.webgl = {}
 kumite.webgl.Config = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.webgl.Config::new");
 	var $spos = $s.length;
-	this.glCase = new kumite.webgl.GLCase();
 	this.initAction = new kumite.webgl.InitAction();
 	this.initAction.antialias = true;
 	$s.pop();
 }}
 kumite.webgl.Config.__name__ = ["kumite","webgl","Config"];
-kumite.webgl.Config.prototype.glCase = null;
 kumite.webgl.Config.prototype.initAction = null;
 kumite.webgl.Config.prototype.__class__ = kumite.webgl.Config;
 kumite.webgl.Config.__interfaces__ = [haxe.rtti.Infos];
@@ -425,6 +423,87 @@ bpmjs.Sequence.prototype.execute = function(phase) {
 	$s.pop();
 }
 bpmjs.Sequence.prototype.__class__ = bpmjs.Sequence;
+Color = function(r,g,b,a) { if( r === $_ ) return; {
+	$s.push("Color::new");
+	var $spos = $s.length;
+	if(a == null) a = 1.0;
+	if(b == null) b = 1.0;
+	if(g == null) g = 0.0;
+	if(r == null) r = 1.0;
+	this.r = r;
+	this.g = g;
+	this.b = b;
+	this.a = a;
+	$s.pop();
+}}
+Color.__name__ = ["Color"];
+Color.prototype.r = null;
+Color.prototype.g = null;
+Color.prototype.b = null;
+Color.prototype.a = null;
+Color.prototype.fromHex = function(hex) {
+	$s.push("Color::fromHex");
+	var $spos = $s.length;
+	this.r = (hex >> 16 & 255) / 255;
+	this.g = (hex >> 8 & 255) / 255;
+	this.b = (hex & 255) / 255;
+	this.a = 1.0;
+	{
+		$s.pop();
+		return this;
+	}
+	$s.pop();
+}
+Color.prototype.scaleRGB = function(factor) {
+	$s.push("Color::scaleRGB");
+	var $spos = $s.length;
+	this.r *= factor;
+	this.g *= factor;
+	this.b *= factor;
+	$s.pop();
+}
+Color.prototype.mixFrom = function(color1,color2,color1Mix) {
+	$s.push("Color::mixFrom");
+	var $spos = $s.length;
+	if(color1Mix < 0) color1Mix = 0;
+	if(color1Mix > 1) color1Mix = 1;
+	var color2Mix = 1 - color1Mix;
+	this.r = color1.r * color1Mix + color2.r * color2Mix;
+	this.g = color1.g * color1Mix + color2.g * color2Mix;
+	this.b = color1.b * color1Mix + color2.b * color2Mix;
+	$s.pop();
+}
+Color.prototype.toContextRGB = function() {
+	$s.push("Color::toContextRGB");
+	var $spos = $s.length;
+	{
+		var $tmp = "rgb(" + this.r * 255 + "," + this.g * 255 + "," + this.b * 255 + ")";
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Color.prototype.toContextRGBA = function() {
+	$s.push("Color::toContextRGBA");
+	var $spos = $s.length;
+	{
+		var $tmp = "rgba(" + Std["int"](this.r * 255) + "," + Std["int"](this.g * 255) + "," + Std["int"](this.b * 255) + "," + this.a + ")";
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Color.prototype.toString = function() {
+	$s.push("Color::toString");
+	var $spos = $s.length;
+	{
+		var $tmp = "Color: " + this.r + "," + this.g + "," + this.b + "," + this.a;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Color.prototype.__class__ = Color;
 bpmjs.ContextConfig = function(p) { if( p === $_ ) return; {
 	$s.push("bpmjs.ContextConfig::new");
 	var $spos = $s.length;
@@ -1221,6 +1300,114 @@ kumite.launch.Launcher.prototype.showError = function() {
 }
 kumite.launch.Launcher.prototype.__class__ = kumite.launch.Launcher;
 kumite.launch.Launcher.__interfaces__ = [haxe.rtti.Infos];
+Vec3 = function(x,y,z) { if( x === $_ ) return; {
+	$s.push("Vec3::new");
+	var $spos = $s.length;
+	this.x = x;
+	this.y = y;
+	this.z = z;
+	$s.pop();
+}}
+Vec3.__name__ = ["Vec3"];
+Vec3.prototype.x = null;
+Vec3.prototype.y = null;
+Vec3.prototype.z = null;
+Vec3.prototype.scale = function(factor) {
+	$s.push("Vec3::scale");
+	var $spos = $s.length;
+	this.x *= factor;
+	this.y *= factor;
+	this.z *= factor;
+	$s.pop();
+}
+Vec3.prototype.multiply = function(x,y,z) {
+	$s.push("Vec3::multiply");
+	var $spos = $s.length;
+	this.x *= x;
+	this.y *= y;
+	this.z *= z;
+	$s.pop();
+}
+Vec3.prototype.subtract = function(x,y,z) {
+	$s.push("Vec3::subtract");
+	var $spos = $s.length;
+	this.x -= x;
+	this.y -= y;
+	this.z -= z;
+	{
+		$s.pop();
+		return this;
+	}
+	$s.pop();
+}
+Vec3.prototype.normalize = function() {
+	$s.push("Vec3::normalize");
+	var $spos = $s.length;
+	var length = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+	this.x /= length;
+	this.y /= length;
+	this.z /= length;
+	$s.pop();
+}
+Vec3.prototype.cross = function(vec) {
+	$s.push("Vec3::cross");
+	var $spos = $s.length;
+	var x = this.y * vec.z - this.z * vec.y;
+	var y = this.z * vec.x - this.x * vec.z;
+	var z = this.x * vec.y - this.y * vec.x;
+	{
+		var $tmp = new Vec3(x,y,z);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Vec3.prototype.dot = function(vec) {
+	$s.push("Vec3::dot");
+	var $spos = $s.length;
+	{
+		var $tmp = this.x * vec.x + this.y * vec.y + this.z * vec.z;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Vec3.prototype.transform = function(matrix) {
+	$s.push("Vec3::transform");
+	var $spos = $s.length;
+	var x1 = this.x, y1 = this.y, z1 = this.z;
+	var mat = matrix.buffer;
+	this.x = mat[0] * x1 + mat[4] * y1 + mat[8] * z1 + mat[12];
+	this.y = mat[1] * x1 + mat[5] * y1 + mat[9] * z1 + mat[13];
+	this.z = mat[2] * x1 + mat[6] * y1 + mat[10] * z1 + mat[14];
+	$s.pop();
+}
+Vec3.prototype.setFrom = function(value,vec3) {
+	$s.push("Vec3::setFrom");
+	var $spos = $s.length;
+	if(value != null) {
+		this.x = value;
+		this.y = value;
+		this.z = value;
+	}
+	else if(vec3 != null) {
+		this.x = vec3.x;
+		this.y = vec3.y;
+		this.z = vec3.z;
+	}
+	$s.pop();
+}
+Vec3.prototype.clone = function() {
+	$s.push("Vec3::clone");
+	var $spos = $s.length;
+	{
+		var $tmp = new Vec3(this.x,this.y,this.z);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Vec3.prototype.__class__ = Vec3;
 LogFilter = function() { }
 LogFilter.__name__ = ["LogFilter"];
 LogFilter.prototype.enabled = null;
@@ -1779,6 +1966,46 @@ IntIter.prototype.next = function() {
 	$s.pop();
 }
 IntIter.prototype.__class__ = IntIter;
+GLAttribLocation = function(p) { if( p === $_ ) return; {
+	$s.push("GLAttribLocation::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+GLAttribLocation.__name__ = ["GLAttribLocation"];
+GLAttribLocation.prototype.location = null;
+GLAttribLocation.prototype.size = null;
+GLAttribLocation.prototype.type = null;
+GLAttribLocation.prototype.buffer = null;
+GLAttribLocation.prototype.currentLength = null;
+GLAttribLocation.prototype.updateBuffer = function(arrayBuffer) {
+	$s.push("GLAttribLocation::updateBuffer");
+	var $spos = $s.length;
+	if(this.buffer != null) GL.gl.deleteBuffer(this.buffer);
+	this.currentLength = arrayBuffer.byteLength;
+	this.buffer = GL.createArrayBuffer(arrayBuffer);
+	$s.pop();
+}
+GLAttribLocation.prototype.vertexAttribPointer = function() {
+	$s.push("GLAttribLocation::vertexAttribPointer");
+	var $spos = $s.length;
+	GL.gl.bindBuffer(34962,this.buffer);
+	GL.gl.enableVertexAttribArray(this.location);
+	GL.gl.vertexAttribPointer(this.location,this.size,this.type,false,0,0);
+	$s.pop();
+}
+GLAttribLocation.prototype.drawArrays = function(mode,first,count) {
+	$s.push("GLAttribLocation::drawArrays");
+	var $spos = $s.length;
+	if(first == null) first = 0;
+	if(count == null) {
+		count = this.currentLength / this.size;
+		if(this.type == 5126) count /= 4;
+	}
+	GL.gl.drawArrays(mode,first,count);
+	$s.pop();
+}
+GLAttribLocation.prototype.__class__ = GLAttribLocation;
 if(!haxe.xml) haxe.xml = {}
 if(!haxe.xml._Fast) haxe.xml._Fast = {}
 haxe.xml._Fast.NodeAccess = function(x) { if( x === $_ ) return; {
@@ -3622,7 +3849,194 @@ kumite.stage.Stage = function(p) { if( p === $_ ) return; {
 kumite.stage.Stage.__name__ = ["kumite","stage","Stage"];
 kumite.stage.Stage.prototype.width = null;
 kumite.stage.Stage.prototype.height = null;
+kumite.stage.Stage.prototype.aspect = null;
+kumite.stage.Stage.prototype.getAspect = function() {
+	$s.push("kumite.stage.Stage::getAspect");
+	var $spos = $s.length;
+	{
+		var $tmp = this.width / this.height;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
 kumite.stage.Stage.prototype.__class__ = kumite.stage.Stage;
+GLTexture = function(p) { if( p === $_ ) return; {
+	$s.push("GLTexture::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+GLTexture.__name__ = ["GLTexture"];
+GLTexture.prototype.width = null;
+GLTexture.prototype.height = null;
+GLTexture.prototype.texture = null;
+GLTexture.prototype.__class__ = GLTexture;
+GLUniformLocation = function(p) { if( p === $_ ) return; {
+	$s.push("GLUniformLocation::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+GLUniformLocation.__name__ = ["GLUniformLocation"];
+GLUniformLocation.prototype.location = null;
+GLUniformLocation.prototype.uniform1f = function(v) {
+	$s.push("GLUniformLocation::uniform1f");
+	var $spos = $s.length;
+	GL.gl.uniform1f(this.location,v);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform1fv = function(v) {
+	$s.push("GLUniformLocation::uniform1fv");
+	var $spos = $s.length;
+	GL.gl.uniform1fv(this.location,v);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform1i = function(v) {
+	$s.push("GLUniformLocation::uniform1i");
+	var $spos = $s.length;
+	GL.gl.uniform1i(this.location,v);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform1iv = function(v) {
+	$s.push("GLUniformLocation::uniform1iv");
+	var $spos = $s.length;
+	GL.gl.uniform1iv(this.location,v);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform2f = function(x,y) {
+	$s.push("GLUniformLocation::uniform2f");
+	var $spos = $s.length;
+	GL.gl.uniform2f(this.location,x,y);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform2fv = function(v) {
+	$s.push("GLUniformLocation::uniform2fv");
+	var $spos = $s.length;
+	GL.gl.uniform2fv(this.location,v);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform2i = function(x,y) {
+	$s.push("GLUniformLocation::uniform2i");
+	var $spos = $s.length;
+	GL.gl.uniform2i(this.location,x,y);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform2iv = function(v) {
+	$s.push("GLUniformLocation::uniform2iv");
+	var $spos = $s.length;
+	GL.gl.uniform2iv(this.location,v);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform3f = function(x,y,z) {
+	$s.push("GLUniformLocation::uniform3f");
+	var $spos = $s.length;
+	GL.gl.uniform3f(this.location,x,y,z);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform3fv = function(v) {
+	$s.push("GLUniformLocation::uniform3fv");
+	var $spos = $s.length;
+	GL.gl.uniform3fv(this.location,v);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform3i = function(x,y,z) {
+	$s.push("GLUniformLocation::uniform3i");
+	var $spos = $s.length;
+	GL.gl.uniform3i(this.location,x,y,z);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform3iv = function(v) {
+	$s.push("GLUniformLocation::uniform3iv");
+	var $spos = $s.length;
+	GL.gl.uniform3iv(this.location,v);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform4f = function(x,y,z,w) {
+	$s.push("GLUniformLocation::uniform4f");
+	var $spos = $s.length;
+	GL.gl.uniform4f(this.location,x,y,z,w);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform4fv = function(v) {
+	$s.push("GLUniformLocation::uniform4fv");
+	var $spos = $s.length;
+	GL.gl.uniform4fv(this.location,v);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform4i = function(x,y,z,w) {
+	$s.push("GLUniformLocation::uniform4i");
+	var $spos = $s.length;
+	GL.gl.uniform4i(this.location,x,y,z,w);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform4iv = function(v) {
+	$s.push("GLUniformLocation::uniform4iv");
+	var $spos = $s.length;
+	GL.gl.uniform4iv(this.location,v);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniformMatrix2fv = function(transpose,value) {
+	$s.push("GLUniformLocation::uniformMatrix2fv");
+	var $spos = $s.length;
+	if(transpose == null) transpose = false;
+	GL.gl.uniformMatrix2fv(this.location,transpose,value);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniformMatrix3fv = function(transpose,value) {
+	$s.push("GLUniformLocation::uniformMatrix3fv");
+	var $spos = $s.length;
+	if(transpose == null) transpose = false;
+	GL.gl.uniformMatrix3fv(this.location,transpose,value);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniformMatrix4fv = function(transpose,value) {
+	$s.push("GLUniformLocation::uniformMatrix4fv");
+	var $spos = $s.length;
+	if(transpose == null) transpose = false;
+	GL.gl.uniformMatrix4fv(this.location,transpose,value);
+	$s.pop();
+}
+GLUniformLocation.prototype.setMatrix3 = function(matrix) {
+	$s.push("GLUniformLocation::setMatrix3");
+	var $spos = $s.length;
+	GL.gl.uniformMatrix3fv(this.location,false,matrix.buffer);
+	$s.pop();
+}
+GLUniformLocation.prototype.setMatrix4 = function(matrix) {
+	$s.push("GLUniformLocation::setMatrix4");
+	var $spos = $s.length;
+	GL.gl.uniformMatrix4fv(this.location,false,matrix.buffer);
+	$s.pop();
+}
+GLUniformLocation.prototype.setVec3 = function(vec) {
+	$s.push("GLUniformLocation::setVec3");
+	var $spos = $s.length;
+	GL.gl.uniform3f(this.location,vec.x,vec.y,vec.z);
+	$s.pop();
+}
+GLUniformLocation.prototype.setRGB = function(color) {
+	$s.push("GLUniformLocation::setRGB");
+	var $spos = $s.length;
+	GL.gl.uniform3f(this.location,color.r,color.g,color.b);
+	$s.pop();
+}
+GLUniformLocation.prototype.setRGBA = function(color) {
+	$s.push("GLUniformLocation::setRGBA");
+	var $spos = $s.length;
+	GL.gl.uniform4f(this.location,color.r,color.g,color.b,color.a);
+	$s.pop();
+}
+GLUniformLocation.prototype.setTexture = function(texture,index) {
+	$s.push("GLUniformLocation::setTexture");
+	var $spos = $s.length;
+	if(index == null) index = 0;
+	GL.gl.activeTexture(33984 + index);
+	GL.gl.bindTexture(3553,texture.texture);
+	GL.gl.uniform1i(this.location,index);
+	$s.pop();
+}
+GLUniformLocation.prototype.__class__ = GLUniformLocation;
 StringBuf = function(p) { if( p === $_ ) return; {
 	$s.push("StringBuf::new");
 	var $spos = $s.length;
@@ -3660,6 +4074,49 @@ StringBuf.prototype.toString = function() {
 }
 StringBuf.prototype.b = null;
 StringBuf.prototype.__class__ = StringBuf;
+if(!kumite.projection) kumite.projection = {}
+kumite.projection.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.projection.Config::new");
+	var $spos = $s.length;
+	this.projection = new kumite.projection.Projection();
+	this.projectionController = new kumite.projection.ProjectionController();
+	this.projectionController.fov = 40;
+	this.projectionController.near = 0.1;
+	this.projectionController.far = 500;
+	$s.pop();
+}}
+kumite.projection.Config.__name__ = ["kumite","projection","Config"];
+kumite.projection.Config.prototype.projection = null;
+kumite.projection.Config.prototype.projectionController = null;
+kumite.projection.Config.prototype.__class__ = kumite.projection.Config;
+kumite.projection.Config.__interfaces__ = [haxe.rtti.Infos];
+kumite.projection.ProjectionController = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.projection.ProjectionController::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.projection.ProjectionController.__name__ = ["kumite","projection","ProjectionController"];
+kumite.projection.ProjectionController.prototype.projection = null;
+kumite.projection.ProjectionController.prototype.stage = null;
+kumite.projection.ProjectionController.prototype.fov = null;
+kumite.projection.ProjectionController.prototype.near = null;
+kumite.projection.ProjectionController.prototype.far = null;
+kumite.projection.ProjectionController.prototype.init = function() {
+	$s.push("kumite.projection.ProjectionController::init");
+	var $spos = $s.length;
+	this.projection.matrix = new Matrix4();
+	this.updateProjectionSizeFromStage();
+	$s.pop();
+}
+kumite.projection.ProjectionController.prototype.updateProjectionSizeFromStage = function(message) {
+	$s.push("kumite.projection.ProjectionController::updateProjectionSizeFromStage");
+	var $spos = $s.length;
+	this.projection.matrix.perspective(this.fov,this.stage.getAspect(),this.near,this.far);
+	$s.pop();
+}
+kumite.projection.ProjectionController.prototype.__class__ = kumite.projection.ProjectionController;
+kumite.projection.ProjectionController.__interfaces__ = [haxe.rtti.Infos];
 Lambda = function() { }
 Lambda.__name__ = ["Lambda"];
 Lambda.array = function(it) {
@@ -4492,6 +4949,86 @@ Log.infoConsole = function(v,i) {
 	$s.pop();
 }
 Log.prototype.__class__ = Log;
+Matrix3 = function(cloneFrom) { if( cloneFrom === $_ ) return; {
+	$s.push("Matrix3::new");
+	var $spos = $s.length;
+	this.buffer = new Float32Array(9);
+	if(cloneFrom != null) {
+		this.setFrom(cloneFrom);
+	}
+	else {
+		this.identity();
+	}
+	$s.pop();
+}}
+Matrix3.__name__ = ["Matrix3"];
+Matrix3.prototype.buffer = null;
+Matrix3.prototype.identity = function() {
+	$s.push("Matrix3::identity");
+	var $spos = $s.length;
+	this.buffer[0] = 1;
+	this.buffer[1] = 0;
+	this.buffer[2] = 0;
+	this.buffer[3] = 0;
+	this.buffer[4] = 1;
+	this.buffer[5] = 0;
+	this.buffer[6] = 0;
+	this.buffer[7] = 0;
+	this.buffer[8] = 1;
+	$s.pop();
+}
+Matrix3.prototype.transpose = function() {
+	$s.push("Matrix3::transpose");
+	var $spos = $s.length;
+	var a01 = this.buffer[1], a02 = this.buffer[2];
+	var a12 = this.buffer[5];
+	this.buffer[1] = this.buffer[3];
+	this.buffer[2] = this.buffer[6];
+	this.buffer[3] = a01;
+	this.buffer[5] = this.buffer[7];
+	this.buffer[6] = a02;
+	this.buffer[7] = a12;
+	$s.pop();
+}
+Matrix3.prototype.setFrom = function(from) {
+	$s.push("Matrix3::setFrom");
+	var $spos = $s.length;
+	this.buffer[0] = from.buffer[0];
+	this.buffer[1] = from.buffer[1];
+	this.buffer[2] = from.buffer[2];
+	this.buffer[3] = from.buffer[3];
+	this.buffer[4] = from.buffer[4];
+	this.buffer[5] = from.buffer[5];
+	this.buffer[6] = from.buffer[6];
+	this.buffer[7] = from.buffer[7];
+	this.buffer[8] = from.buffer[8];
+	this.buffer[9] = from.buffer[9];
+	$s.pop();
+}
+Matrix3.prototype.clone = function() {
+	$s.push("Matrix3::clone");
+	var $spos = $s.length;
+	{
+		var $tmp = new Matrix3(this);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix3.prototype.toString = function() {
+	$s.push("Matrix3::toString");
+	var $spos = $s.length;
+	var result = "Matrix3:";
+	result += "\r\t" + this.buffer[0] + "," + this.buffer[1] + "," + this.buffer[2];
+	result += "\r\t" + this.buffer[3] + "," + this.buffer[4] + "," + this.buffer[5];
+	result += "\r\t" + this.buffer[6] + "," + this.buffer[7] + "," + this.buffer[8];
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+Matrix3.prototype.__class__ = Matrix3;
 haxe.Log = function() { }
 haxe.Log.__name__ = ["haxe","Log"];
 haxe.Log.trace = function(v,infos) {
@@ -4649,15 +5186,15 @@ Hash.prototype.toString = function() {
 	$s.pop();
 }
 Hash.prototype.__class__ = Hash;
-kumite.webgl.GLCase = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.webgl.GLCase::new");
+kumite.projection.Projection = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.projection.Projection::new");
 	var $spos = $s.length;
 	null;
 	$s.pop();
 }}
-kumite.webgl.GLCase.__name__ = ["kumite","webgl","GLCase"];
-kumite.webgl.GLCase.prototype.itself = null;
-kumite.webgl.GLCase.prototype.__class__ = kumite.webgl.GLCase;
+kumite.projection.Projection.__name__ = ["kumite","projection","Projection"];
+kumite.projection.Projection.prototype.matrix = null;
+kumite.projection.Projection.prototype.__class__ = kumite.projection.Projection;
 Std = function() { }
 Std.__name__ = ["Std"];
 Std["is"] = function(v,t) {
@@ -4748,7 +5285,7 @@ Main = function(canvas) { if( canvas === $_ ) return; {
 	$s.push("Main::new");
 	var $spos = $s.length;
 	try {
-		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config]);
+		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.projection.Config]);
 	}
 	catch( $e0 ) {
 		{
@@ -4757,7 +5294,7 @@ Main = function(canvas) { if( canvas === $_ ) return; {
 				$e = [];
 				while($s.length >= $spos) $e.unshift($s.pop());
 				$s.push($e[0]);
-				Log.error("Error building application! \n" + e,null,null,null,null,null,null,{ fileName : "Main.hx", lineNumber : 35, className : "Main", methodName : "new"});
+				Log.error("Error building application! \n" + e,null,null,null,null,null,null,{ fileName : "Main.hx", lineNumber : 36, className : "Main", methodName : "new"});
 			}
 		}
 	}
@@ -4799,17 +5336,11 @@ kumite.webgl.InitAction = function(p) { if( p === $_ ) return; {
 }}
 kumite.webgl.InitAction.__name__ = ["kumite","webgl","InitAction"];
 kumite.webgl.InitAction.prototype.canvas = null;
-kumite.webgl.InitAction.prototype.gl = null;
 kumite.webgl.InitAction.prototype.antialias = null;
 kumite.webgl.InitAction.prototype.init = function() {
 	$s.push("kumite.webgl.InitAction::init");
 	var $spos = $s.length;
-	var params = { antialias : this.antialias};
-	this.gl.itself = this.canvas.itself.getContext("webgl",params);
-	if(this.gl.itself == null) this.gl.itself = this.canvas.itself.getContext("experimental-webgl",params);
-	if(this.gl.itself == null) {
-		throw "Could not initialise WebGL.";
-	}
+	GL.init(this.canvas.itself,this.antialias);
 	$s.pop();
 }
 kumite.webgl.InitAction.prototype.__class__ = kumite.webgl.InitAction;
@@ -5201,6 +5732,786 @@ haxe.rtti.TypeApi.constructorEq = function(c1,c2) {
 	$s.pop();
 }
 haxe.rtti.TypeApi.prototype.__class__ = haxe.rtti.TypeApi;
+GL = function() { }
+GL.__name__ = ["GL"];
+GL.gl = null;
+GL.currentProgramm = null;
+GL.init = function(canvas,antialias) {
+	$s.push("GL::init");
+	var $spos = $s.length;
+	var params = { antialias : antialias};
+	GL.gl = canvas.getContext("webgl",params);
+	if(GL.gl == null) GL.gl = canvas.getContext("experimental-webgl",params);
+	if(GL.gl == null) {
+		throw "Could not initialise WebGL.";
+	}
+	{
+		var $tmp = GL.gl;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GL.useProgram = function(shaderProgramm) {
+	$s.push("GL::useProgram");
+	var $spos = $s.length;
+	GL.currentProgramm = shaderProgramm;
+	GL.gl.useProgram(GL.currentProgramm);
+	$s.pop();
+}
+GL.createProgram = function(vertexSourceClass,fragmentSourceClass) {
+	$s.push("GL::createProgram");
+	var $spos = $s.length;
+	GL.currentProgramm = GL.gl.createProgram();
+	var vs = GL.gl.createShader(GL.gl.VERTEX_SHADER);
+	GL.gl.shaderSource(vs,GL.createGLSLFromClass(vertexSourceClass));
+	GL.gl.compileShader(vs);
+	if(!GL.gl.getShaderParameter(vs,GL.gl.COMPILE_STATUS)) throw GL.gl.getShaderInfoLog(vs);
+	var fs = GL.gl.createShader(GL.gl.FRAGMENT_SHADER);
+	GL.gl.shaderSource(fs,GL.createGLSLFromClass(fragmentSourceClass));
+	GL.gl.compileShader(fs);
+	if(!GL.gl.getShaderParameter(fs,GL.gl.COMPILE_STATUS)) throw GL.gl.getShaderInfoLog(fs);
+	GL.gl.attachShader(GL.currentProgramm,vs);
+	GL.gl.attachShader(GL.currentProgramm,fs);
+	GL.gl.linkProgram(GL.currentProgramm);
+	if(!GL.gl.getProgramParameter(GL.currentProgramm,GL.gl.LINK_STATUS)) throw "Could not link shader!";
+	{
+		var $tmp = GL.currentProgramm;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GL.createGLSLFromClass = function(shaderClass) {
+	$s.push("GL::createGLSLFromClass");
+	var $spos = $s.length;
+	var metaDatas = haxe.rtti.Meta.getType(shaderClass);
+	var glsl = Reflect.field(metaDatas,"GLSL");
+	if(glsl.length != 1) throw "Missing GLSL metadata in shader class: " + shaderClass;
+	{
+		var $tmp = glsl[0];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GL.createArrayBuffer = function(array,type) {
+	$s.push("GL::createArrayBuffer");
+	var $spos = $s.length;
+	if(type == null) type = 35044;
+	var vertexBuffer = GL.gl.createBuffer();
+	GL.gl.bindBuffer(GL.gl.ARRAY_BUFFER,vertexBuffer);
+	GL.gl.bufferData(GL.gl.ARRAY_BUFFER,array,type);
+	{
+		$s.pop();
+		return vertexBuffer;
+	}
+	$s.pop();
+}
+GL.getUniformLocation = function(name) {
+	$s.push("GL::getUniformLocation");
+	var $spos = $s.length;
+	var location = GL.gl.getUniformLocation(GL.currentProgramm,name);
+	if(location == null) haxe.Log.trace("Could not find " + name + " in shader",{ fileName : "GL.hx", lineNumber : 458, className : "GL", methodName : "getUniformLocation"});
+	var result = new GLUniformLocation();
+	result.location = location;
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+GL.getAttribLocation2 = function(name,size,type) {
+	$s.push("GL::getAttribLocation2");
+	var $spos = $s.length;
+	var location = GL.gl.getAttribLocation(GL.currentProgramm,name);
+	if(location == null) haxe.Log.trace("Could not find " + name + " in shader",{ fileName : "GL.hx", lineNumber : 469, className : "GL", methodName : "getAttribLocation2"});
+	var result = new GLAttribLocation();
+	result.location = location;
+	result.size = size;
+	result.type = type;
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+GL.activeTexture = function(texture) {
+	$s.push("GL::activeTexture");
+	var $spos = $s.length;
+	GL.gl.activeTexture(texture);
+	$s.pop();
+}
+GL.bindBuffer = function(target,buffer) {
+	$s.push("GL::bindBuffer");
+	var $spos = $s.length;
+	GL.gl.bindBuffer(target,buffer);
+	$s.pop();
+}
+GL.bindFramebuffer = function(target,framebuffer) {
+	$s.push("GL::bindFramebuffer");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.bindRenderbuffer = function(target,renderbuffer) {
+	$s.push("GL::bindRenderbuffer");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.bindTexture = function(target,texture) {
+	$s.push("GL::bindTexture");
+	var $spos = $s.length;
+	GL.gl.bindTexture(target,texture);
+	$s.pop();
+}
+GL.blendFunc = function(sfactor,dfactor) {
+	$s.push("GL::blendFunc");
+	var $spos = $s.length;
+	GL.gl.blendFunc(sfactor,dfactor);
+	$s.pop();
+}
+GL.bufferData = function(target,data,usage) {
+	$s.push("GL::bufferData");
+	var $spos = $s.length;
+	GL.gl.bufferData(target,data,usage);
+	$s.pop();
+}
+GL.clear = function(mask) {
+	$s.push("GL::clear");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.clearColor = function(red,green,blue,alpha) {
+	$s.push("GL::clearColor");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.clearDepth = function(depth) {
+	$s.push("GL::clearDepth");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.compileShader = function(shader) {
+	$s.push("GL::compileShader");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.createBuffer = function() {
+	$s.push("GL::createBuffer");
+	var $spos = $s.length;
+	{
+		var $tmp = GL.gl.createBuffer();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GL.createFramebuffer = function() {
+	$s.push("GL::createFramebuffer");
+	var $spos = $s.length;
+	{
+		var $tmp = GL.gl.createFramebuffer();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GL.createRenderbuffer = function() {
+	$s.push("GL::createRenderbuffer");
+	var $spos = $s.length;
+	{
+		var $tmp = GL.gl.createRenderbuffer();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GL.createTexture = function() {
+	$s.push("GL::createTexture");
+	var $spos = $s.length;
+	{
+		var $tmp = GL.gl.createTexture();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GL.createShader = function(type) {
+	$s.push("GL::createShader");
+	var $spos = $s.length;
+	{
+		var $tmp = GL.gl.createShader(type);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GL.deleteBuffer = function(buffer) {
+	$s.push("GL::deleteBuffer");
+	var $spos = $s.length;
+	GL.gl.deleteBuffer(buffer);
+	$s.pop();
+}
+GL.disable = function(cap) {
+	$s.push("GL::disable");
+	var $spos = $s.length;
+	GL.gl.disable(cap);
+	$s.pop();
+}
+GL.drawArrays = function(mode,first,count) {
+	$s.push("GL::drawArrays");
+	var $spos = $s.length;
+	GL.gl.drawArrays(mode,first,count);
+	$s.pop();
+}
+GL.enable = function(cap) {
+	$s.push("GL::enable");
+	var $spos = $s.length;
+	GL.gl.enable(cap);
+	$s.pop();
+}
+GL.enableVertexAttribArray = function(index) {
+	$s.push("GL::enableVertexAttribArray");
+	var $spos = $s.length;
+	GL.gl.enableVertexAttribArray(index);
+	$s.pop();
+}
+GL.framebufferRenderbuffer = function(target,attachment,renderbuffertarget,renderbuffer) {
+	$s.push("GL::framebufferRenderbuffer");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.framebufferTexture2D = function(target,attachment,textarget,texture,level) {
+	$s.push("GL::framebufferTexture2D");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.generateMipmap = function(target) {
+	$s.push("GL::generateMipmap");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.getAttribLocation = function(program,name) {
+	$s.push("GL::getAttribLocation");
+	var $spos = $s.length;
+	{
+		var $tmp = GL.gl.getAttribLocation(program,name);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GL.getShaderInfoLog = function(shader) {
+	$s.push("GL::getShaderInfoLog");
+	var $spos = $s.length;
+	{
+		var $tmp = GL.gl.getShaderInfoLog(shader);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GL.getShaderParameter = function(shader,pname) {
+	$s.push("GL::getShaderParameter");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.getProgramParameter = function(program,pname) {
+	$s.push("GL::getProgramParameter");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.linkProgram = function(program) {
+	$s.push("GL::linkProgram");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.renderbufferStorage = function(target,internalformat,width,height) {
+	$s.push("GL::renderbufferStorage");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.shaderSource = function(shader,source) {
+	$s.push("GL::shaderSource");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.texImage2DArrayBufferView = function(target,level,internalformat,width,height,border,format,type,pixels) {
+	$s.push("GL::texImage2DArrayBufferView");
+	var $spos = $s.length;
+	GL.gl.texImage2D(target,level,internalformat,width,height,border,format,type,pixels);
+	$s.pop();
+}
+GL.texImage2DImageData = function(target,level,internalformat,format,type,pixels) {
+	$s.push("GL::texImage2DImageData");
+	var $spos = $s.length;
+	GL.gl.texImage2D(target,level,internalformat,format,type,pixels);
+	$s.pop();
+}
+GL.texImage2DImage = function(target,level,internalformat,format,type,image) {
+	$s.push("GL::texImage2DImage");
+	var $spos = $s.length;
+	GL.gl.texImage2D(target,level,internalformat,format,type,image);
+	$s.pop();
+}
+GL.texImage2DCanvas = function(target,level,internalformat,format,type,canvas) {
+	$s.push("GL::texImage2DCanvas");
+	var $spos = $s.length;
+	GL.gl.texImage2D(target,level,internalformat,format,type,canvas);
+	$s.pop();
+}
+GL.texImage2DVideo = function(target,level,internalformat,format,type,video) {
+	$s.push("GL::texImage2DVideo");
+	var $spos = $s.length;
+	GL.gl.texImage2D(target,level,internalformat,format,type,video);
+	$s.pop();
+}
+GL.texParameteri = function(target,pname,param) {
+	$s.push("GL::texParameteri");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.vertexAttribPointer = function(indx,size,type,normalized,stride,offset) {
+	$s.push("GL::vertexAttribPointer");
+	var $spos = $s.length;
+	GL.gl.vertexAttribPointer(indx,size,type,normalized,stride,offset);
+	$s.pop();
+}
+GL.viewport = function(x,y,width,height) {
+	$s.push("GL::viewport");
+	var $spos = $s.length;
+	GL.gl.viewport(x,y,width,height);
+	$s.pop();
+}
+GL.prototype.__class__ = GL;
+Matrix4 = function(cloneFrom) { if( cloneFrom === $_ ) return; {
+	$s.push("Matrix4::new");
+	var $spos = $s.length;
+	this.buffer = new Float32Array(16);
+	if(cloneFrom != null) {
+		this.setFrom(cloneFrom);
+	}
+	else {
+		this.identity();
+	}
+	$s.pop();
+}}
+Matrix4.__name__ = ["Matrix4"];
+Matrix4.createTranslation = function(x,y,z) {
+	$s.push("Matrix4::createTranslation");
+	var $spos = $s.length;
+	var result = new Matrix4();
+	result.buffer[0] = 1;
+	result.buffer[1] = 0;
+	result.buffer[2] = 0;
+	result.buffer[3] = 0;
+	result.buffer[4] = 0;
+	result.buffer[5] = 1;
+	result.buffer[6] = 0;
+	result.buffer[7] = 0;
+	result.buffer[8] = 0;
+	result.buffer[9] = 0;
+	result.buffer[10] = 1;
+	result.buffer[11] = 0;
+	result.buffer[12] = x;
+	result.buffer[13] = y;
+	result.buffer[14] = z;
+	result.buffer[15] = 1;
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+Matrix4.prototype.buffer = null;
+Matrix4.prototype.identity = function() {
+	$s.push("Matrix4::identity");
+	var $spos = $s.length;
+	this.buffer[0] = 1;
+	this.buffer[1] = 0;
+	this.buffer[2] = 0;
+	this.buffer[3] = 0;
+	this.buffer[4] = 0;
+	this.buffer[5] = 1;
+	this.buffer[6] = 0;
+	this.buffer[7] = 0;
+	this.buffer[8] = 0;
+	this.buffer[9] = 0;
+	this.buffer[10] = 1;
+	this.buffer[11] = 0;
+	this.buffer[12] = 0;
+	this.buffer[13] = 0;
+	this.buffer[14] = 0;
+	this.buffer[15] = 1;
+	$s.pop();
+}
+Matrix4.prototype.setFrom = function(from) {
+	$s.push("Matrix4::setFrom");
+	var $spos = $s.length;
+	this.buffer[0] = from.buffer[0];
+	this.buffer[1] = from.buffer[1];
+	this.buffer[2] = from.buffer[2];
+	this.buffer[3] = from.buffer[3];
+	this.buffer[4] = from.buffer[4];
+	this.buffer[5] = from.buffer[5];
+	this.buffer[6] = from.buffer[6];
+	this.buffer[7] = from.buffer[7];
+	this.buffer[8] = from.buffer[8];
+	this.buffer[9] = from.buffer[9];
+	this.buffer[10] = from.buffer[10];
+	this.buffer[11] = from.buffer[11];
+	this.buffer[12] = from.buffer[12];
+	this.buffer[13] = from.buffer[13];
+	this.buffer[14] = from.buffer[14];
+	this.buffer[15] = from.buffer[15];
+	$s.pop();
+}
+Matrix4.prototype.lookAt = function(eye,center,up) {
+	$s.push("Matrix4::lookAt");
+	var $spos = $s.length;
+	var eyex = eye.x, eyey = eye.y, eyez = eye.z, upx = up.x, upy = up.y, upz = up.z, centerx = center.x, centery = center.y, centerz = center.z;
+	if(eyex == centerx && eyey == centery && eyez == centerz) {
+		this.identity();
+	}
+	var z0, z1, z2, x0, x1, x2, y0, y1, y2, len;
+	z0 = eyex - center.x;
+	z1 = eyey - center.y;
+	z2 = eyez - center.z;
+	len = 1 / Math.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
+	z0 *= len;
+	z1 *= len;
+	z2 *= len;
+	x0 = upy * z2 - upz * z1;
+	x1 = upz * z0 - upx * z2;
+	x2 = upx * z1 - upy * z0;
+	len = Math.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
+	if(Math.isNaN(len)) {
+		x0 = 0;
+		x1 = 0;
+		x2 = 0;
+	}
+	else {
+		len = 1 / len;
+		x0 *= len;
+		x1 *= len;
+		x2 *= len;
+	}
+	y0 = z1 * x2 - z2 * x1;
+	y1 = z2 * x0 - z0 * x2;
+	y2 = z0 * x1 - z1 * x0;
+	len = Math.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
+	if(Math.isNaN(len)) {
+		y0 = 0;
+		y1 = 0;
+		y2 = 0;
+	}
+	else {
+		len = 1 / len;
+		y0 *= len;
+		y1 *= len;
+		y2 *= len;
+	}
+	this.buffer[0] = x0;
+	this.buffer[1] = y0;
+	this.buffer[2] = z0;
+	this.buffer[3] = 0;
+	this.buffer[4] = x1;
+	this.buffer[5] = y1;
+	this.buffer[6] = z1;
+	this.buffer[7] = 0;
+	this.buffer[8] = x2;
+	this.buffer[9] = y2;
+	this.buffer[10] = z2;
+	this.buffer[11] = 0;
+	this.buffer[12] = -(x0 * eyex + x1 * eyey + x2 * eyez);
+	this.buffer[13] = -(y0 * eyex + y1 * eyey + y2 * eyez);
+	this.buffer[14] = -(z0 * eyex + z1 * eyey + z2 * eyez);
+	this.buffer[15] = 1;
+	$s.pop();
+}
+Matrix4.prototype.ortho = function(left,right,bottom,top,near,far) {
+	$s.push("Matrix4::ortho");
+	var $spos = $s.length;
+	var rl = right - left;
+	var tb = top - bottom;
+	var fn = far - near;
+	this.buffer[0] = 2 / rl;
+	this.buffer[1] = 0;
+	this.buffer[2] = 0;
+	this.buffer[3] = 0;
+	this.buffer[4] = 0;
+	this.buffer[5] = 2 / tb;
+	this.buffer[6] = 0;
+	this.buffer[7] = 0;
+	this.buffer[8] = 0;
+	this.buffer[9] = 0;
+	this.buffer[10] = -2 / fn;
+	this.buffer[11] = 0;
+	this.buffer[12] = -(left + right) / rl;
+	this.buffer[13] = -(top + bottom) / tb;
+	this.buffer[14] = -(far + near) / fn;
+	this.buffer[15] = 1;
+	$s.pop();
+}
+Matrix4.prototype.perspective = function(fovy,aspect,near,far) {
+	$s.push("Matrix4::perspective");
+	var $spos = $s.length;
+	var top = near * Math.tan(fovy * Math.PI / 360.0);
+	var right = top * aspect;
+	this.frustum(-right,right,-top,top,near,far);
+	$s.pop();
+}
+Matrix4.prototype.frustum = function(left,right,bottom,top,near,far) {
+	$s.push("Matrix4::frustum");
+	var $spos = $s.length;
+	var rl = right - left;
+	var tb = top - bottom;
+	var fn = far - near;
+	this.buffer[0] = near * 2 / rl;
+	this.buffer[1] = 0;
+	this.buffer[2] = 0;
+	this.buffer[3] = 0;
+	this.buffer[4] = 0;
+	this.buffer[5] = near * 2 / tb;
+	this.buffer[6] = 0;
+	this.buffer[7] = 0;
+	this.buffer[8] = (right + left) / rl;
+	this.buffer[9] = (top + bottom) / tb;
+	this.buffer[10] = -(far + near) / fn;
+	this.buffer[11] = -1;
+	this.buffer[12] = 0;
+	this.buffer[13] = 0;
+	this.buffer[14] = -(far * near * 2) / fn;
+	this.buffer[15] = 0;
+	$s.pop();
+}
+Matrix4.prototype.appendTranslation = function(x,y,z) {
+	$s.push("Matrix4::appendTranslation");
+	var $spos = $s.length;
+	var m = Matrix4.createTranslation(x,y,z);
+	this.multiply(m);
+	$s.pop();
+}
+Matrix4.prototype.appendScale = function(x,y,z) {
+	$s.push("Matrix4::appendScale");
+	var $spos = $s.length;
+	this.buffer[0] = this.buffer[0] * x;
+	this.buffer[1] = this.buffer[1] * x;
+	this.buffer[2] = this.buffer[2] * x;
+	this.buffer[3] = this.buffer[3] * x;
+	this.buffer[4] = this.buffer[4] * y;
+	this.buffer[5] = this.buffer[5] * y;
+	this.buffer[6] = this.buffer[6] * y;
+	this.buffer[7] = this.buffer[7] * y;
+	this.buffer[8] = this.buffer[8] * z;
+	this.buffer[9] = this.buffer[9] * z;
+	this.buffer[10] = this.buffer[10] * z;
+	this.buffer[11] = this.buffer[11] * z;
+	this.buffer[12] = this.buffer[12];
+	this.buffer[13] = this.buffer[13];
+	this.buffer[14] = this.buffer[14];
+	this.buffer[15] = this.buffer[15];
+	$s.pop();
+}
+Matrix4.prototype.appendRotation = function(angle,axis) {
+	$s.push("Matrix4::appendRotation");
+	var $spos = $s.length;
+	var x = axis.x, y = axis.y, z = axis.y;
+	var len = Math.sqrt(x * x + y * y + z * z);
+	len = 1 / len;
+	x *= len;
+	y *= len;
+	z *= len;
+	var s = Math.sin(angle);
+	var c = Math.cos(angle);
+	var t = 1 - c;
+	var a00 = this.buffer[0], a01 = this.buffer[1], a02 = this.buffer[2], a03 = this.buffer[3];
+	var a10 = this.buffer[4], a11 = this.buffer[5], a12 = this.buffer[6], a13 = this.buffer[7];
+	var a20 = this.buffer[8], a21 = this.buffer[9], a22 = this.buffer[10], a23 = this.buffer[11];
+	var b00 = x * x * t + c, b01 = y * x * t + z * s, b02 = z * x * t - y * s;
+	var b10 = x * y * t - z * s, b11 = y * y * t + c, b12 = z * y * t + x * s;
+	var b20 = x * z * t + y * s, b21 = y * z * t - x * s, b22 = z * z * t + c;
+	this.buffer[0] = a00 * b00 + a10 * b01 + a20 * b02;
+	this.buffer[1] = a01 * b00 + a11 * b01 + a21 * b02;
+	this.buffer[2] = a02 * b00 + a12 * b01 + a22 * b02;
+	this.buffer[3] = a03 * b00 + a13 * b01 + a23 * b02;
+	this.buffer[4] = a00 * b10 + a10 * b11 + a20 * b12;
+	this.buffer[5] = a01 * b10 + a11 * b11 + a21 * b12;
+	this.buffer[6] = a02 * b10 + a12 * b11 + a22 * b12;
+	this.buffer[7] = a03 * b10 + a13 * b11 + a23 * b12;
+	this.buffer[8] = a00 * b20 + a10 * b21 + a20 * b22;
+	this.buffer[9] = a01 * b20 + a11 * b21 + a21 * b22;
+	this.buffer[10] = a02 * b20 + a12 * b21 + a22 * b22;
+	this.buffer[11] = a03 * b20 + a13 * b21 + a23 * b22;
+	$s.pop();
+}
+Matrix4.prototype.rotateEuler = function(heading,attitude,bank) {
+	$s.push("Matrix4::rotateEuler");
+	var $spos = $s.length;
+	this.identity();
+	var ch = Math.cos(heading);
+	var sh = Math.sin(heading);
+	var ca = Math.cos(attitude);
+	var sa = Math.sin(attitude);
+	var cb = Math.cos(bank);
+	var sb = Math.sin(bank);
+	this.buffer[0] = ch * ca;
+	this.buffer[1] = sh * sb - ch * sa * cb;
+	this.buffer[2] = ch * sa * sb + sh * cb;
+	this.buffer[4] = sa;
+	this.buffer[5] = ca * cb;
+	this.buffer[6] = -ca * sb;
+	this.buffer[8] = -sh * ca;
+	this.buffer[9] = sh * sa * cb + ch * sb;
+	this.buffer[10] = -sh * sa * sb + ch * cb;
+	$s.pop();
+}
+Matrix4.prototype.appendEulerRotation = function(heading,attitude,bank) {
+	$s.push("Matrix4::appendEulerRotation");
+	var $spos = $s.length;
+	var mEuler = new Matrix4();
+	mEuler.rotateEuler(heading,attitude,bank);
+	this.multiply(mEuler);
+	$s.pop();
+}
+Matrix4.prototype.inverse = function() {
+	$s.push("Matrix4::inverse");
+	var $spos = $s.length;
+	var a00 = this.buffer[0], a01 = this.buffer[1], a02 = this.buffer[2], a03 = this.buffer[3];
+	var a10 = this.buffer[4], a11 = this.buffer[5], a12 = this.buffer[6], a13 = this.buffer[7];
+	var a20 = this.buffer[8], a21 = this.buffer[9], a22 = this.buffer[10], a23 = this.buffer[11];
+	var a30 = this.buffer[12], a31 = this.buffer[13], a32 = this.buffer[14], a33 = this.buffer[15];
+	var b00 = a00 * a11 - a01 * a10;
+	var b01 = a00 * a12 - a02 * a10;
+	var b02 = a00 * a13 - a03 * a10;
+	var b03 = a01 * a12 - a02 * a11;
+	var b04 = a01 * a13 - a03 * a11;
+	var b05 = a02 * a13 - a03 * a12;
+	var b06 = a20 * a31 - a21 * a30;
+	var b07 = a20 * a32 - a22 * a30;
+	var b08 = a20 * a33 - a23 * a30;
+	var b09 = a21 * a32 - a22 * a31;
+	var b10 = a21 * a33 - a23 * a31;
+	var b11 = a22 * a33 - a23 * a32;
+	var invDet = 1 / (b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
+	this.buffer[0] = (a11 * b11 - a12 * b10 + a13 * b09) * invDet;
+	this.buffer[1] = (-a01 * b11 + a02 * b10 - a03 * b09) * invDet;
+	this.buffer[2] = (a31 * b05 - a32 * b04 + a33 * b03) * invDet;
+	this.buffer[3] = (-a21 * b05 + a22 * b04 - a23 * b03) * invDet;
+	this.buffer[4] = (-a10 * b11 + a12 * b08 - a13 * b07) * invDet;
+	this.buffer[5] = (a00 * b11 - a02 * b08 + a03 * b07) * invDet;
+	this.buffer[6] = (-a30 * b05 + a32 * b02 - a33 * b01) * invDet;
+	this.buffer[7] = (a20 * b05 - a22 * b02 + a23 * b01) * invDet;
+	this.buffer[8] = (a10 * b10 - a11 * b08 + a13 * b06) * invDet;
+	this.buffer[9] = (-a00 * b10 + a01 * b08 - a03 * b06) * invDet;
+	this.buffer[10] = (a30 * b04 - a31 * b02 + a33 * b00) * invDet;
+	this.buffer[11] = (-a20 * b04 + a21 * b02 - a23 * b00) * invDet;
+	this.buffer[12] = (-a10 * b09 + a11 * b07 - a12 * b06) * invDet;
+	this.buffer[13] = (a00 * b09 - a01 * b07 + a02 * b06) * invDet;
+	this.buffer[14] = (-a30 * b03 + a31 * b01 - a32 * b00) * invDet;
+	this.buffer[15] = (a20 * b03 - a21 * b01 + a22 * b00) * invDet;
+	$s.pop();
+}
+Matrix4.prototype.multiply = function(mat2) {
+	$s.push("Matrix4::multiply");
+	var $spos = $s.length;
+	var a00 = this.buffer[0], a01 = this.buffer[1], a02 = this.buffer[2], a03 = this.buffer[3];
+	var a10 = this.buffer[4], a11 = this.buffer[5], a12 = this.buffer[6], a13 = this.buffer[7];
+	var a20 = this.buffer[8], a21 = this.buffer[9], a22 = this.buffer[10], a23 = this.buffer[11];
+	var a30 = this.buffer[12], a31 = this.buffer[13], a32 = this.buffer[14], a33 = this.buffer[15];
+	var b00 = mat2.buffer[0], b01 = mat2.buffer[1], b02 = mat2.buffer[2], b03 = mat2.buffer[3];
+	var b10 = mat2.buffer[4], b11 = mat2.buffer[5], b12 = mat2.buffer[6], b13 = mat2.buffer[7];
+	var b20 = mat2.buffer[8], b21 = mat2.buffer[9], b22 = mat2.buffer[10], b23 = mat2.buffer[11];
+	var b30 = mat2.buffer[12], b31 = mat2.buffer[13], b32 = mat2.buffer[14], b33 = mat2.buffer[15];
+	this.buffer[0] = b00 * a00 + b01 * a10 + b02 * a20 + b03 * a30;
+	this.buffer[1] = b00 * a01 + b01 * a11 + b02 * a21 + b03 * a31;
+	this.buffer[2] = b00 * a02 + b01 * a12 + b02 * a22 + b03 * a32;
+	this.buffer[3] = b00 * a03 + b01 * a13 + b02 * a23 + b03 * a33;
+	this.buffer[4] = b10 * a00 + b11 * a10 + b12 * a20 + b13 * a30;
+	this.buffer[5] = b10 * a01 + b11 * a11 + b12 * a21 + b13 * a31;
+	this.buffer[6] = b10 * a02 + b11 * a12 + b12 * a22 + b13 * a32;
+	this.buffer[7] = b10 * a03 + b11 * a13 + b12 * a23 + b13 * a33;
+	this.buffer[8] = b20 * a00 + b21 * a10 + b22 * a20 + b23 * a30;
+	this.buffer[9] = b20 * a01 + b21 * a11 + b22 * a21 + b23 * a31;
+	this.buffer[10] = b20 * a02 + b21 * a12 + b22 * a22 + b23 * a32;
+	this.buffer[11] = b20 * a03 + b21 * a13 + b22 * a23 + b23 * a33;
+	this.buffer[12] = b30 * a00 + b31 * a10 + b32 * a20 + b33 * a30;
+	this.buffer[13] = b30 * a01 + b31 * a11 + b32 * a21 + b33 * a31;
+	this.buffer[14] = b30 * a02 + b31 * a12 + b32 * a22 + b33 * a32;
+	this.buffer[15] = b30 * a03 + b31 * a13 + b32 * a23 + b33 * a33;
+	$s.pop();
+}
+Matrix4.prototype.toInverseMatrix3 = function() {
+	$s.push("Matrix4::toInverseMatrix3");
+	var $spos = $s.length;
+	var a00 = this.buffer[0], a01 = this.buffer[1], a02 = this.buffer[2];
+	var a10 = this.buffer[4], a11 = this.buffer[5], a12 = this.buffer[6];
+	var a20 = this.buffer[8], a21 = this.buffer[9], a22 = this.buffer[10];
+	var b01 = a22 * a11 - a12 * a21;
+	var b11 = -a22 * a10 + a12 * a20;
+	var b21 = a21 * a10 - a11 * a20;
+	var d = a00 * b01 + a01 * b11 + a02 * b21;
+	if(d == null) {
+		$s.pop();
+		return null;
+	}
+	var id = 1 / d;
+	var result = new Matrix3();
+	result.buffer[0] = b01 * id;
+	result.buffer[1] = (-a22 * a01 + a02 * a21) * id;
+	result.buffer[2] = (a12 * a01 - a02 * a11) * id;
+	result.buffer[3] = b11 * id;
+	result.buffer[4] = (a22 * a00 - a02 * a20) * id;
+	result.buffer[5] = (-a12 * a00 + a02 * a10) * id;
+	result.buffer[6] = b21 * id;
+	result.buffer[7] = (-a21 * a00 + a01 * a20) * id;
+	result.buffer[8] = (a11 * a00 - a01 * a10) * id;
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+Matrix4.prototype.clone = function() {
+	$s.push("Matrix4::clone");
+	var $spos = $s.length;
+	{
+		var $tmp = new Matrix4(this);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.toString = function() {
+	$s.push("Matrix4::toString");
+	var $spos = $s.length;
+	var result = "Matrix4:";
+	result += "\r\t" + this.buffer[0] + "," + this.buffer[1] + "," + this.buffer[2] + "," + this.buffer[3];
+	result += "\r\t" + this.buffer[4] + "," + this.buffer[5] + "," + this.buffer[6] + "," + this.buffer[7];
+	result += "\r\t" + this.buffer[8] + "," + this.buffer[9] + "," + this.buffer[10] + "," + this.buffer[11];
+	result += "\r\t" + this.buffer[12] + "," + this.buffer[13] + "," + this.buffer[14] + "," + this.buffer[15];
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+Matrix4.prototype.__class__ = Matrix4;
 kumite.launch.Config = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.launch.Config::new");
 	var $spos = $s.length;
@@ -5398,7 +6709,7 @@ js.Boot.__init();
 }
 kumite.stage.StageResizeAction.__meta__ = { fields : { messenger : { Messenger : null}, stage : { Inject : null}, initPrepare : { Sequence : ["boot","initPrepare"]}, startComplete : { Sequence : ["boot","startComplete"]}}};
 kumite.stage.StageResizeAction.__rtti = "<class path=\"kumite.stage.StageResizeAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<startComplete public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<onResize set=\"method\" line=\"39\"><f a=\"?event\">\n\t<t path=\"js.Event\"/>\n\t<e path=\"Void\"/>\n</f></onResize>\n\t<updateSize set=\"method\" line=\"45\"><f a=\"\"><e path=\"Void\"/></f></updateSize>\n\t<sendResizeMessage set=\"method\" line=\"51\"><f a=\"\"><e path=\"Void\"/></f></sendResizeMessage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.webgl.Config.__rtti = "<class path=\"kumite.webgl.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<glCase public=\"1\"><c path=\"kumite.webgl.GLCase\"/></glCase>\n\t<initAction public=\"1\"><c path=\"kumite.webgl.InitAction\"/></initAction>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.webgl.Config.__rtti = "<class path=\"kumite.webgl.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<initAction public=\"1\"><c path=\"kumite.webgl.InitAction\"/></initAction>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs.Sequencer.__meta__ = { fields : { context : { Inject : null}}};
 bpmjs.Sequencer.__rtti = "<class path=\"bpmjs.Sequencer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context public=\"1\"><c path=\"bpmjs.Context\"/></context>\n\t<start public=\"1\" set=\"method\" line=\"14\"><f a=\"name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></start>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.stage.Config.__rtti = "<class path=\"kumite.stage.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<stageResizeAction public=\"1\"><c path=\"kumite.stage.StageResizeAction\"/></stageResizeAction>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
@@ -5423,10 +6734,310 @@ Xml.ecdata_end = new EReg("\\]\\]>","");
 Xml.edoctype_elt = new EReg("[\\[|\\]>]","");
 Xml.ecomment_end = new EReg("-->","");
 haxe.Timer.arr = new Array();
+kumite.projection.Config.__rtti = "<class path=\"kumite.projection.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<projectionController public=\"1\"><c path=\"kumite.projection.ProjectionController\"/></projectionController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.projection.ProjectionController.__meta__ = { fields : { projection : { Inject : null}, stage : { Inject : null}, init : { Sequence : ["boot","init"]}, updateProjectionSizeFromStage : { Message : null}}};
+kumite.projection.ProjectionController.__rtti = "<class path=\"kumite.projection.ProjectionController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<fov public=\"1\"><c path=\"Float\"/></fov>\n\t<near public=\"1\"><c path=\"Float\"/></near>\n\t<far public=\"1\"><c path=\"Float\"/></far>\n\t<init public=\"1\" set=\"method\" line=\"23\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateProjectionSizeFromStage public=\"1\" set=\"method\" line=\"30\"><f a=\"?message\">\n\t<c path=\"kumite.stage.StageResizeMessage\"/>\n\t<e path=\"Void\"/>\n</f></updateProjectionSizeFromStage>\n\t<new public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Log.filters = new Array();
 kumite.canvas.Config.__rtti = "<class path=\"kumite.canvas.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvasCase public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvasCase>\n\t<canvasController public=\"1\"><c path=\"kumite.canvas.CanvasController\"/></canvasController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.webgl.InitAction.__meta__ = { fields : { canvas : { Inject : null}, gl : { Inject : null}, init : { Sequence : ["boot","init"]}}};
-kumite.webgl.InitAction.__rtti = "<class path=\"kumite.webgl.InitAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<gl public=\"1\"><c path=\"kumite.webgl.GLCase\"/></gl>\n\t<antialias public=\"1\"><e path=\"Bool\"/></antialias>\n\t<init public=\"1\" set=\"method\" line=\"19\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<new public=\"1\" set=\"method\" line=\"16\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.webgl.InitAction.__meta__ = { fields : { canvas : { Inject : null}, antialias : { Inject : null}, init : { Sequence : ["boot","init"]}}};
+kumite.webgl.InitAction.__rtti = "<class path=\"kumite.webgl.InitAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<antialias public=\"1\"><e path=\"Bool\"/></antialias>\n\t<init public=\"1\" set=\"method\" line=\"17\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<new public=\"1\" set=\"method\" line=\"14\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+GL.DEPTH_BUFFER_BIT = 256;
+GL.STENCIL_BUFFER_BIT = 1024;
+GL.COLOR_BUFFER_BIT = 16384;
+GL.POINTS = 0;
+GL.LINES = 1;
+GL.LINE_LOOP = 2;
+GL.LINE_STRIP = 3;
+GL.TRIANGLES = 4;
+GL.TRIANGLE_STRIP = 5;
+GL.TRIANGLE_FAN = 6;
+GL.ZERO = 0;
+GL.ONE = 1;
+GL.SRC_COLOR = 768;
+GL.ONE_MINUS_SRC_COLOR = 769;
+GL.SRC_ALPHA = 770;
+GL.ONE_MINUS_SRC_ALPHA = 771;
+GL.DST_ALPHA = 772;
+GL.ONE_MINUS_DST_ALPHA = 773;
+GL.DST_COLOR = 774;
+GL.ONE_MINUS_DST_COLOR = 775;
+GL.SRC_ALPHA_SATURATE = 776;
+GL.FUNC_ADD = 32774;
+GL.BLEND_EQUATION = 32777;
+GL.BLEND_EQUATION_RGB = 32777;
+GL.BLEND_EQUATION_ALPHA = 34877;
+GL.FUNC_SUBTRACT = 32778;
+GL.FUNC_REVERSE_SUBTRACT = 32779;
+GL.BLEND_DST_RGB = 32968;
+GL.BLEND_SRC_RGB = 32969;
+GL.BLEND_DST_ALPHA = 32970;
+GL.BLEND_SRC_ALPHA = 32971;
+GL.CONSTANT_COLOR = 32769;
+GL.ONE_MINUS_CONSTANT_COLOR = 32770;
+GL.CONSTANT_ALPHA = 32771;
+GL.ONE_MINUS_CONSTANT_ALPHA = 32772;
+GL.BLEND_COLOR = 32773;
+GL.ARRAY_BUFFER = 34962;
+GL.ELEMENT_ARRAY_BUFFER = 34963;
+GL.ARRAY_BUFFER_BINDING = 34964;
+GL.ELEMENT_ARRAY_BUFFER_BINDING = 34965;
+GL.STREAM_DRAW = 35040;
+GL.STATIC_DRAW = 35044;
+GL.DYNAMIC_DRAW = 35048;
+GL.BUFFER_SIZE = 34660;
+GL.BUFFER_USAGE = 34661;
+GL.CURRENT_VERTEX_ATTRIB = 34342;
+GL.FRONT = 1028;
+GL.BACK = 1029;
+GL.FRONT_AND_BACK = 1032;
+GL.CULL_FACE = 2884;
+GL.BLEND = 3042;
+GL.DITHER = 3024;
+GL.STENCIL_TEST = 2960;
+GL.DEPTH_TEST = 2929;
+GL.SCISSOR_TEST = 3089;
+GL.POLYGON_OFFSET_FILL = 32823;
+GL.SAMPLE_ALPHA_TO_COVERAGE = 32926;
+GL.SAMPLE_COVERAGE = 32928;
+GL.NO_ERROR = 0;
+GL.INVALID_ENUM = 1280;
+GL.INVALID_VALUE = 1281;
+GL.INVALID_OPERATION = 1282;
+GL.OUT_OF_MEMORY = 1285;
+GL.CW = 2304;
+GL.CCW = 2305;
+GL.LINE_WIDTH = 2849;
+GL.ALIASED_POINT_SIZE_RANGE = 33901;
+GL.ALIASED_LINE_WIDTH_RANGE = 33902;
+GL.CULL_FACE_MODE = 2885;
+GL.FRONT_FACE = 2886;
+GL.DEPTH_RANGE = 2928;
+GL.DEPTH_WRITEMASK = 2930;
+GL.DEPTH_CLEAR_VALUE = 2931;
+GL.DEPTH_FUNC = 2932;
+GL.STENCIL_CLEAR_VALUE = 2961;
+GL.STENCIL_FUNC = 2962;
+GL.STENCIL_FAIL = 2964;
+GL.STENCIL_PASS_DEPTH_FAIL = 2965;
+GL.STENCIL_PASS_DEPTH_PASS = 2966;
+GL.STENCIL_REF = 2967;
+GL.STENCIL_VALUE_MASK = 2963;
+GL.STENCIL_WRITEMASK = 2968;
+GL.STENCIL_BACK_FUNC = 34816;
+GL.STENCIL_BACK_FAIL = 34817;
+GL.STENCIL_BACK_PASS_DEPTH_FAIL = 34818;
+GL.STENCIL_BACK_PASS_DEPTH_PASS = 34819;
+GL.STENCIL_BACK_REF = 36003;
+GL.STENCIL_BACK_VALUE_MASK = 36004;
+GL.STENCIL_BACK_WRITEMASK = 36005;
+GL.VIEWPORT = 2978;
+GL.SCISSOR_BOX = 3088;
+GL.COLOR_CLEAR_VALUE = 3106;
+GL.COLOR_WRITEMASK = 3107;
+GL.UNPACK_ALIGNMENT = 3317;
+GL.PACK_ALIGNMENT = 3333;
+GL.MAX_TEXTURE_SIZE = 3379;
+GL.MAX_VIEWPORT_DIMS = 3386;
+GL.SUBPIXEL_BITS = 3408;
+GL.RED_BITS = 3410;
+GL.GREEN_BITS = 3411;
+GL.BLUE_BITS = 3412;
+GL.ALPHA_BITS = 3413;
+GL.DEPTH_BITS = 3414;
+GL.STENCIL_BITS = 3415;
+GL.POLYGON_OFFSET_UNITS = 10752;
+GL.POLYGON_OFFSET_FACTOR = 32824;
+GL.TEXTURE_BINDING_2D = 32873;
+GL.SAMPLE_BUFFERS = 32936;
+GL.SAMPLES = 32937;
+GL.SAMPLE_COVERAGE_VALUE = 32938;
+GL.SAMPLE_COVERAGE_INVERT = 32939;
+GL.NUM_COMPRESSED_TEXTURE_FORMATS = 34466;
+GL.COMPRESSED_TEXTURE_FORMATS = 34467;
+GL.DONT_CARE = 4352;
+GL.FASTEST = 4353;
+GL.NICEST = 4354;
+GL.GENERATE_MIPMAP_HINT = 33170;
+GL.BYTE = 5120;
+GL.UNSIGNED_BYTE = 5121;
+GL.SHORT = 5122;
+GL.UNSIGNED_SHORT = 5123;
+GL.INT = 5124;
+GL.UNSIGNED_INT = 5125;
+GL.FLOAT = 5126;
+GL.DEPTH_COMPONENT = 6402;
+GL.ALPHA = 6406;
+GL.RGB = 6407;
+GL.RGBA = 6408;
+GL.LUMINANCE = 6409;
+GL.LUMINANCE_ALPHA = 6410;
+GL.UNSIGNED_SHORT_4_4_4_4 = 32819;
+GL.UNSIGNED_SHORT_5_5_5_1 = 32820;
+GL.UNSIGNED_SHORT_5_6_5 = 33635;
+GL.FRAGMENT_SHADER = 35632;
+GL.VERTEX_SHADER = 35633;
+GL.MAX_VERTEX_ATTRIBS = 34921;
+GL.MAX_VERTEX_UNIFORM_VECTORS = 36347;
+GL.MAX_VARYING_VECTORS = 36348;
+GL.MAX_COMBINED_TEXTURE_IMAGE_UNITS = 35661;
+GL.MAX_VERTEX_TEXTURE_IMAGE_UNITS = 35660;
+GL.MAX_TEXTURE_IMAGE_UNITS = 34930;
+GL.MAX_FRAGMENT_UNIFORM_VECTORS = 36349;
+GL.SHADER_TYPE = 35663;
+GL.DELETE_STATUS = 35712;
+GL.LINK_STATUS = 35714;
+GL.VALIDATE_STATUS = 35715;
+GL.ATTACHED_SHADERS = 35717;
+GL.ACTIVE_UNIFORMS = 35718;
+GL.ACTIVE_UNIFORM_MAX_LENGTH = 35719;
+GL.ACTIVE_ATTRIBUTES = 35721;
+GL.ACTIVE_ATTRIBUTE_MAX_LENGTH = 35722;
+GL.SHADING_LANGUAGE_VERSION = 35724;
+GL.CURRENT_PROGRAM = 35725;
+GL.NEVER = 512;
+GL.LESS = 513;
+GL.EQUAL = 514;
+GL.LEQUAL = 515;
+GL.GREATER = 516;
+GL.NOTEQUAL = 517;
+GL.GEQUAL = 518;
+GL.ALWAYS = 519;
+GL.KEEP = 7680;
+GL.REPLACE = 7681;
+GL.INCR = 7682;
+GL.DECR = 7683;
+GL.INVERT = 5386;
+GL.INCR_WRAP = 34055;
+GL.DECR_WRAP = 34056;
+GL.VENDOR = 7936;
+GL.RENDERER = 7937;
+GL.VERSION = 7938;
+GL.EXTENSIONS = 7939;
+GL.NEAREST = 9728;
+GL.LINEAR = 9729;
+GL.NEAREST_MIPMAP_NEAREST = 9984;
+GL.LINEAR_MIPMAP_NEAREST = 9985;
+GL.NEAREST_MIPMAP_LINEAR = 9986;
+GL.LINEAR_MIPMAP_LINEAR = 9987;
+GL.TEXTURE_MAG_FILTER = 10240;
+GL.TEXTURE_MIN_FILTER = 10241;
+GL.TEXTURE_WRAP_S = 10242;
+GL.TEXTURE_WRAP_T = 10243;
+GL.TEXTURE_2D = 3553;
+GL.TEXTURE = 5890;
+GL.TEXTURE_CUBE_MAP = 34067;
+GL.TEXTURE_BINDING_CUBE_MAP = 34068;
+GL.TEXTURE_CUBE_MAP_POSITIVE_X = 34069;
+GL.TEXTURE_CUBE_MAP_NEGATIVE_X = 34070;
+GL.TEXTURE_CUBE_MAP_POSITIVE_Y = 34071;
+GL.TEXTURE_CUBE_MAP_NEGATIVE_Y = 34072;
+GL.TEXTURE_CUBE_MAP_POSITIVE_Z = 34073;
+GL.TEXTURE_CUBE_MAP_NEGATIVE_Z = 34074;
+GL.MAX_CUBE_MAP_TEXTURE_SIZE = 34076;
+GL.TEXTURE0 = 33984;
+GL.TEXTURE1 = 33985;
+GL.TEXTURE2 = 33986;
+GL.TEXTURE3 = 33987;
+GL.TEXTURE4 = 33988;
+GL.TEXTURE5 = 33989;
+GL.TEXTURE6 = 33990;
+GL.TEXTURE7 = 33991;
+GL.TEXTURE8 = 33992;
+GL.TEXTURE9 = 33993;
+GL.TEXTURE10 = 33994;
+GL.TEXTURE11 = 33995;
+GL.TEXTURE12 = 33996;
+GL.TEXTURE13 = 33997;
+GL.TEXTURE14 = 33998;
+GL.TEXTURE15 = 33999;
+GL.TEXTURE16 = 34000;
+GL.TEXTURE17 = 34001;
+GL.TEXTURE18 = 34002;
+GL.TEXTURE19 = 34003;
+GL.TEXTURE20 = 34004;
+GL.TEXTURE21 = 34005;
+GL.TEXTURE22 = 34006;
+GL.TEXTURE23 = 34007;
+GL.TEXTURE24 = 34008;
+GL.TEXTURE25 = 34009;
+GL.TEXTURE26 = 34010;
+GL.TEXTURE27 = 34011;
+GL.TEXTURE28 = 34012;
+GL.TEXTURE29 = 34013;
+GL.TEXTURE30 = 34014;
+GL.TEXTURE31 = 34015;
+GL.ACTIVE_TEXTURE = 34016;
+GL.REPEAT = 10497;
+GL.CLAMP_TO_EDGE = 33071;
+GL.MIRRORED_REPEAT = 33648;
+GL.FLOAT_VEC2 = 35664;
+GL.FLOAT_VEC3 = 35665;
+GL.FLOAT_VEC4 = 35666;
+GL.INT_VEC2 = 35667;
+GL.INT_VEC3 = 35668;
+GL.INT_VEC4 = 35669;
+GL.BOOL = 35670;
+GL.BOOL_VEC2 = 35671;
+GL.BOOL_VEC3 = 35672;
+GL.BOOL_VEC4 = 35673;
+GL.FLOAT_MAT2 = 35674;
+GL.FLOAT_MAT3 = 35675;
+GL.FLOAT_MAT4 = 35676;
+GL.SAMPLER_2D = 35678;
+GL.SAMPLER_CUBE = 35680;
+GL.VERTEX_ATTRIB_ARRAY_ENABLED = 34338;
+GL.VERTEX_ATTRIB_ARRAY_SIZE = 34339;
+GL.VERTEX_ATTRIB_ARRAY_STRIDE = 34340;
+GL.VERTEX_ATTRIB_ARRAY_TYPE = 34341;
+GL.VERTEX_ATTRIB_ARRAY_NORMALIZED = 34922;
+GL.VERTEX_ATTRIB_ARRAY_POINTER = 34373;
+GL.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING = 34975;
+GL.IMPLEMENTATION_COLOR_READ_TYPE = 35738;
+GL.IMPLEMENTATION_COLOR_READ_FORMAT = 35739;
+GL.COMPILE_STATUS = 35713;
+GL.INFO_LOG_LENGTH = 35716;
+GL.SHADER_SOURCE_LENGTH = 35720;
+GL.SHADER_COMPILER = 36346;
+GL.LOW_FLOAT = 36336;
+GL.MEDIUM_FLOAT = 36337;
+GL.HIGH_FLOAT = 36338;
+GL.LOW_INT = 36339;
+GL.MEDIUM_INT = 36340;
+GL.HIGH_INT = 36341;
+GL.FRAMEBUFFER = 36160;
+GL.RENDERBUFFER = 36161;
+GL.RGBA4 = 32854;
+GL.RGB5_A1 = 32855;
+GL.RGB565 = 36194;
+GL.DEPTH_COMPONENT16 = 33189;
+GL.STENCIL_INDEX = 6401;
+GL.STENCIL_INDEX8 = 36168;
+GL.RENDERBUFFER_WIDTH = 36162;
+GL.RENDERBUFFER_HEIGHT = 36163;
+GL.RENDERBUFFER_INTERNAL_FORMAT = 36164;
+GL.RENDERBUFFER_RED_SIZE = 36176;
+GL.RENDERBUFFER_GREEN_SIZE = 36177;
+GL.RENDERBUFFER_BLUE_SIZE = 36178;
+GL.RENDERBUFFER_ALPHA_SIZE = 36179;
+GL.RENDERBUFFER_DEPTH_SIZE = 36180;
+GL.RENDERBUFFER_STENCIL_SIZE = 36181;
+GL.FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE = 36048;
+GL.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME = 36049;
+GL.FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL = 36050;
+GL.FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE = 36051;
+GL.COLOR_ATTACHMENT0 = 36064;
+GL.DEPTH_ATTACHMENT = 36096;
+GL.STENCIL_ATTACHMENT = 36128;
+GL.NONE = 0;
+GL.FRAMEBUFFER_COMPLETE = 36053;
+GL.FRAMEBUFFER_INCOMPLETE_ATTACHMENT = 36054;
+GL.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT = 36055;
+GL.FRAMEBUFFER_INCOMPLETE_DIMENSIONS = 36057;
+GL.FRAMEBUFFER_UNSUPPORTED = 36061;
+GL.FRAMEBUFFER_BINDING = 36006;
+GL.RENDERBUFFER_BINDING = 36007;
+GL.MAX_RENDERBUFFER_SIZE = 34024;
+GL.INVALID_FRAMEBUFFER_OPERATION = 1286;
 kumite.launch.Config.__rtti = "<class path=\"kumite.launch.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<launcher public=\"1\"><c path=\"kumite.launch.Launcher\"/></launcher>\n\t<new public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 js.Lib.onerror = null;
 Main.main()

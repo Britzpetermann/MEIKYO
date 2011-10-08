@@ -9,8 +9,6 @@ class InitAction implements Infos
 	public var canvas : CanvasCase;
 	
 	@Inject
-	public var gl : GLCase;
-	
 	public var antialias : Bool;
 	
 	public function new() {}
@@ -18,16 +16,7 @@ class InitAction implements Infos
 	@Sequence("boot", "init")
 	public function init()
 	{
-		var params = {antialias : antialias};
-
-		gl.itself = canvas.itself.getContext("webgl", params);
-		if (gl.itself == null)
-			gl.itself = canvas.itself.getContext("experimental-webgl", params);
-
-		if (gl.itself == null)
-		{
-			throw "Could not initialise WebGL.";
-		}
+		GL.init(canvas.itself, antialias);
 	}
 
 }

@@ -387,7 +387,7 @@ class GL
 
 	public static var currentProgramm : WebGLProgram;
 
-	public static function initGL(canvas : Canvas, antialias : Bool) : WebGLRenderingContext
+	public static function init(canvas : Canvas, antialias : Bool) : WebGLRenderingContext
 	{
 		var params = {antialias : antialias};
 
