@@ -504,6 +504,19 @@ Color.prototype.toString = function() {
 	$s.pop();
 }
 Color.prototype.__class__ = Color;
+if(!kumite.camera) kumite.camera = {}
+kumite.camera.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.camera.Config::new");
+	var $spos = $s.length;
+	this.camera = new kumite.camera.Camera();
+	this.cameraMouseMover = new kumite.camera.CameraMouseMover();
+	$s.pop();
+}}
+kumite.camera.Config.__name__ = ["kumite","camera","Config"];
+kumite.camera.Config.prototype.camera = null;
+kumite.camera.Config.prototype.cameraMouseMover = null;
+kumite.camera.Config.prototype.__class__ = kumite.camera.Config;
+kumite.camera.Config.__interfaces__ = [haxe.rtti.Infos];
 bpmjs.ContextConfig = function(p) { if( p === $_ ) return; {
 	$s.push("bpmjs.ContextConfig::new");
 	var $spos = $s.length;
@@ -5195,6 +5208,31 @@ kumite.projection.Projection = function(p) { if( p === $_ ) return; {
 kumite.projection.Projection.__name__ = ["kumite","projection","Projection"];
 kumite.projection.Projection.prototype.matrix = null;
 kumite.projection.Projection.prototype.__class__ = kumite.projection.Projection;
+kumite.camera.CameraMouseMover = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.camera.CameraMouseMover::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.camera.CameraMouseMover.__name__ = ["kumite","camera","CameraMouseMover"];
+kumite.camera.CameraMouseMover.prototype.camera = null;
+kumite.camera.CameraMouseMover.prototype.init = function() {
+	$s.push("kumite.camera.CameraMouseMover::init");
+	var $spos = $s.length;
+	this.camera.matrix = new Matrix4();
+	this.updateCamera();
+	$s.pop();
+}
+kumite.camera.CameraMouseMover.prototype.updateCamera = function() {
+	$s.push("kumite.camera.CameraMouseMover::updateCamera");
+	var $spos = $s.length;
+	this.camera.matrix.identity();
+	this.camera.matrix.lookAt(new Vec3(0,0,40),new Vec3(0,3,0),new Vec3(0,1,0));
+	this.camera.matrix.appendScale(1,1,-1);
+	$s.pop();
+}
+kumite.camera.CameraMouseMover.prototype.__class__ = kumite.camera.CameraMouseMover;
+kumite.camera.CameraMouseMover.__interfaces__ = [haxe.rtti.Infos];
 Std = function() { }
 Std.__name__ = ["Std"];
 Std["is"] = function(v,t) {
@@ -5269,6 +5307,15 @@ Std.random = function(x) {
 	$s.pop();
 }
 Std.prototype.__class__ = Std;
+kumite.camera.Camera = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.camera.Camera::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.camera.Camera.__name__ = ["kumite","camera","Camera"];
+kumite.camera.Camera.prototype.matrix = null;
+kumite.camera.Camera.prototype.__class__ = kumite.camera.Camera;
 kumite.canvas.Config = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.canvas.Config::new");
 	var $spos = $s.length;
@@ -5285,7 +5332,7 @@ Main = function(canvas) { if( canvas === $_ ) return; {
 	$s.push("Main::new");
 	var $spos = $s.length;
 	try {
-		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.projection.Config]);
+		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.projection.Config,kumite.camera.Config]);
 	}
 	catch( $e0 ) {
 		{
@@ -5294,7 +5341,7 @@ Main = function(canvas) { if( canvas === $_ ) return; {
 				$e = [];
 				while($s.length >= $spos) $e.unshift($s.pop());
 				$s.push($e[0]);
-				Log.error("Error building application! \n" + e,null,null,null,null,null,null,{ fileName : "Main.hx", lineNumber : 36, className : "Main", methodName : "new"});
+				Log.error("Error building application! \n" + e,null,null,null,null,null,null,{ fileName : "Main.hx", lineNumber : 37, className : "Main", methodName : "new"});
 			}
 		}
 	}
@@ -6712,6 +6759,7 @@ kumite.stage.StageResizeAction.__rtti = "<class path=\"kumite.stage.StageResizeA
 kumite.webgl.Config.__rtti = "<class path=\"kumite.webgl.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<initAction public=\"1\"><c path=\"kumite.webgl.InitAction\"/></initAction>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs.Sequencer.__meta__ = { fields : { context : { Inject : null}}};
 bpmjs.Sequencer.__rtti = "<class path=\"bpmjs.Sequencer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context public=\"1\"><c path=\"bpmjs.Context\"/></context>\n\t<start public=\"1\" set=\"method\" line=\"14\"><f a=\"name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></start>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.camera.Config.__rtti = "<class path=\"kumite.camera.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<cameraMouseMover public=\"1\"><c path=\"kumite.camera.CameraMouseMover\"/></cameraMouseMover>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.stage.Config.__rtti = "<class path=\"kumite.stage.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<stageResizeAction public=\"1\"><c path=\"kumite.stage.StageResizeAction\"/></stageResizeAction>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.launch.Launcher.__meta__ = { fields : { sequencer : { Inject : null}, handlePostComplete : { PostComplete : null}, showError : { Sequence : ["boot","error"]}}};
 kumite.launch.Launcher.__rtti = "<class path=\"kumite.launch.Launcher\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<handlePostComplete public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></handlePostComplete>\n\t<showError public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></showError>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
@@ -6738,6 +6786,8 @@ kumite.projection.Config.__rtti = "<class path=\"kumite.projection.Config\" para
 kumite.projection.ProjectionController.__meta__ = { fields : { projection : { Inject : null}, stage : { Inject : null}, init : { Sequence : ["boot","init"]}, updateProjectionSizeFromStage : { Message : null}}};
 kumite.projection.ProjectionController.__rtti = "<class path=\"kumite.projection.ProjectionController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<fov public=\"1\"><c path=\"Float\"/></fov>\n\t<near public=\"1\"><c path=\"Float\"/></near>\n\t<far public=\"1\"><c path=\"Float\"/></far>\n\t<init public=\"1\" set=\"method\" line=\"23\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateProjectionSizeFromStage public=\"1\" set=\"method\" line=\"30\"><f a=\"?message\">\n\t<c path=\"kumite.stage.StageResizeMessage\"/>\n\t<e path=\"Void\"/>\n</f></updateProjectionSizeFromStage>\n\t<new public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Log.filters = new Array();
+kumite.camera.CameraMouseMover.__meta__ = { fields : { camera : { Inject : null}, init : { Sequence : ["boot","init"]}}};
+kumite.camera.CameraMouseMover.__rtti = "<class path=\"kumite.camera.CameraMouseMover\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<init public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateCamera set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></updateCamera>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.canvas.Config.__rtti = "<class path=\"kumite.canvas.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvasCase public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvasCase>\n\t<canvasController public=\"1\"><c path=\"kumite.canvas.CanvasController\"/></canvasController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.webgl.InitAction.__meta__ = { fields : { canvas : { Inject : null}, antialias : { Inject : null}, init : { Sequence : ["boot","init"]}}};
 kumite.webgl.InitAction.__rtti = "<class path=\"kumite.webgl.InitAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<antialias public=\"1\"><e path=\"Bool\"/></antialias>\n\t<init public=\"1\" set=\"method\" line=\"17\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<new public=\"1\" set=\"method\" line=\"14\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";

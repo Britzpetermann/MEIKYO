@@ -29,6 +29,7 @@ class Main {
 					kumite.canvas.Config,
 					kumite.webgl.Config,
 					kumite.projection.Config,
+					kumite.camera.Config,
 				]);
 		}
 		catch(e : Dynamic)
