@@ -18,7 +18,6 @@ class CameraMouseMover implements Infos
 	private function updateCamera()
 	{
 		camera.matrix.identity();
-		camera.matrix.lookAt(new Vec3(0, 0, 40), new Vec3(0, 3, 0), new Vec3(0, 1, 0));
-		camera.matrix.appendScale(1, 1, -1);
+		camera.matrix.lookAt(new Vec3(0, 0, 10), new Vec3(0, 0, 0), new Vec3(0, 1, 0));
 	}
 }

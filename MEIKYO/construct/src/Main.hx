@@ -28,8 +28,10 @@ class Main {
 					kumite.stage.Config,
 					kumite.canvas.Config,
 					kumite.webgl.Config,
+					kumite.time.Config,
 					kumite.projection.Config,
 					kumite.camera.Config,
+					kumite.helloworldgl.Config,
 				]);
 		}
 		catch(e : Dynamic)
