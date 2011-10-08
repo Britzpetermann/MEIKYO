@@ -13,7 +13,7 @@ class Sequencer implements haxe.rtti.Infos
 	
 	public function start(name : String)
 	{
-		Log.info(name);
+		Log.groupCollapsed("Sequence: " + name);
 		
 		var sequence = new Sequence(name);
 		sequence.objects = context.objects;
@@ -24,6 +24,8 @@ class Sequencer implements haxe.rtti.Infos
 		sequence.execute("startPrepare");
 		sequence.execute("start");
 		sequence.execute("startComplete");
+		
+		Log.groupEnd();
 	}
 }
 
@@ -40,7 +42,6 @@ class Sequence
 	
 	public function execute(phase : String)
 	{
-		Log.info("Execute sequence", name, phase);
 		for (contextObject in objects)
 		{
 			var object = contextObject.object;
@@ -53,10 +54,9 @@ class Sequence
 				{
 					var localName : String = meta.Sequence[0];
 					var localPhase : String = meta.Sequence[1];
-					Log.info("Found sequence", contextObject.name, localName, localPhase);
 					if (localPhase == phase)
 					{
-						Log.info("Execute!");
+						Log.info("Phase '" + localPhase + "' " + Type.getClassName(contextObject.type) +"#"+fieldName);
 						Reflect.callMethod(object, Reflect.field(object, fieldName), []);
 					}
 				}

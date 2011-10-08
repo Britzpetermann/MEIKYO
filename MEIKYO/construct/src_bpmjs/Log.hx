@@ -57,6 +57,18 @@ class Log
 		return filter(i, LogLevel.ERROR);
 	}
 	
+	public static function groupCollapsed(?m0 : Dynamic, ?m1 : Dynamic, ?m2 : Dynamic, ?m3 : Dynamic, ?m4 : Dynamic, ?m5 : Dynamic, ?m6 : Dynamic, ?i : haxe.PosInfos)
+	{
+		if (infoEnabled(i))
+			untyped console.groupCollapsed(createMessage([m0, m1, m2, m3, m4, m5, m6], i));
+	}
+	
+	public static function groupEnd(?i : haxe.PosInfos)
+	{
+		if (infoEnabled(i))
+			untyped console.groupEnd();
+	}
+	
 	private static function filter(i : haxe.PosInfos, level : LogLevel)
 	{
 		var result = true;

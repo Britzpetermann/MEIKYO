@@ -17,11 +17,15 @@ class ContextBuilder
 
 	public static function buildAll(configClasses : Array<Dynamic>, ?contextConfig : ContextConfig) : Context
 	{
+		Log.groupCollapsed();
+		
 		var builder = new ContextBuilder();
 		defaultContext = builder.context;
 
 		builder.contextConfig = contextConfig == null ? createDefaultContextConfig() : contextConfig;
 		builder.buildInternal(cast configClasses);
+		
+		Log.groupEnd();
 
 		return defaultContext;
 	}

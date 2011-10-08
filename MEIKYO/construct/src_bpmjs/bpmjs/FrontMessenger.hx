@@ -18,19 +18,19 @@ class DefaultFrontMessenger implements FrontMessenger
 
 	public function addMessenger(messenger : Messenger)
 	{
-		Log.info(messenger);
+		Log.info(Type.getClassName(Type.getClass(messenger)));
 		messenger.addReceiver(null, handleMessage);
 	}
 
 	public function addReceiver(receivingObject : Dynamic, methodName : String, type : Class<Dynamic>)
 	{
-		Log.info(receivingObject + ":" + methodName, Type.getClassName(type));
+		Log.info(Type.getClassName(Type.getClass(receivingObject)) + "#" + methodName, Type.getClassName(type));
 		receivers.push(new Receiver(receivingObject, methodName, type));
 	}
 
 	function handleMessage(message : Dynamic)
 	{
-		Log.info(message);
+		Log.info(Type.getClassName(Type.getClass(message)));
 		for(receiver in receivers)
 		{
 			if (receiver.matches(message))
@@ -63,7 +63,7 @@ private class Receiver
 
 	inline public function execute(message : Dynamic)
 	{
-		Log.info(receiver + ":" + methodName);
+		Log.info(Type.getClassName(Type.getClass(receiver)) + "#" + methodName);
 		Reflect.callMethod(receiver, method, [message]);
 	}
 }

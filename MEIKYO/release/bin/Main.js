@@ -1,335 +1,75 @@
 $estr = function() { return js.Boot.__string_rec(this,''); }
 if(typeof haxe=='undefined') haxe = {}
-if(!haxe.xml) haxe.xml = {}
-if(!haxe.xml._Fast) haxe.xml._Fast = {}
-haxe.xml._Fast.NodeAccess = function(x) { if( x === $_ ) return; {
-	$s.push("haxe.xml._Fast.NodeAccess::new");
+if(!haxe.rtti) haxe.rtti = {}
+haxe.rtti.Infos = function() { }
+haxe.rtti.Infos.__name__ = ["haxe","rtti","Infos"];
+haxe.rtti.Infos.prototype.__class__ = haxe.rtti.Infos;
+if(typeof kumite=='undefined') kumite = {}
+if(!kumite.stage) kumite.stage = {}
+kumite.stage.StageResizeAction = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.stage.StageResizeAction::new");
 	var $spos = $s.length;
-	this.__x = x;
+	null;
 	$s.pop();
 }}
-haxe.xml._Fast.NodeAccess.__name__ = ["haxe","xml","_Fast","NodeAccess"];
-haxe.xml._Fast.NodeAccess.prototype.__x = null;
-haxe.xml._Fast.NodeAccess.prototype.resolve = function(name) {
-	$s.push("haxe.xml._Fast.NodeAccess::resolve");
+kumite.stage.StageResizeAction.__name__ = ["kumite","stage","StageResizeAction"];
+kumite.stage.StageResizeAction.prototype.messenger = null;
+kumite.stage.StageResizeAction.prototype.stage = null;
+kumite.stage.StageResizeAction.prototype.initPrepare = function() {
+	$s.push("kumite.stage.StageResizeAction::initPrepare");
 	var $spos = $s.length;
-	var x = this.__x.elementsNamed(name).next();
-	if(x == null) {
-		var xname = this.__x.nodeType == Xml.Document?"Document":this.__x.getNodeName();
-		throw xname + " is missing element " + name;
-	}
-	{
-		var $tmp = new haxe.xml.Fast(x);
-		$s.pop();
-		return $tmp;
-	}
+	this.updateSize();
 	$s.pop();
 }
-haxe.xml._Fast.NodeAccess.prototype.__class__ = haxe.xml._Fast.NodeAccess;
-haxe.xml._Fast.AttribAccess = function(x) { if( x === $_ ) return; {
-	$s.push("haxe.xml._Fast.AttribAccess::new");
+kumite.stage.StageResizeAction.prototype.startComplete = function() {
+	$s.push("kumite.stage.StageResizeAction::startComplete");
 	var $spos = $s.length;
-	this.__x = x;
+	GLAnimationFrame.run($closure(this,"timerUpdate"));
+	js.Lib.window.onresize = $closure(this,"onResize");
+	$s.pop();
+}
+kumite.stage.StageResizeAction.prototype.timerUpdate = function() {
+	$s.push("kumite.stage.StageResizeAction::timerUpdate");
+	var $spos = $s.length;
+	if(this.stage.width != js.Lib.window.innerWidth || this.stage.height != js.Lib.window.innerHeight) this.onResize();
+	$s.pop();
+}
+kumite.stage.StageResizeAction.prototype.onResize = function(event) {
+	$s.push("kumite.stage.StageResizeAction::onResize");
+	var $spos = $s.length;
+	this.updateSize();
+	this.sendResizeMessage();
+	$s.pop();
+}
+kumite.stage.StageResizeAction.prototype.updateSize = function() {
+	$s.push("kumite.stage.StageResizeAction::updateSize");
+	var $spos = $s.length;
+	this.stage.width = Std["int"](js.Lib.window.innerWidth);
+	this.stage.height = Std["int"](js.Lib.window.innerHeight);
+	$s.pop();
+}
+kumite.stage.StageResizeAction.prototype.sendResizeMessage = function() {
+	$s.push("kumite.stage.StageResizeAction::sendResizeMessage");
+	var $spos = $s.length;
+	this.messenger.send(new kumite.stage.StageResizeMessage());
+	$s.pop();
+}
+kumite.stage.StageResizeAction.prototype.__class__ = kumite.stage.StageResizeAction;
+kumite.stage.StageResizeAction.__interfaces__ = [haxe.rtti.Infos];
+if(!kumite.webgl) kumite.webgl = {}
+kumite.webgl.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.webgl.Config::new");
+	var $spos = $s.length;
+	this.glCase = new kumite.webgl.GLCase();
+	this.initAction = new kumite.webgl.InitAction();
+	this.initAction.antialias = true;
 	$s.pop();
 }}
-haxe.xml._Fast.AttribAccess.__name__ = ["haxe","xml","_Fast","AttribAccess"];
-haxe.xml._Fast.AttribAccess.prototype.__x = null;
-haxe.xml._Fast.AttribAccess.prototype.resolve = function(name) {
-	$s.push("haxe.xml._Fast.AttribAccess::resolve");
-	var $spos = $s.length;
-	if(this.__x.nodeType == Xml.Document) throw "Cannot access document attribute " + name;
-	var v = this.__x.get(name);
-	if(v == null) throw this.__x.getNodeName() + " is missing attribute " + name;
-	{
-		$s.pop();
-		return v;
-	}
-	$s.pop();
-}
-haxe.xml._Fast.AttribAccess.prototype.__class__ = haxe.xml._Fast.AttribAccess;
-haxe.xml._Fast.HasAttribAccess = function(x) { if( x === $_ ) return; {
-	$s.push("haxe.xml._Fast.HasAttribAccess::new");
-	var $spos = $s.length;
-	this.__x = x;
-	$s.pop();
-}}
-haxe.xml._Fast.HasAttribAccess.__name__ = ["haxe","xml","_Fast","HasAttribAccess"];
-haxe.xml._Fast.HasAttribAccess.prototype.__x = null;
-haxe.xml._Fast.HasAttribAccess.prototype.resolve = function(name) {
-	$s.push("haxe.xml._Fast.HasAttribAccess::resolve");
-	var $spos = $s.length;
-	if(this.__x.nodeType == Xml.Document) throw "Cannot access document attribute " + name;
-	{
-		var $tmp = this.__x.exists(name);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.xml._Fast.HasAttribAccess.prototype.__class__ = haxe.xml._Fast.HasAttribAccess;
-haxe.xml._Fast.HasNodeAccess = function(x) { if( x === $_ ) return; {
-	$s.push("haxe.xml._Fast.HasNodeAccess::new");
-	var $spos = $s.length;
-	this.__x = x;
-	$s.pop();
-}}
-haxe.xml._Fast.HasNodeAccess.__name__ = ["haxe","xml","_Fast","HasNodeAccess"];
-haxe.xml._Fast.HasNodeAccess.prototype.__x = null;
-haxe.xml._Fast.HasNodeAccess.prototype.resolve = function(name) {
-	$s.push("haxe.xml._Fast.HasNodeAccess::resolve");
-	var $spos = $s.length;
-	{
-		var $tmp = this.__x.elementsNamed(name).hasNext();
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.xml._Fast.HasNodeAccess.prototype.__class__ = haxe.xml._Fast.HasNodeAccess;
-haxe.xml._Fast.NodeListAccess = function(x) { if( x === $_ ) return; {
-	$s.push("haxe.xml._Fast.NodeListAccess::new");
-	var $spos = $s.length;
-	this.__x = x;
-	$s.pop();
-}}
-haxe.xml._Fast.NodeListAccess.__name__ = ["haxe","xml","_Fast","NodeListAccess"];
-haxe.xml._Fast.NodeListAccess.prototype.__x = null;
-haxe.xml._Fast.NodeListAccess.prototype.resolve = function(name) {
-	$s.push("haxe.xml._Fast.NodeListAccess::resolve");
-	var $spos = $s.length;
-	var l = new List();
-	{ var $it0 = this.__x.elementsNamed(name);
-	while( $it0.hasNext() ) { var x = $it0.next();
-	l.add(new haxe.xml.Fast(x));
-	}}
-	{
-		$s.pop();
-		return l;
-	}
-	$s.pop();
-}
-haxe.xml._Fast.NodeListAccess.prototype.__class__ = haxe.xml._Fast.NodeListAccess;
-haxe.xml.Fast = function(x) { if( x === $_ ) return; {
-	$s.push("haxe.xml.Fast::new");
-	var $spos = $s.length;
-	if(x.nodeType != Xml.Document && x.nodeType != Xml.Element) throw "Invalid nodeType " + x.nodeType;
-	this.x = x;
-	this.node = new haxe.xml._Fast.NodeAccess(x);
-	this.nodes = new haxe.xml._Fast.NodeListAccess(x);
-	this.att = new haxe.xml._Fast.AttribAccess(x);
-	this.has = new haxe.xml._Fast.HasAttribAccess(x);
-	this.hasNode = new haxe.xml._Fast.HasNodeAccess(x);
-	$s.pop();
-}}
-haxe.xml.Fast.__name__ = ["haxe","xml","Fast"];
-haxe.xml.Fast.prototype.x = null;
-haxe.xml.Fast.prototype.name = null;
-haxe.xml.Fast.prototype.innerData = null;
-haxe.xml.Fast.prototype.innerHTML = null;
-haxe.xml.Fast.prototype.node = null;
-haxe.xml.Fast.prototype.nodes = null;
-haxe.xml.Fast.prototype.att = null;
-haxe.xml.Fast.prototype.has = null;
-haxe.xml.Fast.prototype.hasNode = null;
-haxe.xml.Fast.prototype.elements = null;
-haxe.xml.Fast.prototype.getName = function() {
-	$s.push("haxe.xml.Fast::getName");
-	var $spos = $s.length;
-	{
-		var $tmp = this.x.nodeType == Xml.Document?"Document":this.x.getNodeName();
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.xml.Fast.prototype.getInnerData = function() {
-	$s.push("haxe.xml.Fast::getInnerData");
-	var $spos = $s.length;
-	var it = this.x.iterator();
-	if(!it.hasNext()) throw this.getName() + " does not have data";
-	var v = it.next();
-	if(it.hasNext()) throw this.getName() + " does not only have data";
-	if(v.nodeType != Xml.PCData && v.nodeType != Xml.CData) throw this.getName() + " does not have data";
-	{
-		var $tmp = v.getNodeValue();
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.xml.Fast.prototype.getInnerHTML = function() {
-	$s.push("haxe.xml.Fast::getInnerHTML");
-	var $spos = $s.length;
-	var s = new StringBuf();
-	{ var $it0 = this.x.iterator();
-	while( $it0.hasNext() ) { var x = $it0.next();
-	s.b[s.b.length] = x.toString();
-	}}
-	{
-		var $tmp = s.b.join("");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.xml.Fast.prototype.getElements = function() {
-	$s.push("haxe.xml.Fast::getElements");
-	var $spos = $s.length;
-	var it = this.x.elements();
-	{
-		var $tmp = { hasNext : $closure(it,"hasNext"), next : function() {
-			$s.push("haxe.xml.Fast::getElements@163");
-			var $spos = $s.length;
-			var x = it.next();
-			if(x == null) {
-				$s.pop();
-				return null;
-			}
-			{
-				var $tmp = new haxe.xml.Fast(x);
-				$s.pop();
-				return $tmp;
-			}
-			$s.pop();
-		}};
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.xml.Fast.prototype.__class__ = haxe.xml.Fast;
-haxe.StackItem = { __ename__ : ["haxe","StackItem"], __constructs__ : ["CFunction","Module","FilePos","Method","Lambda"] }
-haxe.StackItem.CFunction = ["CFunction",0];
-haxe.StackItem.CFunction.toString = $estr;
-haxe.StackItem.CFunction.__enum__ = haxe.StackItem;
-haxe.StackItem.Module = function(m) { var $x = ["Module",1,m]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; }
-haxe.StackItem.FilePos = function(s,file,line) { var $x = ["FilePos",2,s,file,line]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; }
-haxe.StackItem.Method = function(classname,method) { var $x = ["Method",3,classname,method]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; }
-haxe.StackItem.Lambda = function(v) { var $x = ["Lambda",4,v]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; }
-haxe.Stack = function() { }
-haxe.Stack.__name__ = ["haxe","Stack"];
-haxe.Stack.callStack = function() {
-	$s.push("haxe.Stack::callStack");
-	var $spos = $s.length;
-	{
-		var $tmp = haxe.Stack.makeStack("$s");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.Stack.exceptionStack = function() {
-	$s.push("haxe.Stack::exceptionStack");
-	var $spos = $s.length;
-	{
-		var $tmp = haxe.Stack.makeStack("$e");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.Stack.toString = function(stack) {
-	$s.push("haxe.Stack::toString");
-	var $spos = $s.length;
-	var b = new StringBuf();
-	{
-		var _g = 0;
-		while(_g < stack.length) {
-			var s = stack[_g];
-			++_g;
-			b.b[b.b.length] = "\nCalled from ";
-			haxe.Stack.itemToString(b,s);
-		}
-	}
-	{
-		var $tmp = b.b.join("");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.Stack.itemToString = function(b,s) {
-	$s.push("haxe.Stack::itemToString");
-	var $spos = $s.length;
-	var $e = s;
-	switch( $e[1] ) {
-	case 0:
-	{
-		b.b[b.b.length] = "a C function";
-	}break;
-	case 1:
-	var m = $e[2];
-	{
-		b.b[b.b.length] = "module ";
-		b.b[b.b.length] = m;
-	}break;
-	case 2:
-	var line = $e[4], file = $e[3], s1 = $e[2];
-	{
-		if(s1 != null) {
-			haxe.Stack.itemToString(b,s1);
-			b.b[b.b.length] = " (";
-		}
-		b.b[b.b.length] = file;
-		b.b[b.b.length] = " line ";
-		b.b[b.b.length] = line;
-		if(s1 != null) b.b[b.b.length] = ")";
-	}break;
-	case 3:
-	var meth = $e[3], cname = $e[2];
-	{
-		b.b[b.b.length] = cname;
-		b.b[b.b.length] = ".";
-		b.b[b.b.length] = meth;
-	}break;
-	case 4:
-	var n = $e[2];
-	{
-		b.b[b.b.length] = "local function #";
-		b.b[b.b.length] = n;
-	}break;
-	}
-	$s.pop();
-}
-haxe.Stack.makeStack = function(s) {
-	$s.push("haxe.Stack::makeStack");
-	var $spos = $s.length;
-	var a = (function($this) {
-		var $r;
-		try {
-			$r = eval(s);
-		}
-		catch( $e0 ) {
-			{
-				var e = $e0;
-				$r = (function($this) {
-					var $r;
-					$e = [];
-					while($s.length >= $spos) $e.unshift($s.pop());
-					$s.push($e[0]);
-					$r = [];
-					return $r;
-				}($this));
-			}
-		}
-		return $r;
-	}(this));
-	var m = new Array();
-	{
-		var _g1 = 0, _g = a.length - (s == "$s"?2:0);
-		while(_g1 < _g) {
-			var i = _g1++;
-			var d = a[i].split("::");
-			m.unshift(haxe.StackItem.Method(d[0],d[1]));
-		}
-	}
-	{
-		$s.pop();
-		return m;
-	}
-	$s.pop();
-}
-haxe.Stack.prototype.__class__ = haxe.Stack;
+kumite.webgl.Config.__name__ = ["kumite","webgl","Config"];
+kumite.webgl.Config.prototype.glCase = null;
+kumite.webgl.Config.prototype.initAction = null;
+kumite.webgl.Config.prototype.__class__ = kumite.webgl.Config;
+kumite.webgl.Config.__interfaces__ = [haxe.rtti.Infos];
 if(typeof bpmjs=='undefined') bpmjs = {}
 bpmjs.Context = function(p) { if( p === $_ ) return; {
 	$s.push("bpmjs.Context::new");
@@ -407,702 +147,180 @@ bpmjs.ContextObject.prototype.name = null;
 bpmjs.ContextObject.prototype.type = null;
 bpmjs.ContextObject.prototype.object = null;
 bpmjs.ContextObject.prototype.__class__ = bpmjs.ContextObject;
-EReg = function(r,opt) { if( r === $_ ) return; {
-	$s.push("EReg::new");
+List = function(p) { if( p === $_ ) return; {
+	$s.push("List::new");
 	var $spos = $s.length;
-	opt = opt.split("u").join("");
-	this.r = new RegExp(r,opt);
+	this.length = 0;
 	$s.pop();
 }}
-EReg.__name__ = ["EReg"];
-EReg.prototype.r = null;
-EReg.prototype.match = function(s) {
-	$s.push("EReg::match");
+List.__name__ = ["List"];
+List.prototype.h = null;
+List.prototype.q = null;
+List.prototype.length = null;
+List.prototype.add = function(item) {
+	$s.push("List::add");
 	var $spos = $s.length;
-	this.r.m = this.r.exec(s);
-	this.r.s = s;
-	this.r.l = RegExp.leftContext;
-	this.r.r = RegExp.rightContext;
+	var x = [item];
+	if(this.h == null) this.h = x;
+	else this.q[1] = x;
+	this.q = x;
+	this.length++;
+	$s.pop();
+}
+List.prototype.push = function(item) {
+	$s.push("List::push");
+	var $spos = $s.length;
+	var x = [item,this.h];
+	this.h = x;
+	if(this.q == null) this.q = x;
+	this.length++;
+	$s.pop();
+}
+List.prototype.first = function() {
+	$s.push("List::first");
+	var $spos = $s.length;
 	{
-		var $tmp = this.r.m != null;
+		var $tmp = this.h == null?null:this.h[0];
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-EReg.prototype.matched = function(n) {
-	$s.push("EReg::matched");
+List.prototype.last = function() {
+	$s.push("List::last");
 	var $spos = $s.length;
 	{
-		var $tmp = this.r.m != null && n >= 0 && n < this.r.m.length?this.r.m[n]:(function($this) {
-			var $r;
-			throw "EReg::matched";
-			return $r;
-		}(this));
+		var $tmp = this.q == null?null:this.q[0];
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-EReg.prototype.matchedLeft = function() {
-	$s.push("EReg::matchedLeft");
+List.prototype.pop = function() {
+	$s.push("List::pop");
 	var $spos = $s.length;
-	if(this.r.m == null) throw "No string matched";
-	if(this.r.l == null) {
-		var $tmp = this.r.s.substr(0,this.r.m.index);
-		$s.pop();
-		return $tmp;
-	}
-	{
-		var $tmp = this.r.l;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-EReg.prototype.matchedRight = function() {
-	$s.push("EReg::matchedRight");
-	var $spos = $s.length;
-	if(this.r.m == null) throw "No string matched";
-	if(this.r.r == null) {
-		var sz = this.r.m.index + this.r.m[0].length;
-		{
-			var $tmp = this.r.s.substr(sz,this.r.s.length - sz);
-			$s.pop();
-			return $tmp;
-		}
-	}
-	{
-		var $tmp = this.r.r;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-EReg.prototype.matchedPos = function() {
-	$s.push("EReg::matchedPos");
-	var $spos = $s.length;
-	if(this.r.m == null) throw "No string matched";
-	{
-		var $tmp = { pos : this.r.m.index, len : this.r.m[0].length};
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-EReg.prototype.split = function(s) {
-	$s.push("EReg::split");
-	var $spos = $s.length;
-	var d = "#__delim__#";
-	{
-		var $tmp = s.replace(this.r,d).split(d);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-EReg.prototype.replace = function(s,by) {
-	$s.push("EReg::replace");
-	var $spos = $s.length;
-	{
-		var $tmp = s.replace(this.r,by);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-EReg.prototype.customReplace = function(s,f) {
-	$s.push("EReg::customReplace");
-	var $spos = $s.length;
-	var buf = new StringBuf();
-	while(true) {
-		if(!this.match(s)) break;
-		buf.b[buf.b.length] = this.matchedLeft();
-		buf.b[buf.b.length] = f(this);
-		s = this.matchedRight();
-	}
-	buf.b[buf.b.length] = s;
-	{
-		var $tmp = buf.b.join("");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-EReg.prototype.__class__ = EReg;
-Xml = function(p) { if( p === $_ ) return; {
-	$s.push("Xml::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-Xml.__name__ = ["Xml"];
-Xml.Element = null;
-Xml.PCData = null;
-Xml.CData = null;
-Xml.Comment = null;
-Xml.DocType = null;
-Xml.Prolog = null;
-Xml.Document = null;
-Xml.parse = function(str) {
-	$s.push("Xml::parse");
-	var $spos = $s.length;
-	var rules = [Xml.enode,Xml.epcdata,Xml.eend,Xml.ecdata,Xml.edoctype,Xml.ecomment,Xml.eprolog];
-	var nrules = rules.length;
-	var current = Xml.createDocument();
-	var stack = new List();
-	while(str.length > 0) {
-		var i = 0;
-		try {
-			while(i < nrules) {
-				var r = rules[i];
-				if(r.match(str)) {
-					switch(i) {
-					case 0:{
-						var x = Xml.createElement(r.matched(1));
-						current.addChild(x);
-						str = r.matchedRight();
-						while(Xml.eattribute.match(str)) {
-							x.set(Xml.eattribute.matched(1),Xml.eattribute.matched(3));
-							str = Xml.eattribute.matchedRight();
-						}
-						if(!Xml.eclose.match(str)) {
-							i = nrules;
-							throw "__break__";
-						}
-						if(Xml.eclose.matched(1) == ">") {
-							stack.push(current);
-							current = x;
-						}
-						str = Xml.eclose.matchedRight();
-					}break;
-					case 1:{
-						var x = Xml.createPCData(r.matched(0));
-						current.addChild(x);
-						str = r.matchedRight();
-					}break;
-					case 2:{
-						if(current._children != null && current._children.length == 0) {
-							var e = Xml.createPCData("");
-							current.addChild(e);
-						}
-						else null;
-						if(r.matched(1) != current._nodeName || stack.isEmpty()) {
-							i = nrules;
-							throw "__break__";
-						}
-						else null;
-						current = stack.pop();
-						str = r.matchedRight();
-					}break;
-					case 3:{
-						str = r.matchedRight();
-						if(!Xml.ecdata_end.match(str)) throw "End of CDATA section not found";
-						var x = Xml.createCData(Xml.ecdata_end.matchedLeft());
-						current.addChild(x);
-						str = Xml.ecdata_end.matchedRight();
-					}break;
-					case 4:{
-						var pos = 0;
-						var count = 0;
-						var old = str;
-						try {
-							while(true) {
-								if(!Xml.edoctype_elt.match(str)) throw "End of DOCTYPE section not found";
-								var p = Xml.edoctype_elt.matchedPos();
-								pos += p.pos + p.len;
-								str = Xml.edoctype_elt.matchedRight();
-								switch(Xml.edoctype_elt.matched(0)) {
-								case "[":{
-									count++;
-								}break;
-								case "]":{
-									count--;
-									if(count < 0) throw "Invalid ] found in DOCTYPE declaration";
-								}break;
-								default:{
-									if(count == 0) throw "__break__";
-								}break;
-								}
-							}
-						} catch( e ) { if( e != "__break__" ) throw e; }
-						var x = Xml.createDocType(old.substr(10,pos - 11));
-						current.addChild(x);
-					}break;
-					case 5:{
-						if(!Xml.ecomment_end.match(str)) throw "Unclosed Comment";
-						var p = Xml.ecomment_end.matchedPos();
-						var x = Xml.createComment(str.substr(4,p.pos + p.len - 7));
-						current.addChild(x);
-						str = Xml.ecomment_end.matchedRight();
-					}break;
-					case 6:{
-						var prolog = r.matched(0);
-						var x = Xml.createProlog(prolog.substr(2,prolog.length - 4));
-						current.addChild(x);
-						str = r.matchedRight();
-					}break;
-					}
-					throw "__break__";
-				}
-				i += 1;
-			}
-		} catch( e ) { if( e != "__break__" ) throw e; }
-		if(i == nrules) {
-			if(str.length > 10) throw "Xml parse error : Unexpected " + str.substr(0,10) + "...";
-			else throw "Xml parse error : Unexpected " + str;
-		}
-	}
-	if(!stack.isEmpty()) throw "Xml parse error : Unclosed " + stack.last().getNodeName();
-	{
-		$s.pop();
-		return current;
-	}
-	$s.pop();
-}
-Xml.createElement = function(name) {
-	$s.push("Xml::createElement");
-	var $spos = $s.length;
-	var r = new Xml();
-	r.nodeType = Xml.Element;
-	r._children = new Array();
-	r._attributes = new Hash();
-	r.setNodeName(name);
-	{
-		$s.pop();
-		return r;
-	}
-	$s.pop();
-}
-Xml.createPCData = function(data) {
-	$s.push("Xml::createPCData");
-	var $spos = $s.length;
-	var r = new Xml();
-	r.nodeType = Xml.PCData;
-	r.setNodeValue(data);
-	{
-		$s.pop();
-		return r;
-	}
-	$s.pop();
-}
-Xml.createCData = function(data) {
-	$s.push("Xml::createCData");
-	var $spos = $s.length;
-	var r = new Xml();
-	r.nodeType = Xml.CData;
-	r.setNodeValue(data);
-	{
-		$s.pop();
-		return r;
-	}
-	$s.pop();
-}
-Xml.createComment = function(data) {
-	$s.push("Xml::createComment");
-	var $spos = $s.length;
-	var r = new Xml();
-	r.nodeType = Xml.Comment;
-	r.setNodeValue(data);
-	{
-		$s.pop();
-		return r;
-	}
-	$s.pop();
-}
-Xml.createDocType = function(data) {
-	$s.push("Xml::createDocType");
-	var $spos = $s.length;
-	var r = new Xml();
-	r.nodeType = Xml.DocType;
-	r.setNodeValue(data);
-	{
-		$s.pop();
-		return r;
-	}
-	$s.pop();
-}
-Xml.createProlog = function(data) {
-	$s.push("Xml::createProlog");
-	var $spos = $s.length;
-	var r = new Xml();
-	r.nodeType = Xml.Prolog;
-	r.setNodeValue(data);
-	{
-		$s.pop();
-		return r;
-	}
-	$s.pop();
-}
-Xml.createDocument = function() {
-	$s.push("Xml::createDocument");
-	var $spos = $s.length;
-	var r = new Xml();
-	r.nodeType = Xml.Document;
-	r._children = new Array();
-	{
-		$s.pop();
-		return r;
-	}
-	$s.pop();
-}
-Xml.prototype.nodeType = null;
-Xml.prototype.nodeName = null;
-Xml.prototype.nodeValue = null;
-Xml.prototype.parent = null;
-Xml.prototype._nodeName = null;
-Xml.prototype._nodeValue = null;
-Xml.prototype._attributes = null;
-Xml.prototype._children = null;
-Xml.prototype._parent = null;
-Xml.prototype.getNodeName = function() {
-	$s.push("Xml::getNodeName");
-	var $spos = $s.length;
-	if(this.nodeType != Xml.Element) throw "bad nodeType";
-	{
-		var $tmp = this._nodeName;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Xml.prototype.setNodeName = function(n) {
-	$s.push("Xml::setNodeName");
-	var $spos = $s.length;
-	if(this.nodeType != Xml.Element) throw "bad nodeType";
-	{
-		var $tmp = this._nodeName = n;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Xml.prototype.getNodeValue = function() {
-	$s.push("Xml::getNodeValue");
-	var $spos = $s.length;
-	if(this.nodeType == Xml.Element || this.nodeType == Xml.Document) throw "bad nodeType";
-	{
-		var $tmp = this._nodeValue;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Xml.prototype.setNodeValue = function(v) {
-	$s.push("Xml::setNodeValue");
-	var $spos = $s.length;
-	if(this.nodeType == Xml.Element || this.nodeType == Xml.Document) throw "bad nodeType";
-	{
-		var $tmp = this._nodeValue = v;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Xml.prototype.getParent = function() {
-	$s.push("Xml::getParent");
-	var $spos = $s.length;
-	{
-		var $tmp = this._parent;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Xml.prototype.get = function(att) {
-	$s.push("Xml::get");
-	var $spos = $s.length;
-	if(this.nodeType != Xml.Element) throw "bad nodeType";
-	{
-		var $tmp = this._attributes.get(att);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Xml.prototype.set = function(att,value) {
-	$s.push("Xml::set");
-	var $spos = $s.length;
-	if(this.nodeType != Xml.Element) throw "bad nodeType";
-	this._attributes.set(att,value);
-	$s.pop();
-}
-Xml.prototype.remove = function(att) {
-	$s.push("Xml::remove");
-	var $spos = $s.length;
-	if(this.nodeType != Xml.Element) throw "bad nodeType";
-	this._attributes.remove(att);
-	$s.pop();
-}
-Xml.prototype.exists = function(att) {
-	$s.push("Xml::exists");
-	var $spos = $s.length;
-	if(this.nodeType != Xml.Element) throw "bad nodeType";
-	{
-		var $tmp = this._attributes.exists(att);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Xml.prototype.attributes = function() {
-	$s.push("Xml::attributes");
-	var $spos = $s.length;
-	if(this.nodeType != Xml.Element) throw "bad nodeType";
-	{
-		var $tmp = this._attributes.keys();
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Xml.prototype.iterator = function() {
-	$s.push("Xml::iterator");
-	var $spos = $s.length;
-	if(this._children == null) throw "bad nodetype";
-	{
-		var $tmp = { cur : 0, x : this._children, hasNext : function() {
-			$s.push("Xml::iterator@281");
-			var $spos = $s.length;
-			{
-				var $tmp = this.cur < this.x.length;
-				$s.pop();
-				return $tmp;
-			}
-			$s.pop();
-		}, next : function() {
-			$s.push("Xml::iterator@284");
-			var $spos = $s.length;
-			{
-				var $tmp = this.x[this.cur++];
-				$s.pop();
-				return $tmp;
-			}
-			$s.pop();
-		}};
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Xml.prototype.elements = function() {
-	$s.push("Xml::elements");
-	var $spos = $s.length;
-	if(this._children == null) throw "bad nodetype";
-	{
-		var $tmp = { cur : 0, x : this._children, hasNext : function() {
-			$s.push("Xml::elements@295");
-			var $spos = $s.length;
-			var k = this.cur;
-			var l = this.x.length;
-			while(k < l) {
-				if(this.x[k].nodeType == Xml.Element) break;
-				k += 1;
-			}
-			this.cur = k;
-			{
-				var $tmp = k < l;
-				$s.pop();
-				return $tmp;
-			}
-			$s.pop();
-		}, next : function() {
-			$s.push("Xml::elements@306");
-			var $spos = $s.length;
-			var k = this.cur;
-			var l = this.x.length;
-			while(k < l) {
-				var n = this.x[k];
-				k += 1;
-				if(n.nodeType == Xml.Element) {
-					this.cur = k;
-					{
-						$s.pop();
-						return n;
-					}
-				}
-			}
-			{
-				$s.pop();
-				return null;
-			}
-			$s.pop();
-		}};
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Xml.prototype.elementsNamed = function(name) {
-	$s.push("Xml::elementsNamed");
-	var $spos = $s.length;
-	if(this._children == null) throw "bad nodetype";
-	{
-		var $tmp = { cur : 0, x : this._children, hasNext : function() {
-			$s.push("Xml::elementsNamed@327");
-			var $spos = $s.length;
-			var k = this.cur;
-			var l = this.x.length;
-			while(k < l) {
-				var n = this.x[k];
-				if(n.nodeType == Xml.Element && n._nodeName == name) break;
-				k++;
-			}
-			this.cur = k;
-			{
-				var $tmp = k < l;
-				$s.pop();
-				return $tmp;
-			}
-			$s.pop();
-		}, next : function() {
-			$s.push("Xml::elementsNamed@339");
-			var $spos = $s.length;
-			var k = this.cur;
-			var l = this.x.length;
-			while(k < l) {
-				var n = this.x[k];
-				k++;
-				if(n.nodeType == Xml.Element && n._nodeName == name) {
-					this.cur = k;
-					{
-						$s.pop();
-						return n;
-					}
-				}
-			}
-			{
-				$s.pop();
-				return null;
-			}
-			$s.pop();
-		}};
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Xml.prototype.firstChild = function() {
-	$s.push("Xml::firstChild");
-	var $spos = $s.length;
-	if(this._children == null) throw "bad nodetype";
-	{
-		var $tmp = this._children[0];
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Xml.prototype.firstElement = function() {
-	$s.push("Xml::firstElement");
-	var $spos = $s.length;
-	if(this._children == null) throw "bad nodetype";
-	var cur = 0;
-	var l = this._children.length;
-	while(cur < l) {
-		var n = this._children[cur];
-		if(n.nodeType == Xml.Element) {
-			$s.pop();
-			return n;
-		}
-		cur++;
-	}
-	{
+	if(this.h == null) {
 		$s.pop();
 		return null;
 	}
-	$s.pop();
-}
-Xml.prototype.addChild = function(x) {
-	$s.push("Xml::addChild");
-	var $spos = $s.length;
-	if(this._children == null) throw "bad nodetype";
-	if(x._parent != null) x._parent._children.remove(x);
-	x._parent = this;
-	this._children.push(x);
-	$s.pop();
-}
-Xml.prototype.removeChild = function(x) {
-	$s.push("Xml::removeChild");
-	var $spos = $s.length;
-	if(this._children == null) throw "bad nodetype";
-	var b = this._children.remove(x);
-	if(b) x._parent = null;
+	var x = this.h[0];
+	this.h = this.h[1];
+	if(this.h == null) this.q = null;
+	this.length--;
 	{
 		$s.pop();
-		return b;
+		return x;
 	}
 	$s.pop();
 }
-Xml.prototype.insertChild = function(x,pos) {
-	$s.push("Xml::insertChild");
+List.prototype.isEmpty = function() {
+	$s.push("List::isEmpty");
 	var $spos = $s.length;
-	if(this._children == null) throw "bad nodetype";
-	if(x._parent != null) x._parent._children.remove(x);
-	x._parent = this;
-	this._children.insert(pos,x);
+	{
+		var $tmp = this.h == null;
+		$s.pop();
+		return $tmp;
+	}
 	$s.pop();
 }
-Xml.prototype.toString = function() {
-	$s.push("Xml::toString");
+List.prototype.clear = function() {
+	$s.push("List::clear");
 	var $spos = $s.length;
-	if(this.nodeType == Xml.PCData) {
-		var $tmp = this._nodeValue;
-		$s.pop();
-		return $tmp;
-	}
-	if(this.nodeType == Xml.CData) {
-		var $tmp = "<![CDATA[" + this._nodeValue + "]]>";
-		$s.pop();
-		return $tmp;
-	}
-	if(this.nodeType == Xml.Comment) {
-		var $tmp = "<!--" + this._nodeValue + "-->";
-		$s.pop();
-		return $tmp;
-	}
-	if(this.nodeType == Xml.DocType) {
-		var $tmp = "<!DOCTYPE " + this._nodeValue + ">";
-		$s.pop();
-		return $tmp;
-	}
-	if(this.nodeType == Xml.Prolog) {
-		var $tmp = "<?" + this._nodeValue + "?>";
-		$s.pop();
-		return $tmp;
-	}
-	var s = new StringBuf();
-	if(this.nodeType == Xml.Element) {
-		s.b[s.b.length] = "<";
-		s.b[s.b.length] = this._nodeName;
-		{ var $it0 = this._attributes.keys();
-		while( $it0.hasNext() ) { var k = $it0.next();
-		{
-			s.b[s.b.length] = " ";
-			s.b[s.b.length] = k;
-			s.b[s.b.length] = "=\"";
-			s.b[s.b.length] = this._attributes.get(k);
-			s.b[s.b.length] = "\"";
-		}
-		}}
-		if(this._children.length == 0) {
-			s.b[s.b.length] = "/>";
+	this.h = null;
+	this.q = null;
+	this.length = 0;
+	$s.pop();
+}
+List.prototype.remove = function(v) {
+	$s.push("List::remove");
+	var $spos = $s.length;
+	var prev = null;
+	var l = this.h;
+	while(l != null) {
+		if(l[0] == v) {
+			if(prev == null) this.h = l[1];
+			else prev[1] = l[1];
+			if(this.q == l) this.q = prev;
+			this.length--;
 			{
-				var $tmp = s.b.join("");
+				$s.pop();
+				return true;
+			}
+		}
+		prev = l;
+		l = l[1];
+	}
+	{
+		$s.pop();
+		return false;
+	}
+	$s.pop();
+}
+List.prototype.iterator = function() {
+	$s.push("List::iterator");
+	var $spos = $s.length;
+	{
+		var $tmp = { h : this.h, hasNext : function() {
+			$s.push("List::iterator@155");
+			var $spos = $s.length;
+			{
+				var $tmp = this.h != null;
 				$s.pop();
 				return $tmp;
 			}
-		}
-		s.b[s.b.length] = ">";
+			$s.pop();
+		}, next : function() {
+			$s.push("List::iterator@158");
+			var $spos = $s.length;
+			if(this.h == null) {
+				$s.pop();
+				return null;
+			}
+			var x = this.h[0];
+			this.h = this.h[1];
+			{
+				$s.pop();
+				return x;
+			}
+			$s.pop();
+		}};
+		$s.pop();
+		return $tmp;
 	}
-	{ var $it1 = this.iterator();
-	while( $it1.hasNext() ) { var x = $it1.next();
-	s.b[s.b.length] = x.toString();
-	}}
-	if(this.nodeType == Xml.Element) {
-		s.b[s.b.length] = "</";
-		s.b[s.b.length] = this._nodeName;
-		s.b[s.b.length] = ">";
+	$s.pop();
+}
+List.prototype.toString = function() {
+	$s.push("List::toString");
+	var $spos = $s.length;
+	var s = new StringBuf();
+	var first = true;
+	var l = this.h;
+	s.b[s.b.length] = "{";
+	while(l != null) {
+		if(first) first = false;
+		else s.b[s.b.length] = ", ";
+		s.b[s.b.length] = Std.string(l[0]);
+		l = l[1];
+	}
+	s.b[s.b.length] = "}";
+	{
+		var $tmp = s.b.join("");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+List.prototype.join = function(sep) {
+	$s.push("List::join");
+	var $spos = $s.length;
+	var s = new StringBuf();
+	var first = true;
+	var l = this.h;
+	while(l != null) {
+		if(first) first = false;
+		else s.b[s.b.length] = sep;
+		s.b[s.b.length] = l[0];
+		l = l[1];
 	}
 	{
 		var $tmp = s.b.join("");
@@ -1111,426 +329,111 @@ Xml.prototype.toString = function() {
 	}
 	$s.pop();
 }
-Xml.prototype.__class__ = Xml;
-Log = function() { }
-Log.__name__ = ["Log"];
-Log.init = function() {
-	$s.push("Log::init");
+List.prototype.filter = function(f) {
+	$s.push("List::filter");
 	var $spos = $s.length;
-	{
-		if(!window.console) console = { };
-		console.log = console.log || function() {
-			$s.push("Log::init@10");
-			var $spos = $s.length;
-			null;
-			$s.pop();
-		}
-		console.warn = console.warn || function() {
-			$s.push("Log::init@11");
-			var $spos = $s.length;
-			null;
-			$s.pop();
-		}
-		console.error = console.error || function() {
-			$s.push("Log::init@12");
-			var $spos = $s.length;
-			null;
-			$s.pop();
-		}
-		console.info = console.info || function() {
-			$s.push("Log::init@13");
-			var $spos = $s.length;
-			null;
-			$s.pop();
-		}
-	}
-	haxe.Log.trace = $closure(Log,"infoConsole");
-	$s.pop();
-}
-Log.addFilter = function(filter) {
-	$s.push("Log::addFilter");
-	var $spos = $s.length;
-	Log.filters.push(filter);
-	$s.pop();
-}
-Log.info = function(m0,m1,m2,m3,m4,m5,m6,i) {
-	$s.push("Log::info");
-	var $spos = $s.length;
-	if(Log.infoEnabled(i)) console.log(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i));
-	$s.pop();
-}
-Log.warn = function(m0,m1,m2,m3,m4,m5,m6,i) {
-	$s.push("Log::warn");
-	var $spos = $s.length;
-	if(Log.warnEnabled(i)) console.warn(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i));
-	$s.pop();
-}
-Log.error = function(m0,m1,m2,m3,m4,m5,m6,i) {
-	$s.push("Log::error");
-	var $spos = $s.length;
-	if(Log.errorEnabled(i)) {
-		var exception = haxe.Stack.exceptionStack().join("\n");
-		console.error(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i) + "\nStack:\n" + exception);
-	}
-	$s.pop();
-}
-Log.infoEnabled = function(i) {
-	$s.push("Log::infoEnabled");
-	var $spos = $s.length;
-	{
-		var $tmp = Log.filter(i,LogLevel.INFO);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Log.warnEnabled = function(i) {
-	$s.push("Log::warnEnabled");
-	var $spos = $s.length;
-	{
-		var $tmp = Log.filter(i,LogLevel.WARN);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Log.errorEnabled = function(i) {
-	$s.push("Log::errorEnabled");
-	var $spos = $s.length;
-	{
-		var $tmp = Log.filter(i,LogLevel.ERROR);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Log.filter = function(i,level) {
-	$s.push("Log::filter");
-	var $spos = $s.length;
-	var result = true;
-	{
-		var _g = 0, _g1 = Log.filters;
-		while(_g < _g1.length) {
-			var filter = _g1[_g];
-			++_g;
-			result = filter.enabled(result,i,level);
-		}
+	var l2 = new List();
+	var l = this.h;
+	while(l != null) {
+		var v = l[0];
+		l = l[1];
+		if(f(v)) l2.add(v);
 	}
 	{
 		$s.pop();
-		return result;
+		return l2;
 	}
 	$s.pop();
 }
-Log.createMessage = function(messages,i) {
-	$s.push("Log::createMessage");
+List.prototype.map = function(f) {
+	$s.push("List::map");
 	var $spos = $s.length;
-	var resultArray = [];
-	{
-		var _g = 0;
-		while(_g < messages.length) {
-			var message = messages[_g];
-			++_g;
-			resultArray.push(Std.string(message));
-		}
+	var b = new List();
+	var l = this.h;
+	while(l != null) {
+		var v = l[0];
+		l = l[1];
+		b.add(f(v));
 	}
-	while(resultArray.length > 0 && resultArray[resultArray.length - 1] == "null") {
-		resultArray.pop();
-	}
-	var from = i.className + "." + i.methodName;
 	{
-		var $tmp = "[" + from + "] " + resultArray.join(", ");
 		$s.pop();
-		return $tmp;
+		return b;
 	}
 	$s.pop();
 }
-Log.infoConsole = function(v,i) {
-	$s.push("Log::infoConsole");
-	var $spos = $s.length;
-	console.log("" + Log.createMessage([v],i) + " (trace)");
-	$s.pop();
-}
-Log.prototype.__class__ = Log;
-if(!haxe.rtti) haxe.rtti = {}
-haxe.rtti.Infos = function() { }
-haxe.rtti.Infos.__name__ = ["haxe","rtti","Infos"];
-haxe.rtti.Infos.prototype.__class__ = haxe.rtti.Infos;
-if(typeof kumite=='undefined') kumite = {}
-if(!kumite.stage) kumite.stage = {}
-kumite.stage.StageResizeAction = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.stage.StageResizeAction::new");
+List.prototype.__class__ = List;
+bpmjs.Sequencer = function(p) { if( p === $_ ) return; {
+	$s.push("bpmjs.Sequencer::new");
 	var $spos = $s.length;
 	null;
 	$s.pop();
 }}
-kumite.stage.StageResizeAction.__name__ = ["kumite","stage","StageResizeAction"];
-kumite.stage.StageResizeAction.prototype.messenger = null;
-kumite.stage.StageResizeAction.prototype.stage = null;
-kumite.stage.StageResizeAction.prototype.initPrepare = function() {
-	$s.push("kumite.stage.StageResizeAction::initPrepare");
+bpmjs.Sequencer.__name__ = ["bpmjs","Sequencer"];
+bpmjs.Sequencer.prototype.context = null;
+bpmjs.Sequencer.prototype.start = function(name) {
+	$s.push("bpmjs.Sequencer::start");
 	var $spos = $s.length;
-	this.updateSize();
+	Log.groupCollapsed("Sequence: " + name,null,null,null,null,null,null,{ fileName : "Sequencer.hx", lineNumber : 16, className : "bpmjs.Sequencer", methodName : "start"});
+	var sequence = new bpmjs.Sequence(name);
+	sequence.objects = this.context.objects;
+	sequence.execute("initPrepare");
+	sequence.execute("init");
+	sequence.execute("initComplete");
+	sequence.execute("startPrepare");
+	sequence.execute("start");
+	sequence.execute("startComplete");
+	Log.groupEnd({ fileName : "Sequencer.hx", lineNumber : 28, className : "bpmjs.Sequencer", methodName : "start"});
 	$s.pop();
 }
-kumite.stage.StageResizeAction.prototype.startComplete = function() {
-	$s.push("kumite.stage.StageResizeAction::startComplete");
+bpmjs.Sequencer.prototype.__class__ = bpmjs.Sequencer;
+bpmjs.Sequencer.__interfaces__ = [haxe.rtti.Infos];
+bpmjs.Sequence = function(name) { if( name === $_ ) return; {
+	$s.push("bpmjs.Sequence::new");
 	var $spos = $s.length;
-	GLAnimationFrame.run($closure(this,"timerUpdate"));
-	js.Lib.window.onresize = $closure(this,"onResize");
+	this.name = name;
 	$s.pop();
-}
-kumite.stage.StageResizeAction.prototype.timerUpdate = function() {
-	$s.push("kumite.stage.StageResizeAction::timerUpdate");
+}}
+bpmjs.Sequence.__name__ = ["bpmjs","Sequence"];
+bpmjs.Sequence.prototype.name = null;
+bpmjs.Sequence.prototype.objects = null;
+bpmjs.Sequence.prototype.execute = function(phase) {
+	$s.push("bpmjs.Sequence::execute");
 	var $spos = $s.length;
-	if(this.stage.width != js.Lib.window.innerWidth || this.stage.height != js.Lib.window.innerHeight) this.onResize();
-	$s.pop();
-}
-kumite.stage.StageResizeAction.prototype.onResize = function(event) {
-	$s.push("kumite.stage.StageResizeAction::onResize");
-	var $spos = $s.length;
-	this.updateSize();
-	this.sendResizeMessage();
-	$s.pop();
-}
-kumite.stage.StageResizeAction.prototype.updateSize = function() {
-	$s.push("kumite.stage.StageResizeAction::updateSize");
-	var $spos = $s.length;
-	this.stage.width = Std["int"](js.Lib.window.innerWidth);
-	this.stage.height = Std["int"](js.Lib.window.innerHeight);
-	$s.pop();
-}
-kumite.stage.StageResizeAction.prototype.sendResizeMessage = function() {
-	$s.push("kumite.stage.StageResizeAction::sendResizeMessage");
-	var $spos = $s.length;
-	this.messenger.send(new kumite.stage.StageResizeMessage());
-	$s.pop();
-}
-kumite.stage.StageResizeAction.prototype.__class__ = kumite.stage.StageResizeAction;
-kumite.stage.StageResizeAction.__interfaces__ = [haxe.rtti.Infos];
-Reflect = function() { }
-Reflect.__name__ = ["Reflect"];
-Reflect.hasField = function(o,field) {
-	$s.push("Reflect::hasField");
-	var $spos = $s.length;
-	if(o.hasOwnProperty != null) {
-		var $tmp = o.hasOwnProperty(field);
-		$s.pop();
-		return $tmp;
-	}
-	var arr = Reflect.fields(o);
-	{ var $it0 = arr.iterator();
-	while( $it0.hasNext() ) { var t = $it0.next();
-	if(t == field) {
-		$s.pop();
-		return true;
-	}
-	}}
-	{
-		$s.pop();
-		return false;
-	}
-	$s.pop();
-}
-Reflect.field = function(o,field) {
-	$s.push("Reflect::field");
-	var $spos = $s.length;
-	var v = null;
-	try {
-		v = o[field];
-	}
-	catch( $e0 ) {
+	var _g = 0, _g1 = this.objects;
+	while(_g < _g1.length) {
+		var contextObject = _g1[_g];
+		++_g;
+		var object = contextObject.object;
+		var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
 		{
-			var e = $e0;
-			{
-				$e = [];
-				while($s.length >= $spos) $e.unshift($s.pop());
-				$s.push($e[0]);
-				null;
-			}
-		}
-	}
-	{
-		$s.pop();
-		return v;
-	}
-	$s.pop();
-}
-Reflect.setField = function(o,field,value) {
-	$s.push("Reflect::setField");
-	var $spos = $s.length;
-	o[field] = value;
-	$s.pop();
-}
-Reflect.callMethod = function(o,func,args) {
-	$s.push("Reflect::callMethod");
-	var $spos = $s.length;
-	{
-		var $tmp = func.apply(o,args);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Reflect.fields = function(o) {
-	$s.push("Reflect::fields");
-	var $spos = $s.length;
-	if(o == null) {
-		var $tmp = new Array();
-		$s.pop();
-		return $tmp;
-	}
-	var a = new Array();
-	if(o.hasOwnProperty) {
-		
-				for(var i in o)
-					if( o.hasOwnProperty(i) )
-						a.push(i);
-			;
-	}
-	else {
-		var t;
-		try {
-			t = o.__proto__;
-		}
-		catch( $e0 ) {
-			{
-				var e = $e0;
-				{
-					$e = [];
-					while($s.length >= $spos) $e.unshift($s.pop());
-					$s.push($e[0]);
-					t = null;
+			var _g2 = 0, _g3 = Reflect.fields(metaDatas);
+			while(_g2 < _g3.length) {
+				var fieldName = _g3[_g2];
+				++_g2;
+				var meta = Reflect.field(metaDatas,fieldName);
+				if(Reflect.hasField(meta,"Sequence")) {
+					var localName = meta.Sequence[0];
+					var localPhase = meta.Sequence[1];
+					if(localPhase == phase) {
+						Log.info("Phase '" + localPhase + "' " + Type.getClassName(contextObject.type) + "#" + fieldName,null,null,null,null,null,null,{ fileName : "Sequencer.hx", lineNumber : 59, className : "bpmjs.Sequence", methodName : "execute"});
+						Reflect.field(object,fieldName).apply(object,[]);
+					}
 				}
 			}
 		}
-		if(t != null) o.__proto__ = null;
-		
-				for(var i in o)
-					if( i != "__proto__" )
-						a.push(i);
-			;
-		if(t != null) o.__proto__ = t;
-	}
-	{
-		$s.pop();
-		return a;
 	}
 	$s.pop();
 }
-Reflect.isFunction = function(f) {
-	$s.push("Reflect::isFunction");
+bpmjs.Sequence.prototype.__class__ = bpmjs.Sequence;
+bpmjs.ContextConfig = function(p) { if( p === $_ ) return; {
+	$s.push("bpmjs.ContextConfig::new");
 	var $spos = $s.length;
-	{
-		var $tmp = typeof(f) == "function" && f.__name__ == null;
-		$s.pop();
-		return $tmp;
-	}
+	null;
 	$s.pop();
-}
-Reflect.compare = function(a,b) {
-	$s.push("Reflect::compare");
-	var $spos = $s.length;
-	{
-		var $tmp = a == b?0:a > b?1:-1;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Reflect.compareMethods = function(f1,f2) {
-	$s.push("Reflect::compareMethods");
-	var $spos = $s.length;
-	if(f1 == f2) {
-		$s.pop();
-		return true;
-	}
-	if(!Reflect.isFunction(f1) || !Reflect.isFunction(f2)) {
-		$s.pop();
-		return false;
-	}
-	{
-		var $tmp = f1.scope == f2.scope && f1.method == f2.method && f1.method != null;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Reflect.isObject = function(v) {
-	$s.push("Reflect::isObject");
-	var $spos = $s.length;
-	if(v == null) {
-		$s.pop();
-		return false;
-	}
-	var t = typeof(v);
-	{
-		var $tmp = t == "string" || t == "object" && !v.__enum__ || t == "function" && v.__name__ != null;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Reflect.deleteField = function(o,f) {
-	$s.push("Reflect::deleteField");
-	var $spos = $s.length;
-	if(!Reflect.hasField(o,f)) {
-		$s.pop();
-		return false;
-	}
-	delete(o[f]);
-	{
-		$s.pop();
-		return true;
-	}
-	$s.pop();
-}
-Reflect.copy = function(o) {
-	$s.push("Reflect::copy");
-	var $spos = $s.length;
-	var o2 = { };
-	{
-		var _g = 0, _g1 = Reflect.fields(o);
-		while(_g < _g1.length) {
-			var f = _g1[_g];
-			++_g;
-			o2[f] = Reflect.field(o,f);
-		}
-	}
-	{
-		$s.pop();
-		return o2;
-	}
-	$s.pop();
-}
-Reflect.makeVarArgs = function(f) {
-	$s.push("Reflect::makeVarArgs");
-	var $spos = $s.length;
-	{
-		var $tmp = function() {
-			$s.push("Reflect::makeVarArgs@116");
-			var $spos = $s.length;
-			var a = new Array();
-			{
-				var _g1 = 0, _g = arguments.length;
-				while(_g1 < _g) {
-					var i = _g1++;
-					a.push(arguments[i]);
-				}
-			}
-			{
-				var $tmp = f(a);
-				$s.pop();
-				return $tmp;
-			}
-			$s.pop();
-		}
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Reflect.prototype.__class__ = Reflect;
+}}
+bpmjs.ContextConfig.__name__ = ["bpmjs","ContextConfig"];
+bpmjs.ContextConfig.prototype.frontMessenger = null;
+bpmjs.ContextConfig.prototype.__class__ = bpmjs.ContextConfig;
 haxe.rtti.XmlParser = function(p) { if( p === $_ ) return; {
 	$s.push("haxe.rtti.XmlParser::new");
 	var $spos = $s.length;
@@ -2274,98 +1177,27 @@ haxe.rtti.XmlParser.prototype.defplat = function() {
 	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.__class__ = haxe.rtti.XmlParser;
-haxe.Log = function() { }
-haxe.Log.__name__ = ["haxe","Log"];
-haxe.Log.trace = function(v,infos) {
-	$s.push("haxe.Log::trace");
-	var $spos = $s.length;
-	js.Boot.__trace(v,infos);
-	$s.pop();
-}
-haxe.Log.clear = function() {
-	$s.push("haxe.Log::clear");
-	var $spos = $s.length;
-	js.Boot.__clear_trace();
-	$s.pop();
-}
-haxe.Log.prototype.__class__ = haxe.Log;
-LogFilter = function() { }
-LogFilter.__name__ = ["LogFilter"];
-LogFilter.prototype.enabled = null;
-LogFilter.prototype.__class__ = LogFilter;
-kumite.stage.Stage = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.stage.Stage::new");
+kumite.stage.StageResizeMessage = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.stage.StageResizeMessage::new");
 	var $spos = $s.length;
 	null;
 	$s.pop();
 }}
-kumite.stage.Stage.__name__ = ["kumite","stage","Stage"];
-kumite.stage.Stage.prototype.width = null;
-kumite.stage.Stage.prototype.height = null;
-kumite.stage.Stage.prototype.__class__ = kumite.stage.Stage;
-StringBuf = function(p) { if( p === $_ ) return; {
-	$s.push("StringBuf::new");
+kumite.stage.StageResizeMessage.__name__ = ["kumite","stage","StageResizeMessage"];
+kumite.stage.StageResizeMessage.prototype.__class__ = kumite.stage.StageResizeMessage;
+kumite.stage.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.stage.Config::new");
 	var $spos = $s.length;
-	this.b = new Array();
+	this.stage = new kumite.stage.Stage();
+	this.stageResizeAction = new kumite.stage.StageResizeAction();
 	$s.pop();
 }}
-StringBuf.__name__ = ["StringBuf"];
-StringBuf.prototype.add = function(x) {
-	$s.push("StringBuf::add");
-	var $spos = $s.length;
-	this.b[this.b.length] = x;
-	$s.pop();
-}
-StringBuf.prototype.addSub = function(s,pos,len) {
-	$s.push("StringBuf::addSub");
-	var $spos = $s.length;
-	this.b[this.b.length] = s.substr(pos,len);
-	$s.pop();
-}
-StringBuf.prototype.addChar = function(c) {
-	$s.push("StringBuf::addChar");
-	var $spos = $s.length;
-	this.b[this.b.length] = String.fromCharCode(c);
-	$s.pop();
-}
-StringBuf.prototype.toString = function() {
-	$s.push("StringBuf::toString");
-	var $spos = $s.length;
-	{
-		var $tmp = this.b.join("");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-StringBuf.prototype.b = null;
-StringBuf.prototype.__class__ = StringBuf;
-if(!kumite.canvas) kumite.canvas = {}
-kumite.canvas.Config = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.canvas.Config::new");
-	var $spos = $s.length;
-	this.canvasCase = new kumite.canvas.CanvasCase();
-	this.canvasController = new kumite.canvas.CanvasController();
-	$s.pop();
-}}
-kumite.canvas.Config.__name__ = ["kumite","canvas","Config"];
-kumite.canvas.Config.prototype.canvasCase = null;
-kumite.canvas.Config.prototype.canvasController = null;
-kumite.canvas.Config.prototype.__class__ = kumite.canvas.Config;
-kumite.canvas.Config.__interfaces__ = [haxe.rtti.Infos];
+kumite.stage.Config.__name__ = ["kumite","stage","Config"];
+kumite.stage.Config.prototype.stage = null;
+kumite.stage.Config.prototype.stageResizeAction = null;
+kumite.stage.Config.prototype.__class__ = kumite.stage.Config;
+kumite.stage.Config.__interfaces__ = [haxe.rtti.Infos];
 if(!kumite.launch) kumite.launch = {}
-kumite.launch.Config = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.launch.Config::new");
-	var $spos = $s.length;
-	this.launcher = new kumite.launch.Launcher();
-	this.sequencer = new bpmjs.Sequencer();
-	$s.pop();
-}}
-kumite.launch.Config.__name__ = ["kumite","launch","Config"];
-kumite.launch.Config.prototype.sequencer = null;
-kumite.launch.Config.prototype.launcher = null;
-kumite.launch.Config.prototype.__class__ = kumite.launch.Config;
-kumite.launch.Config.__interfaces__ = [haxe.rtti.Infos];
 kumite.launch.Launcher = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.launch.Launcher::new");
 	var $spos = $s.length;
@@ -2389,205 +1221,262 @@ kumite.launch.Launcher.prototype.showError = function() {
 }
 kumite.launch.Launcher.prototype.__class__ = kumite.launch.Launcher;
 kumite.launch.Launcher.__interfaces__ = [haxe.rtti.Infos];
-haxe.Timer = function(time_ms) { if( time_ms === $_ ) return; {
-	$s.push("haxe.Timer::new");
+LogFilter = function() { }
+LogFilter.__name__ = ["LogFilter"];
+LogFilter.prototype.enabled = null;
+LogFilter.prototype.__class__ = LogFilter;
+LogLevel = function(value) { if( value === $_ ) return; {
+	$s.push("LogLevel::new");
 	var $spos = $s.length;
-	this.id = haxe.Timer.arr.length;
-	haxe.Timer.arr[this.id] = this;
-	this.timerId = window.setInterval("haxe.Timer.arr[" + this.id + "].run();",time_ms);
+	this.value = value;
 	$s.pop();
 }}
-haxe.Timer.__name__ = ["haxe","Timer"];
-haxe.Timer.delay = function(f,time_ms) {
-	$s.push("haxe.Timer::delay");
-	var $spos = $s.length;
-	var t = new haxe.Timer(time_ms);
-	t.run = function() {
-		$s.push("haxe.Timer::delay@78");
-		var $spos = $s.length;
-		t.stop();
-		f();
-		$s.pop();
-	}
-	{
-		$s.pop();
-		return t;
-	}
-	$s.pop();
-}
-haxe.Timer.measure = function(f,pos) {
-	$s.push("haxe.Timer::measure");
-	var $spos = $s.length;
-	var t0 = haxe.Timer.stamp();
-	var r = f();
-	haxe.Log.trace(haxe.Timer.stamp() - t0 + "s",pos);
-	{
-		$s.pop();
-		return r;
-	}
-	$s.pop();
-}
-haxe.Timer.stamp = function() {
-	$s.push("haxe.Timer::stamp");
+LogLevel.__name__ = ["LogLevel"];
+LogLevel.prototype.value = null;
+LogLevel.prototype.isSmallerOrEqual = function(level) {
+	$s.push("LogLevel::isSmallerOrEqual");
 	var $spos = $s.length;
 	{
-		var $tmp = Date.now().getTime() / 1000;
+		var $tmp = this.value <= level.value;
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-haxe.Timer.prototype.id = null;
-haxe.Timer.prototype.timerId = null;
-haxe.Timer.prototype.stop = function() {
-	$s.push("haxe.Timer::stop");
+LogLevel.prototype.__class__ = LogLevel;
+if(!kumite.canvas) kumite.canvas = {}
+kumite.canvas.CanvasCase = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.canvas.CanvasCase::new");
 	var $spos = $s.length;
-	if(this.id == null) {
+	null;
+	$s.pop();
+}}
+kumite.canvas.CanvasCase.__name__ = ["kumite","canvas","CanvasCase"];
+kumite.canvas.CanvasCase.prototype.itself = null;
+kumite.canvas.CanvasCase.prototype.__class__ = kumite.canvas.CanvasCase;
+Reflect = function() { }
+Reflect.__name__ = ["Reflect"];
+Reflect.hasField = function(o,field) {
+	$s.push("Reflect::hasField");
+	var $spos = $s.length;
+	if(o.hasOwnProperty != null) {
+		var $tmp = o.hasOwnProperty(field);
 		$s.pop();
-		return;
+		return $tmp;
 	}
-	window.clearInterval(this.timerId);
-	haxe.Timer.arr[this.id] = null;
-	if(this.id > 100 && this.id == haxe.Timer.arr.length - 1) {
-		var p = this.id - 1;
-		while(p >= 0 && haxe.Timer.arr[p] == null) p--;
-		haxe.Timer.arr = haxe.Timer.arr.slice(0,p + 1);
+	var arr = Reflect.fields(o);
+	{ var $it0 = arr.iterator();
+	while( $it0.hasNext() ) { var t = $it0.next();
+	if(t == field) {
+		$s.pop();
+		return true;
 	}
-	this.id = null;
-	$s.pop();
-}
-haxe.Timer.prototype.run = function() {
-	$s.push("haxe.Timer::run");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}
-haxe.Timer.prototype.__class__ = haxe.Timer;
-bpmjs.Sequencer = function(p) { if( p === $_ ) return; {
-	$s.push("bpmjs.Sequencer::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-bpmjs.Sequencer.__name__ = ["bpmjs","Sequencer"];
-bpmjs.Sequencer.prototype.context = null;
-bpmjs.Sequencer.prototype.start = function(name) {
-	$s.push("bpmjs.Sequencer::start");
-	var $spos = $s.length;
-	Log.info(name,null,null,null,null,null,null,{ fileName : "Sequencer.hx", lineNumber : 16, className : "bpmjs.Sequencer", methodName : "start"});
-	var sequence = new bpmjs.Sequence(name);
-	sequence.objects = this.context.objects;
-	sequence.execute("initPrepare");
-	sequence.execute("init");
-	sequence.execute("initComplete");
-	sequence.execute("startPrepare");
-	sequence.execute("start");
-	sequence.execute("startComplete");
-	$s.pop();
-}
-bpmjs.Sequencer.prototype.__class__ = bpmjs.Sequencer;
-bpmjs.Sequencer.__interfaces__ = [haxe.rtti.Infos];
-bpmjs.Sequence = function(name) { if( name === $_ ) return; {
-	$s.push("bpmjs.Sequence::new");
-	var $spos = $s.length;
-	this.name = name;
-	$s.pop();
-}}
-bpmjs.Sequence.__name__ = ["bpmjs","Sequence"];
-bpmjs.Sequence.prototype.name = null;
-bpmjs.Sequence.prototype.objects = null;
-bpmjs.Sequence.prototype.execute = function(phase) {
-	$s.push("bpmjs.Sequence::execute");
-	var $spos = $s.length;
-	Log.info("Execute sequence",this.name,phase,null,null,null,null,{ fileName : "Sequencer.hx", lineNumber : 43, className : "bpmjs.Sequence", methodName : "execute"});
+	}}
 	{
-		var _g = 0, _g1 = this.objects;
-		while(_g < _g1.length) {
-			var contextObject = _g1[_g];
-			++_g;
-			var object = contextObject.object;
-			var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
+		$s.pop();
+		return false;
+	}
+	$s.pop();
+}
+Reflect.field = function(o,field) {
+	$s.push("Reflect::field");
+	var $spos = $s.length;
+	var v = null;
+	try {
+		v = o[field];
+	}
+	catch( $e0 ) {
+		{
+			var e = $e0;
 			{
-				var _g2 = 0, _g3 = Reflect.fields(metaDatas);
-				while(_g2 < _g3.length) {
-					var fieldName = _g3[_g2];
-					++_g2;
-					var meta = Reflect.field(metaDatas,fieldName);
-					if(Reflect.hasField(meta,"Sequence")) {
-						var localName = meta.Sequence[0];
-						var localPhase = meta.Sequence[1];
-						Log.info("Found sequence",contextObject.name,localName,localPhase,null,null,null,{ fileName : "Sequencer.hx", lineNumber : 56, className : "bpmjs.Sequence", methodName : "execute"});
-						if(localPhase == phase) {
-							Log.info("Execute!",null,null,null,null,null,null,{ fileName : "Sequencer.hx", lineNumber : 59, className : "bpmjs.Sequence", methodName : "execute"});
-							Reflect.field(object,fieldName).apply(object,[]);
-						}
-					}
-				}
+				$e = [];
+				while($s.length >= $spos) $e.unshift($s.pop());
+				$s.push($e[0]);
+				null;
 			}
 		}
 	}
+	{
+		$s.pop();
+		return v;
+	}
 	$s.pop();
 }
-bpmjs.Sequence.prototype.__class__ = bpmjs.Sequence;
-IntIter = function(min,max) { if( min === $_ ) return; {
-	$s.push("IntIter::new");
+Reflect.setField = function(o,field,value) {
+	$s.push("Reflect::setField");
 	var $spos = $s.length;
-	this.min = min;
-	this.max = max;
+	o[field] = value;
 	$s.pop();
-}}
-IntIter.__name__ = ["IntIter"];
-IntIter.prototype.min = null;
-IntIter.prototype.max = null;
-IntIter.prototype.hasNext = function() {
-	$s.push("IntIter::hasNext");
+}
+Reflect.callMethod = function(o,func,args) {
+	$s.push("Reflect::callMethod");
 	var $spos = $s.length;
 	{
-		var $tmp = this.min < this.max;
+		var $tmp = func.apply(o,args);
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-IntIter.prototype.next = function() {
-	$s.push("IntIter::next");
+Reflect.fields = function(o) {
+	$s.push("Reflect::fields");
+	var $spos = $s.length;
+	if(o == null) {
+		var $tmp = new Array();
+		$s.pop();
+		return $tmp;
+	}
+	var a = new Array();
+	if(o.hasOwnProperty) {
+		
+				for(var i in o)
+					if( o.hasOwnProperty(i) )
+						a.push(i);
+			;
+	}
+	else {
+		var t;
+		try {
+			t = o.__proto__;
+		}
+		catch( $e0 ) {
+			{
+				var e = $e0;
+				{
+					$e = [];
+					while($s.length >= $spos) $e.unshift($s.pop());
+					$s.push($e[0]);
+					t = null;
+				}
+			}
+		}
+		if(t != null) o.__proto__ = null;
+		
+				for(var i in o)
+					if( i != "__proto__" )
+						a.push(i);
+			;
+		if(t != null) o.__proto__ = t;
+	}
+	{
+		$s.pop();
+		return a;
+	}
+	$s.pop();
+}
+Reflect.isFunction = function(f) {
+	$s.push("Reflect::isFunction");
 	var $spos = $s.length;
 	{
-		var $tmp = this.min++;
+		var $tmp = typeof(f) == "function" && f.__name__ == null;
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-IntIter.prototype.__class__ = IntIter;
-ERegFilter = function(level,r) { if( level === $_ ) return; {
-	$s.push("ERegFilter::new");
+Reflect.compare = function(a,b) {
+	$s.push("Reflect::compare");
 	var $spos = $s.length;
-	this.level = level;
-	this.r = r;
-	$s.pop();
-}}
-ERegFilter.__name__ = ["ERegFilter"];
-ERegFilter.prototype.level = null;
-ERegFilter.prototype.r = null;
-ERegFilter.prototype.enabled = function(input,i,level) {
-	$s.push("ERegFilter::enabled");
-	var $spos = $s.length;
-	var sender = i.className + "." + i.methodName;
-	var matches = this.r.match(sender);
-	if(!matches) {
-		$s.pop();
-		return input;
-	}
 	{
-		var $tmp = matches && this.level.isSmallerOrEqual(level);
+		var $tmp = a == b?0:a > b?1:-1;
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-ERegFilter.prototype.__class__ = ERegFilter;
-ERegFilter.__interfaces__ = [LogFilter];
+Reflect.compareMethods = function(f1,f2) {
+	$s.push("Reflect::compareMethods");
+	var $spos = $s.length;
+	if(f1 == f2) {
+		$s.pop();
+		return true;
+	}
+	if(!Reflect.isFunction(f1) || !Reflect.isFunction(f2)) {
+		$s.pop();
+		return false;
+	}
+	{
+		var $tmp = f1.scope == f2.scope && f1.method == f2.method && f1.method != null;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Reflect.isObject = function(v) {
+	$s.push("Reflect::isObject");
+	var $spos = $s.length;
+	if(v == null) {
+		$s.pop();
+		return false;
+	}
+	var t = typeof(v);
+	{
+		var $tmp = t == "string" || t == "object" && !v.__enum__ || t == "function" && v.__name__ != null;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Reflect.deleteField = function(o,f) {
+	$s.push("Reflect::deleteField");
+	var $spos = $s.length;
+	if(!Reflect.hasField(o,f)) {
+		$s.pop();
+		return false;
+	}
+	delete(o[f]);
+	{
+		$s.pop();
+		return true;
+	}
+	$s.pop();
+}
+Reflect.copy = function(o) {
+	$s.push("Reflect::copy");
+	var $spos = $s.length;
+	var o2 = { };
+	{
+		var _g = 0, _g1 = Reflect.fields(o);
+		while(_g < _g1.length) {
+			var f = _g1[_g];
+			++_g;
+			o2[f] = Reflect.field(o,f);
+		}
+	}
+	{
+		$s.pop();
+		return o2;
+	}
+	$s.pop();
+}
+Reflect.makeVarArgs = function(f) {
+	$s.push("Reflect::makeVarArgs");
+	var $spos = $s.length;
+	{
+		var $tmp = function() {
+			$s.push("Reflect::makeVarArgs@116");
+			var $spos = $s.length;
+			var a = new Array();
+			{
+				var _g1 = 0, _g = arguments.length;
+				while(_g1 < _g) {
+					var i = _g1++;
+					a.push(arguments[i]);
+				}
+			}
+			{
+				var $tmp = f(a);
+				$s.pop();
+				return $tmp;
+			}
+			$s.pop();
+		}
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Reflect.prototype.__class__ = Reflect;
 bpmjs.FrontMessenger = function() { }
 bpmjs.FrontMessenger.__name__ = ["bpmjs","FrontMessenger"];
 bpmjs.FrontMessenger.prototype.addMessenger = null;
@@ -2604,21 +1493,21 @@ bpmjs.DefaultFrontMessenger.prototype.receivers = null;
 bpmjs.DefaultFrontMessenger.prototype.addMessenger = function(messenger) {
 	$s.push("bpmjs.DefaultFrontMessenger::addMessenger");
 	var $spos = $s.length;
-	Log.info(messenger,null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 21, className : "bpmjs.DefaultFrontMessenger", methodName : "addMessenger"});
+	Log.info(Type.getClassName(Type.getClass(messenger)),null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 21, className : "bpmjs.DefaultFrontMessenger", methodName : "addMessenger"});
 	messenger.addReceiver(null,$closure(this,"handleMessage"));
 	$s.pop();
 }
 bpmjs.DefaultFrontMessenger.prototype.addReceiver = function(receivingObject,methodName,type) {
 	$s.push("bpmjs.DefaultFrontMessenger::addReceiver");
 	var $spos = $s.length;
-	Log.info(receivingObject + ":" + methodName,Type.getClassName(type),null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 27, className : "bpmjs.DefaultFrontMessenger", methodName : "addReceiver"});
+	Log.info(Type.getClassName(Type.getClass(receivingObject)) + "#" + methodName,Type.getClassName(type),null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 27, className : "bpmjs.DefaultFrontMessenger", methodName : "addReceiver"});
 	this.receivers.push(new bpmjs._FrontMessenger.Receiver(receivingObject,methodName,type));
 	$s.pop();
 }
 bpmjs.DefaultFrontMessenger.prototype.handleMessage = function(message) {
 	$s.push("bpmjs.DefaultFrontMessenger::handleMessage");
 	var $spos = $s.length;
-	Log.info(message,null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 33, className : "bpmjs.DefaultFrontMessenger", methodName : "handleMessage"});
+	Log.info(Type.getClassName(Type.getClass(message)),null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 33, className : "bpmjs.DefaultFrontMessenger", methodName : "handleMessage"});
 	{
 		var _g = 0, _g1 = this.receivers;
 		while(_g < _g1.length) {
@@ -2626,7 +1515,7 @@ bpmjs.DefaultFrontMessenger.prototype.handleMessage = function(message) {
 			++_g;
 			if(Type.getClass(message) == receiver.type) {
 				{
-					Log.info(receiver.receiver + ":" + receiver.methodName,null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 66, className : "bpmjs._FrontMessenger.Receiver", methodName : "execute"});
+					Log.info(Type.getClassName(Type.getClass(receiver.receiver)) + "#" + receiver.methodName,null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 66, className : "bpmjs._FrontMessenger.Receiver", methodName : "execute"});
 					receiver.method.apply(receiver.receiver,[message]);
 				}
 			}
@@ -2664,314 +1553,171 @@ bpmjs._FrontMessenger.Receiver.prototype.matches = function(message) {
 bpmjs._FrontMessenger.Receiver.prototype.execute = function(message) {
 	$s.push("bpmjs._FrontMessenger.Receiver::execute");
 	var $spos = $s.length;
-	Log.info(this.receiver + ":" + this.methodName,null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 66, className : "bpmjs._FrontMessenger.Receiver", methodName : "execute"});
+	Log.info(Type.getClassName(Type.getClass(this.receiver)) + "#" + this.methodName,null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 66, className : "bpmjs._FrontMessenger.Receiver", methodName : "execute"});
 	this.method.apply(this.receiver,[message]);
 	$s.pop();
 }
 bpmjs._FrontMessenger.Receiver.prototype.__class__ = bpmjs._FrontMessenger.Receiver;
-Std = function() { }
-Std.__name__ = ["Std"];
-Std["is"] = function(v,t) {
-	$s.push("Std::is");
+ERegFilter = function(level,r) { if( level === $_ ) return; {
+	$s.push("ERegFilter::new");
 	var $spos = $s.length;
-	{
-		var $tmp = js.Boot.__instanceof(v,t);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Std.string = function(s) {
-	$s.push("Std::string");
-	var $spos = $s.length;
-	{
-		var $tmp = js.Boot.__string_rec(s,"");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Std["int"] = function(x) {
-	$s.push("Std::int");
-	var $spos = $s.length;
-	if(x < 0) {
-		var $tmp = Math.ceil(x);
-		$s.pop();
-		return $tmp;
-	}
-	{
-		var $tmp = Math.floor(x);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Std.parseInt = function(x) {
-	$s.push("Std::parseInt");
-	var $spos = $s.length;
-	var v = parseInt(x,10);
-	if(v == 0 && x.charCodeAt(1) == 120) v = parseInt(x);
-	if(isNaN(v)) {
-		$s.pop();
-		return null;
-	}
-	{
-		var $tmp = v;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Std.parseFloat = function(x) {
-	$s.push("Std::parseFloat");
-	var $spos = $s.length;
-	{
-		var $tmp = parseFloat(x);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Std.random = function(x) {
-	$s.push("Std::random");
-	var $spos = $s.length;
-	{
-		var $tmp = Math.floor(Math.random() * x);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Std.prototype.__class__ = Std;
-Lambda = function() { }
-Lambda.__name__ = ["Lambda"];
-Lambda.array = function(it) {
-	$s.push("Lambda::array");
-	var $spos = $s.length;
-	var a = new Array();
-	{ var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var i = $it0.next();
-	a.push(i);
-	}}
-	{
-		$s.pop();
-		return a;
-	}
-	$s.pop();
-}
-Lambda.list = function(it) {
-	$s.push("Lambda::list");
-	var $spos = $s.length;
-	var l = new List();
-	{ var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var i = $it0.next();
-	l.add(i);
-	}}
-	{
-		$s.pop();
-		return l;
-	}
-	$s.pop();
-}
-Lambda.map = function(it,f) {
-	$s.push("Lambda::map");
-	var $spos = $s.length;
-	var l = new List();
-	{ var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var x = $it0.next();
-	l.add(f(x));
-	}}
-	{
-		$s.pop();
-		return l;
-	}
-	$s.pop();
-}
-Lambda.mapi = function(it,f) {
-	$s.push("Lambda::mapi");
-	var $spos = $s.length;
-	var l = new List();
-	var i = 0;
-	{ var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var x = $it0.next();
-	l.add(f(i++,x));
-	}}
-	{
-		$s.pop();
-		return l;
-	}
-	$s.pop();
-}
-Lambda.has = function(it,elt,cmp) {
-	$s.push("Lambda::has");
-	var $spos = $s.length;
-	if(cmp == null) {
-		{ var $it0 = it.iterator();
-		while( $it0.hasNext() ) { var x = $it0.next();
-		if(x == elt) {
-			$s.pop();
-			return true;
-		}
-		}}
-	}
-	else {
-		{ var $it1 = it.iterator();
-		while( $it1.hasNext() ) { var x = $it1.next();
-		if(cmp(x,elt)) {
-			$s.pop();
-			return true;
-		}
-		}}
-	}
-	{
-		$s.pop();
-		return false;
-	}
-	$s.pop();
-}
-Lambda.exists = function(it,f) {
-	$s.push("Lambda::exists");
-	var $spos = $s.length;
-	{ var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var x = $it0.next();
-	if(f(x)) {
-		$s.pop();
-		return true;
-	}
-	}}
-	{
-		$s.pop();
-		return false;
-	}
-	$s.pop();
-}
-Lambda.foreach = function(it,f) {
-	$s.push("Lambda::foreach");
-	var $spos = $s.length;
-	{ var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var x = $it0.next();
-	if(!f(x)) {
-		$s.pop();
-		return false;
-	}
-	}}
-	{
-		$s.pop();
-		return true;
-	}
-	$s.pop();
-}
-Lambda.iter = function(it,f) {
-	$s.push("Lambda::iter");
-	var $spos = $s.length;
-	{ var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var x = $it0.next();
-	f(x);
-	}}
-	$s.pop();
-}
-Lambda.filter = function(it,f) {
-	$s.push("Lambda::filter");
-	var $spos = $s.length;
-	var l = new List();
-	{ var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var x = $it0.next();
-	if(f(x)) l.add(x);
-	}}
-	{
-		$s.pop();
-		return l;
-	}
-	$s.pop();
-}
-Lambda.fold = function(it,f,first) {
-	$s.push("Lambda::fold");
-	var $spos = $s.length;
-	{ var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var x = $it0.next();
-	first = f(x,first);
-	}}
-	{
-		$s.pop();
-		return first;
-	}
-	$s.pop();
-}
-Lambda.count = function(it,pred) {
-	$s.push("Lambda::count");
-	var $spos = $s.length;
-	var n = 0;
-	if(pred == null) { var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var _ = $it0.next();
-	n++;
-	}}
-	else { var $it1 = it.iterator();
-	while( $it1.hasNext() ) { var x = $it1.next();
-	if(pred(x)) n++;
-	}}
-	{
-		$s.pop();
-		return n;
-	}
-	$s.pop();
-}
-Lambda.empty = function(it) {
-	$s.push("Lambda::empty");
-	var $spos = $s.length;
-	{
-		var $tmp = !it.iterator().hasNext();
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Lambda.indexOf = function(it,v) {
-	$s.push("Lambda::indexOf");
-	var $spos = $s.length;
-	var i = 0;
-	{ var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var v2 = $it0.next();
-	{
-		if(v == v2) {
-			$s.pop();
-			return i;
-		}
-		i++;
-	}
-	}}
-	{
-		$s.pop();
-		return -1;
-	}
-	$s.pop();
-}
-Lambda.concat = function(a,b) {
-	$s.push("Lambda::concat");
-	var $spos = $s.length;
-	var l = new List();
-	{ var $it0 = a.iterator();
-	while( $it0.hasNext() ) { var x = $it0.next();
-	l.add(x);
-	}}
-	{ var $it1 = b.iterator();
-	while( $it1.hasNext() ) { var x = $it1.next();
-	l.add(x);
-	}}
-	{
-		$s.pop();
-		return l;
-	}
-	$s.pop();
-}
-Lambda.prototype.__class__ = Lambda;
-kumite.stage.StageResizeMessage = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.stage.StageResizeMessage::new");
-	var $spos = $s.length;
-	null;
+	this.level = level;
+	this.r = r;
 	$s.pop();
 }}
-kumite.stage.StageResizeMessage.__name__ = ["kumite","stage","StageResizeMessage"];
-kumite.stage.StageResizeMessage.prototype.__class__ = kumite.stage.StageResizeMessage;
+ERegFilter.__name__ = ["ERegFilter"];
+ERegFilter.prototype.level = null;
+ERegFilter.prototype.r = null;
+ERegFilter.prototype.enabled = function(input,i,level) {
+	$s.push("ERegFilter::enabled");
+	var $spos = $s.length;
+	var sender = i.className + "." + i.methodName;
+	var matches = this.r.match(sender);
+	if(!matches) {
+		$s.pop();
+		return input;
+	}
+	{
+		var $tmp = matches && this.level.isSmallerOrEqual(level);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+ERegFilter.prototype.__class__ = ERegFilter;
+ERegFilter.__interfaces__ = [LogFilter];
+haxe.StackItem = { __ename__ : ["haxe","StackItem"], __constructs__ : ["CFunction","Module","FilePos","Method","Lambda"] }
+haxe.StackItem.CFunction = ["CFunction",0];
+haxe.StackItem.CFunction.toString = $estr;
+haxe.StackItem.CFunction.__enum__ = haxe.StackItem;
+haxe.StackItem.Module = function(m) { var $x = ["Module",1,m]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; }
+haxe.StackItem.FilePos = function(s,file,line) { var $x = ["FilePos",2,s,file,line]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; }
+haxe.StackItem.Method = function(classname,method) { var $x = ["Method",3,classname,method]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; }
+haxe.StackItem.Lambda = function(v) { var $x = ["Lambda",4,v]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; }
+haxe.Stack = function() { }
+haxe.Stack.__name__ = ["haxe","Stack"];
+haxe.Stack.callStack = function() {
+	$s.push("haxe.Stack::callStack");
+	var $spos = $s.length;
+	{
+		var $tmp = haxe.Stack.makeStack("$s");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.Stack.exceptionStack = function() {
+	$s.push("haxe.Stack::exceptionStack");
+	var $spos = $s.length;
+	{
+		var $tmp = haxe.Stack.makeStack("$e");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.Stack.toString = function(stack) {
+	$s.push("haxe.Stack::toString");
+	var $spos = $s.length;
+	var b = new StringBuf();
+	{
+		var _g = 0;
+		while(_g < stack.length) {
+			var s = stack[_g];
+			++_g;
+			b.b[b.b.length] = "\nCalled from ";
+			haxe.Stack.itemToString(b,s);
+		}
+	}
+	{
+		var $tmp = b.b.join("");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.Stack.itemToString = function(b,s) {
+	$s.push("haxe.Stack::itemToString");
+	var $spos = $s.length;
+	var $e = s;
+	switch( $e[1] ) {
+	case 0:
+	{
+		b.b[b.b.length] = "a C function";
+	}break;
+	case 1:
+	var m = $e[2];
+	{
+		b.b[b.b.length] = "module ";
+		b.b[b.b.length] = m;
+	}break;
+	case 2:
+	var line = $e[4], file = $e[3], s1 = $e[2];
+	{
+		if(s1 != null) {
+			haxe.Stack.itemToString(b,s1);
+			b.b[b.b.length] = " (";
+		}
+		b.b[b.b.length] = file;
+		b.b[b.b.length] = " line ";
+		b.b[b.b.length] = line;
+		if(s1 != null) b.b[b.b.length] = ")";
+	}break;
+	case 3:
+	var meth = $e[3], cname = $e[2];
+	{
+		b.b[b.b.length] = cname;
+		b.b[b.b.length] = ".";
+		b.b[b.b.length] = meth;
+	}break;
+	case 4:
+	var n = $e[2];
+	{
+		b.b[b.b.length] = "local function #";
+		b.b[b.b.length] = n;
+	}break;
+	}
+	$s.pop();
+}
+haxe.Stack.makeStack = function(s) {
+	$s.push("haxe.Stack::makeStack");
+	var $spos = $s.length;
+	var a = (function($this) {
+		var $r;
+		try {
+			$r = eval(s);
+		}
+		catch( $e0 ) {
+			{
+				var e = $e0;
+				$r = (function($this) {
+					var $r;
+					$e = [];
+					while($s.length >= $spos) $e.unshift($s.pop());
+					$s.push($e[0]);
+					$r = [];
+					return $r;
+				}($this));
+			}
+		}
+		return $r;
+	}(this));
+	var m = new Array();
+	{
+		var _g1 = 0, _g = a.length - (s == "$s"?2:0);
+		while(_g1 < _g) {
+			var i = _g1++;
+			var d = a[i].split("::");
+			m.unshift(haxe.StackItem.Method(d[0],d[1]));
+		}
+	}
+	{
+		$s.pop();
+		return m;
+	}
+	$s.pop();
+}
+haxe.Stack.prototype.__class__ = haxe.Stack;
 kumite.canvas.CanvasController = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.canvas.CanvasController::new");
 	var $spos = $s.length;
@@ -3002,149 +1748,226 @@ kumite.canvas.CanvasController.prototype.updateCanvasSizeFromStage = function(me
 }
 kumite.canvas.CanvasController.prototype.__class__ = kumite.canvas.CanvasController;
 kumite.canvas.CanvasController.__interfaces__ = [haxe.rtti.Infos];
-bpmjs.ContextConfig = function(p) { if( p === $_ ) return; {
-	$s.push("bpmjs.ContextConfig::new");
+IntIter = function(min,max) { if( min === $_ ) return; {
+	$s.push("IntIter::new");
 	var $spos = $s.length;
-	null;
+	this.min = min;
+	this.max = max;
 	$s.pop();
 }}
-bpmjs.ContextConfig.__name__ = ["bpmjs","ContextConfig"];
-bpmjs.ContextConfig.prototype.frontMessenger = null;
-bpmjs.ContextConfig.prototype.__class__ = bpmjs.ContextConfig;
-List = function(p) { if( p === $_ ) return; {
-	$s.push("List::new");
+IntIter.__name__ = ["IntIter"];
+IntIter.prototype.min = null;
+IntIter.prototype.max = null;
+IntIter.prototype.hasNext = function() {
+	$s.push("IntIter::hasNext");
 	var $spos = $s.length;
-	this.length = 0;
+	{
+		var $tmp = this.min < this.max;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+IntIter.prototype.next = function() {
+	$s.push("IntIter::next");
+	var $spos = $s.length;
+	{
+		var $tmp = this.min++;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+IntIter.prototype.__class__ = IntIter;
+if(!haxe.xml) haxe.xml = {}
+if(!haxe.xml._Fast) haxe.xml._Fast = {}
+haxe.xml._Fast.NodeAccess = function(x) { if( x === $_ ) return; {
+	$s.push("haxe.xml._Fast.NodeAccess::new");
+	var $spos = $s.length;
+	this.__x = x;
 	$s.pop();
 }}
-List.__name__ = ["List"];
-List.prototype.h = null;
-List.prototype.q = null;
-List.prototype.length = null;
-List.prototype.add = function(item) {
-	$s.push("List::add");
+haxe.xml._Fast.NodeAccess.__name__ = ["haxe","xml","_Fast","NodeAccess"];
+haxe.xml._Fast.NodeAccess.prototype.__x = null;
+haxe.xml._Fast.NodeAccess.prototype.resolve = function(name) {
+	$s.push("haxe.xml._Fast.NodeAccess::resolve");
 	var $spos = $s.length;
-	var x = [item];
-	if(this.h == null) this.h = x;
-	else this.q[1] = x;
-	this.q = x;
-	this.length++;
-	$s.pop();
-}
-List.prototype.push = function(item) {
-	$s.push("List::push");
-	var $spos = $s.length;
-	var x = [item,this.h];
-	this.h = x;
-	if(this.q == null) this.q = x;
-	this.length++;
-	$s.pop();
-}
-List.prototype.first = function() {
-	$s.push("List::first");
-	var $spos = $s.length;
+	var x = this.__x.elementsNamed(name).next();
+	if(x == null) {
+		var xname = this.__x.nodeType == Xml.Document?"Document":this.__x.getNodeName();
+		throw xname + " is missing element " + name;
+	}
 	{
-		var $tmp = this.h == null?null:this.h[0];
+		var $tmp = new haxe.xml.Fast(x);
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-List.prototype.last = function() {
-	$s.push("List::last");
+haxe.xml._Fast.NodeAccess.prototype.__class__ = haxe.xml._Fast.NodeAccess;
+haxe.xml._Fast.AttribAccess = function(x) { if( x === $_ ) return; {
+	$s.push("haxe.xml._Fast.AttribAccess::new");
 	var $spos = $s.length;
+	this.__x = x;
+	$s.pop();
+}}
+haxe.xml._Fast.AttribAccess.__name__ = ["haxe","xml","_Fast","AttribAccess"];
+haxe.xml._Fast.AttribAccess.prototype.__x = null;
+haxe.xml._Fast.AttribAccess.prototype.resolve = function(name) {
+	$s.push("haxe.xml._Fast.AttribAccess::resolve");
+	var $spos = $s.length;
+	if(this.__x.nodeType == Xml.Document) throw "Cannot access document attribute " + name;
+	var v = this.__x.get(name);
+	if(v == null) throw this.__x.getNodeName() + " is missing attribute " + name;
 	{
-		var $tmp = this.q == null?null:this.q[0];
+		$s.pop();
+		return v;
+	}
+	$s.pop();
+}
+haxe.xml._Fast.AttribAccess.prototype.__class__ = haxe.xml._Fast.AttribAccess;
+haxe.xml._Fast.HasAttribAccess = function(x) { if( x === $_ ) return; {
+	$s.push("haxe.xml._Fast.HasAttribAccess::new");
+	var $spos = $s.length;
+	this.__x = x;
+	$s.pop();
+}}
+haxe.xml._Fast.HasAttribAccess.__name__ = ["haxe","xml","_Fast","HasAttribAccess"];
+haxe.xml._Fast.HasAttribAccess.prototype.__x = null;
+haxe.xml._Fast.HasAttribAccess.prototype.resolve = function(name) {
+	$s.push("haxe.xml._Fast.HasAttribAccess::resolve");
+	var $spos = $s.length;
+	if(this.__x.nodeType == Xml.Document) throw "Cannot access document attribute " + name;
+	{
+		var $tmp = this.__x.exists(name);
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-List.prototype.pop = function() {
-	$s.push("List::pop");
+haxe.xml._Fast.HasAttribAccess.prototype.__class__ = haxe.xml._Fast.HasAttribAccess;
+haxe.xml._Fast.HasNodeAccess = function(x) { if( x === $_ ) return; {
+	$s.push("haxe.xml._Fast.HasNodeAccess::new");
 	var $spos = $s.length;
-	if(this.h == null) {
-		$s.pop();
-		return null;
-	}
-	var x = this.h[0];
-	this.h = this.h[1];
-	if(this.h == null) this.q = null;
-	this.length--;
-	{
-		$s.pop();
-		return x;
-	}
+	this.__x = x;
 	$s.pop();
-}
-List.prototype.isEmpty = function() {
-	$s.push("List::isEmpty");
+}}
+haxe.xml._Fast.HasNodeAccess.__name__ = ["haxe","xml","_Fast","HasNodeAccess"];
+haxe.xml._Fast.HasNodeAccess.prototype.__x = null;
+haxe.xml._Fast.HasNodeAccess.prototype.resolve = function(name) {
+	$s.push("haxe.xml._Fast.HasNodeAccess::resolve");
 	var $spos = $s.length;
 	{
-		var $tmp = this.h == null;
+		var $tmp = this.__x.elementsNamed(name).hasNext();
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-List.prototype.clear = function() {
-	$s.push("List::clear");
+haxe.xml._Fast.HasNodeAccess.prototype.__class__ = haxe.xml._Fast.HasNodeAccess;
+haxe.xml._Fast.NodeListAccess = function(x) { if( x === $_ ) return; {
+	$s.push("haxe.xml._Fast.NodeListAccess::new");
 	var $spos = $s.length;
-	this.h = null;
-	this.q = null;
-	this.length = 0;
+	this.__x = x;
 	$s.pop();
-}
-List.prototype.remove = function(v) {
-	$s.push("List::remove");
+}}
+haxe.xml._Fast.NodeListAccess.__name__ = ["haxe","xml","_Fast","NodeListAccess"];
+haxe.xml._Fast.NodeListAccess.prototype.__x = null;
+haxe.xml._Fast.NodeListAccess.prototype.resolve = function(name) {
+	$s.push("haxe.xml._Fast.NodeListAccess::resolve");
 	var $spos = $s.length;
-	var prev = null;
-	var l = this.h;
-	while(l != null) {
-		if(l[0] == v) {
-			if(prev == null) this.h = l[1];
-			else prev[1] = l[1];
-			if(this.q == l) this.q = prev;
-			this.length--;
-			{
-				$s.pop();
-				return true;
-			}
-		}
-		prev = l;
-		l = l[1];
-	}
+	var l = new List();
+	{ var $it0 = this.__x.elementsNamed(name);
+	while( $it0.hasNext() ) { var x = $it0.next();
+	l.add(new haxe.xml.Fast(x));
+	}}
 	{
 		$s.pop();
-		return false;
+		return l;
 	}
 	$s.pop();
 }
-List.prototype.iterator = function() {
-	$s.push("List::iterator");
+haxe.xml._Fast.NodeListAccess.prototype.__class__ = haxe.xml._Fast.NodeListAccess;
+haxe.xml.Fast = function(x) { if( x === $_ ) return; {
+	$s.push("haxe.xml.Fast::new");
+	var $spos = $s.length;
+	if(x.nodeType != Xml.Document && x.nodeType != Xml.Element) throw "Invalid nodeType " + x.nodeType;
+	this.x = x;
+	this.node = new haxe.xml._Fast.NodeAccess(x);
+	this.nodes = new haxe.xml._Fast.NodeListAccess(x);
+	this.att = new haxe.xml._Fast.AttribAccess(x);
+	this.has = new haxe.xml._Fast.HasAttribAccess(x);
+	this.hasNode = new haxe.xml._Fast.HasNodeAccess(x);
+	$s.pop();
+}}
+haxe.xml.Fast.__name__ = ["haxe","xml","Fast"];
+haxe.xml.Fast.prototype.x = null;
+haxe.xml.Fast.prototype.name = null;
+haxe.xml.Fast.prototype.innerData = null;
+haxe.xml.Fast.prototype.innerHTML = null;
+haxe.xml.Fast.prototype.node = null;
+haxe.xml.Fast.prototype.nodes = null;
+haxe.xml.Fast.prototype.att = null;
+haxe.xml.Fast.prototype.has = null;
+haxe.xml.Fast.prototype.hasNode = null;
+haxe.xml.Fast.prototype.elements = null;
+haxe.xml.Fast.prototype.getName = function() {
+	$s.push("haxe.xml.Fast::getName");
 	var $spos = $s.length;
 	{
-		var $tmp = { h : this.h, hasNext : function() {
-			$s.push("List::iterator@155");
+		var $tmp = this.x.nodeType == Xml.Document?"Document":this.x.getNodeName();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.xml.Fast.prototype.getInnerData = function() {
+	$s.push("haxe.xml.Fast::getInnerData");
+	var $spos = $s.length;
+	var it = this.x.iterator();
+	if(!it.hasNext()) throw this.getName() + " does not have data";
+	var v = it.next();
+	if(it.hasNext()) throw this.getName() + " does not only have data";
+	if(v.nodeType != Xml.PCData && v.nodeType != Xml.CData) throw this.getName() + " does not have data";
+	{
+		var $tmp = v.getNodeValue();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.xml.Fast.prototype.getInnerHTML = function() {
+	$s.push("haxe.xml.Fast::getInnerHTML");
+	var $spos = $s.length;
+	var s = new StringBuf();
+	{ var $it0 = this.x.iterator();
+	while( $it0.hasNext() ) { var x = $it0.next();
+	s.b[s.b.length] = x.toString();
+	}}
+	{
+		var $tmp = s.b.join("");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.xml.Fast.prototype.getElements = function() {
+	$s.push("haxe.xml.Fast::getElements");
+	var $spos = $s.length;
+	var it = this.x.elements();
+	{
+		var $tmp = { hasNext : $closure(it,"hasNext"), next : function() {
+			$s.push("haxe.xml.Fast::getElements@163");
 			var $spos = $s.length;
-			{
-				var $tmp = this.h != null;
-				$s.pop();
-				return $tmp;
-			}
-			$s.pop();
-		}, next : function() {
-			$s.push("List::iterator@158");
-			var $spos = $s.length;
-			if(this.h == null) {
+			var x = it.next();
+			if(x == null) {
 				$s.pop();
 				return null;
 			}
-			var x = this.h[0];
-			this.h = this.h[1];
 			{
+				var $tmp = new haxe.xml.Fast(x);
 				$s.pop();
-				return x;
+				return $tmp;
 			}
 			$s.pop();
 		}};
@@ -3153,98 +1976,57 @@ List.prototype.iterator = function() {
 	}
 	$s.pop();
 }
-List.prototype.toString = function() {
-	$s.push("List::toString");
+haxe.xml.Fast.prototype.__class__ = haxe.xml.Fast;
+GLAnimationFrame = function() { }
+GLAnimationFrame.__name__ = ["GLAnimationFrame"];
+GLAnimationFrame.run = function(method,ms) {
+	$s.push("GLAnimationFrame::run");
 	var $spos = $s.length;
-	var s = new StringBuf();
-	var first = true;
-	var l = this.h;
-	s.b[s.b.length] = "{";
-	while(l != null) {
-		if(first) first = false;
-		else s.b[s.b.length] = ", ";
-		s.b[s.b.length] = Std.string(l[0]);
-		l = l[1];
-	}
-	s.b[s.b.length] = "}";
-	{
-		var $tmp = s.b.join("");
+	if(ms == null) ms = 0;
+	var secureMethod = function() {
+		$s.push("GLAnimationFrame::run@8");
+		var $spos = $s.length;
+		try {
+			method();
+		}
+		catch( $e0 ) {
+			{
+				var e = $e0;
+				{
+					$e = [];
+					while($s.length >= $spos) $e.unshift($s.pop());
+					$s.push($e[0]);
+					null;
+				}
+			}
+		}
 		$s.pop();
-		return $tmp;
+	}
+	if(ms == 0) {
+		var window = js.Lib.window;
+		var requestAnimationFrame = window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame;
+		if(requestAnimationFrame == null) {
+			var requester = function() {
+				$s.push("GLAnimationFrame::run@30");
+				var $spos = $s.length;
+				requestAnimationFrame(requester);
+				secureMethod();
+				$s.pop();
+			}
+			requestAnimationFrame(requester);
+		}
+		else {
+			var timer = new haxe.Timer(Std["int"](1000 / 60));
+			timer.run = secureMethod;
+		}
+	}
+	else {
+		var timer = new haxe.Timer(Std["int"](1000 / ms));
+		timer.run = secureMethod;
 	}
 	$s.pop();
 }
-List.prototype.join = function(sep) {
-	$s.push("List::join");
-	var $spos = $s.length;
-	var s = new StringBuf();
-	var first = true;
-	var l = this.h;
-	while(l != null) {
-		if(first) first = false;
-		else s.b[s.b.length] = sep;
-		s.b[s.b.length] = l[0];
-		l = l[1];
-	}
-	{
-		var $tmp = s.b.join("");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-List.prototype.filter = function(f) {
-	$s.push("List::filter");
-	var $spos = $s.length;
-	var l2 = new List();
-	var l = this.h;
-	while(l != null) {
-		var v = l[0];
-		l = l[1];
-		if(f(v)) l2.add(v);
-	}
-	{
-		$s.pop();
-		return l2;
-	}
-	$s.pop();
-}
-List.prototype.map = function(f) {
-	$s.push("List::map");
-	var $spos = $s.length;
-	var b = new List();
-	var l = this.h;
-	while(l != null) {
-		var v = l[0];
-		l = l[1];
-		b.add(f(v));
-	}
-	{
-		$s.pop();
-		return b;
-	}
-	$s.pop();
-}
-List.prototype.__class__ = List;
-LogLevel = function(value) { if( value === $_ ) return; {
-	$s.push("LogLevel::new");
-	var $spos = $s.length;
-	this.value = value;
-	$s.pop();
-}}
-LogLevel.__name__ = ["LogLevel"];
-LogLevel.prototype.value = null;
-LogLevel.prototype.isSmallerOrEqual = function(level) {
-	$s.push("LogLevel::isSmallerOrEqual");
-	var $spos = $s.length;
-	{
-		var $tmp = this.value <= level.value;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-LogLevel.prototype.__class__ = LogLevel;
+GLAnimationFrame.prototype.__class__ = GLAnimationFrame;
 ValueType = { __ename__ : ["ValueType"], __constructs__ : ["TNull","TInt","TFloat","TBool","TObject","TFunction","TClass","TEnum","TUnknown"] }
 ValueType.TNull = ["TNull",0];
 ValueType.TNull.toString = $estr;
@@ -3647,422 +2429,6 @@ Type.enumIndex = function(e) {
 }
 Type.prototype.__class__ = Type;
 if(typeof js=='undefined') js = {}
-js.Lib = function() { }
-js.Lib.__name__ = ["js","Lib"];
-js.Lib.isIE = null;
-js.Lib.isOpera = null;
-js.Lib.document = null;
-js.Lib.window = null;
-js.Lib.alert = function(v) {
-	$s.push("js.Lib::alert");
-	var $spos = $s.length;
-	alert(js.Boot.__string_rec(v,""));
-	$s.pop();
-}
-js.Lib.eval = function(code) {
-	$s.push("js.Lib::eval");
-	var $spos = $s.length;
-	{
-		var $tmp = eval(code);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-js.Lib.setErrorHandler = function(f) {
-	$s.push("js.Lib::setErrorHandler");
-	var $spos = $s.length;
-	js.Lib.onerror = f;
-	$s.pop();
-}
-js.Lib.prototype.__class__ = js.Lib;
-haxe.rtti.CType = { __ename__ : ["haxe","rtti","CType"], __constructs__ : ["CUnknown","CEnum","CClass","CTypedef","CFunction","CAnonymous","CDynamic"] }
-haxe.rtti.CType.CUnknown = ["CUnknown",0];
-haxe.rtti.CType.CUnknown.toString = $estr;
-haxe.rtti.CType.CUnknown.__enum__ = haxe.rtti.CType;
-haxe.rtti.CType.CEnum = function(name,params) { var $x = ["CEnum",1,name,params]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
-haxe.rtti.CType.CClass = function(name,params) { var $x = ["CClass",2,name,params]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
-haxe.rtti.CType.CTypedef = function(name,params) { var $x = ["CTypedef",3,name,params]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
-haxe.rtti.CType.CFunction = function(args,ret) { var $x = ["CFunction",4,args,ret]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
-haxe.rtti.CType.CAnonymous = function(fields) { var $x = ["CAnonymous",5,fields]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
-haxe.rtti.CType.CDynamic = function(t) { var $x = ["CDynamic",6,t]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
-haxe.rtti.Rights = { __ename__ : ["haxe","rtti","Rights"], __constructs__ : ["RNormal","RNo","RCall","RMethod","RDynamic","RInline"] }
-haxe.rtti.Rights.RNormal = ["RNormal",0];
-haxe.rtti.Rights.RNormal.toString = $estr;
-haxe.rtti.Rights.RNormal.__enum__ = haxe.rtti.Rights;
-haxe.rtti.Rights.RNo = ["RNo",1];
-haxe.rtti.Rights.RNo.toString = $estr;
-haxe.rtti.Rights.RNo.__enum__ = haxe.rtti.Rights;
-haxe.rtti.Rights.RCall = function(m) { var $x = ["RCall",2,m]; $x.__enum__ = haxe.rtti.Rights; $x.toString = $estr; return $x; }
-haxe.rtti.Rights.RMethod = ["RMethod",3];
-haxe.rtti.Rights.RMethod.toString = $estr;
-haxe.rtti.Rights.RMethod.__enum__ = haxe.rtti.Rights;
-haxe.rtti.Rights.RDynamic = ["RDynamic",4];
-haxe.rtti.Rights.RDynamic.toString = $estr;
-haxe.rtti.Rights.RDynamic.__enum__ = haxe.rtti.Rights;
-haxe.rtti.Rights.RInline = ["RInline",5];
-haxe.rtti.Rights.RInline.toString = $estr;
-haxe.rtti.Rights.RInline.__enum__ = haxe.rtti.Rights;
-haxe.rtti.TypeTree = { __ename__ : ["haxe","rtti","TypeTree"], __constructs__ : ["TPackage","TClassdecl","TEnumdecl","TTypedecl"] }
-haxe.rtti.TypeTree.TPackage = function(name,full,subs) { var $x = ["TPackage",0,name,full,subs]; $x.__enum__ = haxe.rtti.TypeTree; $x.toString = $estr; return $x; }
-haxe.rtti.TypeTree.TClassdecl = function(c) { var $x = ["TClassdecl",1,c]; $x.__enum__ = haxe.rtti.TypeTree; $x.toString = $estr; return $x; }
-haxe.rtti.TypeTree.TEnumdecl = function(e) { var $x = ["TEnumdecl",2,e]; $x.__enum__ = haxe.rtti.TypeTree; $x.toString = $estr; return $x; }
-haxe.rtti.TypeTree.TTypedecl = function(t) { var $x = ["TTypedecl",3,t]; $x.__enum__ = haxe.rtti.TypeTree; $x.toString = $estr; return $x; }
-haxe.rtti.TypeApi = function() { }
-haxe.rtti.TypeApi.__name__ = ["haxe","rtti","TypeApi"];
-haxe.rtti.TypeApi.typeInfos = function(t) {
-	$s.push("haxe.rtti.TypeApi::typeInfos");
-	var $spos = $s.length;
-	var inf;
-	var $e = t;
-	switch( $e[1] ) {
-	case 1:
-	var c = $e[2];
-	{
-		inf = c;
-	}break;
-	case 2:
-	var e = $e[2];
-	{
-		inf = e;
-	}break;
-	case 3:
-	var t1 = $e[2];
-	{
-		inf = t1;
-	}break;
-	case 0:
-	{
-		throw "Unexpected Package";
-	}break;
-	}
-	{
-		$s.pop();
-		return inf;
-	}
-	$s.pop();
-}
-haxe.rtti.TypeApi.isVar = function(t) {
-	$s.push("haxe.rtti.TypeApi::isVar");
-	var $spos = $s.length;
-	{
-		var $tmp = (function($this) {
-			var $r;
-			var $e = t;
-			switch( $e[1] ) {
-			case 4:
-			{
-				$r = false;
-			}break;
-			default:{
-				$r = true;
-			}break;
-			}
-			return $r;
-		}(this));
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.rtti.TypeApi.leq = function(f,l1,l2) {
-	$s.push("haxe.rtti.TypeApi::leq");
-	var $spos = $s.length;
-	var it = l2.iterator();
-	{ var $it0 = l1.iterator();
-	while( $it0.hasNext() ) { var e1 = $it0.next();
-	{
-		if(!it.hasNext()) {
-			$s.pop();
-			return false;
-		}
-		var e2 = it.next();
-		if(!f(e1,e2)) {
-			$s.pop();
-			return false;
-		}
-	}
-	}}
-	if(it.hasNext()) {
-		$s.pop();
-		return false;
-	}
-	{
-		$s.pop();
-		return true;
-	}
-	$s.pop();
-}
-haxe.rtti.TypeApi.rightsEq = function(r1,r2) {
-	$s.push("haxe.rtti.TypeApi::rightsEq");
-	var $spos = $s.length;
-	if(r1 == r2) {
-		$s.pop();
-		return true;
-	}
-	var $e = r1;
-	switch( $e[1] ) {
-	case 2:
-	var m1 = $e[2];
-	{
-		var $e = r2;
-		switch( $e[1] ) {
-		case 2:
-		var m2 = $e[2];
-		{
-			{
-				var $tmp = m1 == m2;
-				$s.pop();
-				return $tmp;
-			}
-		}break;
-		default:{
-			null;
-		}break;
-		}
-	}break;
-	default:{
-		null;
-	}break;
-	}
-	{
-		$s.pop();
-		return false;
-	}
-	$s.pop();
-}
-haxe.rtti.TypeApi.typeEq = function(t1,t2) {
-	$s.push("haxe.rtti.TypeApi::typeEq");
-	var $spos = $s.length;
-	var $e = t1;
-	switch( $e[1] ) {
-	case 0:
-	{
-		{
-			var $tmp = t2 == haxe.rtti.CType.CUnknown;
-			$s.pop();
-			return $tmp;
-		}
-	}break;
-	case 1:
-	var params = $e[3], name = $e[2];
-	{
-		var $e = t2;
-		switch( $e[1] ) {
-		case 1:
-		var params2 = $e[3], name2 = $e[2];
-		{
-			{
-				var $tmp = name == name2 && haxe.rtti.TypeApi.leq($closure(haxe.rtti.TypeApi,"typeEq"),params,params2);
-				$s.pop();
-				return $tmp;
-			}
-		}break;
-		default:{
-			null;
-		}break;
-		}
-	}break;
-	case 2:
-	var params = $e[3], name = $e[2];
-	{
-		var $e = t2;
-		switch( $e[1] ) {
-		case 2:
-		var params2 = $e[3], name2 = $e[2];
-		{
-			{
-				var $tmp = name == name2 && haxe.rtti.TypeApi.leq($closure(haxe.rtti.TypeApi,"typeEq"),params,params2);
-				$s.pop();
-				return $tmp;
-			}
-		}break;
-		default:{
-			null;
-		}break;
-		}
-	}break;
-	case 3:
-	var params = $e[3], name = $e[2];
-	{
-		var $e = t2;
-		switch( $e[1] ) {
-		case 3:
-		var params2 = $e[3], name2 = $e[2];
-		{
-			{
-				var $tmp = name == name2 && haxe.rtti.TypeApi.leq($closure(haxe.rtti.TypeApi,"typeEq"),params,params2);
-				$s.pop();
-				return $tmp;
-			}
-		}break;
-		default:{
-			null;
-		}break;
-		}
-	}break;
-	case 4:
-	var ret = $e[3], args = $e[2];
-	{
-		var $e = t2;
-		switch( $e[1] ) {
-		case 4:
-		var ret2 = $e[3], args2 = $e[2];
-		{
-			{
-				var $tmp = haxe.rtti.TypeApi.leq(function(a,b) {
-					$s.push("haxe.rtti.TypeApi::typeEq@187");
-					var $spos = $s.length;
-					{
-						var $tmp = a.name == b.name && a.opt == b.opt && haxe.rtti.TypeApi.typeEq(a.t,b.t);
-						$s.pop();
-						return $tmp;
-					}
-					$s.pop();
-				},args,args2) && haxe.rtti.TypeApi.typeEq(ret,ret2);
-				$s.pop();
-				return $tmp;
-			}
-		}break;
-		default:{
-			null;
-		}break;
-		}
-	}break;
-	case 5:
-	var fields = $e[2];
-	{
-		var $e = t2;
-		switch( $e[1] ) {
-		case 5:
-		var fields2 = $e[2];
-		{
-			{
-				var $tmp = haxe.rtti.TypeApi.leq(function(a,b) {
-					$s.push("haxe.rtti.TypeApi::typeEq@195");
-					var $spos = $s.length;
-					{
-						var $tmp = a.name == b.name && haxe.rtti.TypeApi.typeEq(a.t,b.t);
-						$s.pop();
-						return $tmp;
-					}
-					$s.pop();
-				},fields,fields2);
-				$s.pop();
-				return $tmp;
-			}
-		}break;
-		default:{
-			null;
-		}break;
-		}
-	}break;
-	case 6:
-	var t = $e[2];
-	{
-		var $e = t2;
-		switch( $e[1] ) {
-		case 6:
-		var t21 = $e[2];
-		{
-			if(t == null != (t21 == null)) {
-				$s.pop();
-				return false;
-			}
-			{
-				var $tmp = t == null || haxe.rtti.TypeApi.typeEq(t,t21);
-				$s.pop();
-				return $tmp;
-			}
-		}break;
-		default:{
-			null;
-		}break;
-		}
-	}break;
-	}
-	{
-		$s.pop();
-		return false;
-	}
-	$s.pop();
-}
-haxe.rtti.TypeApi.fieldEq = function(f1,f2) {
-	$s.push("haxe.rtti.TypeApi::fieldEq");
-	var $spos = $s.length;
-	if(f1.name != f2.name) {
-		$s.pop();
-		return false;
-	}
-	if(!haxe.rtti.TypeApi.typeEq(f1.type,f2.type)) {
-		$s.pop();
-		return false;
-	}
-	if(f1.isPublic != f2.isPublic) {
-		$s.pop();
-		return false;
-	}
-	if(f1.doc != f2.doc) {
-		$s.pop();
-		return false;
-	}
-	if(!haxe.rtti.TypeApi.rightsEq(f1.get,f2.get)) {
-		$s.pop();
-		return false;
-	}
-	if(!haxe.rtti.TypeApi.rightsEq(f1.set,f2.set)) {
-		$s.pop();
-		return false;
-	}
-	if(f1.params == null != (f2.params == null)) {
-		$s.pop();
-		return false;
-	}
-	if(f1.params != null && f1.params.join(":") != f2.params.join(":")) {
-		$s.pop();
-		return false;
-	}
-	{
-		$s.pop();
-		return true;
-	}
-	$s.pop();
-}
-haxe.rtti.TypeApi.constructorEq = function(c1,c2) {
-	$s.push("haxe.rtti.TypeApi::constructorEq");
-	var $spos = $s.length;
-	if(c1.name != c2.name) {
-		$s.pop();
-		return false;
-	}
-	if(c1.doc != c2.doc) {
-		$s.pop();
-		return false;
-	}
-	if(c1.args == null != (c2.args == null)) {
-		$s.pop();
-		return false;
-	}
-	if(c1.args != null && !haxe.rtti.TypeApi.leq(function(a,b) {
-		$s.push("haxe.rtti.TypeApi::constructorEq@239");
-		var $spos = $s.length;
-		{
-			var $tmp = a.name == b.name && a.opt == b.opt && haxe.rtti.TypeApi.typeEq(a.t,b.t);
-			$s.pop();
-			return $tmp;
-		}
-		$s.pop();
-	},c1.args,c2.args)) {
-		$s.pop();
-		return false;
-	}
-	{
-		$s.pop();
-		return true;
-	}
-	$s.pop();
-}
-haxe.rtti.TypeApi.prototype.__class__ = haxe.rtti.TypeApi;
 js.Boot = function() { }
 js.Boot.__name__ = ["js","Boot"];
 js.Boot.__unhtml = function(s) {
@@ -4468,15 +2834,1155 @@ js.Boot.__init = function() {
 	$s.pop();
 }
 js.Boot.prototype.__class__ = js.Boot;
-kumite.canvas.CanvasCase = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.canvas.CanvasCase::new");
+EReg = function(r,opt) { if( r === $_ ) return; {
+	$s.push("EReg::new");
+	var $spos = $s.length;
+	opt = opt.split("u").join("");
+	this.r = new RegExp(r,opt);
+	$s.pop();
+}}
+EReg.__name__ = ["EReg"];
+EReg.prototype.r = null;
+EReg.prototype.match = function(s) {
+	$s.push("EReg::match");
+	var $spos = $s.length;
+	this.r.m = this.r.exec(s);
+	this.r.s = s;
+	this.r.l = RegExp.leftContext;
+	this.r.r = RegExp.rightContext;
+	{
+		var $tmp = this.r.m != null;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+EReg.prototype.matched = function(n) {
+	$s.push("EReg::matched");
+	var $spos = $s.length;
+	{
+		var $tmp = this.r.m != null && n >= 0 && n < this.r.m.length?this.r.m[n]:(function($this) {
+			var $r;
+			throw "EReg::matched";
+			return $r;
+		}(this));
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+EReg.prototype.matchedLeft = function() {
+	$s.push("EReg::matchedLeft");
+	var $spos = $s.length;
+	if(this.r.m == null) throw "No string matched";
+	if(this.r.l == null) {
+		var $tmp = this.r.s.substr(0,this.r.m.index);
+		$s.pop();
+		return $tmp;
+	}
+	{
+		var $tmp = this.r.l;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+EReg.prototype.matchedRight = function() {
+	$s.push("EReg::matchedRight");
+	var $spos = $s.length;
+	if(this.r.m == null) throw "No string matched";
+	if(this.r.r == null) {
+		var sz = this.r.m.index + this.r.m[0].length;
+		{
+			var $tmp = this.r.s.substr(sz,this.r.s.length - sz);
+			$s.pop();
+			return $tmp;
+		}
+	}
+	{
+		var $tmp = this.r.r;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+EReg.prototype.matchedPos = function() {
+	$s.push("EReg::matchedPos");
+	var $spos = $s.length;
+	if(this.r.m == null) throw "No string matched";
+	{
+		var $tmp = { pos : this.r.m.index, len : this.r.m[0].length};
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+EReg.prototype.split = function(s) {
+	$s.push("EReg::split");
+	var $spos = $s.length;
+	var d = "#__delim__#";
+	{
+		var $tmp = s.replace(this.r,d).split(d);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+EReg.prototype.replace = function(s,by) {
+	$s.push("EReg::replace");
+	var $spos = $s.length;
+	{
+		var $tmp = s.replace(this.r,by);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+EReg.prototype.customReplace = function(s,f) {
+	$s.push("EReg::customReplace");
+	var $spos = $s.length;
+	var buf = new StringBuf();
+	while(true) {
+		if(!this.match(s)) break;
+		buf.b[buf.b.length] = this.matchedLeft();
+		buf.b[buf.b.length] = f(this);
+		s = this.matchedRight();
+	}
+	buf.b[buf.b.length] = s;
+	{
+		var $tmp = buf.b.join("");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+EReg.prototype.__class__ = EReg;
+Xml = function(p) { if( p === $_ ) return; {
+	$s.push("Xml::new");
 	var $spos = $s.length;
 	null;
 	$s.pop();
 }}
-kumite.canvas.CanvasCase.__name__ = ["kumite","canvas","CanvasCase"];
-kumite.canvas.CanvasCase.prototype.itself = null;
-kumite.canvas.CanvasCase.prototype.__class__ = kumite.canvas.CanvasCase;
+Xml.__name__ = ["Xml"];
+Xml.Element = null;
+Xml.PCData = null;
+Xml.CData = null;
+Xml.Comment = null;
+Xml.DocType = null;
+Xml.Prolog = null;
+Xml.Document = null;
+Xml.parse = function(str) {
+	$s.push("Xml::parse");
+	var $spos = $s.length;
+	var rules = [Xml.enode,Xml.epcdata,Xml.eend,Xml.ecdata,Xml.edoctype,Xml.ecomment,Xml.eprolog];
+	var nrules = rules.length;
+	var current = Xml.createDocument();
+	var stack = new List();
+	while(str.length > 0) {
+		var i = 0;
+		try {
+			while(i < nrules) {
+				var r = rules[i];
+				if(r.match(str)) {
+					switch(i) {
+					case 0:{
+						var x = Xml.createElement(r.matched(1));
+						current.addChild(x);
+						str = r.matchedRight();
+						while(Xml.eattribute.match(str)) {
+							x.set(Xml.eattribute.matched(1),Xml.eattribute.matched(3));
+							str = Xml.eattribute.matchedRight();
+						}
+						if(!Xml.eclose.match(str)) {
+							i = nrules;
+							throw "__break__";
+						}
+						if(Xml.eclose.matched(1) == ">") {
+							stack.push(current);
+							current = x;
+						}
+						str = Xml.eclose.matchedRight();
+					}break;
+					case 1:{
+						var x = Xml.createPCData(r.matched(0));
+						current.addChild(x);
+						str = r.matchedRight();
+					}break;
+					case 2:{
+						if(current._children != null && current._children.length == 0) {
+							var e = Xml.createPCData("");
+							current.addChild(e);
+						}
+						else null;
+						if(r.matched(1) != current._nodeName || stack.isEmpty()) {
+							i = nrules;
+							throw "__break__";
+						}
+						else null;
+						current = stack.pop();
+						str = r.matchedRight();
+					}break;
+					case 3:{
+						str = r.matchedRight();
+						if(!Xml.ecdata_end.match(str)) throw "End of CDATA section not found";
+						var x = Xml.createCData(Xml.ecdata_end.matchedLeft());
+						current.addChild(x);
+						str = Xml.ecdata_end.matchedRight();
+					}break;
+					case 4:{
+						var pos = 0;
+						var count = 0;
+						var old = str;
+						try {
+							while(true) {
+								if(!Xml.edoctype_elt.match(str)) throw "End of DOCTYPE section not found";
+								var p = Xml.edoctype_elt.matchedPos();
+								pos += p.pos + p.len;
+								str = Xml.edoctype_elt.matchedRight();
+								switch(Xml.edoctype_elt.matched(0)) {
+								case "[":{
+									count++;
+								}break;
+								case "]":{
+									count--;
+									if(count < 0) throw "Invalid ] found in DOCTYPE declaration";
+								}break;
+								default:{
+									if(count == 0) throw "__break__";
+								}break;
+								}
+							}
+						} catch( e ) { if( e != "__break__" ) throw e; }
+						var x = Xml.createDocType(old.substr(10,pos - 11));
+						current.addChild(x);
+					}break;
+					case 5:{
+						if(!Xml.ecomment_end.match(str)) throw "Unclosed Comment";
+						var p = Xml.ecomment_end.matchedPos();
+						var x = Xml.createComment(str.substr(4,p.pos + p.len - 7));
+						current.addChild(x);
+						str = Xml.ecomment_end.matchedRight();
+					}break;
+					case 6:{
+						var prolog = r.matched(0);
+						var x = Xml.createProlog(prolog.substr(2,prolog.length - 4));
+						current.addChild(x);
+						str = r.matchedRight();
+					}break;
+					}
+					throw "__break__";
+				}
+				i += 1;
+			}
+		} catch( e ) { if( e != "__break__" ) throw e; }
+		if(i == nrules) {
+			if(str.length > 10) throw "Xml parse error : Unexpected " + str.substr(0,10) + "...";
+			else throw "Xml parse error : Unexpected " + str;
+		}
+	}
+	if(!stack.isEmpty()) throw "Xml parse error : Unclosed " + stack.last().getNodeName();
+	{
+		$s.pop();
+		return current;
+	}
+	$s.pop();
+}
+Xml.createElement = function(name) {
+	$s.push("Xml::createElement");
+	var $spos = $s.length;
+	var r = new Xml();
+	r.nodeType = Xml.Element;
+	r._children = new Array();
+	r._attributes = new Hash();
+	r.setNodeName(name);
+	{
+		$s.pop();
+		return r;
+	}
+	$s.pop();
+}
+Xml.createPCData = function(data) {
+	$s.push("Xml::createPCData");
+	var $spos = $s.length;
+	var r = new Xml();
+	r.nodeType = Xml.PCData;
+	r.setNodeValue(data);
+	{
+		$s.pop();
+		return r;
+	}
+	$s.pop();
+}
+Xml.createCData = function(data) {
+	$s.push("Xml::createCData");
+	var $spos = $s.length;
+	var r = new Xml();
+	r.nodeType = Xml.CData;
+	r.setNodeValue(data);
+	{
+		$s.pop();
+		return r;
+	}
+	$s.pop();
+}
+Xml.createComment = function(data) {
+	$s.push("Xml::createComment");
+	var $spos = $s.length;
+	var r = new Xml();
+	r.nodeType = Xml.Comment;
+	r.setNodeValue(data);
+	{
+		$s.pop();
+		return r;
+	}
+	$s.pop();
+}
+Xml.createDocType = function(data) {
+	$s.push("Xml::createDocType");
+	var $spos = $s.length;
+	var r = new Xml();
+	r.nodeType = Xml.DocType;
+	r.setNodeValue(data);
+	{
+		$s.pop();
+		return r;
+	}
+	$s.pop();
+}
+Xml.createProlog = function(data) {
+	$s.push("Xml::createProlog");
+	var $spos = $s.length;
+	var r = new Xml();
+	r.nodeType = Xml.Prolog;
+	r.setNodeValue(data);
+	{
+		$s.pop();
+		return r;
+	}
+	$s.pop();
+}
+Xml.createDocument = function() {
+	$s.push("Xml::createDocument");
+	var $spos = $s.length;
+	var r = new Xml();
+	r.nodeType = Xml.Document;
+	r._children = new Array();
+	{
+		$s.pop();
+		return r;
+	}
+	$s.pop();
+}
+Xml.prototype.nodeType = null;
+Xml.prototype.nodeName = null;
+Xml.prototype.nodeValue = null;
+Xml.prototype.parent = null;
+Xml.prototype._nodeName = null;
+Xml.prototype._nodeValue = null;
+Xml.prototype._attributes = null;
+Xml.prototype._children = null;
+Xml.prototype._parent = null;
+Xml.prototype.getNodeName = function() {
+	$s.push("Xml::getNodeName");
+	var $spos = $s.length;
+	if(this.nodeType != Xml.Element) throw "bad nodeType";
+	{
+		var $tmp = this._nodeName;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Xml.prototype.setNodeName = function(n) {
+	$s.push("Xml::setNodeName");
+	var $spos = $s.length;
+	if(this.nodeType != Xml.Element) throw "bad nodeType";
+	{
+		var $tmp = this._nodeName = n;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Xml.prototype.getNodeValue = function() {
+	$s.push("Xml::getNodeValue");
+	var $spos = $s.length;
+	if(this.nodeType == Xml.Element || this.nodeType == Xml.Document) throw "bad nodeType";
+	{
+		var $tmp = this._nodeValue;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Xml.prototype.setNodeValue = function(v) {
+	$s.push("Xml::setNodeValue");
+	var $spos = $s.length;
+	if(this.nodeType == Xml.Element || this.nodeType == Xml.Document) throw "bad nodeType";
+	{
+		var $tmp = this._nodeValue = v;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Xml.prototype.getParent = function() {
+	$s.push("Xml::getParent");
+	var $spos = $s.length;
+	{
+		var $tmp = this._parent;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Xml.prototype.get = function(att) {
+	$s.push("Xml::get");
+	var $spos = $s.length;
+	if(this.nodeType != Xml.Element) throw "bad nodeType";
+	{
+		var $tmp = this._attributes.get(att);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Xml.prototype.set = function(att,value) {
+	$s.push("Xml::set");
+	var $spos = $s.length;
+	if(this.nodeType != Xml.Element) throw "bad nodeType";
+	this._attributes.set(att,value);
+	$s.pop();
+}
+Xml.prototype.remove = function(att) {
+	$s.push("Xml::remove");
+	var $spos = $s.length;
+	if(this.nodeType != Xml.Element) throw "bad nodeType";
+	this._attributes.remove(att);
+	$s.pop();
+}
+Xml.prototype.exists = function(att) {
+	$s.push("Xml::exists");
+	var $spos = $s.length;
+	if(this.nodeType != Xml.Element) throw "bad nodeType";
+	{
+		var $tmp = this._attributes.exists(att);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Xml.prototype.attributes = function() {
+	$s.push("Xml::attributes");
+	var $spos = $s.length;
+	if(this.nodeType != Xml.Element) throw "bad nodeType";
+	{
+		var $tmp = this._attributes.keys();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Xml.prototype.iterator = function() {
+	$s.push("Xml::iterator");
+	var $spos = $s.length;
+	if(this._children == null) throw "bad nodetype";
+	{
+		var $tmp = { cur : 0, x : this._children, hasNext : function() {
+			$s.push("Xml::iterator@281");
+			var $spos = $s.length;
+			{
+				var $tmp = this.cur < this.x.length;
+				$s.pop();
+				return $tmp;
+			}
+			$s.pop();
+		}, next : function() {
+			$s.push("Xml::iterator@284");
+			var $spos = $s.length;
+			{
+				var $tmp = this.x[this.cur++];
+				$s.pop();
+				return $tmp;
+			}
+			$s.pop();
+		}};
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Xml.prototype.elements = function() {
+	$s.push("Xml::elements");
+	var $spos = $s.length;
+	if(this._children == null) throw "bad nodetype";
+	{
+		var $tmp = { cur : 0, x : this._children, hasNext : function() {
+			$s.push("Xml::elements@295");
+			var $spos = $s.length;
+			var k = this.cur;
+			var l = this.x.length;
+			while(k < l) {
+				if(this.x[k].nodeType == Xml.Element) break;
+				k += 1;
+			}
+			this.cur = k;
+			{
+				var $tmp = k < l;
+				$s.pop();
+				return $tmp;
+			}
+			$s.pop();
+		}, next : function() {
+			$s.push("Xml::elements@306");
+			var $spos = $s.length;
+			var k = this.cur;
+			var l = this.x.length;
+			while(k < l) {
+				var n = this.x[k];
+				k += 1;
+				if(n.nodeType == Xml.Element) {
+					this.cur = k;
+					{
+						$s.pop();
+						return n;
+					}
+				}
+			}
+			{
+				$s.pop();
+				return null;
+			}
+			$s.pop();
+		}};
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Xml.prototype.elementsNamed = function(name) {
+	$s.push("Xml::elementsNamed");
+	var $spos = $s.length;
+	if(this._children == null) throw "bad nodetype";
+	{
+		var $tmp = { cur : 0, x : this._children, hasNext : function() {
+			$s.push("Xml::elementsNamed@327");
+			var $spos = $s.length;
+			var k = this.cur;
+			var l = this.x.length;
+			while(k < l) {
+				var n = this.x[k];
+				if(n.nodeType == Xml.Element && n._nodeName == name) break;
+				k++;
+			}
+			this.cur = k;
+			{
+				var $tmp = k < l;
+				$s.pop();
+				return $tmp;
+			}
+			$s.pop();
+		}, next : function() {
+			$s.push("Xml::elementsNamed@339");
+			var $spos = $s.length;
+			var k = this.cur;
+			var l = this.x.length;
+			while(k < l) {
+				var n = this.x[k];
+				k++;
+				if(n.nodeType == Xml.Element && n._nodeName == name) {
+					this.cur = k;
+					{
+						$s.pop();
+						return n;
+					}
+				}
+			}
+			{
+				$s.pop();
+				return null;
+			}
+			$s.pop();
+		}};
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Xml.prototype.firstChild = function() {
+	$s.push("Xml::firstChild");
+	var $spos = $s.length;
+	if(this._children == null) throw "bad nodetype";
+	{
+		var $tmp = this._children[0];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Xml.prototype.firstElement = function() {
+	$s.push("Xml::firstElement");
+	var $spos = $s.length;
+	if(this._children == null) throw "bad nodetype";
+	var cur = 0;
+	var l = this._children.length;
+	while(cur < l) {
+		var n = this._children[cur];
+		if(n.nodeType == Xml.Element) {
+			$s.pop();
+			return n;
+		}
+		cur++;
+	}
+	{
+		$s.pop();
+		return null;
+	}
+	$s.pop();
+}
+Xml.prototype.addChild = function(x) {
+	$s.push("Xml::addChild");
+	var $spos = $s.length;
+	if(this._children == null) throw "bad nodetype";
+	if(x._parent != null) x._parent._children.remove(x);
+	x._parent = this;
+	this._children.push(x);
+	$s.pop();
+}
+Xml.prototype.removeChild = function(x) {
+	$s.push("Xml::removeChild");
+	var $spos = $s.length;
+	if(this._children == null) throw "bad nodetype";
+	var b = this._children.remove(x);
+	if(b) x._parent = null;
+	{
+		$s.pop();
+		return b;
+	}
+	$s.pop();
+}
+Xml.prototype.insertChild = function(x,pos) {
+	$s.push("Xml::insertChild");
+	var $spos = $s.length;
+	if(this._children == null) throw "bad nodetype";
+	if(x._parent != null) x._parent._children.remove(x);
+	x._parent = this;
+	this._children.insert(pos,x);
+	$s.pop();
+}
+Xml.prototype.toString = function() {
+	$s.push("Xml::toString");
+	var $spos = $s.length;
+	if(this.nodeType == Xml.PCData) {
+		var $tmp = this._nodeValue;
+		$s.pop();
+		return $tmp;
+	}
+	if(this.nodeType == Xml.CData) {
+		var $tmp = "<![CDATA[" + this._nodeValue + "]]>";
+		$s.pop();
+		return $tmp;
+	}
+	if(this.nodeType == Xml.Comment) {
+		var $tmp = "<!--" + this._nodeValue + "-->";
+		$s.pop();
+		return $tmp;
+	}
+	if(this.nodeType == Xml.DocType) {
+		var $tmp = "<!DOCTYPE " + this._nodeValue + ">";
+		$s.pop();
+		return $tmp;
+	}
+	if(this.nodeType == Xml.Prolog) {
+		var $tmp = "<?" + this._nodeValue + "?>";
+		$s.pop();
+		return $tmp;
+	}
+	var s = new StringBuf();
+	if(this.nodeType == Xml.Element) {
+		s.b[s.b.length] = "<";
+		s.b[s.b.length] = this._nodeName;
+		{ var $it0 = this._attributes.keys();
+		while( $it0.hasNext() ) { var k = $it0.next();
+		{
+			s.b[s.b.length] = " ";
+			s.b[s.b.length] = k;
+			s.b[s.b.length] = "=\"";
+			s.b[s.b.length] = this._attributes.get(k);
+			s.b[s.b.length] = "\"";
+		}
+		}}
+		if(this._children.length == 0) {
+			s.b[s.b.length] = "/>";
+			{
+				var $tmp = s.b.join("");
+				$s.pop();
+				return $tmp;
+			}
+		}
+		s.b[s.b.length] = ">";
+	}
+	{ var $it1 = this.iterator();
+	while( $it1.hasNext() ) { var x = $it1.next();
+	s.b[s.b.length] = x.toString();
+	}}
+	if(this.nodeType == Xml.Element) {
+		s.b[s.b.length] = "</";
+		s.b[s.b.length] = this._nodeName;
+		s.b[s.b.length] = ">";
+	}
+	{
+		var $tmp = s.b.join("");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Xml.prototype.__class__ = Xml;
+haxe.Timer = function(time_ms) { if( time_ms === $_ ) return; {
+	$s.push("haxe.Timer::new");
+	var $spos = $s.length;
+	this.id = haxe.Timer.arr.length;
+	haxe.Timer.arr[this.id] = this;
+	this.timerId = window.setInterval("haxe.Timer.arr[" + this.id + "].run();",time_ms);
+	$s.pop();
+}}
+haxe.Timer.__name__ = ["haxe","Timer"];
+haxe.Timer.delay = function(f,time_ms) {
+	$s.push("haxe.Timer::delay");
+	var $spos = $s.length;
+	var t = new haxe.Timer(time_ms);
+	t.run = function() {
+		$s.push("haxe.Timer::delay@78");
+		var $spos = $s.length;
+		t.stop();
+		f();
+		$s.pop();
+	}
+	{
+		$s.pop();
+		return t;
+	}
+	$s.pop();
+}
+haxe.Timer.measure = function(f,pos) {
+	$s.push("haxe.Timer::measure");
+	var $spos = $s.length;
+	var t0 = haxe.Timer.stamp();
+	var r = f();
+	haxe.Log.trace(haxe.Timer.stamp() - t0 + "s",pos);
+	{
+		$s.pop();
+		return r;
+	}
+	$s.pop();
+}
+haxe.Timer.stamp = function() {
+	$s.push("haxe.Timer::stamp");
+	var $spos = $s.length;
+	{
+		var $tmp = Date.now().getTime() / 1000;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.Timer.prototype.id = null;
+haxe.Timer.prototype.timerId = null;
+haxe.Timer.prototype.stop = function() {
+	$s.push("haxe.Timer::stop");
+	var $spos = $s.length;
+	if(this.id == null) {
+		$s.pop();
+		return;
+	}
+	window.clearInterval(this.timerId);
+	haxe.Timer.arr[this.id] = null;
+	if(this.id > 100 && this.id == haxe.Timer.arr.length - 1) {
+		var p = this.id - 1;
+		while(p >= 0 && haxe.Timer.arr[p] == null) p--;
+		haxe.Timer.arr = haxe.Timer.arr.slice(0,p + 1);
+	}
+	this.id = null;
+	$s.pop();
+}
+haxe.Timer.prototype.run = function() {
+	$s.push("haxe.Timer::run");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+haxe.Timer.prototype.__class__ = haxe.Timer;
+kumite.stage.Stage = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.stage.Stage::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.stage.Stage.__name__ = ["kumite","stage","Stage"];
+kumite.stage.Stage.prototype.width = null;
+kumite.stage.Stage.prototype.height = null;
+kumite.stage.Stage.prototype.__class__ = kumite.stage.Stage;
+StringBuf = function(p) { if( p === $_ ) return; {
+	$s.push("StringBuf::new");
+	var $spos = $s.length;
+	this.b = new Array();
+	$s.pop();
+}}
+StringBuf.__name__ = ["StringBuf"];
+StringBuf.prototype.add = function(x) {
+	$s.push("StringBuf::add");
+	var $spos = $s.length;
+	this.b[this.b.length] = x;
+	$s.pop();
+}
+StringBuf.prototype.addSub = function(s,pos,len) {
+	$s.push("StringBuf::addSub");
+	var $spos = $s.length;
+	this.b[this.b.length] = s.substr(pos,len);
+	$s.pop();
+}
+StringBuf.prototype.addChar = function(c) {
+	$s.push("StringBuf::addChar");
+	var $spos = $s.length;
+	this.b[this.b.length] = String.fromCharCode(c);
+	$s.pop();
+}
+StringBuf.prototype.toString = function() {
+	$s.push("StringBuf::toString");
+	var $spos = $s.length;
+	{
+		var $tmp = this.b.join("");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+StringBuf.prototype.b = null;
+StringBuf.prototype.__class__ = StringBuf;
+Lambda = function() { }
+Lambda.__name__ = ["Lambda"];
+Lambda.array = function(it) {
+	$s.push("Lambda::array");
+	var $spos = $s.length;
+	var a = new Array();
+	{ var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var i = $it0.next();
+	a.push(i);
+	}}
+	{
+		$s.pop();
+		return a;
+	}
+	$s.pop();
+}
+Lambda.list = function(it) {
+	$s.push("Lambda::list");
+	var $spos = $s.length;
+	var l = new List();
+	{ var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var i = $it0.next();
+	l.add(i);
+	}}
+	{
+		$s.pop();
+		return l;
+	}
+	$s.pop();
+}
+Lambda.map = function(it,f) {
+	$s.push("Lambda::map");
+	var $spos = $s.length;
+	var l = new List();
+	{ var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var x = $it0.next();
+	l.add(f(x));
+	}}
+	{
+		$s.pop();
+		return l;
+	}
+	$s.pop();
+}
+Lambda.mapi = function(it,f) {
+	$s.push("Lambda::mapi");
+	var $spos = $s.length;
+	var l = new List();
+	var i = 0;
+	{ var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var x = $it0.next();
+	l.add(f(i++,x));
+	}}
+	{
+		$s.pop();
+		return l;
+	}
+	$s.pop();
+}
+Lambda.has = function(it,elt,cmp) {
+	$s.push("Lambda::has");
+	var $spos = $s.length;
+	if(cmp == null) {
+		{ var $it0 = it.iterator();
+		while( $it0.hasNext() ) { var x = $it0.next();
+		if(x == elt) {
+			$s.pop();
+			return true;
+		}
+		}}
+	}
+	else {
+		{ var $it1 = it.iterator();
+		while( $it1.hasNext() ) { var x = $it1.next();
+		if(cmp(x,elt)) {
+			$s.pop();
+			return true;
+		}
+		}}
+	}
+	{
+		$s.pop();
+		return false;
+	}
+	$s.pop();
+}
+Lambda.exists = function(it,f) {
+	$s.push("Lambda::exists");
+	var $spos = $s.length;
+	{ var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var x = $it0.next();
+	if(f(x)) {
+		$s.pop();
+		return true;
+	}
+	}}
+	{
+		$s.pop();
+		return false;
+	}
+	$s.pop();
+}
+Lambda.foreach = function(it,f) {
+	$s.push("Lambda::foreach");
+	var $spos = $s.length;
+	{ var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var x = $it0.next();
+	if(!f(x)) {
+		$s.pop();
+		return false;
+	}
+	}}
+	{
+		$s.pop();
+		return true;
+	}
+	$s.pop();
+}
+Lambda.iter = function(it,f) {
+	$s.push("Lambda::iter");
+	var $spos = $s.length;
+	{ var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var x = $it0.next();
+	f(x);
+	}}
+	$s.pop();
+}
+Lambda.filter = function(it,f) {
+	$s.push("Lambda::filter");
+	var $spos = $s.length;
+	var l = new List();
+	{ var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var x = $it0.next();
+	if(f(x)) l.add(x);
+	}}
+	{
+		$s.pop();
+		return l;
+	}
+	$s.pop();
+}
+Lambda.fold = function(it,f,first) {
+	$s.push("Lambda::fold");
+	var $spos = $s.length;
+	{ var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var x = $it0.next();
+	first = f(x,first);
+	}}
+	{
+		$s.pop();
+		return first;
+	}
+	$s.pop();
+}
+Lambda.count = function(it,pred) {
+	$s.push("Lambda::count");
+	var $spos = $s.length;
+	var n = 0;
+	if(pred == null) { var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var _ = $it0.next();
+	n++;
+	}}
+	else { var $it1 = it.iterator();
+	while( $it1.hasNext() ) { var x = $it1.next();
+	if(pred(x)) n++;
+	}}
+	{
+		$s.pop();
+		return n;
+	}
+	$s.pop();
+}
+Lambda.empty = function(it) {
+	$s.push("Lambda::empty");
+	var $spos = $s.length;
+	{
+		var $tmp = !it.iterator().hasNext();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Lambda.indexOf = function(it,v) {
+	$s.push("Lambda::indexOf");
+	var $spos = $s.length;
+	var i = 0;
+	{ var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var v2 = $it0.next();
+	{
+		if(v == v2) {
+			$s.pop();
+			return i;
+		}
+		i++;
+	}
+	}}
+	{
+		$s.pop();
+		return -1;
+	}
+	$s.pop();
+}
+Lambda.concat = function(a,b) {
+	$s.push("Lambda::concat");
+	var $spos = $s.length;
+	var l = new List();
+	{ var $it0 = a.iterator();
+	while( $it0.hasNext() ) { var x = $it0.next();
+	l.add(x);
+	}}
+	{ var $it1 = b.iterator();
+	while( $it1.hasNext() ) { var x = $it1.next();
+	l.add(x);
+	}}
+	{
+		$s.pop();
+		return l;
+	}
+	$s.pop();
+}
+Lambda.prototype.__class__ = Lambda;
+haxe.rtti.Meta = function() { }
+haxe.rtti.Meta.__name__ = ["haxe","rtti","Meta"];
+haxe.rtti.Meta.getType = function(t) {
+	$s.push("haxe.rtti.Meta::getType");
+	var $spos = $s.length;
+	var meta = t.__meta__;
+	{
+		var $tmp = meta == null?meta:meta.obj;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.rtti.Meta.getStatics = function(t) {
+	$s.push("haxe.rtti.Meta::getStatics");
+	var $spos = $s.length;
+	var meta = t.__meta__;
+	{
+		var $tmp = meta == null?meta:meta.statics;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.rtti.Meta.getFields = function(t) {
+	$s.push("haxe.rtti.Meta::getFields");
+	var $spos = $s.length;
+	var meta = t.__meta__;
+	{
+		var $tmp = meta == null?meta:meta.fields;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.rtti.Meta.prototype.__class__ = haxe.rtti.Meta;
+bpmjs.Messenger = function(p) { if( p === $_ ) return; {
+	$s.push("bpmjs.Messenger::new");
+	var $spos = $s.length;
+	this.receivers = new Array();
+	$s.pop();
+}}
+bpmjs.Messenger.__name__ = ["bpmjs","Messenger"];
+bpmjs.Messenger.prototype.receivers = null;
+bpmjs.Messenger.prototype.addReceiver = function(type,listener) {
+	$s.push("bpmjs.Messenger::addReceiver");
+	var $spos = $s.length;
+	this.removeReceiver(type,listener);
+	this.receivers.push(new bpmjs._Messenger.ReceiverForType(type,listener));
+	$s.pop();
+}
+bpmjs.Messenger.prototype.removeReceiver = function(type,listener) {
+	$s.push("bpmjs.Messenger::removeReceiver");
+	var $spos = $s.length;
+	var _g = 0, _g1 = this.receivers;
+	while(_g < _g1.length) {
+		var receiver = _g1[_g];
+		++_g;
+		if(receiver.type == type && Reflect.compareMethods(listener,receiver.method)) {
+			this.receivers.remove(receiver);
+			{
+				$s.pop();
+				return;
+			}
+		}
+	}
+	$s.pop();
+}
+bpmjs.Messenger.prototype.send = function(message) {
+	$s.push("bpmjs.Messenger::send");
+	var $spos = $s.length;
+	var _g = 0, _g1 = this.receivers;
+	while(_g < _g1.length) {
+		var receiver = _g1[_g];
+		++_g;
+		if(receiver.type == null || receiver.type == Type.getClass(message)) receiver.method(message);
+	}
+	$s.pop();
+}
+bpmjs.Messenger.prototype.toString = function() {
+	$s.push("bpmjs.Messenger::toString");
+	var $spos = $s.length;
+	{
+		var $tmp = Type.getClassName(Type.getClass(this));
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+bpmjs.Messenger.prototype.__class__ = bpmjs.Messenger;
+if(!bpmjs._Messenger) bpmjs._Messenger = {}
+bpmjs._Messenger.ReceiverForType = function(type,method) { if( type === $_ ) return; {
+	$s.push("bpmjs._Messenger.ReceiverForType::new");
+	var $spos = $s.length;
+	this.type = type;
+	this.method = method;
+	$s.pop();
+}}
+bpmjs._Messenger.ReceiverForType.__name__ = ["bpmjs","_Messenger","ReceiverForType"];
+bpmjs._Messenger.ReceiverForType.prototype.type = null;
+bpmjs._Messenger.ReceiverForType.prototype.method = null;
+bpmjs._Messenger.ReceiverForType.prototype.__class__ = bpmjs._Messenger.ReceiverForType;
 bpmjs.ContextBuilder = function(p) { if( p === $_ ) return; {
 	$s.push("bpmjs.ContextBuilder::new");
 	var $spos = $s.length;
@@ -4498,10 +4004,12 @@ bpmjs.ContextBuilder.build = function(configClass,contextConfig) {
 bpmjs.ContextBuilder.buildAll = function(configClasses,contextConfig) {
 	$s.push("bpmjs.ContextBuilder::buildAll");
 	var $spos = $s.length;
+	Log.groupCollapsed(null,null,null,null,null,null,null,{ fileName : "ContextBuilder.hx", lineNumber : 20, className : "bpmjs.ContextBuilder", methodName : "buildAll"});
 	var builder = new bpmjs.ContextBuilder();
 	bpmjs.ContextBuilder.defaultContext = builder.context;
 	builder.contextConfig = contextConfig == null?bpmjs.ContextBuilder.createDefaultContextConfig():contextConfig;
 	builder.buildInternal(configClasses);
+	Log.groupEnd({ fileName : "ContextBuilder.hx", lineNumber : 28, className : "bpmjs.ContextBuilder", methodName : "buildAll"});
 	{
 		var $tmp = bpmjs.ContextBuilder.defaultContext;
 		$s.pop();
@@ -4635,7 +4143,7 @@ bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
 			if(meta != null && Reflect.hasField(meta,"Inject")) {
 				var type = Type.resolveClass(name);
 				var wiredObject = type == bpmjs.Context?this.context:this.context.getObjectByType(type);
-				if(wiredObject == null) Log.warn("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + field.name + " but could not find object to inject.",null,null,null,null,null,null,{ fileName : "ContextBuilder.hx", lineNumber : 141, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"});
+				if(wiredObject == null) Log.warn("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + field.name + " but could not find object to inject.",null,null,null,null,null,null,{ fileName : "ContextBuilder.hx", lineNumber : 145, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"});
 				else contextObject.object[field.name] = wiredObject;
 			}
 		}break;
@@ -4832,170 +4340,173 @@ bpmjs.ContextBuilder.prototype.createError = function(message) {
 	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.__class__ = bpmjs.ContextBuilder;
-haxe.rtti.Meta = function() { }
-haxe.rtti.Meta.__name__ = ["haxe","rtti","Meta"];
-haxe.rtti.Meta.getType = function(t) {
-	$s.push("haxe.rtti.Meta::getType");
+Log = function() { }
+Log.__name__ = ["Log"];
+Log.init = function() {
+	$s.push("Log::init");
 	var $spos = $s.length;
-	var meta = t.__meta__;
 	{
-		var $tmp = meta == null?meta:meta.obj;
+		if(!window.console) console = { };
+		console.log = console.log || function() {
+			$s.push("Log::init@10");
+			var $spos = $s.length;
+			null;
+			$s.pop();
+		}
+		console.warn = console.warn || function() {
+			$s.push("Log::init@11");
+			var $spos = $s.length;
+			null;
+			$s.pop();
+		}
+		console.error = console.error || function() {
+			$s.push("Log::init@12");
+			var $spos = $s.length;
+			null;
+			$s.pop();
+		}
+		console.info = console.info || function() {
+			$s.push("Log::init@13");
+			var $spos = $s.length;
+			null;
+			$s.pop();
+		}
+	}
+	haxe.Log.trace = $closure(Log,"infoConsole");
+	$s.pop();
+}
+Log.addFilter = function(filter) {
+	$s.push("Log::addFilter");
+	var $spos = $s.length;
+	Log.filters.push(filter);
+	$s.pop();
+}
+Log.info = function(m0,m1,m2,m3,m4,m5,m6,i) {
+	$s.push("Log::info");
+	var $spos = $s.length;
+	if(Log.infoEnabled(i)) console.log(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i));
+	$s.pop();
+}
+Log.warn = function(m0,m1,m2,m3,m4,m5,m6,i) {
+	$s.push("Log::warn");
+	var $spos = $s.length;
+	if(Log.warnEnabled(i)) console.warn(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i));
+	$s.pop();
+}
+Log.error = function(m0,m1,m2,m3,m4,m5,m6,i) {
+	$s.push("Log::error");
+	var $spos = $s.length;
+	if(Log.errorEnabled(i)) {
+		var exception = haxe.Stack.exceptionStack().join("\n");
+		console.error(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i) + "\nStack:\n" + exception);
+	}
+	$s.pop();
+}
+Log.infoEnabled = function(i) {
+	$s.push("Log::infoEnabled");
+	var $spos = $s.length;
+	{
+		var $tmp = Log.filter(i,LogLevel.INFO);
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-haxe.rtti.Meta.getStatics = function(t) {
-	$s.push("haxe.rtti.Meta::getStatics");
+Log.warnEnabled = function(i) {
+	$s.push("Log::warnEnabled");
 	var $spos = $s.length;
-	var meta = t.__meta__;
 	{
-		var $tmp = meta == null?meta:meta.statics;
+		var $tmp = Log.filter(i,LogLevel.WARN);
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-haxe.rtti.Meta.getFields = function(t) {
-	$s.push("haxe.rtti.Meta::getFields");
+Log.errorEnabled = function(i) {
+	$s.push("Log::errorEnabled");
 	var $spos = $s.length;
-	var meta = t.__meta__;
 	{
-		var $tmp = meta == null?meta:meta.fields;
+		var $tmp = Log.filter(i,LogLevel.ERROR);
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-haxe.rtti.Meta.prototype.__class__ = haxe.rtti.Meta;
-GLAnimationFrame = function() { }
-GLAnimationFrame.__name__ = ["GLAnimationFrame"];
-GLAnimationFrame.run = function(method,ms) {
-	$s.push("GLAnimationFrame::run");
+Log.groupCollapsed = function(m0,m1,m2,m3,m4,m5,m6,i) {
+	$s.push("Log::groupCollapsed");
 	var $spos = $s.length;
-	if(ms == null) ms = 0;
-	var secureMethod = function() {
-		$s.push("GLAnimationFrame::run@8");
-		var $spos = $s.length;
-		try {
-			method();
-		}
-		catch( $e0 ) {
-			{
-				var e = $e0;
-				{
-					$e = [];
-					while($s.length >= $spos) $e.unshift($s.pop());
-					$s.push($e[0]);
-					null;
-				}
-			}
-		}
-		$s.pop();
-	}
-	if(ms == 0) {
-		var window = js.Lib.window;
-		var requestAnimationFrame = window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame;
-		if(requestAnimationFrame == null) {
-			var requester = function() {
-				$s.push("GLAnimationFrame::run@30");
-				var $spos = $s.length;
-				requestAnimationFrame(requester);
-				secureMethod();
-				$s.pop();
-			}
-			requestAnimationFrame(requester);
-		}
-		else {
-			var timer = new haxe.Timer(Std["int"](1000 / 60));
-			timer.run = secureMethod;
-		}
-	}
-	else {
-		var timer = new haxe.Timer(Std["int"](1000 / ms));
-		timer.run = secureMethod;
-	}
+	if(Log.infoEnabled(i)) console.groupCollapsed(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i));
 	$s.pop();
 }
-GLAnimationFrame.prototype.__class__ = GLAnimationFrame;
-bpmjs.Messenger = function(p) { if( p === $_ ) return; {
-	$s.push("bpmjs.Messenger::new");
+Log.groupEnd = function(i) {
+	$s.push("Log::groupEnd");
 	var $spos = $s.length;
-	this.receivers = new Array();
-	$s.pop();
-}}
-bpmjs.Messenger.__name__ = ["bpmjs","Messenger"];
-bpmjs.Messenger.prototype.receivers = null;
-bpmjs.Messenger.prototype.addReceiver = function(type,listener) {
-	$s.push("bpmjs.Messenger::addReceiver");
-	var $spos = $s.length;
-	this.removeReceiver(type,listener);
-	this.receivers.push(new bpmjs._Messenger.ReceiverForType(type,listener));
+	if(Log.infoEnabled(i)) console.groupEnd();
 	$s.pop();
 }
-bpmjs.Messenger.prototype.removeReceiver = function(type,listener) {
-	$s.push("bpmjs.Messenger::removeReceiver");
+Log.filter = function(i,level) {
+	$s.push("Log::filter");
 	var $spos = $s.length;
-	var _g = 0, _g1 = this.receivers;
-	while(_g < _g1.length) {
-		var receiver = _g1[_g];
-		++_g;
-		if(receiver.type == type && Reflect.compareMethods(listener,receiver.method)) {
-			this.receivers.remove(receiver);
-			{
-				$s.pop();
-				return;
-			}
-		}
-	}
-	$s.pop();
-}
-bpmjs.Messenger.prototype.send = function(message) {
-	$s.push("bpmjs.Messenger::send");
-	var $spos = $s.length;
-	var _g = 0, _g1 = this.receivers;
-	while(_g < _g1.length) {
-		var receiver = _g1[_g];
-		++_g;
-		if(receiver.type == null || receiver.type == Type.getClass(message)) receiver.method(message);
-	}
-	$s.pop();
-}
-bpmjs.Messenger.prototype.toString = function() {
-	$s.push("bpmjs.Messenger::toString");
-	var $spos = $s.length;
+	var result = true;
 	{
-		var $tmp = Type.getClassName(Type.getClass(this));
+		var _g = 0, _g1 = Log.filters;
+		while(_g < _g1.length) {
+			var filter = _g1[_g];
+			++_g;
+			result = filter.enabled(result,i,level);
+		}
+	}
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+Log.createMessage = function(messages,i) {
+	$s.push("Log::createMessage");
+	var $spos = $s.length;
+	var resultArray = [];
+	{
+		var _g = 0;
+		while(_g < messages.length) {
+			var message = messages[_g];
+			++_g;
+			resultArray.push(Std.string(message));
+		}
+	}
+	while(resultArray.length > 0 && resultArray[resultArray.length - 1] == "null") {
+		resultArray.pop();
+	}
+	var from = i.className + "." + i.methodName;
+	{
+		var $tmp = "[" + from + "] " + resultArray.join(", ");
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-bpmjs.Messenger.prototype.__class__ = bpmjs.Messenger;
-if(!bpmjs._Messenger) bpmjs._Messenger = {}
-bpmjs._Messenger.ReceiverForType = function(type,method) { if( type === $_ ) return; {
-	$s.push("bpmjs._Messenger.ReceiverForType::new");
+Log.infoConsole = function(v,i) {
+	$s.push("Log::infoConsole");
 	var $spos = $s.length;
-	this.type = type;
-	this.method = method;
+	console.log("" + Log.createMessage([v],i) + " (trace)");
 	$s.pop();
-}}
-bpmjs._Messenger.ReceiverForType.__name__ = ["bpmjs","_Messenger","ReceiverForType"];
-bpmjs._Messenger.ReceiverForType.prototype.type = null;
-bpmjs._Messenger.ReceiverForType.prototype.method = null;
-bpmjs._Messenger.ReceiverForType.prototype.__class__ = bpmjs._Messenger.ReceiverForType;
-kumite.stage.Config = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.stage.Config::new");
+}
+Log.prototype.__class__ = Log;
+haxe.Log = function() { }
+haxe.Log.__name__ = ["haxe","Log"];
+haxe.Log.trace = function(v,infos) {
+	$s.push("haxe.Log::trace");
 	var $spos = $s.length;
-	this.stage = new kumite.stage.Stage();
-	this.stageResizeAction = new kumite.stage.StageResizeAction();
+	js.Boot.__trace(v,infos);
 	$s.pop();
-}}
-kumite.stage.Config.__name__ = ["kumite","stage","Config"];
-kumite.stage.Config.prototype.stage = null;
-kumite.stage.Config.prototype.stageResizeAction = null;
-kumite.stage.Config.prototype.__class__ = kumite.stage.Config;
-kumite.stage.Config.__interfaces__ = [haxe.rtti.Infos];
+}
+haxe.Log.clear = function() {
+	$s.push("haxe.Log::clear");
+	var $spos = $s.length;
+	js.Boot.__clear_trace();
+	$s.pop();
+}
+haxe.Log.prototype.__class__ = haxe.Log;
 Hash = function(p) { if( p === $_ ) return; {
 	$s.push("Hash::new");
 	var $spos = $s.length;
@@ -5138,11 +4649,106 @@ Hash.prototype.toString = function() {
 	$s.pop();
 }
 Hash.prototype.__class__ = Hash;
+kumite.webgl.GLCase = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.webgl.GLCase::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.webgl.GLCase.__name__ = ["kumite","webgl","GLCase"];
+kumite.webgl.GLCase.prototype.itself = null;
+kumite.webgl.GLCase.prototype.__class__ = kumite.webgl.GLCase;
+Std = function() { }
+Std.__name__ = ["Std"];
+Std["is"] = function(v,t) {
+	$s.push("Std::is");
+	var $spos = $s.length;
+	{
+		var $tmp = js.Boot.__instanceof(v,t);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Std.string = function(s) {
+	$s.push("Std::string");
+	var $spos = $s.length;
+	{
+		var $tmp = js.Boot.__string_rec(s,"");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Std["int"] = function(x) {
+	$s.push("Std::int");
+	var $spos = $s.length;
+	if(x < 0) {
+		var $tmp = Math.ceil(x);
+		$s.pop();
+		return $tmp;
+	}
+	{
+		var $tmp = Math.floor(x);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Std.parseInt = function(x) {
+	$s.push("Std::parseInt");
+	var $spos = $s.length;
+	var v = parseInt(x,10);
+	if(v == 0 && x.charCodeAt(1) == 120) v = parseInt(x);
+	if(isNaN(v)) {
+		$s.pop();
+		return null;
+	}
+	{
+		var $tmp = v;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Std.parseFloat = function(x) {
+	$s.push("Std::parseFloat");
+	var $spos = $s.length;
+	{
+		var $tmp = parseFloat(x);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Std.random = function(x) {
+	$s.push("Std::random");
+	var $spos = $s.length;
+	{
+		var $tmp = Math.floor(Math.random() * x);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Std.prototype.__class__ = Std;
+kumite.canvas.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.canvas.Config::new");
+	var $spos = $s.length;
+	this.canvasCase = new kumite.canvas.CanvasCase();
+	this.canvasController = new kumite.canvas.CanvasController();
+	$s.pop();
+}}
+kumite.canvas.Config.__name__ = ["kumite","canvas","Config"];
+kumite.canvas.Config.prototype.canvasCase = null;
+kumite.canvas.Config.prototype.canvasController = null;
+kumite.canvas.Config.prototype.__class__ = kumite.canvas.Config;
+kumite.canvas.Config.__interfaces__ = [haxe.rtti.Infos];
 Main = function(canvas) { if( canvas === $_ ) return; {
 	$s.push("Main::new");
 	var $spos = $s.length;
 	try {
-		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.canvas.Config]);
+		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config]);
 	}
 	catch( $e0 ) {
 		{
@@ -5151,7 +4757,7 @@ Main = function(canvas) { if( canvas === $_ ) return; {
 				$e = [];
 				while($s.length >= $spos) $e.unshift($s.pop());
 				$s.push($e[0]);
-				Log.error("Error building application! \n" + e,null,null,null,null,null,null,{ fileName : "Main.hx", lineNumber : 34, className : "Main", methodName : "new"});
+				Log.error("Error building application! \n" + e,null,null,null,null,null,null,{ fileName : "Main.hx", lineNumber : 35, className : "Main", methodName : "new"});
 			}
 		}
 	}
@@ -5185,11 +4791,488 @@ Main.main = function() {
 	$s.pop();
 }
 Main.prototype.__class__ = Main;
+kumite.webgl.InitAction = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.webgl.InitAction::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.webgl.InitAction.__name__ = ["kumite","webgl","InitAction"];
+kumite.webgl.InitAction.prototype.canvas = null;
+kumite.webgl.InitAction.prototype.gl = null;
+kumite.webgl.InitAction.prototype.antialias = null;
+kumite.webgl.InitAction.prototype.init = function() {
+	$s.push("kumite.webgl.InitAction::init");
+	var $spos = $s.length;
+	var params = { antialias : this.antialias};
+	this.gl.itself = this.canvas.itself.getContext("webgl",params);
+	if(this.gl.itself == null) this.gl.itself = this.canvas.itself.getContext("experimental-webgl",params);
+	if(this.gl.itself == null) {
+		throw "Could not initialise WebGL.";
+	}
+	$s.pop();
+}
+kumite.webgl.InitAction.prototype.__class__ = kumite.webgl.InitAction;
+kumite.webgl.InitAction.__interfaces__ = [haxe.rtti.Infos];
+haxe.rtti.CType = { __ename__ : ["haxe","rtti","CType"], __constructs__ : ["CUnknown","CEnum","CClass","CTypedef","CFunction","CAnonymous","CDynamic"] }
+haxe.rtti.CType.CUnknown = ["CUnknown",0];
+haxe.rtti.CType.CUnknown.toString = $estr;
+haxe.rtti.CType.CUnknown.__enum__ = haxe.rtti.CType;
+haxe.rtti.CType.CEnum = function(name,params) { var $x = ["CEnum",1,name,params]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
+haxe.rtti.CType.CClass = function(name,params) { var $x = ["CClass",2,name,params]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
+haxe.rtti.CType.CTypedef = function(name,params) { var $x = ["CTypedef",3,name,params]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
+haxe.rtti.CType.CFunction = function(args,ret) { var $x = ["CFunction",4,args,ret]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
+haxe.rtti.CType.CAnonymous = function(fields) { var $x = ["CAnonymous",5,fields]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
+haxe.rtti.CType.CDynamic = function(t) { var $x = ["CDynamic",6,t]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
+haxe.rtti.Rights = { __ename__ : ["haxe","rtti","Rights"], __constructs__ : ["RNormal","RNo","RCall","RMethod","RDynamic","RInline"] }
+haxe.rtti.Rights.RNormal = ["RNormal",0];
+haxe.rtti.Rights.RNormal.toString = $estr;
+haxe.rtti.Rights.RNormal.__enum__ = haxe.rtti.Rights;
+haxe.rtti.Rights.RNo = ["RNo",1];
+haxe.rtti.Rights.RNo.toString = $estr;
+haxe.rtti.Rights.RNo.__enum__ = haxe.rtti.Rights;
+haxe.rtti.Rights.RCall = function(m) { var $x = ["RCall",2,m]; $x.__enum__ = haxe.rtti.Rights; $x.toString = $estr; return $x; }
+haxe.rtti.Rights.RMethod = ["RMethod",3];
+haxe.rtti.Rights.RMethod.toString = $estr;
+haxe.rtti.Rights.RMethod.__enum__ = haxe.rtti.Rights;
+haxe.rtti.Rights.RDynamic = ["RDynamic",4];
+haxe.rtti.Rights.RDynamic.toString = $estr;
+haxe.rtti.Rights.RDynamic.__enum__ = haxe.rtti.Rights;
+haxe.rtti.Rights.RInline = ["RInline",5];
+haxe.rtti.Rights.RInline.toString = $estr;
+haxe.rtti.Rights.RInline.__enum__ = haxe.rtti.Rights;
+haxe.rtti.TypeTree = { __ename__ : ["haxe","rtti","TypeTree"], __constructs__ : ["TPackage","TClassdecl","TEnumdecl","TTypedecl"] }
+haxe.rtti.TypeTree.TPackage = function(name,full,subs) { var $x = ["TPackage",0,name,full,subs]; $x.__enum__ = haxe.rtti.TypeTree; $x.toString = $estr; return $x; }
+haxe.rtti.TypeTree.TClassdecl = function(c) { var $x = ["TClassdecl",1,c]; $x.__enum__ = haxe.rtti.TypeTree; $x.toString = $estr; return $x; }
+haxe.rtti.TypeTree.TEnumdecl = function(e) { var $x = ["TEnumdecl",2,e]; $x.__enum__ = haxe.rtti.TypeTree; $x.toString = $estr; return $x; }
+haxe.rtti.TypeTree.TTypedecl = function(t) { var $x = ["TTypedecl",3,t]; $x.__enum__ = haxe.rtti.TypeTree; $x.toString = $estr; return $x; }
+haxe.rtti.TypeApi = function() { }
+haxe.rtti.TypeApi.__name__ = ["haxe","rtti","TypeApi"];
+haxe.rtti.TypeApi.typeInfos = function(t) {
+	$s.push("haxe.rtti.TypeApi::typeInfos");
+	var $spos = $s.length;
+	var inf;
+	var $e = t;
+	switch( $e[1] ) {
+	case 1:
+	var c = $e[2];
+	{
+		inf = c;
+	}break;
+	case 2:
+	var e = $e[2];
+	{
+		inf = e;
+	}break;
+	case 3:
+	var t1 = $e[2];
+	{
+		inf = t1;
+	}break;
+	case 0:
+	{
+		throw "Unexpected Package";
+	}break;
+	}
+	{
+		$s.pop();
+		return inf;
+	}
+	$s.pop();
+}
+haxe.rtti.TypeApi.isVar = function(t) {
+	$s.push("haxe.rtti.TypeApi::isVar");
+	var $spos = $s.length;
+	{
+		var $tmp = (function($this) {
+			var $r;
+			var $e = t;
+			switch( $e[1] ) {
+			case 4:
+			{
+				$r = false;
+			}break;
+			default:{
+				$r = true;
+			}break;
+			}
+			return $r;
+		}(this));
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.rtti.TypeApi.leq = function(f,l1,l2) {
+	$s.push("haxe.rtti.TypeApi::leq");
+	var $spos = $s.length;
+	var it = l2.iterator();
+	{ var $it0 = l1.iterator();
+	while( $it0.hasNext() ) { var e1 = $it0.next();
+	{
+		if(!it.hasNext()) {
+			$s.pop();
+			return false;
+		}
+		var e2 = it.next();
+		if(!f(e1,e2)) {
+			$s.pop();
+			return false;
+		}
+	}
+	}}
+	if(it.hasNext()) {
+		$s.pop();
+		return false;
+	}
+	{
+		$s.pop();
+		return true;
+	}
+	$s.pop();
+}
+haxe.rtti.TypeApi.rightsEq = function(r1,r2) {
+	$s.push("haxe.rtti.TypeApi::rightsEq");
+	var $spos = $s.length;
+	if(r1 == r2) {
+		$s.pop();
+		return true;
+	}
+	var $e = r1;
+	switch( $e[1] ) {
+	case 2:
+	var m1 = $e[2];
+	{
+		var $e = r2;
+		switch( $e[1] ) {
+		case 2:
+		var m2 = $e[2];
+		{
+			{
+				var $tmp = m1 == m2;
+				$s.pop();
+				return $tmp;
+			}
+		}break;
+		default:{
+			null;
+		}break;
+		}
+	}break;
+	default:{
+		null;
+	}break;
+	}
+	{
+		$s.pop();
+		return false;
+	}
+	$s.pop();
+}
+haxe.rtti.TypeApi.typeEq = function(t1,t2) {
+	$s.push("haxe.rtti.TypeApi::typeEq");
+	var $spos = $s.length;
+	var $e = t1;
+	switch( $e[1] ) {
+	case 0:
+	{
+		{
+			var $tmp = t2 == haxe.rtti.CType.CUnknown;
+			$s.pop();
+			return $tmp;
+		}
+	}break;
+	case 1:
+	var params = $e[3], name = $e[2];
+	{
+		var $e = t2;
+		switch( $e[1] ) {
+		case 1:
+		var params2 = $e[3], name2 = $e[2];
+		{
+			{
+				var $tmp = name == name2 && haxe.rtti.TypeApi.leq($closure(haxe.rtti.TypeApi,"typeEq"),params,params2);
+				$s.pop();
+				return $tmp;
+			}
+		}break;
+		default:{
+			null;
+		}break;
+		}
+	}break;
+	case 2:
+	var params = $e[3], name = $e[2];
+	{
+		var $e = t2;
+		switch( $e[1] ) {
+		case 2:
+		var params2 = $e[3], name2 = $e[2];
+		{
+			{
+				var $tmp = name == name2 && haxe.rtti.TypeApi.leq($closure(haxe.rtti.TypeApi,"typeEq"),params,params2);
+				$s.pop();
+				return $tmp;
+			}
+		}break;
+		default:{
+			null;
+		}break;
+		}
+	}break;
+	case 3:
+	var params = $e[3], name = $e[2];
+	{
+		var $e = t2;
+		switch( $e[1] ) {
+		case 3:
+		var params2 = $e[3], name2 = $e[2];
+		{
+			{
+				var $tmp = name == name2 && haxe.rtti.TypeApi.leq($closure(haxe.rtti.TypeApi,"typeEq"),params,params2);
+				$s.pop();
+				return $tmp;
+			}
+		}break;
+		default:{
+			null;
+		}break;
+		}
+	}break;
+	case 4:
+	var ret = $e[3], args = $e[2];
+	{
+		var $e = t2;
+		switch( $e[1] ) {
+		case 4:
+		var ret2 = $e[3], args2 = $e[2];
+		{
+			{
+				var $tmp = haxe.rtti.TypeApi.leq(function(a,b) {
+					$s.push("haxe.rtti.TypeApi::typeEq@187");
+					var $spos = $s.length;
+					{
+						var $tmp = a.name == b.name && a.opt == b.opt && haxe.rtti.TypeApi.typeEq(a.t,b.t);
+						$s.pop();
+						return $tmp;
+					}
+					$s.pop();
+				},args,args2) && haxe.rtti.TypeApi.typeEq(ret,ret2);
+				$s.pop();
+				return $tmp;
+			}
+		}break;
+		default:{
+			null;
+		}break;
+		}
+	}break;
+	case 5:
+	var fields = $e[2];
+	{
+		var $e = t2;
+		switch( $e[1] ) {
+		case 5:
+		var fields2 = $e[2];
+		{
+			{
+				var $tmp = haxe.rtti.TypeApi.leq(function(a,b) {
+					$s.push("haxe.rtti.TypeApi::typeEq@195");
+					var $spos = $s.length;
+					{
+						var $tmp = a.name == b.name && haxe.rtti.TypeApi.typeEq(a.t,b.t);
+						$s.pop();
+						return $tmp;
+					}
+					$s.pop();
+				},fields,fields2);
+				$s.pop();
+				return $tmp;
+			}
+		}break;
+		default:{
+			null;
+		}break;
+		}
+	}break;
+	case 6:
+	var t = $e[2];
+	{
+		var $e = t2;
+		switch( $e[1] ) {
+		case 6:
+		var t21 = $e[2];
+		{
+			if(t == null != (t21 == null)) {
+				$s.pop();
+				return false;
+			}
+			{
+				var $tmp = t == null || haxe.rtti.TypeApi.typeEq(t,t21);
+				$s.pop();
+				return $tmp;
+			}
+		}break;
+		default:{
+			null;
+		}break;
+		}
+	}break;
+	}
+	{
+		$s.pop();
+		return false;
+	}
+	$s.pop();
+}
+haxe.rtti.TypeApi.fieldEq = function(f1,f2) {
+	$s.push("haxe.rtti.TypeApi::fieldEq");
+	var $spos = $s.length;
+	if(f1.name != f2.name) {
+		$s.pop();
+		return false;
+	}
+	if(!haxe.rtti.TypeApi.typeEq(f1.type,f2.type)) {
+		$s.pop();
+		return false;
+	}
+	if(f1.isPublic != f2.isPublic) {
+		$s.pop();
+		return false;
+	}
+	if(f1.doc != f2.doc) {
+		$s.pop();
+		return false;
+	}
+	if(!haxe.rtti.TypeApi.rightsEq(f1.get,f2.get)) {
+		$s.pop();
+		return false;
+	}
+	if(!haxe.rtti.TypeApi.rightsEq(f1.set,f2.set)) {
+		$s.pop();
+		return false;
+	}
+	if(f1.params == null != (f2.params == null)) {
+		$s.pop();
+		return false;
+	}
+	if(f1.params != null && f1.params.join(":") != f2.params.join(":")) {
+		$s.pop();
+		return false;
+	}
+	{
+		$s.pop();
+		return true;
+	}
+	$s.pop();
+}
+haxe.rtti.TypeApi.constructorEq = function(c1,c2) {
+	$s.push("haxe.rtti.TypeApi::constructorEq");
+	var $spos = $s.length;
+	if(c1.name != c2.name) {
+		$s.pop();
+		return false;
+	}
+	if(c1.doc != c2.doc) {
+		$s.pop();
+		return false;
+	}
+	if(c1.args == null != (c2.args == null)) {
+		$s.pop();
+		return false;
+	}
+	if(c1.args != null && !haxe.rtti.TypeApi.leq(function(a,b) {
+		$s.push("haxe.rtti.TypeApi::constructorEq@239");
+		var $spos = $s.length;
+		{
+			var $tmp = a.name == b.name && a.opt == b.opt && haxe.rtti.TypeApi.typeEq(a.t,b.t);
+			$s.pop();
+			return $tmp;
+		}
+		$s.pop();
+	},c1.args,c2.args)) {
+		$s.pop();
+		return false;
+	}
+	{
+		$s.pop();
+		return true;
+	}
+	$s.pop();
+}
+haxe.rtti.TypeApi.prototype.__class__ = haxe.rtti.TypeApi;
+kumite.launch.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.launch.Config::new");
+	var $spos = $s.length;
+	this.launcher = new kumite.launch.Launcher();
+	this.sequencer = new bpmjs.Sequencer();
+	$s.pop();
+}}
+kumite.launch.Config.__name__ = ["kumite","launch","Config"];
+kumite.launch.Config.prototype.sequencer = null;
+kumite.launch.Config.prototype.launcher = null;
+kumite.launch.Config.prototype.__class__ = kumite.launch.Config;
+kumite.launch.Config.__interfaces__ = [haxe.rtti.Infos];
+js.Lib = function() { }
+js.Lib.__name__ = ["js","Lib"];
+js.Lib.isIE = null;
+js.Lib.isOpera = null;
+js.Lib.document = null;
+js.Lib.window = null;
+js.Lib.alert = function(v) {
+	$s.push("js.Lib::alert");
+	var $spos = $s.length;
+	alert(js.Boot.__string_rec(v,""));
+	$s.pop();
+}
+js.Lib.eval = function(code) {
+	$s.push("js.Lib::eval");
+	var $spos = $s.length;
+	{
+		var $tmp = eval(code);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+js.Lib.setErrorHandler = function(f) {
+	$s.push("js.Lib::setErrorHandler");
+	var $spos = $s.length;
+	js.Lib.onerror = f;
+	$s.pop();
+}
+js.Lib.prototype.__class__ = js.Lib;
 $_ = {}
 js.Boot.__res = {}
 $s = [];
 $e = [];
 js.Boot.__init();
+{
+	Math.__name__ = ["Math"];
+	Math.NaN = Number["NaN"];
+	Math.NEGATIVE_INFINITY = Number["NEGATIVE_INFINITY"];
+	Math.POSITIVE_INFINITY = Number["POSITIVE_INFINITY"];
+	Math.isFinite = function(i) {
+		$s.push("js.Lib::setErrorHandler");
+		var $spos = $s.length;
+		{
+			var $tmp = isFinite(i);
+			$s.pop();
+			return $tmp;
+		}
+		$s.pop();
+	}
+	Math.isNaN = function(i) {
+		$s.push("js.Lib::setErrorHandler");
+		var $spos = $s.length;
+		{
+			var $tmp = isNaN(i);
+			$s.pop();
+			return $tmp;
+		}
+		$s.pop();
+	}
+}
 {
 	Xml.Element = "element";
 	Xml.PCData = "pcdata";
@@ -5200,9 +5283,23 @@ js.Boot.__init();
 	Xml.Document = "document";
 }
 {
+	String.prototype.__class__ = String;
+	String.__name__ = ["String"];
+	Array.prototype.__class__ = Array;
+	Array.__name__ = ["Array"];
+	Int = { __name__ : ["Int"]};
+	Dynamic = { __name__ : ["Dynamic"]};
+	Float = Number;
+	Float.__name__ = ["Float"];
+	Bool = { __ename__ : ["Bool"]};
+	Class = { __name__ : ["Class"]};
+	Enum = { };
+	Void = { __ename__ : ["Void"]};
+}
+{
 	var d = Date;
 	d.now = function() {
-		$s.push("Main::main");
+		$s.push("js.Lib::setErrorHandler");
 		var $spos = $s.length;
 		{
 			var $tmp = new Date();
@@ -5212,7 +5309,7 @@ js.Boot.__init();
 		$s.pop();
 	}
 	d.fromTime = function(t) {
-		$s.push("Main::main");
+		$s.push("js.Lib::setErrorHandler");
 		var $spos = $s.length;
 		var d1 = new Date();
 		d1["setTime"](t);
@@ -5223,7 +5320,7 @@ js.Boot.__init();
 		$s.pop();
 	}
 	d.fromString = function(s) {
-		$s.push("Main::main");
+		$s.push("js.Lib::setErrorHandler");
 		var $spos = $s.length;
 		switch(s.length) {
 		case 8:{
@@ -5263,7 +5360,7 @@ js.Boot.__init();
 		$s.pop();
 	}
 	d.prototype["toString"] = function() {
-		$s.push("Main::main");
+		$s.push("js.Lib::setErrorHandler");
 		var $spos = $s.length;
 		var date = this;
 		var m = date.getMonth() + 1;
@@ -5280,46 +5377,6 @@ js.Boot.__init();
 	}
 	d.prototype.__class__ = d;
 	d.__name__ = ["Date"];
-}
-{
-	String.prototype.__class__ = String;
-	String.__name__ = ["String"];
-	Array.prototype.__class__ = Array;
-	Array.__name__ = ["Array"];
-	Int = { __name__ : ["Int"]};
-	Dynamic = { __name__ : ["Dynamic"]};
-	Float = Number;
-	Float.__name__ = ["Float"];
-	Bool = { __ename__ : ["Bool"]};
-	Class = { __name__ : ["Class"]};
-	Enum = { };
-	Void = { __ename__ : ["Void"]};
-}
-{
-	Math.__name__ = ["Math"];
-	Math.NaN = Number["NaN"];
-	Math.NEGATIVE_INFINITY = Number["NEGATIVE_INFINITY"];
-	Math.POSITIVE_INFINITY = Number["POSITIVE_INFINITY"];
-	Math.isFinite = function(i) {
-		$s.push("Main::main");
-		var $spos = $s.length;
-		{
-			var $tmp = isFinite(i);
-			$s.pop();
-			return $tmp;
-		}
-		$s.pop();
-	}
-	Math.isNaN = function(i) {
-		$s.push("Main::main");
-		var $spos = $s.length;
-		{
-			var $tmp = isNaN(i);
-			$s.pop();
-			return $tmp;
-		}
-		$s.pop();
-	}
 }
 {
 	js.Lib.document = document;
@@ -5339,6 +5396,20 @@ js.Boot.__init();
 		return f(msg,stack);
 	}
 }
+kumite.stage.StageResizeAction.__meta__ = { fields : { messenger : { Messenger : null}, stage : { Inject : null}, initPrepare : { Sequence : ["boot","initPrepare"]}, startComplete : { Sequence : ["boot","startComplete"]}}};
+kumite.stage.StageResizeAction.__rtti = "<class path=\"kumite.stage.StageResizeAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<startComplete public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<onResize set=\"method\" line=\"39\"><f a=\"?event\">\n\t<t path=\"js.Event\"/>\n\t<e path=\"Void\"/>\n</f></onResize>\n\t<updateSize set=\"method\" line=\"45\"><f a=\"\"><e path=\"Void\"/></f></updateSize>\n\t<sendResizeMessage set=\"method\" line=\"51\"><f a=\"\"><e path=\"Void\"/></f></sendResizeMessage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.webgl.Config.__rtti = "<class path=\"kumite.webgl.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<glCase public=\"1\"><c path=\"kumite.webgl.GLCase\"/></glCase>\n\t<initAction public=\"1\"><c path=\"kumite.webgl.InitAction\"/></initAction>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+bpmjs.Sequencer.__meta__ = { fields : { context : { Inject : null}}};
+bpmjs.Sequencer.__rtti = "<class path=\"bpmjs.Sequencer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context public=\"1\"><c path=\"bpmjs.Context\"/></context>\n\t<start public=\"1\" set=\"method\" line=\"14\"><f a=\"name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></start>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.stage.Config.__rtti = "<class path=\"kumite.stage.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<stageResizeAction public=\"1\"><c path=\"kumite.stage.StageResizeAction\"/></stageResizeAction>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.launch.Launcher.__meta__ = { fields : { sequencer : { Inject : null}, handlePostComplete : { PostComplete : null}, showError : { Sequence : ["boot","error"]}}};
+kumite.launch.Launcher.__rtti = "<class path=\"kumite.launch.Launcher\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<handlePostComplete public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></handlePostComplete>\n\t<showError public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></showError>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+LogLevel.INFO = new LogLevel(1);
+LogLevel.WARN = new LogLevel(2);
+LogLevel.ERROR = new LogLevel(3);
+LogLevel.OFF = new LogLevel(4);
+kumite.canvas.CanvasController.__meta__ = { fields : { canvas : { Inject : null}, stage : { Inject : null}, initPrepare : { Sequence : ["boot","initPrepare"]}, init : { Sequence : ["boot","init"]}, updateCanvasSizeFromStage : { Message : null}}};
+kumite.canvas.CanvasController.__rtti = "<class path=\"kumite.canvas.CanvasController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<init public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateCanvasSizeFromStage public=\"1\" set=\"method\" line=\"33\"><f a=\"?message\">\n\t<c path=\"kumite.stage.StageResizeMessage\"/>\n\t<e path=\"Void\"/>\n</f></updateCanvasSizeFromStage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Xml.enode = new EReg("^<([a-zA-Z0-9:_-]+)","");
 Xml.ecdata = new EReg("^<!\\[CDATA\\[","i");
 Xml.edoctype = new EReg("^<!DOCTYPE ","i");
@@ -5351,22 +5422,11 @@ Xml.eclose = new EReg("^[ \r\n\t]*(>|(/>))","");
 Xml.ecdata_end = new EReg("\\]\\]>","");
 Xml.edoctype_elt = new EReg("[\\[|\\]>]","");
 Xml.ecomment_end = new EReg("-->","");
-Log.filters = new Array();
-kumite.stage.StageResizeAction.__meta__ = { fields : { messenger : { Messenger : null}, stage : { Inject : null}, initPrepare : { Sequence : ["boot","initPrepare"]}, startComplete : { Sequence : ["boot","startComplete"]}}};
-kumite.stage.StageResizeAction.__rtti = "<class path=\"kumite.stage.StageResizeAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<startComplete public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<onResize set=\"method\" line=\"39\"><f a=\"?event\">\n\t<t path=\"js.Event\"/>\n\t<e path=\"Void\"/>\n</f></onResize>\n\t<updateSize set=\"method\" line=\"45\"><f a=\"\"><e path=\"Void\"/></f></updateSize>\n\t<sendResizeMessage set=\"method\" line=\"51\"><f a=\"\"><e path=\"Void\"/></f></sendResizeMessage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.canvas.Config.__rtti = "<class path=\"kumite.canvas.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvasCase public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvasCase>\n\t<canvasController public=\"1\"><c path=\"kumite.canvas.CanvasController\"/></canvasController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.launch.Config.__rtti = "<class path=\"kumite.launch.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<launcher public=\"1\"><c path=\"kumite.launch.Launcher\"/></launcher>\n\t<new public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.launch.Launcher.__meta__ = { fields : { sequencer : { Inject : null}, handlePostComplete : { PostComplete : null}, showError : { Sequence : ["boot","error"]}}};
-kumite.launch.Launcher.__rtti = "<class path=\"kumite.launch.Launcher\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<handlePostComplete public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></handlePostComplete>\n\t<showError public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></showError>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 haxe.Timer.arr = new Array();
-bpmjs.Sequencer.__meta__ = { fields : { context : { Inject : null}}};
-bpmjs.Sequencer.__rtti = "<class path=\"bpmjs.Sequencer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context public=\"1\"><c path=\"bpmjs.Context\"/></context>\n\t<start public=\"1\" set=\"method\" line=\"14\"><f a=\"name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></start>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.canvas.CanvasController.__meta__ = { fields : { canvas : { Inject : null}, stage : { Inject : null}, initPrepare : { Sequence : ["boot","initPrepare"]}, init : { Sequence : ["boot","init"]}, updateCanvasSizeFromStage : { Message : null}}};
-kumite.canvas.CanvasController.__rtti = "<class path=\"kumite.canvas.CanvasController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<init public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateCanvasSizeFromStage public=\"1\" set=\"method\" line=\"33\"><f a=\"?message\">\n\t<c path=\"kumite.stage.StageResizeMessage\"/>\n\t<e path=\"Void\"/>\n</f></updateCanvasSizeFromStage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-LogLevel.INFO = new LogLevel(1);
-LogLevel.WARN = new LogLevel(2);
-LogLevel.ERROR = new LogLevel(3);
-LogLevel.OFF = new LogLevel(4);
+Log.filters = new Array();
+kumite.canvas.Config.__rtti = "<class path=\"kumite.canvas.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvasCase public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvasCase>\n\t<canvasController public=\"1\"><c path=\"kumite.canvas.CanvasController\"/></canvasController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.webgl.InitAction.__meta__ = { fields : { canvas : { Inject : null}, gl : { Inject : null}, init : { Sequence : ["boot","init"]}}};
+kumite.webgl.InitAction.__rtti = "<class path=\"kumite.webgl.InitAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<gl public=\"1\"><c path=\"kumite.webgl.GLCase\"/></gl>\n\t<antialias public=\"1\"><e path=\"Bool\"/></antialias>\n\t<init public=\"1\" set=\"method\" line=\"19\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<new public=\"1\" set=\"method\" line=\"16\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.launch.Config.__rtti = "<class path=\"kumite.launch.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<launcher public=\"1\"><c path=\"kumite.launch.Launcher\"/></launcher>\n\t<new public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 js.Lib.onerror = null;
-kumite.stage.Config.__rtti = "<class path=\"kumite.stage.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<stageResizeAction public=\"1\"><c path=\"kumite.stage.StageResizeAction\"/></stageResizeAction>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Main.main()

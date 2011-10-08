@@ -27,7 +27,8 @@ class Main {
 					kumite.launch.Config,
 					kumite.stage.Config,
 					kumite.canvas.Config,
-			]);
+					kumite.webgl.Config,
+				]);
 		}
 		catch(e : Dynamic)
 		{
