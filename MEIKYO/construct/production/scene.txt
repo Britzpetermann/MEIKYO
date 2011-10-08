@@ -1,0 +1,87 @@
+<scenes>
+	<scene id="intro1">	
+		<layer id="e2" in="smooth-long" out="smooth"/>
+		<layer id="e1" in="smooth" out="cut"/>
+		<layer id="b1" in="smooth" out="cut"/>
+		<next in="b1,e1" />
+	</scene>
+
+	<scene id="intro2">
+		<layer id="e2"/>
+		<layer id="b2" in="cut" out="smooth"/>
+		<next in="all" out="others" wait="10"/>
+	</scene>
+
+	<scene id="outro">
+		<layer id="e3" in="smooth" out="smooth"/>
+		<layer id="b3" in="smooth" out="smooth"/>
+	</scene>
+</scenes>
+
+<timeline>
+	<in layer="b1" transition="long"/>
+	
+	<wait ms="1000"/>
+
+	<in layer="e1" transition="long"/>
+	
+	<wait ms="1000"/>
+	
+	<out layer="e1" transition="long"/>
+	<in layer="e2" transition="long"/>
+	<in layer="e3" transition="long"/>
+	
+	<wait ms="1000">
+
+	<out layer="e2" transition="cut"/>
+	<out layer="e3" transition="cut"/>
+	<out layer="b1" transition="cut"/>
+	
+	<in layer="e4" transition="cut"/>
+	<in layer="b2" transition="cut"/>
+
+	<wait ms="1000">
+
+	<out layer="b2" transition="cut"/>
+		
+</timeline>
+
+T        |                                10
+e4       |                           xxxxx|
+e3       |                 .....xxxxx     |
+e2       |                 .....xxxxx     |
+e1       |       .....xxxxx.....          |
+b2       |                           xxxxx|
+b1       | .....xxxxxxxxxxxxxxxxxxxxx     |
+
+
+
+
+T	b1	b2	e1	e2	e3	e4
+	.0
+	.0
+	.0
+	.0
+	x
+3
+	x		.0
+	x		.0
+	x		.0
+	x		.0
+	x		x
+3
+	x		.1	.1	.1
+	x		.1	.1	.1
+	x			x0	x
+10
+
+
+
+
+|  cut  |
+| short |
+| long  |	|scene1|    |scene2|    |scene3|    |scene4|    |scene5|    |scene6|    |scene7|
+
+
+
+

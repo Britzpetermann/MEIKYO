@@ -1,19 +1,10 @@
 $estr = function() { return js.Boot.__string_rec(this,''); }
-if(typeof kumite=='undefined') kumite = {}
-if(!kumite.time) kumite.time = {}
-kumite.time.Tick = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.time.Tick::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-kumite.time.Tick.__name__ = ["kumite","time","Tick"];
-kumite.time.Tick.prototype.__class__ = kumite.time.Tick;
 if(typeof haxe=='undefined') haxe = {}
 if(!haxe.rtti) haxe.rtti = {}
 haxe.rtti.Infos = function() { }
 haxe.rtti.Infos.__name__ = ["haxe","rtti","Infos"];
 haxe.rtti.Infos.prototype.__class__ = haxe.rtti.Infos;
+if(typeof kumite=='undefined') kumite = {}
 if(!kumite.helloworldgl) kumite.helloworldgl = {}
 kumite.helloworldgl.HelloWorld = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.helloworldgl.HelloWorld::new");
@@ -88,6 +79,191 @@ kumite.helloworldgl.HelloWorld.prototype.drawRect = function(x,y,z,color) {
 }
 kumite.helloworldgl.HelloWorld.prototype.__class__ = kumite.helloworldgl.HelloWorld;
 kumite.helloworldgl.HelloWorld.__interfaces__ = [haxe.rtti.Infos];
+if(!kumite.time) kumite.time = {}
+kumite.time.Tick = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.time.Tick::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.time.Tick.__name__ = ["kumite","time","Tick"];
+kumite.time.Tick.prototype.__class__ = kumite.time.Tick;
+Vec2 = function(x,y) { if( x === $_ ) return; {
+	$s.push("Vec2::new");
+	var $spos = $s.length;
+	this.x = x;
+	this.y = y;
+	$s.pop();
+}}
+Vec2.__name__ = ["Vec2"];
+Vec2.prototype.x = null;
+Vec2.prototype.y = null;
+Vec2.prototype.set = function(x,y) {
+	$s.push("Vec2::set");
+	var $spos = $s.length;
+	this.x = x;
+	this.y = y;
+	$s.pop();
+}
+Vec2.prototype.scale = function(factor) {
+	$s.push("Vec2::scale");
+	var $spos = $s.length;
+	this.x *= factor;
+	this.y *= factor;
+	$s.pop();
+}
+Vec2.prototype.multiply = function(x,y) {
+	$s.push("Vec2::multiply");
+	var $spos = $s.length;
+	this.x *= x;
+	this.y *= y;
+	$s.pop();
+}
+Vec2.prototype.subtract = function(x,y) {
+	$s.push("Vec2::subtract");
+	var $spos = $s.length;
+	this.x -= x;
+	this.y -= y;
+	$s.pop();
+}
+Vec2.prototype.normalize = function() {
+	$s.push("Vec2::normalize");
+	var $spos = $s.length;
+	var invLength = 1 / Math.sqrt(this.x * this.x + this.y * this.y);
+	this.x *= invLength;
+	this.y *= invLength;
+	$s.pop();
+}
+Vec2.prototype.transform = function(matrix) {
+	$s.push("Vec2::transform");
+	var $spos = $s.length;
+	var x1 = this.x, y1 = this.y, z1 = 0, w1 = 1;
+	var mat = matrix.buffer;
+	this.x = mat[0] * x1 + mat[4] * y1 + mat[8] * z1 + mat[12] * w1;
+	this.y = mat[1] * x1 + mat[5] * y1 + mat[9] * z1 + mat[13] * w1;
+	$s.pop();
+}
+Vec2.prototype.clone = function() {
+	$s.push("Vec2::clone");
+	var $spos = $s.length;
+	{
+		var $tmp = new Vec2(this.x,this.y);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Vec2.prototype.__class__ = Vec2;
+if(typeof hsl=='undefined') hsl = {}
+if(!hsl.haxe) hsl.haxe = {}
+hsl.haxe.Bond = function(p) { if( p === $_ ) return; {
+	$s.push("hsl.haxe.Bond::new");
+	var $spos = $s.length;
+	this.halted = false;
+	$s.pop();
+}}
+hsl.haxe.Bond.__name__ = ["hsl","haxe","Bond"];
+hsl.haxe.Bond.prototype.halted = null;
+hsl.haxe.Bond.prototype.willDestroyOnUse = null;
+hsl.haxe.Bond.prototype.destroy = function() {
+	$s.push("hsl.haxe.Bond::destroy");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+hsl.haxe.Bond.prototype.destroyOnUse = function() {
+	$s.push("hsl.haxe.Bond::destroyOnUse");
+	var $spos = $s.length;
+	this.willDestroyOnUse = true;
+	{
+		$s.pop();
+		return this;
+	}
+	$s.pop();
+}
+hsl.haxe.Bond.prototype.halt = function() {
+	$s.push("hsl.haxe.Bond::halt");
+	var $spos = $s.length;
+	this.halted = true;
+	$s.pop();
+}
+hsl.haxe.Bond.prototype.resume = function() {
+	$s.push("hsl.haxe.Bond::resume");
+	var $spos = $s.length;
+	this.halted = false;
+	$s.pop();
+}
+hsl.haxe.Bond.prototype.toString = function() {
+	$s.push("hsl.haxe.Bond::toString");
+	var $spos = $s.length;
+	{
+		$s.pop();
+		return "[Bond]";
+	}
+	$s.pop();
+}
+hsl.haxe.Bond.prototype.__class__ = hsl.haxe.Bond;
+if(!haxe.exception) haxe.exception = {}
+haxe.exception.Exception = function(message,innerException,numberOfStackTraceShifts) { if( message === $_ ) return; {
+	$s.push("haxe.exception.Exception::new");
+	var $spos = $s.length;
+	this.message = null == message?"Unknown exception":message;
+	this.innerException = innerException;
+	this.generateStackTrace(numberOfStackTraceShifts);
+	this.stackTrace = this.stackTraceArray;
+	$s.pop();
+}}
+haxe.exception.Exception.__name__ = ["haxe","exception","Exception"];
+haxe.exception.Exception.prototype.baseException = null;
+haxe.exception.Exception.prototype.innerException = null;
+haxe.exception.Exception.prototype.message = null;
+haxe.exception.Exception.prototype.stackTrace = null;
+haxe.exception.Exception.prototype.stackTraceArray = null;
+haxe.exception.Exception.prototype.generateStackTrace = function(numberOfStackTraceShifts) {
+	$s.push("haxe.exception.Exception::generateStackTrace");
+	var $spos = $s.length;
+	this.stackTraceArray = haxe.Stack.callStack().slice(numberOfStackTraceShifts + 1);
+	var exceptionClass = Type.getClass(this);
+	while(haxe.exception.Exception != exceptionClass) {
+		this.stackTraceArray.shift();
+		exceptionClass = Type.getSuperClass(exceptionClass);
+	}
+	$s.pop();
+}
+haxe.exception.Exception.prototype.getBaseException = function() {
+	$s.push("haxe.exception.Exception::getBaseException");
+	var $spos = $s.length;
+	var result = this;
+	while(null != result.innerException) {
+		result = result.innerException;
+	}
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+haxe.exception.Exception.prototype.toString = function() {
+	$s.push("haxe.exception.Exception::toString");
+	var $spos = $s.length;
+	{
+		var $tmp = this.message + haxe.Stack.toString(this.stackTraceArray);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.exception.Exception.prototype.__class__ = haxe.exception.Exception;
+haxe.exception.ArgumentNullException = function(argumentName,numberOfStackTraceShifts) { if( argumentName === $_ ) return; {
+	$s.push("haxe.exception.ArgumentNullException::new");
+	var $spos = $s.length;
+	haxe.exception.Exception.call(this,"Argument " + argumentName + " must be non-null",null,numberOfStackTraceShifts);
+	$s.pop();
+}}
+haxe.exception.ArgumentNullException.__name__ = ["haxe","exception","ArgumentNullException"];
+haxe.exception.ArgumentNullException.__super__ = haxe.exception.Exception;
+for(var k in haxe.exception.Exception.prototype ) haxe.exception.ArgumentNullException.prototype[k] = haxe.exception.Exception.prototype[k];
+haxe.exception.ArgumentNullException.prototype.__class__ = haxe.exception.ArgumentNullException;
 Map = function() { }
 Map.__name__ = ["Map"];
 Map.linear = function(value,min0,max0,min1,max1) {
@@ -153,6 +329,17 @@ kumite.stage.StageResizeAction.prototype.sendResizeMessage = function() {
 }
 kumite.stage.StageResizeAction.prototype.__class__ = kumite.stage.StageResizeAction;
 kumite.stage.StageResizeAction.__interfaces__ = [haxe.rtti.Infos];
+if(!kumite.mouse) kumite.mouse = {}
+kumite.mouse.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.mouse.Config::new");
+	var $spos = $s.length;
+	this.mouseController = new kumite.mouse.MouseController();
+	$s.pop();
+}}
+kumite.mouse.Config.__name__ = ["kumite","mouse","Config"];
+kumite.mouse.Config.prototype.mouseController = null;
+kumite.mouse.Config.prototype.__class__ = kumite.mouse.Config;
+kumite.mouse.Config.__interfaces__ = [haxe.rtti.Infos];
 if(!kumite.webgl) kumite.webgl = {}
 kumite.webgl.Config = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.webgl.Config::new");
@@ -696,6 +883,34 @@ kumite.time.Time.prototype.interpolateTo = function(from,to,f) {
 	$s.pop();
 }
 kumite.time.Time.prototype.__class__ = kumite.time.Time;
+GLCursorClient = function(p) { if( p === $_ ) return; {
+	$s.push("GLCursorClient::new");
+	var $spos = $s.length;
+	this.lastCursor = "";
+	$s.pop();
+}}
+GLCursorClient.__name__ = ["GLCursorClient"];
+GLCursorClient.prototype.lastCursor = null;
+GLCursorClient.prototype.defaultCursor = function() {
+	$s.push("GLCursorClient::defaultCursor");
+	var $spos = $s.length;
+	if(this.lastCursor != GLCursorClient.DEFAULT) {
+		this.lastCursor = GLCursorClient.DEFAULT;
+		GLMouseRegistry.getInstance().setCursor(this.lastCursor);
+	}
+	$s.pop();
+}
+GLCursorClient.prototype.handCursor = function(message) {
+	$s.push("GLCursorClient::handCursor");
+	var $spos = $s.length;
+	if(this.lastCursor != GLCursorClient.HAND) {
+		this.lastCursor = GLCursorClient.HAND;
+		GLMouseRegistry.getInstance().setCursor(this.lastCursor);
+		if(message != null) js.Lib.window.status = message;
+	}
+	$s.pop();
+}
+GLCursorClient.prototype.__class__ = GLCursorClient;
 if(!kumite.camera) kumite.camera = {}
 kumite.camera.Config = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.camera.Config::new");
@@ -709,6 +924,212 @@ kumite.camera.Config.prototype.camera = null;
 kumite.camera.Config.prototype.cameraMouseMover = null;
 kumite.camera.Config.prototype.__class__ = kumite.camera.Config;
 kumite.camera.Config.__interfaces__ = [haxe.rtti.Infos];
+GLDisplayObject = function(p) { if( p === $_ ) return; {
+	$s.push("GLDisplayObject::new");
+	var $spos = $s.length;
+	if(GLDisplayObject.nextId == null) GLDisplayObject.nextId = 0;
+	this.id = GLDisplayObject.nextId;
+	GLDisplayObject.nextId++;
+	GLDisplayList.getDefault().initDisplayObject(this);
+	this.skipDraw = false;
+	this.alpha = 1;
+	this.matrix = new Matrix4();
+	this.setX(0);
+	this.setY(0);
+	this.setWidth(256);
+	this.setHeight(128);
+	this.setScaleX(1);
+	this.setScaleY(1);
+	this.transformIsInvalid = true;
+	this.canvas = js.Lib.document.createElement("canvas");
+	this.getCanvas().width = this.width;
+	this.getCanvas().height = this.height;
+	var context = this.getCanvas().getContext("2d");
+	context.fillStyle = "rgba(0, 0, 0, 0.0)";
+	context.fillRect(0,0,this.width,this.height);
+	this.canvasIsInvalid = true;
+	$s.pop();
+}}
+GLDisplayObject.__name__ = ["GLDisplayObject"];
+GLDisplayObject.nextId = null;
+GLDisplayObject.prototype.id = null;
+GLDisplayObject.prototype.stage = null;
+GLDisplayObject.prototype.skipDraw = null;
+GLDisplayObject.prototype.alpha = null;
+GLDisplayObject.prototype.x = null;
+GLDisplayObject.prototype.y = null;
+GLDisplayObject.prototype.width = null;
+GLDisplayObject.prototype.height = null;
+GLDisplayObject.prototype.scaleX = null;
+GLDisplayObject.prototype.scaleY = null;
+GLDisplayObject.prototype.transformIsInvalid = null;
+GLDisplayObject.prototype.canvasIsInvalid = null;
+GLDisplayObject.prototype.canvas = null;
+GLDisplayObject.prototype.context = null;
+GLDisplayObject.prototype.matrix = null;
+GLDisplayObject.prototype.enterFrameSignaler = null;
+GLDisplayObject.prototype.validateTransform = function() {
+	$s.push("GLDisplayObject::validateTransform");
+	var $spos = $s.length;
+	if(this.transformIsInvalid) {
+		this.transformIsInvalid = false;
+		if(this.getCanvas().width != this.width) this.getCanvas().width = this.width;
+		if(this.getCanvas().height != this.height) this.getCanvas().height = this.height;
+		this.matrix.identity();
+		this.matrix.appendTranslation(this.x,this.y,0);
+		this.matrix.appendScale(this.scaleX,this.scaleY,1);
+	}
+	$s.pop();
+}
+GLDisplayObject.prototype.toString = function() {
+	$s.push("GLDisplayObject::toString");
+	var $spos = $s.length;
+	{
+		var $tmp = "DisplayObject: " + this.id;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GLDisplayObject.prototype.setX = function(value) {
+	$s.push("GLDisplayObject::setX");
+	var $spos = $s.length;
+	if(this.x != value) {
+		this.x = value;
+		this.transformIsInvalid = true;
+	}
+	{
+		$s.pop();
+		return value;
+	}
+	$s.pop();
+}
+GLDisplayObject.prototype.setY = function(value) {
+	$s.push("GLDisplayObject::setY");
+	var $spos = $s.length;
+	if(this.y != value) {
+		this.y = value;
+		this.transformIsInvalid = true;
+	}
+	{
+		$s.pop();
+		return value;
+	}
+	$s.pop();
+}
+GLDisplayObject.prototype.setScaleX = function(value) {
+	$s.push("GLDisplayObject::setScaleX");
+	var $spos = $s.length;
+	if(this.scaleX != value) {
+		this.scaleX = value;
+		this.transformIsInvalid = true;
+	}
+	{
+		$s.pop();
+		return value;
+	}
+	$s.pop();
+}
+GLDisplayObject.prototype.setScaleY = function(value) {
+	$s.push("GLDisplayObject::setScaleY");
+	var $spos = $s.length;
+	if(this.scaleY != value) {
+		this.scaleY = value;
+		this.transformIsInvalid = true;
+	}
+	{
+		$s.pop();
+		return value;
+	}
+	$s.pop();
+}
+GLDisplayObject.prototype.setWidth = function(value) {
+	$s.push("GLDisplayObject::setWidth");
+	var $spos = $s.length;
+	if(this.width != value) {
+		this.width = value;
+		this.transformIsInvalid = true;
+		this.canvasIsInvalid = true;
+	}
+	{
+		$s.pop();
+		return value;
+	}
+	$s.pop();
+}
+GLDisplayObject.prototype.setHeight = function(value) {
+	$s.push("GLDisplayObject::setHeight");
+	var $spos = $s.length;
+	if(this.height != value) {
+		this.height = value;
+		this.transformIsInvalid = true;
+		this.canvasIsInvalid = true;
+	}
+	{
+		$s.pop();
+		return value;
+	}
+	$s.pop();
+}
+GLDisplayObject.prototype.getCanvas = function() {
+	$s.push("GLDisplayObject::getCanvas");
+	var $spos = $s.length;
+	this.validateTransform();
+	{
+		var $tmp = this.canvas;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GLDisplayObject.prototype.getContext = function() {
+	$s.push("GLDisplayObject::getContext");
+	var $spos = $s.length;
+	this.validateTransform();
+	{
+		var $tmp = this.getCanvas().getContext("2d");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GLDisplayObject.prototype.__class__ = GLDisplayObject;
+GLDisplayObjectContainer = function(p) { if( p === $_ ) return; {
+	$s.push("GLDisplayObjectContainer::new");
+	var $spos = $s.length;
+	GLDisplayObject.call(this);
+	this.children = new Array();
+	$s.pop();
+}}
+GLDisplayObjectContainer.__name__ = ["GLDisplayObjectContainer"];
+GLDisplayObjectContainer.__super__ = GLDisplayObject;
+for(var k in GLDisplayObject.prototype ) GLDisplayObjectContainer.prototype[k] = GLDisplayObject.prototype[k];
+GLDisplayObjectContainer.prototype.children = null;
+GLDisplayObjectContainer.prototype.addChild = function(child) {
+	$s.push("GLDisplayObjectContainer::addChild");
+	var $spos = $s.length;
+	this.children.push(child);
+	$s.pop();
+}
+GLDisplayObjectContainer.prototype.removeChild = function(child) {
+	$s.push("GLDisplayObjectContainer::removeChild");
+	var $spos = $s.length;
+	this.children.remove(child);
+	$s.pop();
+}
+GLDisplayObjectContainer.prototype.__class__ = GLDisplayObjectContainer;
+GLStage = function(p) { if( p === $_ ) return; {
+	$s.push("GLStage::new");
+	var $spos = $s.length;
+	GLDisplayObjectContainer.call(this);
+	$s.pop();
+}}
+GLStage.__name__ = ["GLStage"];
+GLStage.__super__ = GLDisplayObjectContainer;
+for(var k in GLDisplayObjectContainer.prototype ) GLStage.prototype[k] = GLDisplayObjectContainer.prototype[k];
+GLStage.prototype.stageWidth = null;
+GLStage.prototype.stageHeight = null;
+GLStage.prototype.__class__ = GLStage;
 bpmjs.ContextConfig = function(p) { if( p === $_ ) return; {
 	$s.push("bpmjs.ContextConfig::new");
 	var $spos = $s.length;
@@ -1461,6 +1882,110 @@ haxe.rtti.XmlParser.prototype.defplat = function() {
 	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.__class__ = haxe.rtti.XmlParser;
+GLMouseRegistry = function(p) { if( p === $_ ) return; {
+	$s.push("GLMouseRegistry::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+GLMouseRegistry.__name__ = ["GLMouseRegistry"];
+GLMouseRegistry.instance = null;
+GLMouseRegistry.getInstance = function() {
+	$s.push("GLMouseRegistry::getInstance");
+	var $spos = $s.length;
+	if(GLMouseRegistry.instance == null) GLMouseRegistry.instance = new GLMouseRegistry();
+	{
+		var $tmp = GLMouseRegistry.instance;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GLMouseRegistry.prototype.mouseDownSignaler = null;
+GLMouseRegistry.prototype.mouseMoveSignaler = null;
+GLMouseRegistry.prototype.canvas = null;
+GLMouseRegistry.prototype.init = function(canvas) {
+	$s.push("GLMouseRegistry::init");
+	var $spos = $s.length;
+	this.canvas = canvas;
+	this.mouseDownSignaler = new hsl.haxe.DirectSignaler(this);
+	this.mouseMoveSignaler = new hsl.haxe.DirectSignaler(this);
+	canvas.onmousedown = $closure(this,"onMouseDown");
+	canvas.onmousemove = $closure(this,"onMouseMove");
+	$s.pop();
+}
+GLMouseRegistry.prototype.setCursor = function(cursor) {
+	$s.push("GLMouseRegistry::setCursor");
+	var $spos = $s.length;
+	this.canvas.style.cursor = cursor;
+	$s.pop();
+}
+GLMouseRegistry.prototype.createCursorClient = function() {
+	$s.push("GLMouseRegistry::createCursorClient");
+	var $spos = $s.length;
+	var client = new GLCursorClient();
+	{
+		$s.pop();
+		return client;
+	}
+	$s.pop();
+}
+GLMouseRegistry.prototype.onMouseDown = function(e) {
+	$s.push("GLMouseRegistry::onMouseDown");
+	var $spos = $s.length;
+	try {
+		this.mouseDownSignaler.dispatch(new Vec2(e.layerX / this.canvas.clientWidth,e.layerY / this.canvas.clientHeight),null,{ fileName : "GLMouseRegistry.hx", lineNumber : 50, className : "GLMouseRegistry", methodName : "onMouseDown"});
+	}
+	catch( $e0 ) {
+		{
+			var e1 = $e0;
+			{
+				$e = [];
+				while($s.length >= $spos) $e.unshift($s.pop());
+				$s.push($e[0]);
+				haxe.Log.trace(e1,{ fileName : "GLMouseRegistry.hx", lineNumber : 54, className : "GLMouseRegistry", methodName : "onMouseDown"});
+			}
+		}
+	}
+	$s.pop();
+}
+GLMouseRegistry.prototype.onMouseMove = function(e) {
+	$s.push("GLMouseRegistry::onMouseMove");
+	var $spos = $s.length;
+	try {
+		this.mouseMoveSignaler.dispatch(new Vec2(e.layerX / this.canvas.clientWidth,e.layerY / this.canvas.clientHeight),null,{ fileName : "GLMouseRegistry.hx", lineNumber : 62, className : "GLMouseRegistry", methodName : "onMouseMove"});
+	}
+	catch( $e0 ) {
+		{
+			var e1 = $e0;
+			{
+				$e = [];
+				while($s.length >= $spos) $e.unshift($s.pop());
+				$s.push($e[0]);
+				haxe.Log.trace(e1,{ fileName : "GLMouseRegistry.hx", lineNumber : 66, className : "GLMouseRegistry", methodName : "onMouseMove"});
+			}
+		}
+	}
+	$s.pop();
+}
+GLMouseRegistry.prototype.__class__ = GLMouseRegistry;
+hsl.haxe.Signaler = function() { }
+hsl.haxe.Signaler.__name__ = ["hsl","haxe","Signaler"];
+hsl.haxe.Signaler.prototype.isListenedTo = null;
+hsl.haxe.Signaler.prototype.subject = null;
+hsl.haxe.Signaler.prototype.addBubblingTarget = null;
+hsl.haxe.Signaler.prototype.addNotificationTarget = null;
+hsl.haxe.Signaler.prototype.bind = null;
+hsl.haxe.Signaler.prototype.bindAdvanced = null;
+hsl.haxe.Signaler.prototype.bindVoid = null;
+hsl.haxe.Signaler.prototype.dispatch = null;
+hsl.haxe.Signaler.prototype.getIsListenedTo = null;
+hsl.haxe.Signaler.prototype.removeBubblingTarget = null;
+hsl.haxe.Signaler.prototype.removeNotificationTarget = null;
+hsl.haxe.Signaler.prototype.unbind = null;
+hsl.haxe.Signaler.prototype.unbindAdvanced = null;
+hsl.haxe.Signaler.prototype.unbindVoid = null;
+hsl.haxe.Signaler.prototype.__class__ = hsl.haxe.Signaler;
 kumite.stage.StageResizeMessage = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.stage.StageResizeMessage::new");
 	var $spos = $s.length;
@@ -1636,6 +2161,95 @@ LogLevel.prototype.isSmallerOrEqual = function(level) {
 	$s.pop();
 }
 LogLevel.prototype.__class__ = LogLevel;
+bpmjs.Stats = function() { }
+bpmjs.Stats.__name__ = ["bpmjs","Stats"];
+bpmjs.Stats.initialized = null;
+bpmjs.Stats.lastTime = null;
+bpmjs.Stats.times = null;
+bpmjs.Stats.finishedTimes = null;
+bpmjs.Stats.messages = null;
+bpmjs.Stats.init = function() {
+	$s.push("bpmjs.Stats::init");
+	var $spos = $s.length;
+	bpmjs.Stats.clear();
+	bpmjs.Stats.initialized = true;
+	$s.pop();
+}
+bpmjs.Stats.clear = function() {
+	$s.push("bpmjs.Stats::clear");
+	var $spos = $s.length;
+	bpmjs.Stats.times = new Array();
+	bpmjs.Stats.finishedTimes = new Array();
+	bpmjs.Stats.messages = new Array();
+	$s.pop();
+}
+bpmjs.Stats.measureFPS = function() {
+	$s.push("bpmjs.Stats::measureFPS");
+	var $spos = $s.length;
+	bpmjs.Stats.checkInit();
+	var time = Date.now().getTime();
+	bpmjs.Stats.fps = 1000 / (time - bpmjs.Stats.lastTime);
+	bpmjs.Stats.lastTime = time;
+	$s.pop();
+}
+bpmjs.Stats.checkStart = function(message) {
+	$s.push("bpmjs.Stats::checkStart");
+	var $spos = $s.length;
+	bpmjs.Stats.checkInit();
+	var time = Date.now().getTime();
+	bpmjs.Stats.times.push({ start : time, stop : 0.0, message : message});
+	$s.pop();
+}
+bpmjs.Stats.addMessage = function(message) {
+	$s.push("bpmjs.Stats::addMessage");
+	var $spos = $s.length;
+	bpmjs.Stats.checkInit();
+	bpmjs.Stats.messages.push(message);
+	$s.pop();
+}
+bpmjs.Stats.checkStop = function() {
+	$s.push("bpmjs.Stats::checkStop");
+	var $spos = $s.length;
+	bpmjs.Stats.checkInit();
+	var timeAndMessage = bpmjs.Stats.times.pop();
+	timeAndMessage.stop = Date.now().getTime();
+	bpmjs.Stats.finishedTimes.push(timeAndMessage);
+	$s.pop();
+}
+bpmjs.Stats.getContents = function() {
+	$s.push("bpmjs.Stats::getContents");
+	var $spos = $s.length;
+	var finalMessages = new Array();
+	finalMessages.push("FPS: " + Math.round(bpmjs.Stats.fps));
+	{
+		var _g = 0, _g1 = bpmjs.Stats.finishedTimes;
+		while(_g < _g1.length) {
+			var timeAndMessage = _g1[_g];
+			++_g;
+			finalMessages.push(" > " + timeAndMessage.message + ": " + (timeAndMessage.stop - timeAndMessage.start) + " ms");
+		}
+	}
+	{
+		var _g = 0, _g1 = bpmjs.Stats.messages;
+		while(_g < _g1.length) {
+			var message = _g1[_g];
+			++_g;
+			finalMessages.push(message);
+		}
+	}
+	{
+		$s.pop();
+		return finalMessages;
+	}
+	$s.pop();
+}
+bpmjs.Stats.checkInit = function() {
+	$s.push("bpmjs.Stats::checkInit");
+	var $spos = $s.length;
+	if(!bpmjs.Stats.initialized) bpmjs.Stats.init();
+	$s.pop();
+}
+bpmjs.Stats.prototype.__class__ = bpmjs.Stats;
 if(!kumite.canvas) kumite.canvas = {}
 kumite.canvas.CanvasCase = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.canvas.CanvasCase::new");
@@ -2110,6 +2724,31 @@ ERegFilter.prototype.enabled = function(input,i,level) {
 }
 ERegFilter.prototype.__class__ = ERegFilter;
 ERegFilter.__interfaces__ = [LogFilter];
+GLHitarea = function(p) { if( p === $_ ) return; {
+	$s.push("GLHitarea::new");
+	var $spos = $s.length;
+	this.position = new Vec2();
+	this.size = new Vec2();
+	$s.pop();
+}}
+GLHitarea.__name__ = ["GLHitarea"];
+GLHitarea.prototype.position = null;
+GLHitarea.prototype.size = null;
+GLHitarea.prototype.isUnder = function(matrix,positionOnStage) {
+	$s.push("GLHitarea::isUnder");
+	var $spos = $s.length;
+	var tl = this.position.clone();
+	tl.transform(matrix);
+	var br = this.size.clone();
+	br.transform(matrix);
+	{
+		var $tmp = tl.x <= positionOnStage.x && br.x >= positionOnStage.x && tl.y <= positionOnStage.y && br.y >= positionOnStage.y;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GLHitarea.prototype.__class__ = GLHitarea;
 kumite.canvas.CanvasController = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.canvas.CanvasController::new");
 	var $spos = $s.length;
@@ -2211,6 +2850,35 @@ GLAttribLocation.prototype.drawArrays = function(mode,first,count) {
 	$s.pop();
 }
 GLAttribLocation.prototype.__class__ = GLAttribLocation;
+if(!kumite.displaylist) kumite.displaylist = {}
+kumite.displaylist.DisplayListController = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.displaylist.DisplayListController::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.displaylist.DisplayListController.__name__ = ["kumite","displaylist","DisplayListController"];
+kumite.displaylist.DisplayListController.prototype.stage = null;
+kumite.displaylist.DisplayListController.prototype.renderer = null;
+kumite.displaylist.DisplayListController.prototype.start = function() {
+	$s.push("kumite.displaylist.DisplayListController::start");
+	var $spos = $s.length;
+	this.renderer = new GLDisplayListRenderer();
+	this.renderer.init();
+	var root = GLDisplayList.getDefault().stage;
+	root.addChild(new GLStats());
+	$s.pop();
+}
+kumite.displaylist.DisplayListController.prototype.render = function(tick) {
+	$s.push("kumite.displaylist.DisplayListController::render");
+	var $spos = $s.length;
+	bpmjs.Stats.measureFPS();
+	GLDisplayList.getDefault().dispatchEnterFrame();
+	this.renderer.render(this.stage.width,this.stage.height);
+	$s.pop();
+}
+kumite.displaylist.DisplayListController.prototype.__class__ = kumite.displaylist.DisplayListController;
+kumite.displaylist.DisplayListController.__interfaces__ = [haxe.rtti.Infos];
 if(!haxe.xml) haxe.xml = {}
 if(!haxe.xml._Fast) haxe.xml._Fast = {}
 haxe.xml._Fast.NodeAccess = function(x) { if( x === $_ ) return; {
@@ -2428,7 +3096,7 @@ GLAnimationFrame.run = function(method,ms) {
 					$e = [];
 					while($s.length >= $spos) $e.unshift($s.pop());
 					$s.push($e[0]);
-					null;
+					Log.error("Error executing GLAnimationFrame: " + e,null,null,null,null,null,null,{ fileName : "GLAnimationFrame.hx", lineNumber : 16, className : "GLAnimationFrame", methodName : "run"});
 				}
 			}
 		}
@@ -2459,10 +3127,145 @@ GLAnimationFrame.run = function(method,ms) {
 	$s.pop();
 }
 GLAnimationFrame.prototype.__class__ = GLAnimationFrame;
+GLDisplayList = function(p) { if( p === $_ ) return; {
+	$s.push("GLDisplayList::new");
+	var $spos = $s.length;
+	this.lastFrameTime = Date.now().getTime();
+	this.startTime = this.lastFrameTime;
+	this.enterFrameSignaler = new hsl.haxe.DirectSignaler(this);
+	this.hitareaPicker = new GLHitareaPicker();
+	GLMouseRegistry.getInstance().mouseDownSignaler.bind($closure(this,"handleMouseDown"));
+	GLMouseRegistry.getInstance().mouseMoveSignaler.bind($closure(this,"handleMouseMove"));
+	this.cursorClient = GLMouseRegistry.getInstance().createCursorClient();
+	$s.pop();
+}}
+GLDisplayList.__name__ = ["GLDisplayList"];
+GLDisplayList.instance = null;
+GLDisplayList.getDefault = function() {
+	$s.push("GLDisplayList::getDefault");
+	var $spos = $s.length;
+	if(GLDisplayList.instance == null) {
+		GLDisplayList.instance = new GLDisplayList();
+		GLDisplayList.instance.stage = new GLStage();
+		GLDisplayList.instance.initDisplayObject(GLDisplayList.instance.stage);
+	}
+	{
+		var $tmp = GLDisplayList.instance;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GLDisplayList.prototype.stage = null;
+GLDisplayList.prototype.hitareaPicker = null;
+GLDisplayList.prototype.lastFrameTime = null;
+GLDisplayList.prototype.startTime = null;
+GLDisplayList.prototype.cursorClient = null;
+GLDisplayList.prototype.enterFrameSignaler = null;
+GLDisplayList.prototype.initDisplayObject = function(displayObject) {
+	$s.push("GLDisplayList::initDisplayObject");
+	var $spos = $s.length;
+	displayObject.stage = this.stage;
+	displayObject.enterFrameSignaler = this.enterFrameSignaler;
+	$s.pop();
+}
+GLDisplayList.prototype.initInteractiveObject = function(interactiveObject) {
+	$s.push("GLDisplayList::initInteractiveObject");
+	var $spos = $s.length;
+	interactiveObject.mouseDownSignaler = new hsl.haxe.DirectSignaler(this);
+	$s.pop();
+}
+GLDisplayList.prototype.setStageSize = function(width,height) {
+	$s.push("GLDisplayList::setStageSize");
+	var $spos = $s.length;
+	this.stage.stageWidth = width;
+	this.stage.stageHeight = height;
+	$s.pop();
+}
+GLDisplayList.prototype.dispatchEnterFrame = function() {
+	$s.push("GLDisplayList::dispatchEnterFrame");
+	var $spos = $s.length;
+	var time = Date.now().getTime();
+	var frame = new GLFrame();
+	frame.time = time;
+	frame.timer = time - this.startTime;
+	frame.frameTime = time - this.lastFrameTime;
+	this.lastFrameTime = time;
+	this.enterFrameSignaler.dispatch(frame,null,{ fileName : "GLDisplayList.hx", lineNumber : 69, className : "GLDisplayList", methodName : "dispatchEnterFrame"});
+	$s.pop();
+}
+GLDisplayList.prototype.handleMouseDown = function(position) {
+	$s.push("GLDisplayList::handleMouseDown");
+	var $spos = $s.length;
+	var result = this.hitareaPicker.pick(this.stage,position);
+	if(result != null) result.mouseDownSignaler.dispatch(result,null,{ fileName : "GLDisplayList.hx", lineNumber : 76, className : "GLDisplayList", methodName : "handleMouseDown"});
+	$s.pop();
+}
+GLDisplayList.prototype.handleMouseMove = function(position) {
+	$s.push("GLDisplayList::handleMouseMove");
+	var $spos = $s.length;
+	var result = this.hitareaPicker.pick(this.stage,position);
+	if(result != null) this.cursorClient.handCursor();
+	else this.cursorClient.defaultCursor();
+	$s.pop();
+}
+GLDisplayList.prototype.__class__ = GLDisplayList;
 if(!kumite.helloworldgl.shader) kumite.helloworldgl.shader = {}
 kumite.helloworldgl.shader.Fragment = function() { }
 kumite.helloworldgl.shader.Fragment.__name__ = ["kumite","helloworldgl","shader","Fragment"];
 kumite.helloworldgl.shader.Fragment.prototype.__class__ = kumite.helloworldgl.shader.Fragment;
+hsl.haxe.Signal = function(data,currentBond,currentTarget,origin) { if( data === $_ ) return; {
+	$s.push("hsl.haxe.Signal::new");
+	var $spos = $s.length;
+	this.data = data;
+	this.currentBond = currentBond;
+	this.currentTarget = currentTarget;
+	this.origin = origin;
+	this.immediatePropagationStopped = false;
+	this.propagationStopped = false;
+	$s.pop();
+}}
+hsl.haxe.Signal.__name__ = ["hsl","haxe","Signal"];
+hsl.haxe.Signal.prototype.currentBond = null;
+hsl.haxe.Signal.prototype.currentTarget = null;
+hsl.haxe.Signal.prototype.data = null;
+hsl.haxe.Signal.prototype.data1 = null;
+hsl.haxe.Signal.prototype.immediatePropagationStopped = null;
+hsl.haxe.Signal.prototype.origin = null;
+hsl.haxe.Signal.prototype.propagationStopped = null;
+hsl.haxe.Signal.prototype.getData = function() {
+	$s.push("hsl.haxe.Signal::getData");
+	var $spos = $s.length;
+	{
+		var $tmp = this.data;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe.Signal.prototype.stopImmediatePropagation = function() {
+	$s.push("hsl.haxe.Signal::stopImmediatePropagation");
+	var $spos = $s.length;
+	this.immediatePropagationStopped = true;
+	$s.pop();
+}
+hsl.haxe.Signal.prototype.stopPropagation = function() {
+	$s.push("hsl.haxe.Signal::stopPropagation");
+	var $spos = $s.length;
+	this.propagationStopped = true;
+	$s.pop();
+}
+hsl.haxe.Signal.prototype.toString = function() {
+	$s.push("hsl.haxe.Signal::toString");
+	var $spos = $s.length;
+	{
+		var $tmp = "[GenericSignal data=" + this.data + "]";
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe.Signal.prototype.__class__ = hsl.haxe.Signal;
 ValueType = { __ename__ : ["ValueType"], __constructs__ : ["TNull","TInt","TFloat","TBool","TObject","TFunction","TClass","TEnum","TUnknown"] }
 ValueType.TNull = ["TNull",0];
 ValueType.TNull.toString = $estr;
@@ -3975,6 +4778,68 @@ Xml.prototype.toString = function() {
 	$s.pop();
 }
 Xml.prototype.__class__ = Xml;
+GLHitareaPicker = function(p) { if( p === $_ ) return; {
+	$s.push("GLHitareaPicker::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+GLHitareaPicker.__name__ = ["GLHitareaPicker"];
+GLHitareaPicker.prototype.stageMousePosition = null;
+GLHitareaPicker.prototype.result = null;
+GLHitareaPicker.prototype.pick = function(stage,mousePosition) {
+	$s.push("GLHitareaPicker::pick");
+	var $spos = $s.length;
+	this.stageMousePosition = mousePosition.clone();
+	this.stageMousePosition.multiply(stage.stageWidth,stage.stageHeight);
+	this.result = null;
+	this.pickRecursive(stage,new Matrix4());
+	{
+		var $tmp = this.result;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GLHitareaPicker.prototype.pickRecursive = function(displayObjectContainer,parentMatrix) {
+	$s.push("GLHitareaPicker::pickRecursive");
+	var $spos = $s.length;
+	var _g = 0, _g1 = displayObjectContainer.children;
+	while(_g < _g1.length) {
+		var displayObject = _g1[_g];
+		++_g;
+		var matrix = this.pickDisplayObject(displayObject,parentMatrix);
+		if(Std["is"](displayObject,GLInteractiveObject)) {
+			var interactiveObject = (function($this) {
+				var $r;
+				var $t = displayObject;
+				if(Std["is"]($t,GLInteractiveObject)) $t;
+				else throw "Class cast error";
+				$r = $t;
+				return $r;
+			}(this));
+			if(interactiveObject.hitarea.isUnder(matrix,this.stageMousePosition)) this.result = interactiveObject;
+		}
+		if(Std["is"](displayObject,GLDisplayObjectContainer)) {
+			this.pickRecursive(displayObject,matrix);
+		}
+	}
+	$s.pop();
+}
+GLHitareaPicker.prototype.pickDisplayObject = function(displayObject,parentMatrix) {
+	$s.push("GLHitareaPicker::pickDisplayObject");
+	var $spos = $s.length;
+	displayObject.validateTransform();
+	var result = new Matrix4();
+	result.multiply(parentMatrix);
+	result.multiply(displayObject.matrix);
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+GLHitareaPicker.prototype.__class__ = GLHitareaPicker;
 haxe.Timer = function(time_ms) { if( time_ms === $_ ) return; {
 	$s.push("haxe.Timer::new");
 	var $spos = $s.length;
@@ -4049,6 +4914,127 @@ haxe.Timer.prototype.run = function() {
 	$s.pop();
 }
 haxe.Timer.prototype.__class__ = haxe.Timer;
+IntHash = function(p) { if( p === $_ ) return; {
+	$s.push("IntHash::new");
+	var $spos = $s.length;
+	this.h = {}
+	if(this.h.__proto__ != null) {
+		this.h.__proto__ = null;
+		delete(this.h.__proto__);
+	}
+	else null;
+	$s.pop();
+}}
+IntHash.__name__ = ["IntHash"];
+IntHash.prototype.h = null;
+IntHash.prototype.set = function(key,value) {
+	$s.push("IntHash::set");
+	var $spos = $s.length;
+	this.h[key] = value;
+	$s.pop();
+}
+IntHash.prototype.get = function(key) {
+	$s.push("IntHash::get");
+	var $spos = $s.length;
+	{
+		var $tmp = this.h[key];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+IntHash.prototype.exists = function(key) {
+	$s.push("IntHash::exists");
+	var $spos = $s.length;
+	{
+		var $tmp = this.h[key] != null;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+IntHash.prototype.remove = function(key) {
+	$s.push("IntHash::remove");
+	var $spos = $s.length;
+	if(this.h[key] == null) {
+		$s.pop();
+		return false;
+	}
+	delete(this.h[key]);
+	{
+		$s.pop();
+		return true;
+	}
+	$s.pop();
+}
+IntHash.prototype.keys = function() {
+	$s.push("IntHash::keys");
+	var $spos = $s.length;
+	var a = new Array();
+	
+			for( x in this.h )
+				a.push(x);
+		;
+	{
+		var $tmp = a.iterator();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+IntHash.prototype.iterator = function() {
+	$s.push("IntHash::iterator");
+	var $spos = $s.length;
+	{
+		var $tmp = { ref : this.h, it : this.keys(), hasNext : function() {
+			$s.push("IntHash::iterator@69");
+			var $spos = $s.length;
+			{
+				var $tmp = this.it.hasNext();
+				$s.pop();
+				return $tmp;
+			}
+			$s.pop();
+		}, next : function() {
+			$s.push("IntHash::iterator@70");
+			var $spos = $s.length;
+			var i = this.it.next();
+			{
+				var $tmp = this.ref[i];
+				$s.pop();
+				return $tmp;
+			}
+			$s.pop();
+		}};
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+IntHash.prototype.toString = function() {
+	$s.push("IntHash::toString");
+	var $spos = $s.length;
+	var s = new StringBuf();
+	s.b[s.b.length] = "{";
+	var it = this.keys();
+	{ var $it0 = it;
+	while( $it0.hasNext() ) { var i = $it0.next();
+	{
+		s.b[s.b.length] = i;
+		s.b[s.b.length] = " => ";
+		s.b[s.b.length] = Std.string(this.get(i));
+		if(it.hasNext()) s.b[s.b.length] = ", ";
+	}
+	}}
+	s.b[s.b.length] = "}";
+	{
+		var $tmp = s.b.join("");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+IntHash.prototype.__class__ = IntHash;
 kumite.stage.Stage = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.stage.Stage::new");
 	var $spos = $s.length;
@@ -4070,6 +5056,522 @@ kumite.stage.Stage.prototype.getAspect = function() {
 	$s.pop();
 }
 kumite.stage.Stage.prototype.__class__ = kumite.stage.Stage;
+GLStats = function(p) { if( p === $_ ) return; {
+	$s.push("GLStats::new");
+	var $spos = $s.length;
+	GLDisplayObject.call(this);
+	this.setWidth(64);
+	this.setHeight(32);
+	this.getContext().fillStyle = "rgba(0, 40, 0, 0.6)";
+	this.getContext().fillRect(0,0,this.width,this.height);
+	this.enterFrameSignaler.bind($closure(this,"handleEnterFrame"));
+	$s.pop();
+}}
+GLStats.__name__ = ["GLStats"];
+GLStats.__super__ = GLDisplayObject;
+for(var k in GLDisplayObject.prototype ) GLStats.prototype[k] = GLDisplayObject.prototype[k];
+GLStats.prototype.lastDraw = null;
+GLStats.prototype.handleEnterFrame = function(frame) {
+	$s.push("GLStats::handleEnterFrame");
+	var $spos = $s.length;
+	if(this.lastDraw < frame.time - 100) {
+		this.lastDraw = frame.time;
+		this.getContext().clearRect(0,0,this.width,this.height);
+		this.getContext().fillStyle = "rgba(0, 0, 0, 0.2)";
+		this.getContext().fillRect(0,0,this.width,bpmjs.Stats.getContents().length * 12 + 4);
+		this.getContext().font = "12px Arial";
+		this.getContext().fillStyle = "rgba(0, 255, 0, 0.4)";
+		var line = 0;
+		{
+			var _g = 0, _g1 = bpmjs.Stats.getContents();
+			while(_g < _g1.length) {
+				var message = _g1[_g];
+				++_g;
+				this.getContext().fillText(message,6,12 + line * 12);
+				line++;
+			}
+		}
+		this.canvasIsInvalid = true;
+	}
+	$s.pop();
+}
+GLStats.prototype.__class__ = GLStats;
+if(typeof shader=='undefined') shader = {}
+shader.DisplayObjectVertex = function() { }
+shader.DisplayObjectVertex.__name__ = ["shader","DisplayObjectVertex"];
+shader.DisplayObjectVertex.prototype.__class__ = shader.DisplayObjectVertex;
+hsl.haxe.DirectSignaler = function(subject,rejectNullData) { if( subject === $_ ) return; {
+	$s.push("hsl.haxe.DirectSignaler::new");
+	var $spos = $s.length;
+	if(null == subject) {
+		throw new haxe.exception.ArgumentNullException("subject",1);
+	}
+	this.subject = subject;
+	this.rejectNullData = rejectNullData;
+	this.sentinel = new hsl.haxe._DirectSignaler.SentinelBond();
+	$s.pop();
+}}
+hsl.haxe.DirectSignaler.__name__ = ["hsl","haxe","DirectSignaler"];
+hsl.haxe.DirectSignaler.prototype.bubblingTargets = null;
+hsl.haxe.DirectSignaler.prototype.isListenedTo = null;
+hsl.haxe.DirectSignaler.prototype.notificationTargets = null;
+hsl.haxe.DirectSignaler.prototype.rejectNullData = null;
+hsl.haxe.DirectSignaler.prototype.sentinel = null;
+hsl.haxe.DirectSignaler.prototype.subject = null;
+hsl.haxe.DirectSignaler.prototype.subjectClassNames = null;
+hsl.haxe.DirectSignaler.prototype.addBubblingTarget = function(value) {
+	$s.push("hsl.haxe.DirectSignaler::addBubblingTarget");
+	var $spos = $s.length;
+	if(null == this.bubblingTargets) {
+		this.bubblingTargets = new List();
+	}
+	this.bubblingTargets.add(value);
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.addNotificationTarget = function(value) {
+	$s.push("hsl.haxe.DirectSignaler::addNotificationTarget");
+	var $spos = $s.length;
+	if(null == this.notificationTargets) {
+		this.notificationTargets = new List();
+	}
+	this.notificationTargets.add(value);
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.bind = function(listener) {
+	$s.push("hsl.haxe.DirectSignaler::bind");
+	var $spos = $s.length;
+	if(null == listener) {
+		throw new haxe.exception.ArgumentNullException("listener",1);
+	}
+	{
+		var $tmp = this.sentinel.add(new hsl.haxe._DirectSignaler.RegularBond(listener));
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.bindAdvanced = function(listener) {
+	$s.push("hsl.haxe.DirectSignaler::bindAdvanced");
+	var $spos = $s.length;
+	if(null == listener) {
+		throw new haxe.exception.ArgumentNullException("listener",1);
+	}
+	{
+		var $tmp = this.sentinel.add(new hsl.haxe._DirectSignaler.AdvancedBond(listener));
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.bindVoid = function(listener) {
+	$s.push("hsl.haxe.DirectSignaler::bindVoid");
+	var $spos = $s.length;
+	if(null == listener) {
+		throw new haxe.exception.ArgumentNullException("listener",1);
+	}
+	{
+		var $tmp = this.sentinel.add(new hsl.haxe._DirectSignaler.NiladicBond(listener));
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.bubble = function(data,origin) {
+	$s.push("hsl.haxe.DirectSignaler::bubble");
+	var $spos = $s.length;
+	if(null != this.bubblingTargets) {
+		{ var $it0 = this.bubblingTargets.iterator();
+		while( $it0.hasNext() ) { var bubblingTarget = $it0.next();
+		{
+			bubblingTarget.dispatch(data,origin,{ fileName : "DirectSignaler.hx", lineNumber : 109, className : "hsl.haxe.DirectSignaler", methodName : "bubble"});
+		}
+		}}
+	}
+	if(null != this.notificationTargets) {
+		{ var $it1 = this.notificationTargets.iterator();
+		while( $it1.hasNext() ) { var notificationTarget = $it1.next();
+		{
+			notificationTarget.dispatch(null,origin,{ fileName : "DirectSignaler.hx", lineNumber : 114, className : "hsl.haxe.DirectSignaler", methodName : "bubble"});
+		}
+		}}
+	}
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.dispatch = function(data,origin,positionInformation) {
+	$s.push("hsl.haxe.DirectSignaler::dispatch");
+	var $spos = $s.length;
+	if("dispatchNative" != positionInformation.methodName && "bubble" != positionInformation.methodName) {
+		this.verifyCaller(positionInformation);
+	}
+	if(this.rejectNullData && null == data) {
+		throw new haxe.exception.Exception("Some data that was passed is null, but this signaler has been set to reject null data.",null,1);
+	}
+	origin = null == origin?this.subject:origin;
+	if(3 == this.sentinel.callListener(data,this.subject,origin,3)) {
+		{
+			if(null != this.bubblingTargets) {
+				{ var $it0 = this.bubblingTargets.iterator();
+				while( $it0.hasNext() ) { var bubblingTarget = $it0.next();
+				{
+					bubblingTarget.dispatch(data,origin,{ fileName : "DirectSignaler.hx", lineNumber : 109, className : "hsl.haxe.DirectSignaler", methodName : "bubble"});
+				}
+				}}
+			}
+			if(null != this.notificationTargets) {
+				{ var $it1 = this.notificationTargets.iterator();
+				while( $it1.hasNext() ) { var notificationTarget = $it1.next();
+				{
+					notificationTarget.dispatch(null,origin,{ fileName : "DirectSignaler.hx", lineNumber : 114, className : "hsl.haxe.DirectSignaler", methodName : "bubble"});
+				}
+				}}
+			}
+		}
+	}
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.getIsListenedTo = function() {
+	$s.push("hsl.haxe.DirectSignaler::getIsListenedTo");
+	var $spos = $s.length;
+	{
+		var $tmp = this.sentinel.getIsConnected();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.getOrigin = function(origin) {
+	$s.push("hsl.haxe.DirectSignaler::getOrigin");
+	var $spos = $s.length;
+	{
+		var $tmp = null == origin?this.subject:origin;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.verifyCaller = function(positionInformation) {
+	$s.push("hsl.haxe.DirectSignaler::verifyCaller");
+	var $spos = $s.length;
+	if(null == this.subjectClassNames) {
+		this.subjectClassNames = haxe.TypeTools.getClassNames(this.subject);
+	}
+	{ var $it0 = this.subjectClassNames.iterator();
+	while( $it0.hasNext() ) { var subjectClassName = $it0.next();
+	{
+		if(subjectClassName == positionInformation.className) {
+			{
+				$s.pop();
+				return;
+			}
+		}
+	}
+	}}
+	throw new haxe.exception.Exception("This method may only be called by the subject of the signaler.",null,2);
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.removeBubblingTarget = function(value) {
+	$s.push("hsl.haxe.DirectSignaler::removeBubblingTarget");
+	var $spos = $s.length;
+	if(null != this.bubblingTargets) {
+		this.bubblingTargets.remove(value);
+	}
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.removeNotificationTarget = function(value) {
+	$s.push("hsl.haxe.DirectSignaler::removeNotificationTarget");
+	var $spos = $s.length;
+	if(null != this.notificationTargets) {
+		this.notificationTargets.remove(value);
+	}
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.toString = function() {
+	$s.push("hsl.haxe.DirectSignaler::toString");
+	var $spos = $s.length;
+	{
+		var $tmp = "[Signaler isListenedTo=" + this.getIsListenedTo() + "]";
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.unbind = function(listener) {
+	$s.push("hsl.haxe.DirectSignaler::unbind");
+	var $spos = $s.length;
+	this.sentinel.remove(new hsl.haxe._DirectSignaler.RegularBond(listener));
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.unbindAdvanced = function(listener) {
+	$s.push("hsl.haxe.DirectSignaler::unbindAdvanced");
+	var $spos = $s.length;
+	this.sentinel.remove(new hsl.haxe._DirectSignaler.AdvancedBond(listener));
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.unbindVoid = function(listener) {
+	$s.push("hsl.haxe.DirectSignaler::unbindVoid");
+	var $spos = $s.length;
+	this.sentinel.remove(new hsl.haxe._DirectSignaler.NiladicBond(listener));
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.__class__ = hsl.haxe.DirectSignaler;
+hsl.haxe.DirectSignaler.__interfaces__ = [hsl.haxe.Signaler];
+if(!hsl.haxe._DirectSignaler) hsl.haxe._DirectSignaler = {}
+hsl.haxe._DirectSignaler.LinkedBond = function(p) { if( p === $_ ) return; {
+	$s.push("hsl.haxe._DirectSignaler.LinkedBond::new");
+	var $spos = $s.length;
+	hsl.haxe.Bond.call(this);
+	this.destroyed = false;
+	$s.pop();
+}}
+hsl.haxe._DirectSignaler.LinkedBond.__name__ = ["hsl","haxe","_DirectSignaler","LinkedBond"];
+hsl.haxe._DirectSignaler.LinkedBond.__super__ = hsl.haxe.Bond;
+for(var k in hsl.haxe.Bond.prototype ) hsl.haxe._DirectSignaler.LinkedBond.prototype[k] = hsl.haxe.Bond.prototype[k];
+hsl.haxe._DirectSignaler.LinkedBond.prototype.destroyed = null;
+hsl.haxe._DirectSignaler.LinkedBond.prototype.next = null;
+hsl.haxe._DirectSignaler.LinkedBond.prototype.previous = null;
+hsl.haxe._DirectSignaler.LinkedBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
+	$s.push("hsl.haxe._DirectSignaler.LinkedBond::callListener");
+	var $spos = $s.length;
+	{
+		$s.pop();
+		return 0;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.LinkedBond.prototype.determineEquals = function(value) {
+	$s.push("hsl.haxe._DirectSignaler.LinkedBond::determineEquals");
+	var $spos = $s.length;
+	{
+		$s.pop();
+		return false;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.LinkedBond.prototype.destroy = function() {
+	$s.push("hsl.haxe._DirectSignaler.LinkedBond::destroy");
+	var $spos = $s.length;
+	if(false == this.destroyed) {
+		this.previous.next = this.next;
+		this.next.previous = this.previous;
+		this.destroyed = true;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.LinkedBond.prototype.unlink = function() {
+	$s.push("hsl.haxe._DirectSignaler.LinkedBond::unlink");
+	var $spos = $s.length;
+	if(false == this.destroyed) {
+		this.previous.next = this.next;
+		this.next.previous = this.previous;
+		this.destroyed = true;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.LinkedBond.prototype.__class__ = hsl.haxe._DirectSignaler.LinkedBond;
+hsl.haxe._DirectSignaler.SentinelBond = function(p) { if( p === $_ ) return; {
+	$s.push("hsl.haxe._DirectSignaler.SentinelBond::new");
+	var $spos = $s.length;
+	hsl.haxe._DirectSignaler.LinkedBond.call(this);
+	this.next = this.previous = this;
+	$s.pop();
+}}
+hsl.haxe._DirectSignaler.SentinelBond.__name__ = ["hsl","haxe","_DirectSignaler","SentinelBond"];
+hsl.haxe._DirectSignaler.SentinelBond.__super__ = hsl.haxe._DirectSignaler.LinkedBond;
+for(var k in hsl.haxe._DirectSignaler.LinkedBond.prototype ) hsl.haxe._DirectSignaler.SentinelBond.prototype[k] = hsl.haxe._DirectSignaler.LinkedBond.prototype[k];
+hsl.haxe._DirectSignaler.SentinelBond.prototype.isConnected = null;
+hsl.haxe._DirectSignaler.SentinelBond.prototype.add = function(value) {
+	$s.push("hsl.haxe._DirectSignaler.SentinelBond::add");
+	var $spos = $s.length;
+	value.next = this;
+	value.previous = this.previous;
+	{
+		var $tmp = this.previous = this.previous.next = value;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.SentinelBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
+	$s.push("hsl.haxe._DirectSignaler.SentinelBond::callListener");
+	var $spos = $s.length;
+	var node = this.next;
+	while(node != this && 1 != propagationStatus) {
+		propagationStatus = node.callListener(data,currentTarget,origin,propagationStatus);
+		node = node.next;
+	}
+	{
+		$s.pop();
+		return propagationStatus;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.SentinelBond.prototype.getIsConnected = function() {
+	$s.push("hsl.haxe._DirectSignaler.SentinelBond::getIsConnected");
+	var $spos = $s.length;
+	{
+		var $tmp = this.next != this;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.SentinelBond.prototype.remove = function(value) {
+	$s.push("hsl.haxe._DirectSignaler.SentinelBond::remove");
+	var $spos = $s.length;
+	var node = this.next;
+	while(node != this) {
+		if(node.determineEquals(value)) {
+			if(false == node.destroyed) {
+				node.previous.next = node.next;
+				node.next.previous = node.previous;
+				node.destroyed = true;
+			}
+			break;
+		}
+		node = node.next;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.SentinelBond.prototype.__class__ = hsl.haxe._DirectSignaler.SentinelBond;
+hsl.haxe._DirectSignaler.RegularBond = function(listener) { if( listener === $_ ) return; {
+	$s.push("hsl.haxe._DirectSignaler.RegularBond::new");
+	var $spos = $s.length;
+	hsl.haxe._DirectSignaler.LinkedBond.call(this);
+	this.listener = listener;
+	$s.pop();
+}}
+hsl.haxe._DirectSignaler.RegularBond.__name__ = ["hsl","haxe","_DirectSignaler","RegularBond"];
+hsl.haxe._DirectSignaler.RegularBond.__super__ = hsl.haxe._DirectSignaler.LinkedBond;
+for(var k in hsl.haxe._DirectSignaler.LinkedBond.prototype ) hsl.haxe._DirectSignaler.RegularBond.prototype[k] = hsl.haxe._DirectSignaler.LinkedBond.prototype[k];
+hsl.haxe._DirectSignaler.RegularBond.prototype.listener = null;
+hsl.haxe._DirectSignaler.RegularBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
+	$s.push("hsl.haxe._DirectSignaler.RegularBond::callListener");
+	var $spos = $s.length;
+	if(false == this.halted) {
+		this.listener(data);
+		if(this.willDestroyOnUse) {
+			if(false == this.destroyed) {
+				this.previous.next = this.next;
+				this.next.previous = this.previous;
+				this.destroyed = true;
+			}
+		}
+	}
+	{
+		$s.pop();
+		return propagationStatus;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.RegularBond.prototype.determineEquals = function(value) {
+	$s.push("hsl.haxe._DirectSignaler.RegularBond::determineEquals");
+	var $spos = $s.length;
+	{
+		var $tmp = Std["is"](value,hsl.haxe._DirectSignaler.RegularBond) && Reflect.compareMethods(value.listener,this.listener);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.RegularBond.prototype.__class__ = hsl.haxe._DirectSignaler.RegularBond;
+hsl.haxe._DirectSignaler.NiladicBond = function(listener) { if( listener === $_ ) return; {
+	$s.push("hsl.haxe._DirectSignaler.NiladicBond::new");
+	var $spos = $s.length;
+	hsl.haxe._DirectSignaler.LinkedBond.call(this);
+	this.listener = listener;
+	$s.pop();
+}}
+hsl.haxe._DirectSignaler.NiladicBond.__name__ = ["hsl","haxe","_DirectSignaler","NiladicBond"];
+hsl.haxe._DirectSignaler.NiladicBond.__super__ = hsl.haxe._DirectSignaler.LinkedBond;
+for(var k in hsl.haxe._DirectSignaler.LinkedBond.prototype ) hsl.haxe._DirectSignaler.NiladicBond.prototype[k] = hsl.haxe._DirectSignaler.LinkedBond.prototype[k];
+hsl.haxe._DirectSignaler.NiladicBond.prototype.listener = null;
+hsl.haxe._DirectSignaler.NiladicBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
+	$s.push("hsl.haxe._DirectSignaler.NiladicBond::callListener");
+	var $spos = $s.length;
+	if(false == this.halted) {
+		this.listener();
+		if(this.willDestroyOnUse) {
+			if(false == this.destroyed) {
+				this.previous.next = this.next;
+				this.next.previous = this.previous;
+				this.destroyed = true;
+			}
+		}
+	}
+	{
+		$s.pop();
+		return propagationStatus;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.NiladicBond.prototype.determineEquals = function(value) {
+	$s.push("hsl.haxe._DirectSignaler.NiladicBond::determineEquals");
+	var $spos = $s.length;
+	{
+		var $tmp = Std["is"](value,hsl.haxe._DirectSignaler.NiladicBond) && Reflect.compareMethods(value.listener,this.listener);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.NiladicBond.prototype.__class__ = hsl.haxe._DirectSignaler.NiladicBond;
+hsl.haxe._DirectSignaler.AdvancedBond = function(listener) { if( listener === $_ ) return; {
+	$s.push("hsl.haxe._DirectSignaler.AdvancedBond::new");
+	var $spos = $s.length;
+	hsl.haxe._DirectSignaler.LinkedBond.call(this);
+	this.listener = listener;
+	$s.pop();
+}}
+hsl.haxe._DirectSignaler.AdvancedBond.__name__ = ["hsl","haxe","_DirectSignaler","AdvancedBond"];
+hsl.haxe._DirectSignaler.AdvancedBond.__super__ = hsl.haxe._DirectSignaler.LinkedBond;
+for(var k in hsl.haxe._DirectSignaler.LinkedBond.prototype ) hsl.haxe._DirectSignaler.AdvancedBond.prototype[k] = hsl.haxe._DirectSignaler.LinkedBond.prototype[k];
+hsl.haxe._DirectSignaler.AdvancedBond.prototype.listener = null;
+hsl.haxe._DirectSignaler.AdvancedBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
+	$s.push("hsl.haxe._DirectSignaler.AdvancedBond::callListener");
+	var $spos = $s.length;
+	if(this.halted == false) {
+		var signal = new hsl.haxe.Signal(data,this,currentTarget,origin);
+		this.listener(signal);
+		if(this.willDestroyOnUse) {
+			if(false == this.destroyed) {
+				this.previous.next = this.next;
+				this.next.previous = this.previous;
+				this.destroyed = true;
+			}
+		}
+		if(signal.immediatePropagationStopped) {
+			{
+				$s.pop();
+				return 1;
+			}
+		}
+		else if(signal.propagationStopped) {
+			{
+				$s.pop();
+				return 2;
+			}
+		}
+	}
+	{
+		$s.pop();
+		return propagationStatus;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.AdvancedBond.prototype.determineEquals = function(value) {
+	$s.push("hsl.haxe._DirectSignaler.AdvancedBond::determineEquals");
+	var $spos = $s.length;
+	{
+		var $tmp = Std["is"](value,hsl.haxe._DirectSignaler.AdvancedBond) && Reflect.compareMethods(value.listener,this.listener);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.AdvancedBond.prototype.__class__ = hsl.haxe._DirectSignaler.AdvancedBond;
+hsl.haxe._DirectSignaler.PropagationStatus = function() { }
+hsl.haxe._DirectSignaler.PropagationStatus.__name__ = ["hsl","haxe","_DirectSignaler","PropagationStatus"];
+hsl.haxe._DirectSignaler.PropagationStatus.prototype.__class__ = hsl.haxe._DirectSignaler.PropagationStatus;
 GLTexture = function(p) { if( p === $_ ) return; {
 	$s.push("GLTexture::new");
 	var $spos = $s.length;
@@ -4311,6 +5813,20 @@ kumite.time.Config.prototype.time = null;
 kumite.time.Config.prototype.timeController = null;
 kumite.time.Config.prototype.__class__ = kumite.time.Config;
 kumite.time.Config.__interfaces__ = [haxe.rtti.Infos];
+GLInteractiveObject = function(p) { if( p === $_ ) return; {
+	$s.push("GLInteractiveObject::new");
+	var $spos = $s.length;
+	GLDisplayObject.call(this);
+	GLDisplayList.getDefault().initInteractiveObject(this);
+	this.hitarea = new GLHitarea();
+	$s.pop();
+}}
+GLInteractiveObject.__name__ = ["GLInteractiveObject"];
+GLInteractiveObject.__super__ = GLDisplayObject;
+for(var k in GLDisplayObject.prototype ) GLInteractiveObject.prototype[k] = GLDisplayObject.prototype[k];
+GLInteractiveObject.prototype.hitarea = null;
+GLInteractiveObject.prototype.mouseDownSignaler = null;
+GLInteractiveObject.prototype.__class__ = GLInteractiveObject;
 kumite.time.TimeController = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.time.TimeController::new");
 	var $spos = $s.length;
@@ -5195,6 +6711,16 @@ Log.infoConsole = function(v,i) {
 	$s.pop();
 }
 Log.prototype.__class__ = Log;
+kumite.displaylist.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.displaylist.Config::new");
+	var $spos = $s.length;
+	this.displayListController = new kumite.displaylist.DisplayListController();
+	$s.pop();
+}}
+kumite.displaylist.Config.__name__ = ["kumite","displaylist","Config"];
+kumite.displaylist.Config.prototype.displayListController = null;
+kumite.displaylist.Config.prototype.__class__ = kumite.displaylist.Config;
+kumite.displaylist.Config.__interfaces__ = [haxe.rtti.Infos];
 Matrix3 = function(cloneFrom) { if( cloneFrom === $_ ) return; {
 	$s.push("Matrix3::new");
 	var $spos = $s.length;
@@ -5275,6 +6801,17 @@ Matrix3.prototype.toString = function() {
 	$s.pop();
 }
 Matrix3.prototype.__class__ = Matrix3;
+GLFrame = function(p) { if( p === $_ ) return; {
+	$s.push("GLFrame::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+GLFrame.__name__ = ["GLFrame"];
+GLFrame.prototype.time = null;
+GLFrame.prototype.timer = null;
+GLFrame.prototype.frameTime = null;
+GLFrame.prototype.__class__ = GLFrame;
 haxe.Log = function() { }
 haxe.Log.__name__ = ["haxe","Log"];
 haxe.Log.trace = function(v,infos) {
@@ -5290,6 +6827,9 @@ haxe.Log.clear = function() {
 	$s.pop();
 }
 haxe.Log.prototype.__class__ = haxe.Log;
+shader.DisplayObjectFragment = function() { }
+shader.DisplayObjectFragment.__name__ = ["shader","DisplayObjectFragment"];
+shader.DisplayObjectFragment.prototype.__class__ = shader.DisplayObjectFragment;
 Hash = function(p) { if( p === $_ ) return; {
 	$s.push("Hash::new");
 	var $spos = $s.length;
@@ -5539,6 +7079,22 @@ Std.random = function(x) {
 	$s.pop();
 }
 Std.prototype.__class__ = Std;
+kumite.mouse.MouseController = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.mouse.MouseController::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.mouse.MouseController.__name__ = ["kumite","mouse","MouseController"];
+kumite.mouse.MouseController.prototype.canvas = null;
+kumite.mouse.MouseController.prototype.start = function() {
+	$s.push("kumite.mouse.MouseController::start");
+	var $spos = $s.length;
+	GLMouseRegistry.getInstance().init(this.canvas.itself);
+	$s.pop();
+}
+kumite.mouse.MouseController.prototype.__class__ = kumite.mouse.MouseController;
+kumite.mouse.MouseController.__interfaces__ = [haxe.rtti.Infos];
 kumite.camera.Camera = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.camera.Camera::new");
 	var $spos = $s.length;
@@ -5548,6 +7104,24 @@ kumite.camera.Camera = function(p) { if( p === $_ ) return; {
 kumite.camera.Camera.__name__ = ["kumite","camera","Camera"];
 kumite.camera.Camera.prototype.matrix = null;
 kumite.camera.Camera.prototype.__class__ = kumite.camera.Camera;
+haxe.TypeTools = function() { }
+haxe.TypeTools.__name__ = ["haxe","TypeTools"];
+haxe.TypeTools.getClassNames = function(value) {
+	$s.push("haxe.TypeTools::getClassNames");
+	var $spos = $s.length;
+	var result = new List();
+	var valueClass = Std["is"](value,Class)?value:Type.getClass(value);
+	while(null != valueClass) {
+		result.add(Type.getClassName(valueClass));
+		valueClass = Type.getSuperClass(valueClass);
+	}
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+haxe.TypeTools.prototype.__class__ = haxe.TypeTools;
 kumite.canvas.Config = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.canvas.Config::new");
 	var $spos = $s.length;
@@ -5564,7 +7138,7 @@ Main = function(canvas) { if( canvas === $_ ) return; {
 	$s.push("Main::new");
 	var $spos = $s.length;
 	try {
-		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.time.Config,kumite.projection.Config,kumite.camera.Config,kumite.helloworldgl.Config]);
+		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.time.Config,kumite.projection.Config,kumite.camera.Config,kumite.mouse.Config,kumite.displaylist.Config,kumite.helloworldgl.Config]);
 	}
 	catch( $e0 ) {
 		{
@@ -5573,7 +7147,7 @@ Main = function(canvas) { if( canvas === $_ ) return; {
 				$e = [];
 				while($s.length >= $spos) $e.unshift($s.pop());
 				$s.push($e[0]);
-				Log.error("Error building application! \n" + e,null,null,null,null,null,null,{ fileName : "Main.hx", lineNumber : 40, className : "Main", methodName : "new"});
+				Log.error("Error building application! \n" + e,null,null,null,null,null,null,{ fileName : "Main.hx", lineNumber : 42, className : "Main", methodName : "new"});
 			}
 		}
 	}
@@ -5629,6 +7203,113 @@ kumite.webgl.InitAction.prototype.init = function() {
 }
 kumite.webgl.InitAction.prototype.__class__ = kumite.webgl.InitAction;
 kumite.webgl.InitAction.__interfaces__ = [haxe.rtti.Infos];
+GLDisplayListRenderer = function(p) { if( p === $_ ) return; {
+	$s.push("GLDisplayListRenderer::new");
+	var $spos = $s.length;
+	this.textures = new IntHash();
+	$s.pop();
+}}
+GLDisplayListRenderer.__name__ = ["GLDisplayListRenderer"];
+GLDisplayListRenderer.prototype.shaderProgram = null;
+GLDisplayListRenderer.prototype.vertexPositionAttribute = null;
+GLDisplayListRenderer.prototype.vertexBuffer = null;
+GLDisplayListRenderer.prototype.textureUniform = null;
+GLDisplayListRenderer.prototype.projectionMatrixUniform = null;
+GLDisplayListRenderer.prototype.objectMatrixUniform = null;
+GLDisplayListRenderer.prototype.sizeUniform = null;
+GLDisplayListRenderer.prototype.alphaUniform = null;
+GLDisplayListRenderer.prototype.textures = null;
+GLDisplayListRenderer.prototype.init = function() {
+	$s.push("GLDisplayListRenderer::init");
+	var $spos = $s.length;
+	var gl = GL.gl;
+	this.shaderProgram = GL.createProgram(shader.DisplayObjectVertex,shader.DisplayObjectFragment);
+	this.vertexPositionAttribute = gl.getAttribLocation(this.shaderProgram,"vertexPosition");
+	this.vertexBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER,this.vertexBuffer);
+	var vertices = [0,0,1,0,0,1,1,1];
+	gl.bufferData(gl.ARRAY_BUFFER,new Int8Array(vertices),gl.STATIC_DRAW);
+	this.textureUniform = GL.getUniformLocation("texture");
+	this.projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
+	this.objectMatrixUniform = GL.getUniformLocation("objectMatrix");
+	this.sizeUniform = GL.getUniformLocation("size");
+	this.alphaUniform = GL.getUniformLocation("alpha");
+	$s.pop();
+}
+GLDisplayListRenderer.prototype.render = function(width,height) {
+	$s.push("GLDisplayListRenderer::render");
+	var $spos = $s.length;
+	var gl = GL.gl;
+	GL.useProgram(this.shaderProgram);
+	gl.viewport(0,0,width,height);
+	gl.enable(gl.BLEND);
+	gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+	gl.bindBuffer(gl.ARRAY_BUFFER,this.vertexBuffer);
+	GL.gl.enableVertexAttribArray(this.vertexPositionAttribute);
+	gl.vertexAttribPointer(this.vertexPositionAttribute,2,gl.BYTE,false,0,0);
+	var projectionMatrix = new Matrix4();
+	projectionMatrix.ortho(0,width,height,0,0,1);
+	gl.uniformMatrix4fv(this.projectionMatrixUniform.location,false,projectionMatrix.buffer);
+	var stage = GLDisplayList.getDefault().stage;
+	gl.activeTexture(gl.TEXTURE0);
+	gl.uniform1i(this.textureUniform.location,0);
+	this.renderRecursive(stage,new Matrix4());
+	gl.disable(gl.BLEND);
+	$s.pop();
+}
+GLDisplayListRenderer.prototype.renderRecursive = function(displayObjectContainer,parentMatrix) {
+	$s.push("GLDisplayListRenderer::renderRecursive");
+	var $spos = $s.length;
+	var _g = 0, _g1 = displayObjectContainer.children;
+	while(_g < _g1.length) {
+		var displayObject = _g1[_g];
+		++_g;
+		var matrix = this.renderDisplayObject(displayObject,parentMatrix);
+		if(Std["is"](displayObject,GLDisplayObjectContainer)) {
+			this.renderRecursive(displayObject,matrix);
+		}
+	}
+	$s.pop();
+}
+GLDisplayListRenderer.prototype.renderDisplayObject = function(displayObject,parentMatrix) {
+	$s.push("GLDisplayListRenderer::renderDisplayObject");
+	var $spos = $s.length;
+	var gl = GL.gl;
+	displayObject.validateTransform();
+	var result = new Matrix4();
+	result.multiply(parentMatrix);
+	result.multiply(displayObject.matrix);
+	if(displayObject.skipDraw) {
+		$s.pop();
+		return result;
+	}
+	var texture;
+	if(!this.textures.exists(displayObject.id)) {
+		texture = gl.createTexture();
+		gl.bindTexture(gl.TEXTURE_2D,texture);
+		gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+		gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);
+		this.textures.set(displayObject.id,texture);
+	}
+	else {
+		texture = this.textures.get(displayObject.id);
+		gl.bindTexture(gl.TEXTURE_2D,texture);
+	}
+	if(displayObject.canvasIsInvalid) {
+		gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,displayObject.getCanvas());
+		displayObject.canvasIsInvalid = false;
+	}
+	gl.uniformMatrix4fv(this.objectMatrixUniform.location,false,result.buffer);
+	gl.uniform2f(this.sizeUniform.location,displayObject.width,displayObject.height);
+	gl.uniform1f(this.alphaUniform.location,displayObject.alpha);
+	gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+GLDisplayListRenderer.prototype.__class__ = GLDisplayListRenderer;
 haxe.rtti.CType = { __ename__ : ["haxe","rtti","CType"], __constructs__ : ["CUnknown","CEnum","CClass","CTypedef","CFunction","CAnonymous","CDynamic"] }
 haxe.rtti.CType.CUnknown = ["CUnknown",0];
 haxe.rtti.CType.CUnknown.toString = $estr;
@@ -6995,11 +8676,14 @@ kumite.helloworldgl.HelloWorld.__meta__ = { fields : { stage : { Inject : null},
 kumite.helloworldgl.HelloWorld.__rtti = "<class path=\"kumite.helloworldgl.HelloWorld\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<worldViewMatrixUniform><c path=\"GLUniformLocation\"/></worldViewMatrixUniform>\n\t<colorUniform><c path=\"GLUniformLocation\"/></colorUniform>\n\t<start public=\"1\" set=\"method\" line=\"36\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<render public=\"1\" set=\"method\" line=\"54\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<drawRect set=\"method\" line=\"75\"><f a=\"x:y:z:color\">\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Color\"/>\n\t<e path=\"Void\"/>\n</f></drawRect>\n\t<new public=\"1\" set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.stage.StageResizeAction.__meta__ = { fields : { messenger : { Messenger : null}, stage : { Inject : null}, initPrepare : { Sequence : ["boot","initPrepare"]}, startComplete : { Sequence : ["boot","startComplete"]}}};
 kumite.stage.StageResizeAction.__rtti = "<class path=\"kumite.stage.StageResizeAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<startComplete public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<onResize set=\"method\" line=\"39\"><f a=\"?event\">\n\t<t path=\"js.Event\"/>\n\t<e path=\"Void\"/>\n</f></onResize>\n\t<updateSize set=\"method\" line=\"45\"><f a=\"\"><e path=\"Void\"/></f></updateSize>\n\t<sendResizeMessage set=\"method\" line=\"51\"><f a=\"\"><e path=\"Void\"/></f></sendResizeMessage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.mouse.Config.__rtti = "<class path=\"kumite.mouse.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<mouseController public=\"1\"><c path=\"kumite.mouse.MouseController\"/></mouseController>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.webgl.Config.__rtti = "<class path=\"kumite.webgl.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<initAction public=\"1\"><c path=\"kumite.webgl.InitAction\"/></initAction>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.helloworldgl.Config.__rtti = "<class path=\"kumite.helloworldgl.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<helloWorld public=\"1\"><c path=\"kumite.helloworldgl.HelloWorld\"/></helloWorld>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs.Sequencer.__meta__ = { fields : { context : { Inject : null}}};
 bpmjs.Sequencer.__rtti = "<class path=\"bpmjs.Sequencer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context public=\"1\"><c path=\"bpmjs.Context\"/></context>\n\t<start public=\"1\" set=\"method\" line=\"14\"><f a=\"name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></start>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.time.Time.EXPECTED_FRAMERATE = 60;
+GLCursorClient.DEFAULT = "default";
+GLCursorClient.HAND = "pointer";
 kumite.camera.Config.__rtti = "<class path=\"kumite.camera.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<cameraMouseMover public=\"1\"><c path=\"kumite.camera.CameraMouseMover\"/></cameraMouseMover>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.stage.Config.__rtti = "<class path=\"kumite.stage.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<stageResizeAction public=\"1\"><c path=\"kumite.stage.StageResizeAction\"/></stageResizeAction>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.launch.Launcher.__meta__ = { fields : { sequencer : { Inject : null}, handlePostComplete : { PostComplete : null}, showError : { Sequence : ["boot","error"]}}};
@@ -7008,8 +8692,11 @@ LogLevel.INFO = new LogLevel(1);
 LogLevel.WARN = new LogLevel(2);
 LogLevel.ERROR = new LogLevel(3);
 LogLevel.OFF = new LogLevel(4);
+bpmjs.Stats.fps = 0;
 kumite.canvas.CanvasController.__meta__ = { fields : { canvas : { Inject : null}, stage : { Inject : null}, initPrepare : { Sequence : ["boot","initPrepare"]}, init : { Sequence : ["boot","init"]}, updateCanvasSizeFromStage : { Message : null}}};
 kumite.canvas.CanvasController.__rtti = "<class path=\"kumite.canvas.CanvasController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<init public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateCanvasSizeFromStage public=\"1\" set=\"method\" line=\"33\"><f a=\"?message\">\n\t<c path=\"kumite.stage.StageResizeMessage\"/>\n\t<e path=\"Void\"/>\n</f></updateCanvasSizeFromStage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.displaylist.DisplayListController.__meta__ = { fields : { stage : { Inject : null}, start : { Sequence : ["boot","start"]}, render : { Message : null}}};
+kumite.displaylist.DisplayListController.__rtti = "<class path=\"kumite.displaylist.DisplayListController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<renderer><c path=\"GLDisplayListRenderer\"/></renderer>\n\t<start public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<render public=\"1\" set=\"method\" line=\"30\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"17\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.helloworldgl.shader.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform vec4 color;\n\n\tvoid main(void)\n\t{\n\t\tgl_FragColor = color;\n\t}\n\n"]}};
 Xml.enode = new EReg("^<([a-zA-Z0-9:_-]+)","");
 Xml.ecdata = new EReg("^<!\\[CDATA\\[","i");
@@ -7024,6 +8711,10 @@ Xml.ecdata_end = new EReg("\\]\\]>","");
 Xml.edoctype_elt = new EReg("[\\[|\\]>]","");
 Xml.ecomment_end = new EReg("-->","");
 haxe.Timer.arr = new Array();
+shader.DisplayObjectVertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 objectMatrix;\n\tuniform vec2 size;\n\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * objectMatrix * (vec4(size, 1.0, 1.0) * vec4(vertexPosition, 0.0, 1.0));\n\t\ttextureCoord = vertexPosition.xy;\n\t}\n\n"]}};
+hsl.haxe._DirectSignaler.PropagationStatus.IMMEDIATELY_STOPPED = 1;
+hsl.haxe._DirectSignaler.PropagationStatus.STOPPED = 2;
+hsl.haxe._DirectSignaler.PropagationStatus.UNDISTURBED = 3;
 kumite.projection.Config.__rtti = "<class path=\"kumite.projection.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<projectionController public=\"1\"><c path=\"kumite.projection.ProjectionController\"/></projectionController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.time.Config.__rtti = "<class path=\"kumite.time.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<timeController public=\"1\"><c path=\"kumite.time.TimeController\"/></timeController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.time.TimeController.__meta__ = { fields : { time : { Inject : null}, messenger : { Messenger : null}, startComplete : { Sequence : ["boot","startComplete"]}}};
@@ -7031,8 +8722,12 @@ kumite.time.TimeController.__rtti = "<class path=\"kumite.time.TimeController\" 
 kumite.projection.ProjectionController.__meta__ = { fields : { projection : { Inject : null}, stage : { Inject : null}, init : { Sequence : ["boot","init"]}, updateProjectionSizeFromStage : { Message : null}}};
 kumite.projection.ProjectionController.__rtti = "<class path=\"kumite.projection.ProjectionController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<fov public=\"1\"><c path=\"Float\"/></fov>\n\t<near public=\"1\"><c path=\"Float\"/></near>\n\t<far public=\"1\"><c path=\"Float\"/></far>\n\t<init public=\"1\" set=\"method\" line=\"23\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateProjectionSizeFromStage public=\"1\" set=\"method\" line=\"30\"><f a=\"?message\">\n\t<c path=\"kumite.stage.StageResizeMessage\"/>\n\t<e path=\"Void\"/>\n</f></updateProjectionSizeFromStage>\n\t<new public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Log.filters = new Array();
+kumite.displaylist.Config.__rtti = "<class path=\"kumite.displaylist.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<displayListController public=\"1\"><c path=\"kumite.displaylist.DisplayListController\"/></displayListController>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+shader.DisplayObjectFragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform sampler2D texture;\n\tuniform float alpha;\n\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tvec4 color = texture2D(texture, textureCoord);\n\t\tgl_FragColor = color * vec4(1.0, 1.0, 1.0, alpha);\n\t}\n\n"]}};
 kumite.camera.CameraMouseMover.__meta__ = { fields : { camera : { Inject : null}, init : { Sequence : ["boot","init"]}}};
 kumite.camera.CameraMouseMover.__rtti = "<class path=\"kumite.camera.CameraMouseMover\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<init public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateCamera set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></updateCamera>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.mouse.MouseController.__meta__ = { fields : { canvas : { Inject : null}, start : { Sequence : ["boot","init"]}}};
+kumite.mouse.MouseController.__rtti = "<class path=\"kumite.mouse.MouseController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<start public=\"1\" set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<new public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.canvas.Config.__rtti = "<class path=\"kumite.canvas.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvasCase public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvasCase>\n\t<canvasController public=\"1\"><c path=\"kumite.canvas.CanvasController\"/></canvasController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.helloworldgl.shader.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 worldViewMatrix;\n\n\tvarying vec4 vertex;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);\n\t\tvertex = vec4(vertexPosition, 0.0, 1.0);\n\t}\n\n"]}};
 kumite.webgl.InitAction.__meta__ = { fields : { canvas : { Inject : null}, antialias : { Inject : null}, init : { Sequence : ["boot","init"]}}};

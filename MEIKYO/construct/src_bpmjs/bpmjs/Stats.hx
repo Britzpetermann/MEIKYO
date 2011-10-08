@@ -13,7 +13,7 @@ class Stats {
 	private static var finishedTimes : Array<{start : Float, stop : Float, message : String}>;
 	private static var messages : Array<String>;
 
-	public static function init(content : HtmlDom)
+	public static function init()
 	{
 		clear();
 		initialized = true;
@@ -79,7 +79,7 @@ class Stats {
 	static function checkInit()
 	{
 		if (!initialized)
-			init(Lib.document.body);
+			init();
 	}
 
 }

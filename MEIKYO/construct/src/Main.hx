@@ -32,6 +32,8 @@ class Main {
 					kumite.time.Config,
 					kumite.projection.Config,
 					kumite.camera.Config,
+					kumite.mouse.Config,
+					kumite.displaylist.Config,
 					kumite.helloworldgl.Config,
 				]);
 		}
