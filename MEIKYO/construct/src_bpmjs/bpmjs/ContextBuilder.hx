@@ -2,8 +2,9 @@ package bpmjs;
 
 import haxe.rtti.CType;
 import haxe.rtti.Meta;
-import bpmjs.FrontController;
+import bpmjs.FrontMessenger;
 import bpmjs.Context;
+import bpmjs.Messenger;
 
 class ContextBuilder
 {
@@ -40,7 +41,7 @@ class ContextBuilder
 	static function createDefaultContextConfig()
 	{
 		var defaultContextConfig = new ContextConfig();
-		defaultContextConfig.frontController = new DefaultFrontController();
+		defaultContextConfig.frontMessenger = new DefaultFrontMessenger();
 		return defaultContextConfig;
 	}
 
@@ -56,7 +57,8 @@ class ContextBuilder
 	{
 		var contextObject = context.addObject("configured", Type.getClass(object), object);
 		wireContextObject(contextObject);
-		registerDispatchersForContextObject(contextObject);
+		registerMessengerByObjectTypeForContextObject(contextObject);
+		registerMessengersForContextObject(contextObject);
 		registerReceiversForContextObject(contextObject);
 		doCompleteCallForContextObject(contextObject);
 	}
@@ -72,7 +74,8 @@ class ContextBuilder
 		}
 
 		wireInjections();
-		registerDispatchers();
+		registerMessengersByObjectType();
+		registerMessengers();
 		registerReceivers();
 		doCompleteCall();
 		doPostCompleteCall();
@@ -81,7 +84,7 @@ class ContextBuilder
 	function createObjects(config : Dynamic, configClass : Class<Dynamic>)
 	{
 		if (untyped configClass.__rtti == null)
-			throw createError("Config class must have RTTI enabled!");
+			throw createError("Config class " + Type.getClassName(configClass) + " must have RTTI enabled!");
 
 		var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(untyped configClass.__rtti).firstElement());
 		var classDef : Classdef = cast TypeApi.typeInfos(infos);
@@ -90,6 +93,8 @@ class ContextBuilder
 			switch(field.type) {
 				case CClass(name, params):
 					var type = Type.resolveClass(name);
+					if (type == null)
+						throw "Type of class " + name + " is null!";
 					var instance = Reflect.field(config, field.name);
 					context.addObject(field.name, type, instance);
 
@@ -143,20 +148,53 @@ class ContextBuilder
 		}
 	}
 
-	function registerDispatchers()
+	function registerMessengersByObjectType()
 	{
 		for(contextObject in context.objects)
 		{
-			registerDispatchersForContextObject(contextObject);
+			registerMessengerByObjectTypeForContextObject(contextObject);
 		}
 	}
 
-	function registerDispatchersForContextObject(contextObject : ContextObject)
+	function registerMessengerByObjectTypeForContextObject(contextObject : ContextObject)
 	{
-		var metaDatas = Meta.getType(contextObject.type);
-		if (metaDatas != null && Reflect.hasField(metaDatas, "ManagedEvents"))
+		if (Std.is(contextObject.object, Messenger))
 		{
-			contextConfig.frontController.addDispatcher(contextObject.object);
+			contextConfig.frontMessenger.addMessenger(contextObject.object);
+		}
+	}
+
+	function registerMessengers()
+	{
+		for(contextObject in context.objects)
+		{
+			registerMessengersForContextObject(contextObject);
+		}
+	}
+
+	function registerMessengersForContextObject(contextObject : ContextObject)
+	{
+		if (untyped contextObject.type.__rtti == null)
+			return;
+
+		var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(untyped contextObject.type.__rtti).firstElement());
+		var classDef : Classdef = cast TypeApi.typeInfos(infos);
+		var metaDatas = Meta.getFields(contextObject.type);
+
+		for(field in classDef.fields)
+		{
+			switch(field.type) {
+				case CClass(name, params):
+					var meta = Reflect.field(metaDatas, field.name);
+					if (meta != null && Reflect.hasField(meta, "Messenger"))
+					{
+						var messenger = new Messenger();
+						Reflect.setField(contextObject.object, field.name, messenger);
+						contextConfig.frontMessenger.addMessenger(messenger);
+					}
+				default:
+					continue;
+			}
 		}
 	}
 
@@ -182,14 +220,14 @@ class ContextBuilder
 			switch(field.type) {
 				case CFunction(args, ret):
 					var meta = Reflect.field(metaDatas, field.name);
-					if (meta != null && Reflect.hasField(meta, "MessageHandler"))
+					if (meta != null && Reflect.hasField(meta, "Message"))
 					{
 						for (argument in args)
 						{
 							switch(argument.t) {
 								case CClass(name, params):
 									var type = Type.resolveClass(name);
-									contextConfig.frontController.addReceiver(contextObject.object, field.name, type);
+									contextConfig.frontMessenger.addReceiver(contextObject.object, field.name, type);
 								default: continue;
 							}
 							break;

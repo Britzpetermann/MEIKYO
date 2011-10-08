@@ -10,18 +10,7 @@ body {
     position: absolute;
     background: #000000;
     color: #ffffff;
-    opacity:0.3;
-    white-space:pre;
-}
-
-.preloader {
-    font-family: "Courier";
-    margin-top: 10px;
-    margin-left: 10px;
-    font-size: 12px;
-    position: absolute;
-    background: #000000;
-    color: #ffffff;
+    opacity:0.6;
     white-space:pre;
 }
 

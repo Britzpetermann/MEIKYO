@@ -1,7 +1,7 @@
 import haxe.unit.TestCase;
 import haxe.PosInfos;
 
-import bpmjs.TestEvent;
+import bpmjs.TestMessenger;
 
 import bpmjs.TestGetObject;
 import bpmjs.TestInject;
@@ -9,7 +9,7 @@ import bpmjs.TestConfigure;
 import bpmjs.TestComplete;
 import bpmjs.TestDynamic;
 import bpmjs.TestError;
-import bpmjs.TestFrontController;
+import bpmjs.TestFrontMessenger;
 import bpmjs.TestSequencer;
 import bpmjs.integration.TestMessaging;
 import bpmjs.integration.TestMultipleConfigs;
@@ -29,7 +29,7 @@ class TestRunner {
 
 		addBPMJSTests();
 		addContextBuilderTests();
-		addFrontControllerTests();
+		addFrontMessengerTests();
 		addIntegrationTests();
 		addSequencerTests();
 
@@ -40,7 +40,7 @@ class TestRunner {
 
 	function addBPMJSTests()
 	{
-		runner.add(new TestEvent());
+		runner.add(new TestMessenger());
 	}
 
 	function addContextBuilderTests()
@@ -53,9 +53,9 @@ class TestRunner {
 		runner.add(new TestDynamic());
 	}
 
-	function addFrontControllerTests()
+	function addFrontMessengerTests()
 	{
-		runner.add(new TestFrontController());
+		runner.add(new TestFrontMessenger());
 	}
 
 	function addIntegrationTests()

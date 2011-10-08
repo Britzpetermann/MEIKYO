@@ -2,9 +2,9 @@ package bpmjs.integration;
 
 import TestRunner;
 
-import bpmjs.Event;
 import bpmjs.ContextBuilder;
-import bpmjs.FrontController;
+import bpmjs.FrontMessenger;
+import haxe.rtti.Infos;
 
 class TestMessaging extends SummerTestCase
 {
@@ -18,50 +18,50 @@ class TestMessaging extends SummerTestCase
 	public function testDefaultFrontController()
 	{
 		var context = ContextBuilder.build(Config);
-		assertNotNull(context.contextConfig.frontController);
+		assertNotNull(context.contextConfig.frontMessenger);
 
-		var frontControllerClass = Type.getClass(context.contextConfig.frontController);
-		assertEquals(DefaultFrontController, frontControllerClass);
+		var frontControllerClass = Type.getClass(context.contextConfig.frontMessenger);
+		assertEquals(DefaultFrontMessenger, frontControllerClass);
 	}
 
 	public function testCustomFrontController()
 	{
 		var customContextConfig = new ContextConfig();
-		customContextConfig.frontController = new MockFrontController();
+		customContextConfig.frontMessenger = new MockFrontMessenger();
 
 		var context = ContextBuilder.build(Config, customContextConfig);
-		assertNotNull(context.contextConfig.frontController);
+		assertNotNull(context.contextConfig.frontMessenger);
 
-		var frontControllerClass = Type.getClass(context.contextConfig.frontController);
-		assertEquals(MockFrontController, frontControllerClass);
+		var frontControllerClass = Type.getClass(context.contextConfig.frontMessenger);
+		assertEquals(MockFrontMessenger, frontControllerClass);
 	}
 
-	public function testDispatcherAdded()
+	public function testMessengerAdded()
 	{
-		var mockFrontController = new MockFrontController();
+		var mockFrontMessenger = new MockFrontMessenger();
 
 		var customContextConfig = new ContextConfig();
-		customContextConfig.frontController = mockFrontController;
+		customContextConfig.frontMessenger = mockFrontMessenger;
 
 		var context = ContextBuilder.build(Config, customContextConfig);
 
-		assertEquals(1, mockFrontController.addDispatcherCount);
-		assertEquals(context.getObjectByType(A), mockFrontController.lastDispatcher);
+		assertEquals(1, mockFrontMessenger.addMessengerCount);
+		assertEquals(context.getObjectByType(A), mockFrontMessenger.lastMessenger);
 	}
 
 	public function testReceiverAdded()
 	{
-		var mockFrontController = new MockFrontController();
+		var mockFrontMessenger = new MockFrontMessenger();
 
 		var customContextConfig = new ContextConfig();
-		customContextConfig.frontController = mockFrontController;
+		customContextConfig.frontMessenger = mockFrontMessenger;
 
 		var context = ContextBuilder.build(Config, customContextConfig);
 
-		assertEquals(1, mockFrontController.addReceiverCount);
-		assertEquals(context.getObjectByType(B), mockFrontController.lastReceivingObject);
-		assertEquals("handleStart", mockFrontController.lastMethodName);
-		assertEquals(Event, cast mockFrontController.lastEventClass);
+		assertEquals(1, mockFrontMessenger.addReceiverCount);
+		assertEquals(context.getObjectByType(B), mockFrontMessenger.lastReceivingObject);
+		assertEquals("handleStart", mockFrontMessenger.lastMethodName);
+		assertEquals(Message, cast mockFrontMessenger.lastMessageClass);
 	}
 
 	public function testMessageReceived()
@@ -69,38 +69,44 @@ class TestMessaging extends SummerTestCase
 		ContextBuilder.build(Config);
 		assertEquals(1, messageReceivedCount);
 	}
+	
+	public function testMessageReceivedWithMessenger()
+	{
+		ContextBuilder.build(ConfigWithMessenger);
+		assertEquals(1, messageReceivedCount);
+	}
 }
 
-private class MockFrontController implements FrontController
+private class MockFrontMessenger implements FrontMessenger
 {
-	public var addDispatcherCount : Int;
-	public var lastDispatcher : EventDispatcher;
+	public var addMessengerCount : Int;
+	public var lastMessenger : Messenger;
 	
 	public var addReceiverCount : Int;
 	public var lastReceivingObject : Dynamic;
 	public var lastMethodName : String;
-	public var lastEventClass : Class<Dynamic>;
+	public var lastMessageClass : Class<Dynamic>;
 
 	public function new()
 	{
-		addDispatcherCount = 0;
+		addMessengerCount = 0;
 		addReceiverCount = 0;
 	}
 
-	public function addDispatcher(dispatcher : EventDispatcher) : Void
+	public function addMessenger(messenger : Messenger) : Void
 	{
-		addDispatcherCount++;
+		addMessengerCount++;
 
-		lastDispatcher = dispatcher;
+		lastMessenger = messenger;
 	}
 
-	public function addReceiver(receivingObject : Dynamic, methodName : String, eventClass : Class<Dynamic>) : Void
+	public function addReceiver(receivingObject : Dynamic, methodName : String, messageClass : Class<Dynamic>) : Void
 	{
 		addReceiverCount++;
 
 		lastReceivingObject = receivingObject;
 		lastMethodName = methodName;
-		lastEventClass = eventClass;
+		lastMessageClass = messageClass;
 	}
 }
 
@@ -116,26 +122,57 @@ private class Config implements haxe.rtti.Infos
 	}
 }
 
-@ManagedEvents()
-private class A extends EventDispatcher
+private class ConfigWithMessenger implements haxe.rtti.Infos
+{
+	public var a : AWithMessenger;
+	public var b : B;
+
+	public function new()
+	{
+		a = new AWithMessenger();
+		b = new B();
+	}
+}
+
+
+private class A extends Messenger
 {
 	@Complete
 	public function handleComplete()
 	{
-		dispatchEvent(new Event());
+		send(new Message());
 	}
 }
 
-private class B implements haxe.rtti.Infos
+private class AWithMessenger implements Infos
+{
+	@Messenger
+	public var messenger : Messenger;
+	
+	public function new() {}
+	
+	@Complete
+	public function handleComplete()
+	{
+		messenger.send(new Message());
+	}
+}
+
+private class B implements Infos
 {
 	public function new()
 	{
 
 	}
 
-	@MessageHandler
-	public function handleStart(event : Event)
+	@Message
+	public function handleStart(message : Message)
 	{
 		TestMessaging.messageReceivedCount++;
 	}
+}
+
+class Message
+{
+	public function new() {}
 }

@@ -1,10 +1,10 @@
 package bpmjs;
 
-import bpmjs.FrontController;
+import bpmjs.FrontMessenger;
 
 class ContextConfig
 {
-	public var frontController : FrontController;
+	public var frontMessenger : FrontMessenger;
 
 	public function new()
 	{

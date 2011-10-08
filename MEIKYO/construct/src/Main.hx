@@ -26,11 +26,12 @@ class Main {
 			var context = bpmjs.ContextBuilder.buildAll([
 					kumite.launch.Config,
 					kumite.stage.Config,
+					kumite.canvas.Config,
 			]);
 		}
 		catch(e : Dynamic)
 		{
-			Log.error("Error building application!");
+			Log.error("Error building application! \n" + e);
 		}
 	}
 

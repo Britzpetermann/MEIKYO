@@ -1252,63 +1252,6 @@ Log.infoConsole = function(v,i) {
 	$s.pop();
 }
 Log.prototype.__class__ = Log;
-bpmjs.EventDispatcher = function(p) { if( p === $_ ) return; {
-	$s.push("bpmjs.EventDispatcher::new");
-	var $spos = $s.length;
-	this.listeners = new Array();
-	$s.pop();
-}}
-bpmjs.EventDispatcher.__name__ = ["bpmjs","EventDispatcher"];
-bpmjs.EventDispatcher.prototype.listeners = null;
-bpmjs.EventDispatcher.prototype.addEventListener = function(type,listener) {
-	$s.push("bpmjs.EventDispatcher::addEventListener");
-	var $spos = $s.length;
-	this.removeEventListener(type,listener);
-	this.listeners.push(new bpmjs._EventDispatcher.ListenerForType(type,listener));
-	$s.pop();
-}
-bpmjs.EventDispatcher.prototype.removeEventListener = function(type,listener) {
-	$s.push("bpmjs.EventDispatcher::removeEventListener");
-	var $spos = $s.length;
-	var _g = 0, _g1 = this.listeners;
-	while(_g < _g1.length) {
-		var listenerForType = _g1[_g];
-		++_g;
-		if(listenerForType.type == type && Reflect.compareMethods(listener,listenerForType.listener)) {
-			this.listeners.remove(listenerForType);
-			{
-				$s.pop();
-				return;
-			}
-		}
-	}
-	$s.pop();
-}
-bpmjs.EventDispatcher.prototype.dispatchEvent = function(event) {
-	$s.push("bpmjs.EventDispatcher::dispatchEvent");
-	var $spos = $s.length;
-	event.target = this;
-	{
-		var _g = 0, _g1 = this.listeners;
-		while(_g < _g1.length) {
-			var listener = _g1[_g];
-			++_g;
-			if(listener.type == null || listener.type == event.getType()) listener.listener(event);
-		}
-	}
-	$s.pop();
-}
-bpmjs.EventDispatcher.prototype.toString = function() {
-	$s.push("bpmjs.EventDispatcher::toString");
-	var $spos = $s.length;
-	{
-		var $tmp = Type.getClassName(Type.getClass(this));
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-bpmjs.EventDispatcher.prototype.__class__ = bpmjs.EventDispatcher;
 if(!haxe.rtti) haxe.rtti = {}
 haxe.rtti.Infos = function() { }
 haxe.rtti.Infos.__name__ = ["haxe","rtti","Infos"];
@@ -1318,14 +1261,12 @@ if(!kumite.stage) kumite.stage = {}
 kumite.stage.StageResizeAction = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.stage.StageResizeAction::new");
 	var $spos = $s.length;
-	bpmjs.EventDispatcher.call(this);
+	null;
 	$s.pop();
 }}
 kumite.stage.StageResizeAction.__name__ = ["kumite","stage","StageResizeAction"];
-kumite.stage.StageResizeAction.__super__ = bpmjs.EventDispatcher;
-for(var k in bpmjs.EventDispatcher.prototype ) kumite.stage.StageResizeAction.prototype[k] = bpmjs.EventDispatcher.prototype[k];
-kumite.stage.StageResizeAction.prototype.windowWidth = null;
-kumite.stage.StageResizeAction.prototype.windowHeight = null;
+kumite.stage.StageResizeAction.prototype.messenger = null;
+kumite.stage.StageResizeAction.prototype.stage = null;
 kumite.stage.StageResizeAction.prototype.initPrepare = function() {
 	$s.push("kumite.stage.StageResizeAction::initPrepare");
 	var $spos = $s.length;
@@ -1342,27 +1283,27 @@ kumite.stage.StageResizeAction.prototype.startComplete = function() {
 kumite.stage.StageResizeAction.prototype.timerUpdate = function() {
 	$s.push("kumite.stage.StageResizeAction::timerUpdate");
 	var $spos = $s.length;
-	if(this.windowWidth != js.Lib.window.innerWidth || this.windowHeight != js.Lib.window.innerHeight) this.onResize();
+	if(this.stage.width != js.Lib.window.innerWidth || this.stage.height != js.Lib.window.innerHeight) this.onResize();
 	$s.pop();
 }
 kumite.stage.StageResizeAction.prototype.onResize = function(event) {
 	$s.push("kumite.stage.StageResizeAction::onResize");
 	var $spos = $s.length;
 	this.updateSize();
-	this.fireUpdate();
+	this.sendResizeMessage();
 	$s.pop();
 }
 kumite.stage.StageResizeAction.prototype.updateSize = function() {
 	$s.push("kumite.stage.StageResizeAction::updateSize");
 	var $spos = $s.length;
-	this.windowWidth = Std["int"](js.Lib.window.innerWidth);
-	this.windowHeight = Std["int"](js.Lib.window.innerHeight);
+	this.stage.width = Std["int"](js.Lib.window.innerWidth);
+	this.stage.height = Std["int"](js.Lib.window.innerHeight);
 	$s.pop();
 }
-kumite.stage.StageResizeAction.prototype.fireUpdate = function() {
-	$s.push("kumite.stage.StageResizeAction::fireUpdate");
+kumite.stage.StageResizeAction.prototype.sendResizeMessage = function() {
+	$s.push("kumite.stage.StageResizeAction::sendResizeMessage");
 	var $spos = $s.length;
-	this.dispatchEvent(new kumite.stage.StageResizeEvent());
+	this.messenger.send(new kumite.stage.StageResizeMessage());
 	$s.pop();
 }
 kumite.stage.StageResizeAction.prototype.__class__ = kumite.stage.StageResizeAction;
@@ -2352,36 +2293,16 @@ LogFilter = function() { }
 LogFilter.__name__ = ["LogFilter"];
 LogFilter.prototype.enabled = null;
 LogFilter.prototype.__class__ = LogFilter;
-bpmjs.Event = function(p) { if( p === $_ ) return; {
-	$s.push("bpmjs.Event::new");
+kumite.stage.Stage = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.stage.Stage::new");
 	var $spos = $s.length;
 	null;
 	$s.pop();
 }}
-bpmjs.Event.__name__ = ["bpmjs","Event"];
-bpmjs.Event.prototype.target = null;
-bpmjs.Event.prototype.type = null;
-bpmjs.Event.prototype.getType = function() {
-	$s.push("bpmjs.Event::getType");
-	var $spos = $s.length;
-	{
-		var $tmp = Type.getClass(this);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-bpmjs.Event.prototype.__class__ = bpmjs.Event;
-kumite.stage.StageResizeEvent = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.stage.StageResizeEvent::new");
-	var $spos = $s.length;
-	bpmjs.Event.call(this);
-	$s.pop();
-}}
-kumite.stage.StageResizeEvent.__name__ = ["kumite","stage","StageResizeEvent"];
-kumite.stage.StageResizeEvent.__super__ = bpmjs.Event;
-for(var k in bpmjs.Event.prototype ) kumite.stage.StageResizeEvent.prototype[k] = bpmjs.Event.prototype[k];
-kumite.stage.StageResizeEvent.prototype.__class__ = kumite.stage.StageResizeEvent;
+kumite.stage.Stage.__name__ = ["kumite","stage","Stage"];
+kumite.stage.Stage.prototype.width = null;
+kumite.stage.Stage.prototype.height = null;
+kumite.stage.Stage.prototype.__class__ = kumite.stage.Stage;
 StringBuf = function(p) { if( p === $_ ) return; {
 	$s.push("StringBuf::new");
 	var $spos = $s.length;
@@ -2419,6 +2340,19 @@ StringBuf.prototype.toString = function() {
 }
 StringBuf.prototype.b = null;
 StringBuf.prototype.__class__ = StringBuf;
+if(!kumite.canvas) kumite.canvas = {}
+kumite.canvas.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.canvas.Config::new");
+	var $spos = $s.length;
+	this.canvasCase = new kumite.canvas.CanvasCase();
+	this.canvasController = new kumite.canvas.CanvasController();
+	$s.pop();
+}}
+kumite.canvas.Config.__name__ = ["kumite","canvas","Config"];
+kumite.canvas.Config.prototype.canvasCase = null;
+kumite.canvas.Config.prototype.canvasController = null;
+kumite.canvas.Config.prototype.__class__ = kumite.canvas.Config;
+kumite.canvas.Config.__interfaces__ = [haxe.rtti.Infos];
 if(!kumite.launch) kumite.launch = {}
 kumite.launch.Config = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.launch.Config::new");
@@ -2432,87 +2366,6 @@ kumite.launch.Config.prototype.sequencer = null;
 kumite.launch.Config.prototype.launcher = null;
 kumite.launch.Config.prototype.__class__ = kumite.launch.Config;
 kumite.launch.Config.__interfaces__ = [haxe.rtti.Infos];
-bpmjs.FrontController = function() { }
-bpmjs.FrontController.__name__ = ["bpmjs","FrontController"];
-bpmjs.FrontController.prototype.addDispatcher = null;
-bpmjs.FrontController.prototype.addReceiver = null;
-bpmjs.FrontController.prototype.__class__ = bpmjs.FrontController;
-bpmjs.DefaultFrontController = function(p) { if( p === $_ ) return; {
-	$s.push("bpmjs.DefaultFrontController::new");
-	var $spos = $s.length;
-	this.receivers = new Array();
-	$s.pop();
-}}
-bpmjs.DefaultFrontController.__name__ = ["bpmjs","DefaultFrontController"];
-bpmjs.DefaultFrontController.prototype.receivers = null;
-bpmjs.DefaultFrontController.prototype.addDispatcher = function(dispatcher) {
-	$s.push("bpmjs.DefaultFrontController::addDispatcher");
-	var $spos = $s.length;
-	Log.info(dispatcher,null,null,null,null,null,null,{ fileName : "FrontController.hx", lineNumber : 22, className : "bpmjs.DefaultFrontController", methodName : "addDispatcher"});
-	dispatcher.addEventListener(null,$closure(this,"handleEvent"));
-	$s.pop();
-}
-bpmjs.DefaultFrontController.prototype.addReceiver = function(receivingObject,methodName,type) {
-	$s.push("bpmjs.DefaultFrontController::addReceiver");
-	var $spos = $s.length;
-	Log.info(receivingObject + ":" + methodName,Type.getClassName(type),null,null,null,null,null,{ fileName : "FrontController.hx", lineNumber : 28, className : "bpmjs.DefaultFrontController", methodName : "addReceiver"});
-	this.receivers.push(new bpmjs._FrontController.Receiver(receivingObject,methodName,type));
-	$s.pop();
-}
-bpmjs.DefaultFrontController.prototype.handleEvent = function(event) {
-	$s.push("bpmjs.DefaultFrontController::handleEvent");
-	var $spos = $s.length;
-	Log.info(event,null,null,null,null,null,null,{ fileName : "FrontController.hx", lineNumber : 34, className : "bpmjs.DefaultFrontController", methodName : "handleEvent"});
-	{
-		var _g = 0, _g1 = this.receivers;
-		while(_g < _g1.length) {
-			var receiver = _g1[_g];
-			++_g;
-			if(Type.getClass(event) == receiver.type) {
-				{
-					Log.info(receiver.receiver + ":" + receiver.methodName,null,null,null,null,null,null,{ fileName : "FrontController.hx", lineNumber : 67, className : "bpmjs._FrontController.Receiver", methodName : "execute"});
-					receiver.method.apply(receiver.receiver,[event]);
-				}
-			}
-		}
-	}
-	$s.pop();
-}
-bpmjs.DefaultFrontController.prototype.__class__ = bpmjs.DefaultFrontController;
-bpmjs.DefaultFrontController.__interfaces__ = [bpmjs.FrontController];
-if(!bpmjs._FrontController) bpmjs._FrontController = {}
-bpmjs._FrontController.Receiver = function(receiver,methodName,type) { if( receiver === $_ ) return; {
-	$s.push("bpmjs._FrontController.Receiver::new");
-	var $spos = $s.length;
-	this.receiver = receiver;
-	this.type = type;
-	this.method = Reflect.field(receiver,methodName);
-	this.methodName = methodName;
-	$s.pop();
-}}
-bpmjs._FrontController.Receiver.__name__ = ["bpmjs","_FrontController","Receiver"];
-bpmjs._FrontController.Receiver.prototype.receiver = null;
-bpmjs._FrontController.Receiver.prototype.method = null;
-bpmjs._FrontController.Receiver.prototype.methodName = null;
-bpmjs._FrontController.Receiver.prototype.type = null;
-bpmjs._FrontController.Receiver.prototype.matches = function(event) {
-	$s.push("bpmjs._FrontController.Receiver::matches");
-	var $spos = $s.length;
-	{
-		var $tmp = Type.getClass(event) == this.type;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-bpmjs._FrontController.Receiver.prototype.execute = function(event) {
-	$s.push("bpmjs._FrontController.Receiver::execute");
-	var $spos = $s.length;
-	Log.info(this.receiver + ":" + this.methodName,null,null,null,null,null,null,{ fileName : "FrontController.hx", lineNumber : 67, className : "bpmjs._FrontController.Receiver", methodName : "execute"});
-	this.method.apply(this.receiver,[event]);
-	$s.pop();
-}
-bpmjs._FrontController.Receiver.prototype.__class__ = bpmjs._FrontController.Receiver;
 kumite.launch.Launcher = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.launch.Launcher::new");
 	var $spos = $s.length;
@@ -2735,6 +2588,87 @@ ERegFilter.prototype.enabled = function(input,i,level) {
 }
 ERegFilter.prototype.__class__ = ERegFilter;
 ERegFilter.__interfaces__ = [LogFilter];
+bpmjs.FrontMessenger = function() { }
+bpmjs.FrontMessenger.__name__ = ["bpmjs","FrontMessenger"];
+bpmjs.FrontMessenger.prototype.addMessenger = null;
+bpmjs.FrontMessenger.prototype.addReceiver = null;
+bpmjs.FrontMessenger.prototype.__class__ = bpmjs.FrontMessenger;
+bpmjs.DefaultFrontMessenger = function(p) { if( p === $_ ) return; {
+	$s.push("bpmjs.DefaultFrontMessenger::new");
+	var $spos = $s.length;
+	this.receivers = new Array();
+	$s.pop();
+}}
+bpmjs.DefaultFrontMessenger.__name__ = ["bpmjs","DefaultFrontMessenger"];
+bpmjs.DefaultFrontMessenger.prototype.receivers = null;
+bpmjs.DefaultFrontMessenger.prototype.addMessenger = function(messenger) {
+	$s.push("bpmjs.DefaultFrontMessenger::addMessenger");
+	var $spos = $s.length;
+	Log.info(messenger,null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 21, className : "bpmjs.DefaultFrontMessenger", methodName : "addMessenger"});
+	messenger.addReceiver(null,$closure(this,"handleMessage"));
+	$s.pop();
+}
+bpmjs.DefaultFrontMessenger.prototype.addReceiver = function(receivingObject,methodName,type) {
+	$s.push("bpmjs.DefaultFrontMessenger::addReceiver");
+	var $spos = $s.length;
+	Log.info(receivingObject + ":" + methodName,Type.getClassName(type),null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 27, className : "bpmjs.DefaultFrontMessenger", methodName : "addReceiver"});
+	this.receivers.push(new bpmjs._FrontMessenger.Receiver(receivingObject,methodName,type));
+	$s.pop();
+}
+bpmjs.DefaultFrontMessenger.prototype.handleMessage = function(message) {
+	$s.push("bpmjs.DefaultFrontMessenger::handleMessage");
+	var $spos = $s.length;
+	Log.info(message,null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 33, className : "bpmjs.DefaultFrontMessenger", methodName : "handleMessage"});
+	{
+		var _g = 0, _g1 = this.receivers;
+		while(_g < _g1.length) {
+			var receiver = _g1[_g];
+			++_g;
+			if(Type.getClass(message) == receiver.type) {
+				{
+					Log.info(receiver.receiver + ":" + receiver.methodName,null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 66, className : "bpmjs._FrontMessenger.Receiver", methodName : "execute"});
+					receiver.method.apply(receiver.receiver,[message]);
+				}
+			}
+		}
+	}
+	$s.pop();
+}
+bpmjs.DefaultFrontMessenger.prototype.__class__ = bpmjs.DefaultFrontMessenger;
+bpmjs.DefaultFrontMessenger.__interfaces__ = [bpmjs.FrontMessenger];
+if(!bpmjs._FrontMessenger) bpmjs._FrontMessenger = {}
+bpmjs._FrontMessenger.Receiver = function(receiver,methodName,type) { if( receiver === $_ ) return; {
+	$s.push("bpmjs._FrontMessenger.Receiver::new");
+	var $spos = $s.length;
+	this.receiver = receiver;
+	this.type = type;
+	this.method = Reflect.field(receiver,methodName);
+	this.methodName = methodName;
+	$s.pop();
+}}
+bpmjs._FrontMessenger.Receiver.__name__ = ["bpmjs","_FrontMessenger","Receiver"];
+bpmjs._FrontMessenger.Receiver.prototype.receiver = null;
+bpmjs._FrontMessenger.Receiver.prototype.method = null;
+bpmjs._FrontMessenger.Receiver.prototype.methodName = null;
+bpmjs._FrontMessenger.Receiver.prototype.type = null;
+bpmjs._FrontMessenger.Receiver.prototype.matches = function(message) {
+	$s.push("bpmjs._FrontMessenger.Receiver::matches");
+	var $spos = $s.length;
+	{
+		var $tmp = Type.getClass(message) == this.type;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+bpmjs._FrontMessenger.Receiver.prototype.execute = function(message) {
+	$s.push("bpmjs._FrontMessenger.Receiver::execute");
+	var $spos = $s.length;
+	Log.info(this.receiver + ":" + this.methodName,null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 66, className : "bpmjs._FrontMessenger.Receiver", methodName : "execute"});
+	this.method.apply(this.receiver,[message]);
+	$s.pop();
+}
+bpmjs._FrontMessenger.Receiver.prototype.__class__ = bpmjs._FrontMessenger.Receiver;
 Std = function() { }
 Std.__name__ = ["Std"];
 Std["is"] = function(v,t) {
@@ -3030,6 +2964,44 @@ Lambda.concat = function(a,b) {
 	$s.pop();
 }
 Lambda.prototype.__class__ = Lambda;
+kumite.stage.StageResizeMessage = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.stage.StageResizeMessage::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.stage.StageResizeMessage.__name__ = ["kumite","stage","StageResizeMessage"];
+kumite.stage.StageResizeMessage.prototype.__class__ = kumite.stage.StageResizeMessage;
+kumite.canvas.CanvasController = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.canvas.CanvasController::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.canvas.CanvasController.__name__ = ["kumite","canvas","CanvasController"];
+kumite.canvas.CanvasController.prototype.canvas = null;
+kumite.canvas.CanvasController.prototype.stage = null;
+kumite.canvas.CanvasController.prototype.initPrepare = function() {
+	$s.push("kumite.canvas.CanvasController::initPrepare");
+	var $spos = $s.length;
+	this.canvas.itself = js.Lib.document.getElementById("content");
+	$s.pop();
+}
+kumite.canvas.CanvasController.prototype.init = function() {
+	$s.push("kumite.canvas.CanvasController::init");
+	var $spos = $s.length;
+	this.updateCanvasSizeFromStage();
+	$s.pop();
+}
+kumite.canvas.CanvasController.prototype.updateCanvasSizeFromStage = function(message) {
+	$s.push("kumite.canvas.CanvasController::updateCanvasSizeFromStage");
+	var $spos = $s.length;
+	this.canvas.itself.width = this.stage.width;
+	this.canvas.itself.height = this.stage.height;
+	$s.pop();
+}
+kumite.canvas.CanvasController.prototype.__class__ = kumite.canvas.CanvasController;
+kumite.canvas.CanvasController.__interfaces__ = [haxe.rtti.Infos];
 bpmjs.ContextConfig = function(p) { if( p === $_ ) return; {
 	$s.push("bpmjs.ContextConfig::new");
 	var $spos = $s.length;
@@ -3037,7 +3009,7 @@ bpmjs.ContextConfig = function(p) { if( p === $_ ) return; {
 	$s.pop();
 }}
 bpmjs.ContextConfig.__name__ = ["bpmjs","ContextConfig"];
-bpmjs.ContextConfig.prototype.frontController = null;
+bpmjs.ContextConfig.prototype.frontMessenger = null;
 bpmjs.ContextConfig.prototype.__class__ = bpmjs.ContextConfig;
 List = function(p) { if( p === $_ ) return; {
 	$s.push("List::new");
@@ -4496,6 +4468,15 @@ js.Boot.__init = function() {
 	$s.pop();
 }
 js.Boot.prototype.__class__ = js.Boot;
+kumite.canvas.CanvasCase = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.canvas.CanvasCase::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.canvas.CanvasCase.__name__ = ["kumite","canvas","CanvasCase"];
+kumite.canvas.CanvasCase.prototype.itself = null;
+kumite.canvas.CanvasCase.prototype.__class__ = kumite.canvas.CanvasCase;
 bpmjs.ContextBuilder = function(p) { if( p === $_ ) return; {
 	$s.push("bpmjs.ContextBuilder::new");
 	var $spos = $s.length;
@@ -4542,7 +4523,7 @@ bpmjs.ContextBuilder.createDefaultContextConfig = function() {
 	$s.push("bpmjs.ContextBuilder::createDefaultContextConfig");
 	var $spos = $s.length;
 	var defaultContextConfig = new bpmjs.ContextConfig();
-	defaultContextConfig.frontController = new bpmjs.DefaultFrontController();
+	defaultContextConfig.frontMessenger = new bpmjs.DefaultFrontMessenger();
 	{
 		$s.pop();
 		return defaultContextConfig;
@@ -4556,7 +4537,8 @@ bpmjs.ContextBuilder.prototype.configureInternal = function(object) {
 	var $spos = $s.length;
 	var contextObject = this.context.addObject("configured",Type.getClass(object),object);
 	this.wireContextObject(contextObject);
-	this.registerDispatchersForContextObject(contextObject);
+	this.registerMessengerByObjectTypeForContextObject(contextObject);
+	this.registerMessengersForContextObject(contextObject);
 	this.registerReceiversForContextObject(contextObject);
 	this.doCompleteCallForContextObject(contextObject);
 	$s.pop();
@@ -4575,7 +4557,8 @@ bpmjs.ContextBuilder.prototype.buildInternal = function(configClasses) {
 		}
 	}
 	this.wireInjections();
-	this.registerDispatchers();
+	this.registerMessengersByObjectType();
+	this.registerMessengers();
 	this.registerReceivers();
 	this.doCompleteCall();
 	this.doPostCompleteCall();
@@ -4584,7 +4567,7 @@ bpmjs.ContextBuilder.prototype.buildInternal = function(configClasses) {
 bpmjs.ContextBuilder.prototype.createObjects = function(config,configClass) {
 	$s.push("bpmjs.ContextBuilder::createObjects");
 	var $spos = $s.length;
-	if(configClass.__rtti == null) throw this.createError("Config class must have RTTI enabled!");
+	if(configClass.__rtti == null) throw this.createError("Config class " + Type.getClassName(configClass) + " must have RTTI enabled!");
 	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(configClass.__rtti).firstElement());
 	var classDef = haxe.rtti.TypeApi.typeInfos(infos);
 	{ var $it0 = classDef.fields.iterator();
@@ -4596,6 +4579,7 @@ bpmjs.ContextBuilder.prototype.createObjects = function(config,configClass) {
 		var params = $e[3], name = $e[2];
 		{
 			var type = Type.resolveClass(name);
+			if(type == null) throw "Type of class " + name + " is null!";
 			var instance = Reflect.field(config,field.name);
 			this.context.addObject(field.name,type,instance);
 			if(type == Array) {
@@ -4651,7 +4635,7 @@ bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
 			if(meta != null && Reflect.hasField(meta,"Inject")) {
 				var type = Type.resolveClass(name);
 				var wiredObject = type == bpmjs.Context?this.context:this.context.getObjectByType(type);
-				if(wiredObject == null) Log.warn("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + field.name + " but could not find object to inject.",null,null,null,null,null,null,{ fileName : "ContextBuilder.hx", lineNumber : 136, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"});
+				if(wiredObject == null) Log.warn("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + field.name + " but could not find object to inject.",null,null,null,null,null,null,{ fileName : "ContextBuilder.hx", lineNumber : 141, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"});
 				else contextObject.object[field.name] = wiredObject;
 			}
 		}break;
@@ -4663,24 +4647,67 @@ bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
 	}}
 	$s.pop();
 }
-bpmjs.ContextBuilder.prototype.registerDispatchers = function() {
-	$s.push("bpmjs.ContextBuilder::registerDispatchers");
+bpmjs.ContextBuilder.prototype.registerMessengersByObjectType = function() {
+	$s.push("bpmjs.ContextBuilder::registerMessengersByObjectType");
 	var $spos = $s.length;
 	var _g = 0, _g1 = this.context.objects;
 	while(_g < _g1.length) {
 		var contextObject = _g1[_g];
 		++_g;
-		this.registerDispatchersForContextObject(contextObject);
+		this.registerMessengerByObjectTypeForContextObject(contextObject);
 	}
 	$s.pop();
 }
-bpmjs.ContextBuilder.prototype.registerDispatchersForContextObject = function(contextObject) {
-	$s.push("bpmjs.ContextBuilder::registerDispatchersForContextObject");
+bpmjs.ContextBuilder.prototype.registerMessengerByObjectTypeForContextObject = function(contextObject) {
+	$s.push("bpmjs.ContextBuilder::registerMessengerByObjectTypeForContextObject");
 	var $spos = $s.length;
-	var metaDatas = haxe.rtti.Meta.getType(contextObject.type);
-	if(metaDatas != null && Reflect.hasField(metaDatas,"ManagedEvents")) {
-		this.contextConfig.frontController.addDispatcher(contextObject.object);
+	if(Std["is"](contextObject.object,bpmjs.Messenger)) {
+		this.contextConfig.frontMessenger.addMessenger(contextObject.object);
 	}
+	$s.pop();
+}
+bpmjs.ContextBuilder.prototype.registerMessengers = function() {
+	$s.push("bpmjs.ContextBuilder::registerMessengers");
+	var $spos = $s.length;
+	var _g = 0, _g1 = this.context.objects;
+	while(_g < _g1.length) {
+		var contextObject = _g1[_g];
+		++_g;
+		this.registerMessengersForContextObject(contextObject);
+	}
+	$s.pop();
+}
+bpmjs.ContextBuilder.prototype.registerMessengersForContextObject = function(contextObject) {
+	$s.push("bpmjs.ContextBuilder::registerMessengersForContextObject");
+	var $spos = $s.length;
+	if(contextObject.type.__rtti == null) {
+		$s.pop();
+		return;
+	}
+	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(contextObject.type.__rtti).firstElement());
+	var classDef = haxe.rtti.TypeApi.typeInfos(infos);
+	var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
+	{ var $it0 = classDef.fields.iterator();
+	while( $it0.hasNext() ) { var field = $it0.next();
+	{
+		var $e = field.type;
+		switch( $e[1] ) {
+		case 2:
+		var params = $e[3], name = $e[2];
+		{
+			var meta = Reflect.field(metaDatas,field.name);
+			if(meta != null && Reflect.hasField(meta,"Messenger")) {
+				var messenger = new bpmjs.Messenger();
+				contextObject.object[field.name] = messenger;
+				this.contextConfig.frontMessenger.addMessenger(messenger);
+			}
+		}break;
+		default:{
+			continue;
+		}break;
+		}
+	}
+	}}
 	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.registerReceivers = function() {
@@ -4713,7 +4740,7 @@ bpmjs.ContextBuilder.prototype.registerReceiversForContextObject = function(cont
 		var ret = $e[3], args = $e[2];
 		{
 			var meta = Reflect.field(metaDatas,field.name);
-			if(meta != null && Reflect.hasField(meta,"MessageHandler")) {
+			if(meta != null && Reflect.hasField(meta,"Message")) {
 				{ var $it1 = args.iterator();
 				while( $it1.hasNext() ) { var argument = $it1.next();
 				{
@@ -4723,7 +4750,7 @@ bpmjs.ContextBuilder.prototype.registerReceiversForContextObject = function(cont
 					var params = $e[3], name = $e[2];
 					{
 						var type = Type.resolveClass(name);
-						this.contextConfig.frontController.addReceiver(contextObject.object,field.name,type);
+						this.contextConfig.frontMessenger.addReceiver(contextObject.object,field.name,type);
 					}break;
 					default:{
 						continue;
@@ -4891,25 +4918,81 @@ GLAnimationFrame.run = function(method,ms) {
 	$s.pop();
 }
 GLAnimationFrame.prototype.__class__ = GLAnimationFrame;
-if(!bpmjs._EventDispatcher) bpmjs._EventDispatcher = {}
-bpmjs._EventDispatcher.ListenerForType = function(type,listener) { if( type === $_ ) return; {
-	$s.push("bpmjs._EventDispatcher.ListenerForType::new");
+bpmjs.Messenger = function(p) { if( p === $_ ) return; {
+	$s.push("bpmjs.Messenger::new");
 	var $spos = $s.length;
-	this.type = type;
-	this.listener = listener;
+	this.receivers = new Array();
 	$s.pop();
 }}
-bpmjs._EventDispatcher.ListenerForType.__name__ = ["bpmjs","_EventDispatcher","ListenerForType"];
-bpmjs._EventDispatcher.ListenerForType.prototype.type = null;
-bpmjs._EventDispatcher.ListenerForType.prototype.listener = null;
-bpmjs._EventDispatcher.ListenerForType.prototype.__class__ = bpmjs._EventDispatcher.ListenerForType;
+bpmjs.Messenger.__name__ = ["bpmjs","Messenger"];
+bpmjs.Messenger.prototype.receivers = null;
+bpmjs.Messenger.prototype.addReceiver = function(type,listener) {
+	$s.push("bpmjs.Messenger::addReceiver");
+	var $spos = $s.length;
+	this.removeReceiver(type,listener);
+	this.receivers.push(new bpmjs._Messenger.ReceiverForType(type,listener));
+	$s.pop();
+}
+bpmjs.Messenger.prototype.removeReceiver = function(type,listener) {
+	$s.push("bpmjs.Messenger::removeReceiver");
+	var $spos = $s.length;
+	var _g = 0, _g1 = this.receivers;
+	while(_g < _g1.length) {
+		var receiver = _g1[_g];
+		++_g;
+		if(receiver.type == type && Reflect.compareMethods(listener,receiver.method)) {
+			this.receivers.remove(receiver);
+			{
+				$s.pop();
+				return;
+			}
+		}
+	}
+	$s.pop();
+}
+bpmjs.Messenger.prototype.send = function(message) {
+	$s.push("bpmjs.Messenger::send");
+	var $spos = $s.length;
+	var _g = 0, _g1 = this.receivers;
+	while(_g < _g1.length) {
+		var receiver = _g1[_g];
+		++_g;
+		if(receiver.type == null || receiver.type == Type.getClass(message)) receiver.method(message);
+	}
+	$s.pop();
+}
+bpmjs.Messenger.prototype.toString = function() {
+	$s.push("bpmjs.Messenger::toString");
+	var $spos = $s.length;
+	{
+		var $tmp = Type.getClassName(Type.getClass(this));
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+bpmjs.Messenger.prototype.__class__ = bpmjs.Messenger;
+if(!bpmjs._Messenger) bpmjs._Messenger = {}
+bpmjs._Messenger.ReceiverForType = function(type,method) { if( type === $_ ) return; {
+	$s.push("bpmjs._Messenger.ReceiverForType::new");
+	var $spos = $s.length;
+	this.type = type;
+	this.method = method;
+	$s.pop();
+}}
+bpmjs._Messenger.ReceiverForType.__name__ = ["bpmjs","_Messenger","ReceiverForType"];
+bpmjs._Messenger.ReceiverForType.prototype.type = null;
+bpmjs._Messenger.ReceiverForType.prototype.method = null;
+bpmjs._Messenger.ReceiverForType.prototype.__class__ = bpmjs._Messenger.ReceiverForType;
 kumite.stage.Config = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.stage.Config::new");
 	var $spos = $s.length;
+	this.stage = new kumite.stage.Stage();
 	this.stageResizeAction = new kumite.stage.StageResizeAction();
 	$s.pop();
 }}
 kumite.stage.Config.__name__ = ["kumite","stage","Config"];
+kumite.stage.Config.prototype.stage = null;
 kumite.stage.Config.prototype.stageResizeAction = null;
 kumite.stage.Config.prototype.__class__ = kumite.stage.Config;
 kumite.stage.Config.__interfaces__ = [haxe.rtti.Infos];
@@ -5059,7 +5142,7 @@ Main = function(canvas) { if( canvas === $_ ) return; {
 	$s.push("Main::new");
 	var $spos = $s.length;
 	try {
-		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config]);
+		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.canvas.Config]);
 	}
 	catch( $e0 ) {
 		{
@@ -5068,7 +5151,7 @@ Main = function(canvas) { if( canvas === $_ ) return; {
 				$e = [];
 				while($s.length >= $spos) $e.unshift($s.pop());
 				$s.push($e[0]);
-				Log.error("Error building application!",null,null,null,null,null,null,{ fileName : "Main.hx", lineNumber : 33, className : "Main", methodName : "new"});
+				Log.error("Error building application! \n" + e,null,null,null,null,null,null,{ fileName : "Main.hx", lineNumber : 34, className : "Main", methodName : "new"});
 			}
 		}
 	}
@@ -5269,18 +5352,21 @@ Xml.ecdata_end = new EReg("\\]\\]>","");
 Xml.edoctype_elt = new EReg("[\\[|\\]>]","");
 Xml.ecomment_end = new EReg("-->","");
 Log.filters = new Array();
-kumite.stage.StageResizeAction.__meta__ = { obj : { ManagedEvents : ["stageResize"]}, fields : { initPrepare : { Sequence : ["boot","initPrepare"]}, startComplete : { Sequence : ["boot","startComplete"]}}};
-kumite.stage.StageResizeAction.__rtti = "<class path=\"kumite.stage.StageResizeAction\" params=\"\">\n\t<extends path=\"bpmjs.EventDispatcher\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<windowWidth public=\"1\"><c path=\"Int\"/></windowWidth>\n\t<windowHeight public=\"1\"><c path=\"Int\"/></windowHeight>\n\t<initPrepare public=\"1\" set=\"method\" line=\"17\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<startComplete public=\"1\" set=\"method\" line=\"23\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"29\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<onResize set=\"method\" line=\"35\"><f a=\"?event\">\n\t<t path=\"js.Event\"/>\n\t<e path=\"Void\"/>\n</f></onResize>\n\t<updateSize set=\"method\" line=\"41\"><f a=\"\"><e path=\"Void\"/></f></updateSize>\n\t<fireUpdate set=\"method\" line=\"47\"><f a=\"\"><e path=\"Void\"/></f></fireUpdate>\n\t<new public=\"1\" set=\"method\" line=\"11\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.stage.StageResizeAction.__meta__ = { fields : { messenger : { Messenger : null}, stage : { Inject : null}, initPrepare : { Sequence : ["boot","initPrepare"]}, startComplete : { Sequence : ["boot","startComplete"]}}};
+kumite.stage.StageResizeAction.__rtti = "<class path=\"kumite.stage.StageResizeAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<startComplete public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<onResize set=\"method\" line=\"39\"><f a=\"?event\">\n\t<t path=\"js.Event\"/>\n\t<e path=\"Void\"/>\n</f></onResize>\n\t<updateSize set=\"method\" line=\"45\"><f a=\"\"><e path=\"Void\"/></f></updateSize>\n\t<sendResizeMessage set=\"method\" line=\"51\"><f a=\"\"><e path=\"Void\"/></f></sendResizeMessage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.canvas.Config.__rtti = "<class path=\"kumite.canvas.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvasCase public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvasCase>\n\t<canvasController public=\"1\"><c path=\"kumite.canvas.CanvasController\"/></canvasController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.launch.Config.__rtti = "<class path=\"kumite.launch.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<launcher public=\"1\"><c path=\"kumite.launch.Launcher\"/></launcher>\n\t<new public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.launch.Launcher.__meta__ = { fields : { sequencer : { Inject : null}, handlePostComplete : { PostComplete : null}, showError : { Sequence : ["boot","error"]}}};
 kumite.launch.Launcher.__rtti = "<class path=\"kumite.launch.Launcher\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<handlePostComplete public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></handlePostComplete>\n\t<showError public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></showError>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 haxe.Timer.arr = new Array();
 bpmjs.Sequencer.__meta__ = { fields : { context : { Inject : null}}};
 bpmjs.Sequencer.__rtti = "<class path=\"bpmjs.Sequencer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context public=\"1\"><c path=\"bpmjs.Context\"/></context>\n\t<start public=\"1\" set=\"method\" line=\"14\"><f a=\"name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></start>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.canvas.CanvasController.__meta__ = { fields : { canvas : { Inject : null}, stage : { Inject : null}, initPrepare : { Sequence : ["boot","initPrepare"]}, init : { Sequence : ["boot","init"]}, updateCanvasSizeFromStage : { Message : null}}};
+kumite.canvas.CanvasController.__rtti = "<class path=\"kumite.canvas.CanvasController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<init public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateCanvasSizeFromStage public=\"1\" set=\"method\" line=\"33\"><f a=\"?message\">\n\t<c path=\"kumite.stage.StageResizeMessage\"/>\n\t<e path=\"Void\"/>\n</f></updateCanvasSizeFromStage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 LogLevel.INFO = new LogLevel(1);
 LogLevel.WARN = new LogLevel(2);
 LogLevel.ERROR = new LogLevel(3);
 LogLevel.OFF = new LogLevel(4);
 js.Lib.onerror = null;
-kumite.stage.Config.__rtti = "<class path=\"kumite.stage.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stageResizeAction public=\"1\"><c path=\"kumite.stage.StageResizeAction\"/></stageResizeAction>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.stage.Config.__rtti = "<class path=\"kumite.stage.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<stageResizeAction public=\"1\"><c path=\"kumite.stage.StageResizeAction\"/></stageResizeAction>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Main.main()

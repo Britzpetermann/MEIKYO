@@ -1,15 +1,14 @@
 package bpmjs;
-import bpmjs.Event;
 
-interface FrontController
+interface FrontMessenger
 {
-	function addDispatcher(dispatcher : EventDispatcher) : Void;
+	function addMessenger(messenger : Messenger) : Void;
 
 	function addReceiver(receivingObject : Dynamic, methodName : String, type : Class<Dynamic>) : Void;
 }
 
-class DefaultFrontController implements FrontController {
-
+class DefaultFrontMessenger implements FrontMessenger
+{
 	var receivers : Array<Receiver>;
 
 	public function new()
@@ -17,10 +16,10 @@ class DefaultFrontController implements FrontController {
 		receivers = new Array();
 	}
 
-	public function addDispatcher(dispatcher : EventDispatcher)
+	public function addMessenger(messenger : Messenger)
 	{
-		Log.info(dispatcher);
-		dispatcher.addEventListener(null, handleEvent);
+		Log.info(messenger);
+		messenger.addReceiver(null, handleMessage);
 	}
 
 	public function addReceiver(receivingObject : Dynamic, methodName : String, type : Class<Dynamic>)
@@ -29,14 +28,14 @@ class DefaultFrontController implements FrontController {
 		receivers.push(new Receiver(receivingObject, methodName, type));
 	}
 
-	function handleEvent(event : Event)
+	function handleMessage(message : Dynamic)
 	{
-		Log.info(event);
+		Log.info(message);
 		for(receiver in receivers)
 		{
-			if (receiver.matches(event))
+			if (receiver.matches(message))
 			{
-				receiver.execute(event);
+				receiver.execute(message);
 			}
 		}
 	}
@@ -57,14 +56,14 @@ private class Receiver
 		this.methodName = methodName;
 	}
 
-	inline public function matches(event : Event)
+	inline public function matches(message : Dynamic)
 	{
-		return Type.getClass(event) == type;
+		return Type.getClass(message) == type;
 	}
 
-	inline public function execute(event : Event)
+	inline public function execute(message : Dynamic)
 	{
 		Log.info(receiver + ":" + methodName);
-		Reflect.callMethod(receiver, method, [event]);
+		Reflect.callMethod(receiver, method, [message]);
 	}
 }

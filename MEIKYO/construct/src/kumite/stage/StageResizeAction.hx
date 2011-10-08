@@ -3,15 +3,19 @@ package kumite.stage;
 import js.Lib;
 import js.Dom;
 
-import bpmjs.EventDispatcher;
+import bpmjs.Messenger;
 
 import haxe.rtti.Infos;
 
-@ManagedEvents("stageResize")
-class StageResizeAction extends EventDispatcher, implements Infos
+class StageResizeAction implements Infos
 {
-	public var windowWidth : Int;
-	public var windowHeight : Int;
+	@Messenger
+	public var messenger : Messenger;
+	
+	@Inject
+	public var stage : Stage;
+	
+	public function new() {}
 	
 	@Sequence("boot", "initPrepare")
 	public function initPrepare()
@@ -28,24 +32,24 @@ class StageResizeAction extends EventDispatcher, implements Infos
 
 	function timerUpdate()
 	{
-		if (windowWidth != Lib.window.innerWidth || windowHeight != Lib.window.innerHeight)
+		if (stage.width != Lib.window.innerWidth || stage.height != Lib.window.innerHeight)
 			onResize();
 	}
 
 	function onResize(?event : Event)
 	{
 		updateSize();
-		fireUpdate();
+		sendResizeMessage();
 	}
 	
 	function updateSize()
 	{
-		windowWidth = Std.int(Lib.window.innerWidth);
-		windowHeight = Std.int(Lib.window.innerHeight);
+		stage.width = Std.int(Lib.window.innerWidth);
+		stage.height = Std.int(Lib.window.innerHeight);
 	}
 
-	function fireUpdate()
+	function sendResizeMessage()
 	{
-		dispatchEvent(new StageResizeEvent());
+		messenger.send(new StageResizeMessage());
 	}
 }
