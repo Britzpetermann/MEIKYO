@@ -1,10 +1,19 @@
 $estr = function() { return js.Boot.__string_rec(this,''); }
+if(typeof kumite=='undefined') kumite = {}
+if(!kumite.time) kumite.time = {}
+kumite.time.Tick = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.time.Tick::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.time.Tick.__name__ = ["kumite","time","Tick"];
+kumite.time.Tick.prototype.__class__ = kumite.time.Tick;
 if(typeof haxe=='undefined') haxe = {}
 if(!haxe.rtti) haxe.rtti = {}
 haxe.rtti.Infos = function() { }
 haxe.rtti.Infos.__name__ = ["haxe","rtti","Infos"];
 haxe.rtti.Infos.prototype.__class__ = haxe.rtti.Infos;
-if(typeof kumite=='undefined') kumite = {}
 if(!kumite.helloworldgl) kumite.helloworldgl = {}
 kumite.helloworldgl.HelloWorld = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.helloworldgl.HelloWorld::new");
@@ -23,8 +32,8 @@ kumite.helloworldgl.HelloWorld.prototype.vertexBuffer = null;
 kumite.helloworldgl.HelloWorld.prototype.projectionMatrixUniform = null;
 kumite.helloworldgl.HelloWorld.prototype.worldViewMatrixUniform = null;
 kumite.helloworldgl.HelloWorld.prototype.colorUniform = null;
-kumite.helloworldgl.HelloWorld.prototype.startComplete = function() {
-	$s.push("kumite.helloworldgl.HelloWorld::startComplete");
+kumite.helloworldgl.HelloWorld.prototype.start = function() {
+	$s.push("kumite.helloworldgl.HelloWorld::start");
 	var $spos = $s.length;
 	this.shaderProgram = GL.createProgram(kumite.helloworldgl.shader.Vertex,kumite.helloworldgl.shader.Fragment);
 	this.vertexPositionAttribute = GL.getAttribLocation2("vertexPosition",2,5120);
@@ -32,10 +41,9 @@ kumite.helloworldgl.HelloWorld.prototype.startComplete = function() {
 	this.projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
 	this.worldViewMatrixUniform = GL.getUniformLocation("worldViewMatrix");
 	this.colorUniform = GL.getUniformLocation("color");
-	GLAnimationFrame.run($closure(this,"render"));
 	$s.pop();
 }
-kumite.helloworldgl.HelloWorld.prototype.render = function() {
+kumite.helloworldgl.HelloWorld.prototype.render = function(tick) {
 	$s.push("kumite.helloworldgl.HelloWorld::render");
 	var $spos = $s.length;
 	GL.useProgram(this.shaderProgram);
@@ -603,7 +611,6 @@ Color.prototype.toString = function() {
 	$s.pop();
 }
 Color.prototype.__class__ = Color;
-if(!kumite.time) kumite.time = {}
 kumite.time.Time = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.time.Time::new");
 	var $spos = $s.length;
@@ -4312,8 +4319,9 @@ kumite.time.TimeController = function(p) { if( p === $_ ) return; {
 }}
 kumite.time.TimeController.__name__ = ["kumite","time","TimeController"];
 kumite.time.TimeController.prototype.time = null;
-kumite.time.TimeController.prototype.init = function() {
-	$s.push("kumite.time.TimeController::init");
+kumite.time.TimeController.prototype.messenger = null;
+kumite.time.TimeController.prototype.startComplete = function() {
+	$s.push("kumite.time.TimeController::startComplete");
 	var $spos = $s.length;
 	this.time.reset();
 	GLAnimationFrame.run($closure(this,"timerUpdate"));
@@ -4323,6 +4331,7 @@ kumite.time.TimeController.prototype.timerUpdate = function() {
 	$s.push("kumite.time.TimeController::timerUpdate");
 	var $spos = $s.length;
 	this.time.tick();
+	this.messenger.send(new kumite.time.Tick());
 	$s.pop();
 }
 kumite.time.TimeController.prototype.__class__ = kumite.time.TimeController;
@@ -5564,7 +5573,7 @@ Main = function(canvas) { if( canvas === $_ ) return; {
 				$e = [];
 				while($s.length >= $spos) $e.unshift($s.pop());
 				$s.push($e[0]);
-				Log.error("Error building application! \n" + e,null,null,null,null,null,null,{ fileName : "Main.hx", lineNumber : 39, className : "Main", methodName : "new"});
+				Log.error("Error building application! \n" + e,null,null,null,null,null,null,{ fileName : "Main.hx", lineNumber : 40, className : "Main", methodName : "new"});
 			}
 		}
 	}
@@ -5594,6 +5603,8 @@ Main.main = function() {
 	var $spos = $s.length;
 	Log.init();
 	Log.addFilter(new ERegFilter(LogLevel.INFO,new EReg(".*","")));
+	Log.addFilter(new ERegFilter(LogLevel.WARN,new EReg(".*FrontMessenger\\.handleMessage.*","")));
+	Log.addFilter(new ERegFilter(LogLevel.WARN,new EReg(".*FrontMessenger\\.Receiver\\.execute.*","")));
 	js.Lib.setErrorHandler($closure(Main,"globalErrorHandler"));
 	$s.pop();
 }
@@ -6980,8 +6991,8 @@ js.Boot.__init();
 		return f(msg,stack);
 	}
 }
-kumite.helloworldgl.HelloWorld.__meta__ = { fields : { stage : { Inject : null}, time : { Inject : null}, projection : { Inject : null}, camera : { Inject : null}, startComplete : { Sequence : ["boot","startComplete"]}}};
-kumite.helloworldgl.HelloWorld.__rtti = "<class path=\"kumite.helloworldgl.HelloWorld\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<worldViewMatrixUniform><c path=\"GLUniformLocation\"/></worldViewMatrixUniform>\n\t<colorUniform><c path=\"GLUniformLocation\"/></colorUniform>\n\t<startComplete public=\"1\" set=\"method\" line=\"35\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<render set=\"method\" line=\"54\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<drawRect set=\"method\" line=\"75\"><f a=\"x:y:z:color\">\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Color\"/>\n\t<e path=\"Void\"/>\n</f></drawRect>\n\t<new public=\"1\" set=\"method\" line=\"32\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.helloworldgl.HelloWorld.__meta__ = { fields : { stage : { Inject : null}, time : { Inject : null}, projection : { Inject : null}, camera : { Inject : null}, start : { Sequence : ["boot","start"]}, render : { Message : null}}};
+kumite.helloworldgl.HelloWorld.__rtti = "<class path=\"kumite.helloworldgl.HelloWorld\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<worldViewMatrixUniform><c path=\"GLUniformLocation\"/></worldViewMatrixUniform>\n\t<colorUniform><c path=\"GLUniformLocation\"/></colorUniform>\n\t<start public=\"1\" set=\"method\" line=\"36\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<render public=\"1\" set=\"method\" line=\"54\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<drawRect set=\"method\" line=\"75\"><f a=\"x:y:z:color\">\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Color\"/>\n\t<e path=\"Void\"/>\n</f></drawRect>\n\t<new public=\"1\" set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.stage.StageResizeAction.__meta__ = { fields : { messenger : { Messenger : null}, stage : { Inject : null}, initPrepare : { Sequence : ["boot","initPrepare"]}, startComplete : { Sequence : ["boot","startComplete"]}}};
 kumite.stage.StageResizeAction.__rtti = "<class path=\"kumite.stage.StageResizeAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<startComplete public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<onResize set=\"method\" line=\"39\"><f a=\"?event\">\n\t<t path=\"js.Event\"/>\n\t<e path=\"Void\"/>\n</f></onResize>\n\t<updateSize set=\"method\" line=\"45\"><f a=\"\"><e path=\"Void\"/></f></updateSize>\n\t<sendResizeMessage set=\"method\" line=\"51\"><f a=\"\"><e path=\"Void\"/></f></sendResizeMessage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.webgl.Config.__rtti = "<class path=\"kumite.webgl.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<initAction public=\"1\"><c path=\"kumite.webgl.InitAction\"/></initAction>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
@@ -7015,8 +7026,8 @@ Xml.ecomment_end = new EReg("-->","");
 haxe.Timer.arr = new Array();
 kumite.projection.Config.__rtti = "<class path=\"kumite.projection.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<projectionController public=\"1\"><c path=\"kumite.projection.ProjectionController\"/></projectionController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.time.Config.__rtti = "<class path=\"kumite.time.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<timeController public=\"1\"><c path=\"kumite.time.TimeController\"/></timeController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.time.TimeController.__meta__ = { fields : { time : { Inject : null}, init : { Sequence : ["boot","startComplete"]}}};
-kumite.time.TimeController.__rtti = "<class path=\"kumite.time.TimeController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<init public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<timerUpdate set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.time.TimeController.__meta__ = { fields : { time : { Inject : null}, messenger : { Messenger : null}, startComplete : { Sequence : ["boot","startComplete"]}}};
+kumite.time.TimeController.__rtti = "<class path=\"kumite.time.TimeController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<startComplete public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"24\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<new public=\"1\" set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.projection.ProjectionController.__meta__ = { fields : { projection : { Inject : null}, stage : { Inject : null}, init : { Sequence : ["boot","init"]}, updateProjectionSizeFromStage : { Message : null}}};
 kumite.projection.ProjectionController.__rtti = "<class path=\"kumite.projection.ProjectionController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<fov public=\"1\"><c path=\"Float\"/></fov>\n\t<near public=\"1\"><c path=\"Float\"/></near>\n\t<far public=\"1\"><c path=\"Float\"/></far>\n\t<init public=\"1\" set=\"method\" line=\"23\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateProjectionSizeFromStage public=\"1\" set=\"method\" line=\"30\"><f a=\"?message\">\n\t<c path=\"kumite.stage.StageResizeMessage\"/>\n\t<e path=\"Void\"/>\n</f></updateProjectionSizeFromStage>\n\t<new public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Log.filters = new Array();

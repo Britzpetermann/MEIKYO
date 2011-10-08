@@ -4,6 +4,7 @@ import kumite.stage.Stage;
 import kumite.camera.Camera;
 import kumite.projection.Projection;
 import kumite.time.Time;
+import kumite.time.Tick;
 
 import haxe.rtti.Infos;
 
@@ -31,8 +32,8 @@ class HelloWorld implements Infos
 		
 	public function new() {}
 	
-	@Sequence("boot", "startComplete")
-	public function startComplete()
+	@Sequence("boot", "start")
+	public function start()
 	{
 		shaderProgram = GL.createProgram(kumite.helloworldgl.shader.Vertex, kumite.helloworldgl.shader.Fragment);
 
@@ -47,11 +48,10 @@ class HelloWorld implements Infos
 		projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
 		worldViewMatrixUniform = GL.getUniformLocation("worldViewMatrix");
 		colorUniform = GL.getUniformLocation("color");
-				
-		GLAnimationFrame.run(render);
 	}
 	
-	private function render()
+	@Message
+	public function render(tick : Tick)
 	{
 		GL.useProgram(shaderProgram);
 		GL.viewport(0, 0, stage.width, stage.height);
