@@ -21,9 +21,6 @@ class DisplayListController implements Infos
 	{
 		renderer = new GLDisplayListRenderer();
 		renderer.init();
-		
-		var root = GLDisplayList.getDefault().stage;
-		root.addChild(new GLStats());
 	}
 	
 	@Message
@@ -31,6 +28,7 @@ class DisplayListController implements Infos
 	{
 		Stats.measureFPS();
 		
+		GLDisplayList.getDefault().setStageSize(stage.width, stage.height);
 		GLDisplayList.getDefault().dispatchEnterFrame();
 		renderer.render(stage.width, stage.height);		
 	}

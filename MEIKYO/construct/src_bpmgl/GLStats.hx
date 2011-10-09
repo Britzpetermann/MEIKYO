@@ -10,9 +10,7 @@ class GLStats extends GLDisplayObject
 
 		width = 64;
 		height = 32;
-		context.fillStyle = "rgba(0, 40, 0, 0.6)";
-		context.fillRect (0, 0, width, height);
-
+		
 		enterFrameSignaler.bind(handleEnterFrame);
 	}
 
@@ -21,19 +19,18 @@ class GLStats extends GLDisplayObject
 		if (lastDraw < frame.time - 100)
 		{
 			lastDraw = frame.time;
-			context.clearRect(0, 0, width, height);
-			context.fillStyle = "rgba(0, 0, 0, 0.2)";
-			context.fillRect (0, 0, width, Stats.getContents().length * 12 + 4);
-			context.font = "12px Arial";
-			context.fillStyle = "rgba(0, 255, 0, 0.4)";
+			graphic.clear();
+			graphic.fillStyle = new Color(0, 1, 0, 0.3);
+			graphic.fillRect(0, 0, width - 10, Stats.getContents().length * 12 + 4);
+			graphic.font = "12px Arial";
+			graphic.fillStyle = new Color(0, 1, 0, 1);
 
 			var line = 0;
 			for(message in Stats.getContents())
 			{
-				context.fillText(message, 6, 12 + line * 12);
+				graphic.fillText(message, 6, 12 + line * 12);
 				line++;
 			}
-			canvasIsInvalid = true;
 		}
 	}
 }

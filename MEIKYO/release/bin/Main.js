@@ -1,929 +1,4 @@
 $estr = function() { return js.Boot.__string_rec(this,''); }
-if(typeof haxe=='undefined') haxe = {}
-if(!haxe.rtti) haxe.rtti = {}
-haxe.rtti.Infos = function() { }
-haxe.rtti.Infos.__name__ = ["haxe","rtti","Infos"];
-haxe.rtti.Infos.prototype.__class__ = haxe.rtti.Infos;
-if(typeof kumite=='undefined') kumite = {}
-if(!kumite.helloworldgl) kumite.helloworldgl = {}
-kumite.helloworldgl.HelloWorld = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.helloworldgl.HelloWorld::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-kumite.helloworldgl.HelloWorld.__name__ = ["kumite","helloworldgl","HelloWorld"];
-kumite.helloworldgl.HelloWorld.prototype.stage = null;
-kumite.helloworldgl.HelloWorld.prototype.time = null;
-kumite.helloworldgl.HelloWorld.prototype.projection = null;
-kumite.helloworldgl.HelloWorld.prototype.camera = null;
-kumite.helloworldgl.HelloWorld.prototype.shaderProgram = null;
-kumite.helloworldgl.HelloWorld.prototype.vertexPositionAttribute = null;
-kumite.helloworldgl.HelloWorld.prototype.vertexBuffer = null;
-kumite.helloworldgl.HelloWorld.prototype.projectionMatrixUniform = null;
-kumite.helloworldgl.HelloWorld.prototype.worldViewMatrixUniform = null;
-kumite.helloworldgl.HelloWorld.prototype.colorUniform = null;
-kumite.helloworldgl.HelloWorld.prototype.start = function() {
-	$s.push("kumite.helloworldgl.HelloWorld::start");
-	var $spos = $s.length;
-	this.shaderProgram = GL.createProgram(kumite.helloworldgl.shader.Vertex,kumite.helloworldgl.shader.Fragment);
-	this.vertexPositionAttribute = GL.getAttribLocation2("vertexPosition",2,5120);
-	this.vertexPositionAttribute.updateBuffer(new Int8Array([-1,-1,1,-1,-1,1,1,1]));
-	this.projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
-	this.worldViewMatrixUniform = GL.getUniformLocation("worldViewMatrix");
-	this.colorUniform = GL.getUniformLocation("color");
-	$s.pop();
-}
-kumite.helloworldgl.HelloWorld.prototype.render = function(tick) {
-	$s.push("kumite.helloworldgl.HelloWorld::render");
-	var $spos = $s.length;
-	GL.useProgram(this.shaderProgram);
-	GL.gl.viewport(0,0,this.stage.width,this.stage.height);
-	GL.gl.enable(2929);
-	GL.gl.uniformMatrix4fv(this.projectionMatrixUniform.location,false,this.projection.matrix.buffer);
-	this.vertexPositionAttribute.vertexAttribPointer();
-	{
-		var _g = -10;
-		while(_g < 10) {
-			var y = _g++;
-			this.drawRect(0,Map.linear(y,-10,10,-3,3),0,new Color(0,Map.linear(y,-10,10,0,1),0,1));
-		}
-	}
-	{
-		var _g = -10;
-		while(_g < 10) {
-			var z = _g++;
-			this.drawRect(0,0,Map.linear(z,-10,10,-3,3),new Color(0,0,Map.linear(z,-10,10,0,1),1));
-		}
-	}
-	{
-		var _g = -10;
-		while(_g < 10) {
-			var x = _g++;
-			this.drawRect(Map.linear(x,-10,10,-3,3),0,0,new Color(Map.linear(x,-10,10,0,1),0,0,1));
-		}
-	}
-	$s.pop();
-}
-kumite.helloworldgl.HelloWorld.prototype.drawRect = function(x,y,z,color) {
-	$s.push("kumite.helloworldgl.HelloWorld::drawRect");
-	var $spos = $s.length;
-	var worldViewMatrix = new Matrix4(this.camera.matrix);
-	worldViewMatrix.appendRotation(this.time.ms / 50000,new Vec3(1,-1,-1));
-	worldViewMatrix.appendTranslation(x,y,z);
-	worldViewMatrix.appendScale(0.1,0.1,0.1);
-	GL.gl.uniformMatrix4fv(this.worldViewMatrixUniform.location,false,worldViewMatrix.buffer);
-	GL.gl.uniform4f(this.colorUniform.location,color.r,color.g,color.b,color.a);
-	this.vertexPositionAttribute.drawArrays(5);
-	$s.pop();
-}
-kumite.helloworldgl.HelloWorld.prototype.__class__ = kumite.helloworldgl.HelloWorld;
-kumite.helloworldgl.HelloWorld.__interfaces__ = [haxe.rtti.Infos];
-if(!kumite.time) kumite.time = {}
-kumite.time.Tick = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.time.Tick::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-kumite.time.Tick.__name__ = ["kumite","time","Tick"];
-kumite.time.Tick.prototype.__class__ = kumite.time.Tick;
-Vec2 = function(x,y) { if( x === $_ ) return; {
-	$s.push("Vec2::new");
-	var $spos = $s.length;
-	this.x = x;
-	this.y = y;
-	$s.pop();
-}}
-Vec2.__name__ = ["Vec2"];
-Vec2.prototype.x = null;
-Vec2.prototype.y = null;
-Vec2.prototype.set = function(x,y) {
-	$s.push("Vec2::set");
-	var $spos = $s.length;
-	this.x = x;
-	this.y = y;
-	$s.pop();
-}
-Vec2.prototype.scale = function(factor) {
-	$s.push("Vec2::scale");
-	var $spos = $s.length;
-	this.x *= factor;
-	this.y *= factor;
-	$s.pop();
-}
-Vec2.prototype.multiply = function(x,y) {
-	$s.push("Vec2::multiply");
-	var $spos = $s.length;
-	this.x *= x;
-	this.y *= y;
-	$s.pop();
-}
-Vec2.prototype.subtract = function(x,y) {
-	$s.push("Vec2::subtract");
-	var $spos = $s.length;
-	this.x -= x;
-	this.y -= y;
-	$s.pop();
-}
-Vec2.prototype.normalize = function() {
-	$s.push("Vec2::normalize");
-	var $spos = $s.length;
-	var invLength = 1 / Math.sqrt(this.x * this.x + this.y * this.y);
-	this.x *= invLength;
-	this.y *= invLength;
-	$s.pop();
-}
-Vec2.prototype.transform = function(matrix) {
-	$s.push("Vec2::transform");
-	var $spos = $s.length;
-	var x1 = this.x, y1 = this.y, z1 = 0, w1 = 1;
-	var mat = matrix.buffer;
-	this.x = mat[0] * x1 + mat[4] * y1 + mat[8] * z1 + mat[12] * w1;
-	this.y = mat[1] * x1 + mat[5] * y1 + mat[9] * z1 + mat[13] * w1;
-	$s.pop();
-}
-Vec2.prototype.clone = function() {
-	$s.push("Vec2::clone");
-	var $spos = $s.length;
-	{
-		var $tmp = new Vec2(this.x,this.y);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Vec2.prototype.__class__ = Vec2;
-if(typeof hsl=='undefined') hsl = {}
-if(!hsl.haxe) hsl.haxe = {}
-hsl.haxe.Bond = function(p) { if( p === $_ ) return; {
-	$s.push("hsl.haxe.Bond::new");
-	var $spos = $s.length;
-	this.halted = false;
-	$s.pop();
-}}
-hsl.haxe.Bond.__name__ = ["hsl","haxe","Bond"];
-hsl.haxe.Bond.prototype.halted = null;
-hsl.haxe.Bond.prototype.willDestroyOnUse = null;
-hsl.haxe.Bond.prototype.destroy = function() {
-	$s.push("hsl.haxe.Bond::destroy");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}
-hsl.haxe.Bond.prototype.destroyOnUse = function() {
-	$s.push("hsl.haxe.Bond::destroyOnUse");
-	var $spos = $s.length;
-	this.willDestroyOnUse = true;
-	{
-		$s.pop();
-		return this;
-	}
-	$s.pop();
-}
-hsl.haxe.Bond.prototype.halt = function() {
-	$s.push("hsl.haxe.Bond::halt");
-	var $spos = $s.length;
-	this.halted = true;
-	$s.pop();
-}
-hsl.haxe.Bond.prototype.resume = function() {
-	$s.push("hsl.haxe.Bond::resume");
-	var $spos = $s.length;
-	this.halted = false;
-	$s.pop();
-}
-hsl.haxe.Bond.prototype.toString = function() {
-	$s.push("hsl.haxe.Bond::toString");
-	var $spos = $s.length;
-	{
-		$s.pop();
-		return "[Bond]";
-	}
-	$s.pop();
-}
-hsl.haxe.Bond.prototype.__class__ = hsl.haxe.Bond;
-if(!haxe.exception) haxe.exception = {}
-haxe.exception.Exception = function(message,innerException,numberOfStackTraceShifts) { if( message === $_ ) return; {
-	$s.push("haxe.exception.Exception::new");
-	var $spos = $s.length;
-	this.message = null == message?"Unknown exception":message;
-	this.innerException = innerException;
-	this.generateStackTrace(numberOfStackTraceShifts);
-	this.stackTrace = this.stackTraceArray;
-	$s.pop();
-}}
-haxe.exception.Exception.__name__ = ["haxe","exception","Exception"];
-haxe.exception.Exception.prototype.baseException = null;
-haxe.exception.Exception.prototype.innerException = null;
-haxe.exception.Exception.prototype.message = null;
-haxe.exception.Exception.prototype.stackTrace = null;
-haxe.exception.Exception.prototype.stackTraceArray = null;
-haxe.exception.Exception.prototype.generateStackTrace = function(numberOfStackTraceShifts) {
-	$s.push("haxe.exception.Exception::generateStackTrace");
-	var $spos = $s.length;
-	this.stackTraceArray = haxe.Stack.callStack().slice(numberOfStackTraceShifts + 1);
-	var exceptionClass = Type.getClass(this);
-	while(haxe.exception.Exception != exceptionClass) {
-		this.stackTraceArray.shift();
-		exceptionClass = Type.getSuperClass(exceptionClass);
-	}
-	$s.pop();
-}
-haxe.exception.Exception.prototype.getBaseException = function() {
-	$s.push("haxe.exception.Exception::getBaseException");
-	var $spos = $s.length;
-	var result = this;
-	while(null != result.innerException) {
-		result = result.innerException;
-	}
-	{
-		$s.pop();
-		return result;
-	}
-	$s.pop();
-}
-haxe.exception.Exception.prototype.toString = function() {
-	$s.push("haxe.exception.Exception::toString");
-	var $spos = $s.length;
-	{
-		var $tmp = this.message + haxe.Stack.toString(this.stackTraceArray);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.exception.Exception.prototype.__class__ = haxe.exception.Exception;
-haxe.exception.ArgumentNullException = function(argumentName,numberOfStackTraceShifts) { if( argumentName === $_ ) return; {
-	$s.push("haxe.exception.ArgumentNullException::new");
-	var $spos = $s.length;
-	haxe.exception.Exception.call(this,"Argument " + argumentName + " must be non-null",null,numberOfStackTraceShifts);
-	$s.pop();
-}}
-haxe.exception.ArgumentNullException.__name__ = ["haxe","exception","ArgumentNullException"];
-haxe.exception.ArgumentNullException.__super__ = haxe.exception.Exception;
-for(var k in haxe.exception.Exception.prototype ) haxe.exception.ArgumentNullException.prototype[k] = haxe.exception.Exception.prototype[k];
-haxe.exception.ArgumentNullException.prototype.__class__ = haxe.exception.ArgumentNullException;
-Map = function() { }
-Map.__name__ = ["Map"];
-Map.linear = function(value,min0,max0,min1,max1) {
-	$s.push("Map::linear");
-	var $spos = $s.length;
-	var p0 = 1 / (max0 - min0) * (value - min0);
-	{
-		var $tmp = min1 + (max1 - min1) * p0;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Map.prototype.__class__ = Map;
-if(!kumite.stage) kumite.stage = {}
-kumite.stage.StageResizeAction = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.stage.StageResizeAction::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-kumite.stage.StageResizeAction.__name__ = ["kumite","stage","StageResizeAction"];
-kumite.stage.StageResizeAction.prototype.messenger = null;
-kumite.stage.StageResizeAction.prototype.stage = null;
-kumite.stage.StageResizeAction.prototype.initPrepare = function() {
-	$s.push("kumite.stage.StageResizeAction::initPrepare");
-	var $spos = $s.length;
-	this.updateSize();
-	$s.pop();
-}
-kumite.stage.StageResizeAction.prototype.startComplete = function() {
-	$s.push("kumite.stage.StageResizeAction::startComplete");
-	var $spos = $s.length;
-	GLAnimationFrame.run($closure(this,"timerUpdate"));
-	js.Lib.window.onresize = $closure(this,"onResize");
-	$s.pop();
-}
-kumite.stage.StageResizeAction.prototype.timerUpdate = function() {
-	$s.push("kumite.stage.StageResizeAction::timerUpdate");
-	var $spos = $s.length;
-	if(this.stage.width != js.Lib.window.innerWidth || this.stage.height != js.Lib.window.innerHeight) this.onResize();
-	$s.pop();
-}
-kumite.stage.StageResizeAction.prototype.onResize = function(event) {
-	$s.push("kumite.stage.StageResizeAction::onResize");
-	var $spos = $s.length;
-	this.updateSize();
-	this.sendResizeMessage();
-	$s.pop();
-}
-kumite.stage.StageResizeAction.prototype.updateSize = function() {
-	$s.push("kumite.stage.StageResizeAction::updateSize");
-	var $spos = $s.length;
-	this.stage.width = Std["int"](js.Lib.window.innerWidth);
-	this.stage.height = Std["int"](js.Lib.window.innerHeight);
-	$s.pop();
-}
-kumite.stage.StageResizeAction.prototype.sendResizeMessage = function() {
-	$s.push("kumite.stage.StageResizeAction::sendResizeMessage");
-	var $spos = $s.length;
-	this.messenger.send(new kumite.stage.StageResizeMessage());
-	$s.pop();
-}
-kumite.stage.StageResizeAction.prototype.__class__ = kumite.stage.StageResizeAction;
-kumite.stage.StageResizeAction.__interfaces__ = [haxe.rtti.Infos];
-if(!kumite.mouse) kumite.mouse = {}
-kumite.mouse.Config = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.mouse.Config::new");
-	var $spos = $s.length;
-	this.mouseController = new kumite.mouse.MouseController();
-	$s.pop();
-}}
-kumite.mouse.Config.__name__ = ["kumite","mouse","Config"];
-kumite.mouse.Config.prototype.mouseController = null;
-kumite.mouse.Config.prototype.__class__ = kumite.mouse.Config;
-kumite.mouse.Config.__interfaces__ = [haxe.rtti.Infos];
-if(!kumite.webgl) kumite.webgl = {}
-kumite.webgl.Config = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.webgl.Config::new");
-	var $spos = $s.length;
-	this.initAction = new kumite.webgl.InitAction();
-	this.initAction.antialias = true;
-	$s.pop();
-}}
-kumite.webgl.Config.__name__ = ["kumite","webgl","Config"];
-kumite.webgl.Config.prototype.initAction = null;
-kumite.webgl.Config.prototype.__class__ = kumite.webgl.Config;
-kumite.webgl.Config.__interfaces__ = [haxe.rtti.Infos];
-if(typeof bpmjs=='undefined') bpmjs = {}
-bpmjs.Context = function(p) { if( p === $_ ) return; {
-	$s.push("bpmjs.Context::new");
-	var $spos = $s.length;
-	this.objects = new Array();
-	$s.pop();
-}}
-bpmjs.Context.__name__ = ["bpmjs","Context"];
-bpmjs.Context.prototype.contextConfig = null;
-bpmjs.Context.prototype.objects = null;
-bpmjs.Context.prototype.addObject = function(name,type,object) {
-	$s.push("bpmjs.Context::addObject");
-	var $spos = $s.length;
-	var contextObject = new bpmjs.ContextObject(name,type,object);
-	this.objects.push(contextObject);
-	{
-		$s.pop();
-		return contextObject;
-	}
-	$s.pop();
-}
-bpmjs.Context.prototype.getObjectByName = function(name) {
-	$s.push("bpmjs.Context::getObjectByName");
-	var $spos = $s.length;
-	{
-		var _g = 0, _g1 = this.objects;
-		while(_g < _g1.length) {
-			var contextObject = _g1[_g];
-			++_g;
-			if(contextObject.name == name) {
-				var $tmp = contextObject.object;
-				$s.pop();
-				return $tmp;
-			}
-		}
-	}
-	{
-		$s.pop();
-		return null;
-	}
-	$s.pop();
-}
-bpmjs.Context.prototype.getObjectByType = function(type) {
-	$s.push("bpmjs.Context::getObjectByType");
-	var $spos = $s.length;
-	{
-		var _g = 0, _g1 = this.objects;
-		while(_g < _g1.length) {
-			var contextObject = _g1[_g];
-			++_g;
-			if(contextObject.type == type) {
-				var $tmp = contextObject.object;
-				$s.pop();
-				return $tmp;
-			}
-		}
-	}
-	{
-		$s.pop();
-		return null;
-	}
-	$s.pop();
-}
-bpmjs.Context.prototype.__class__ = bpmjs.Context;
-bpmjs.ContextObject = function(name,type,object) { if( name === $_ ) return; {
-	$s.push("bpmjs.ContextObject::new");
-	var $spos = $s.length;
-	this.name = name;
-	this.type = type;
-	this.object = object;
-	$s.pop();
-}}
-bpmjs.ContextObject.__name__ = ["bpmjs","ContextObject"];
-bpmjs.ContextObject.prototype.name = null;
-bpmjs.ContextObject.prototype.type = null;
-bpmjs.ContextObject.prototype.object = null;
-bpmjs.ContextObject.prototype.__class__ = bpmjs.ContextObject;
-kumite.helloworldgl.Config = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.helloworldgl.Config::new");
-	var $spos = $s.length;
-	this.helloWorld = new kumite.helloworldgl.HelloWorld();
-	$s.pop();
-}}
-kumite.helloworldgl.Config.__name__ = ["kumite","helloworldgl","Config"];
-kumite.helloworldgl.Config.prototype.helloWorld = null;
-kumite.helloworldgl.Config.prototype.__class__ = kumite.helloworldgl.Config;
-kumite.helloworldgl.Config.__interfaces__ = [haxe.rtti.Infos];
-List = function(p) { if( p === $_ ) return; {
-	$s.push("List::new");
-	var $spos = $s.length;
-	this.length = 0;
-	$s.pop();
-}}
-List.__name__ = ["List"];
-List.prototype.h = null;
-List.prototype.q = null;
-List.prototype.length = null;
-List.prototype.add = function(item) {
-	$s.push("List::add");
-	var $spos = $s.length;
-	var x = [item];
-	if(this.h == null) this.h = x;
-	else this.q[1] = x;
-	this.q = x;
-	this.length++;
-	$s.pop();
-}
-List.prototype.push = function(item) {
-	$s.push("List::push");
-	var $spos = $s.length;
-	var x = [item,this.h];
-	this.h = x;
-	if(this.q == null) this.q = x;
-	this.length++;
-	$s.pop();
-}
-List.prototype.first = function() {
-	$s.push("List::first");
-	var $spos = $s.length;
-	{
-		var $tmp = this.h == null?null:this.h[0];
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-List.prototype.last = function() {
-	$s.push("List::last");
-	var $spos = $s.length;
-	{
-		var $tmp = this.q == null?null:this.q[0];
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-List.prototype.pop = function() {
-	$s.push("List::pop");
-	var $spos = $s.length;
-	if(this.h == null) {
-		$s.pop();
-		return null;
-	}
-	var x = this.h[0];
-	this.h = this.h[1];
-	if(this.h == null) this.q = null;
-	this.length--;
-	{
-		$s.pop();
-		return x;
-	}
-	$s.pop();
-}
-List.prototype.isEmpty = function() {
-	$s.push("List::isEmpty");
-	var $spos = $s.length;
-	{
-		var $tmp = this.h == null;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-List.prototype.clear = function() {
-	$s.push("List::clear");
-	var $spos = $s.length;
-	this.h = null;
-	this.q = null;
-	this.length = 0;
-	$s.pop();
-}
-List.prototype.remove = function(v) {
-	$s.push("List::remove");
-	var $spos = $s.length;
-	var prev = null;
-	var l = this.h;
-	while(l != null) {
-		if(l[0] == v) {
-			if(prev == null) this.h = l[1];
-			else prev[1] = l[1];
-			if(this.q == l) this.q = prev;
-			this.length--;
-			{
-				$s.pop();
-				return true;
-			}
-		}
-		prev = l;
-		l = l[1];
-	}
-	{
-		$s.pop();
-		return false;
-	}
-	$s.pop();
-}
-List.prototype.iterator = function() {
-	$s.push("List::iterator");
-	var $spos = $s.length;
-	{
-		var $tmp = { h : this.h, hasNext : function() {
-			$s.push("List::iterator@155");
-			var $spos = $s.length;
-			{
-				var $tmp = this.h != null;
-				$s.pop();
-				return $tmp;
-			}
-			$s.pop();
-		}, next : function() {
-			$s.push("List::iterator@158");
-			var $spos = $s.length;
-			if(this.h == null) {
-				$s.pop();
-				return null;
-			}
-			var x = this.h[0];
-			this.h = this.h[1];
-			{
-				$s.pop();
-				return x;
-			}
-			$s.pop();
-		}};
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-List.prototype.toString = function() {
-	$s.push("List::toString");
-	var $spos = $s.length;
-	var s = new StringBuf();
-	var first = true;
-	var l = this.h;
-	s.b[s.b.length] = "{";
-	while(l != null) {
-		if(first) first = false;
-		else s.b[s.b.length] = ", ";
-		s.b[s.b.length] = Std.string(l[0]);
-		l = l[1];
-	}
-	s.b[s.b.length] = "}";
-	{
-		var $tmp = s.b.join("");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-List.prototype.join = function(sep) {
-	$s.push("List::join");
-	var $spos = $s.length;
-	var s = new StringBuf();
-	var first = true;
-	var l = this.h;
-	while(l != null) {
-		if(first) first = false;
-		else s.b[s.b.length] = sep;
-		s.b[s.b.length] = l[0];
-		l = l[1];
-	}
-	{
-		var $tmp = s.b.join("");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-List.prototype.filter = function(f) {
-	$s.push("List::filter");
-	var $spos = $s.length;
-	var l2 = new List();
-	var l = this.h;
-	while(l != null) {
-		var v = l[0];
-		l = l[1];
-		if(f(v)) l2.add(v);
-	}
-	{
-		$s.pop();
-		return l2;
-	}
-	$s.pop();
-}
-List.prototype.map = function(f) {
-	$s.push("List::map");
-	var $spos = $s.length;
-	var b = new List();
-	var l = this.h;
-	while(l != null) {
-		var v = l[0];
-		l = l[1];
-		b.add(f(v));
-	}
-	{
-		$s.pop();
-		return b;
-	}
-	$s.pop();
-}
-List.prototype.__class__ = List;
-bpmjs.Sequencer = function(p) { if( p === $_ ) return; {
-	$s.push("bpmjs.Sequencer::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-bpmjs.Sequencer.__name__ = ["bpmjs","Sequencer"];
-bpmjs.Sequencer.prototype.context = null;
-bpmjs.Sequencer.prototype.start = function(name) {
-	$s.push("bpmjs.Sequencer::start");
-	var $spos = $s.length;
-	Log.groupCollapsed("Sequence: " + name,null,null,null,null,null,null,{ fileName : "Sequencer.hx", lineNumber : 16, className : "bpmjs.Sequencer", methodName : "start"});
-	var sequence = new bpmjs.Sequence(name);
-	sequence.objects = this.context.objects;
-	sequence.execute("initPrepare");
-	sequence.execute("init");
-	sequence.execute("initComplete");
-	sequence.execute("startPrepare");
-	sequence.execute("start");
-	sequence.execute("startComplete");
-	Log.groupEnd({ fileName : "Sequencer.hx", lineNumber : 28, className : "bpmjs.Sequencer", methodName : "start"});
-	$s.pop();
-}
-bpmjs.Sequencer.prototype.__class__ = bpmjs.Sequencer;
-bpmjs.Sequencer.__interfaces__ = [haxe.rtti.Infos];
-bpmjs.Sequence = function(name) { if( name === $_ ) return; {
-	$s.push("bpmjs.Sequence::new");
-	var $spos = $s.length;
-	this.name = name;
-	$s.pop();
-}}
-bpmjs.Sequence.__name__ = ["bpmjs","Sequence"];
-bpmjs.Sequence.prototype.name = null;
-bpmjs.Sequence.prototype.objects = null;
-bpmjs.Sequence.prototype.execute = function(phase) {
-	$s.push("bpmjs.Sequence::execute");
-	var $spos = $s.length;
-	var _g = 0, _g1 = this.objects;
-	while(_g < _g1.length) {
-		var contextObject = _g1[_g];
-		++_g;
-		var object = contextObject.object;
-		var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
-		{
-			var _g2 = 0, _g3 = Reflect.fields(metaDatas);
-			while(_g2 < _g3.length) {
-				var fieldName = _g3[_g2];
-				++_g2;
-				var meta = Reflect.field(metaDatas,fieldName);
-				if(Reflect.hasField(meta,"Sequence")) {
-					var localName = meta.Sequence[0];
-					var localPhase = meta.Sequence[1];
-					if(localPhase == phase) {
-						Log.info("Phase '" + localPhase + "' " + Type.getClassName(contextObject.type) + "#" + fieldName,null,null,null,null,null,null,{ fileName : "Sequencer.hx", lineNumber : 59, className : "bpmjs.Sequence", methodName : "execute"});
-						Reflect.field(object,fieldName).apply(object,[]);
-					}
-				}
-			}
-		}
-	}
-	$s.pop();
-}
-bpmjs.Sequence.prototype.__class__ = bpmjs.Sequence;
-Color = function(r,g,b,a) { if( r === $_ ) return; {
-	$s.push("Color::new");
-	var $spos = $s.length;
-	if(a == null) a = 1.0;
-	if(b == null) b = 1.0;
-	if(g == null) g = 0.0;
-	if(r == null) r = 1.0;
-	this.r = r;
-	this.g = g;
-	this.b = b;
-	this.a = a;
-	$s.pop();
-}}
-Color.__name__ = ["Color"];
-Color.prototype.r = null;
-Color.prototype.g = null;
-Color.prototype.b = null;
-Color.prototype.a = null;
-Color.prototype.fromHex = function(hex) {
-	$s.push("Color::fromHex");
-	var $spos = $s.length;
-	this.r = (hex >> 16 & 255) / 255;
-	this.g = (hex >> 8 & 255) / 255;
-	this.b = (hex & 255) / 255;
-	this.a = 1.0;
-	{
-		$s.pop();
-		return this;
-	}
-	$s.pop();
-}
-Color.prototype.scaleRGB = function(factor) {
-	$s.push("Color::scaleRGB");
-	var $spos = $s.length;
-	this.r *= factor;
-	this.g *= factor;
-	this.b *= factor;
-	$s.pop();
-}
-Color.prototype.mixFrom = function(color1,color2,color1Mix) {
-	$s.push("Color::mixFrom");
-	var $spos = $s.length;
-	if(color1Mix < 0) color1Mix = 0;
-	if(color1Mix > 1) color1Mix = 1;
-	var color2Mix = 1 - color1Mix;
-	this.r = color1.r * color1Mix + color2.r * color2Mix;
-	this.g = color1.g * color1Mix + color2.g * color2Mix;
-	this.b = color1.b * color1Mix + color2.b * color2Mix;
-	$s.pop();
-}
-Color.prototype.toContextRGB = function() {
-	$s.push("Color::toContextRGB");
-	var $spos = $s.length;
-	{
-		var $tmp = "rgb(" + this.r * 255 + "," + this.g * 255 + "," + this.b * 255 + ")";
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Color.prototype.toContextRGBA = function() {
-	$s.push("Color::toContextRGBA");
-	var $spos = $s.length;
-	{
-		var $tmp = "rgba(" + Std["int"](this.r * 255) + "," + Std["int"](this.g * 255) + "," + Std["int"](this.b * 255) + "," + this.a + ")";
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Color.prototype.toString = function() {
-	$s.push("Color::toString");
-	var $spos = $s.length;
-	{
-		var $tmp = "Color: " + this.r + "," + this.g + "," + this.b + "," + this.a;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Color.prototype.__class__ = Color;
-kumite.time.Time = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.time.Time::new");
-	var $spos = $s.length;
-	this.reset();
-	$s.pop();
-}}
-kumite.time.Time.__name__ = ["kumite","time","Time"];
-kumite.time.Time.prototype.ms = null;
-kumite.time.Time.prototype.frameMs = null;
-kumite.time.Time.prototype.timeScale = null;
-kumite.time.Time.prototype.frame = null;
-kumite.time.Time.prototype.frameRate = null;
-kumite.time.Time.prototype.lastTime = null;
-kumite.time.Time.prototype.reset = function() {
-	$s.push("kumite.time.Time::reset");
-	var $spos = $s.length;
-	this.frameRate = 60;
-	this.ms = 0;
-	this.frameMs = Std["int"](1000 / 60);
-	this.timeScale = 1;
-	this.frame = 0;
-	this.lastTime = Date.now().getTime();
-	$s.pop();
-}
-kumite.time.Time.prototype.tick = function() {
-	$s.push("kumite.time.Time::tick");
-	var $spos = $s.length;
-	var time = Date.now().getTime();
-	this.frame++;
-	if(this.lastTime == -1) this.lastTime = time - 100;
-	this.frameMs = time - this.lastTime;
-	if(Math.isNaN(this.frameMs) || !Math.isFinite(this.frameMs)) this.frameMs = 100;
-	this.timeScale += (this.frameMs / 1000 * 60 - this.timeScale) * 0.1;
-	if(this.timeScale < 0.25) this.timeScale = 0.25;
-	if(this.timeScale > 3) this.timeScale = 3;
-	if(Math.isNaN(this.timeScale) || !Math.isFinite(this.timeScale)) this.timeScale = 100 / 1000 * 30;
-	this.ms += this.frameMs;
-	this.frameRate = 1000 / this.frameMs;
-	this.lastTime = time;
-	$s.pop();
-}
-kumite.time.Time.prototype.tickInPause = function() {
-	$s.push("kumite.time.Time::tickInPause");
-	var $spos = $s.length;
-	var time = Date.now().getTime();
-	if(this.lastTime == -1) this.lastTime = time - 100;
-	this.frameMs = time - this.lastTime;
-	if(Math.isNaN(this.frameMs) || !Math.isFinite(this.frameMs)) this.frameMs = 100;
-	this.timeScale = this.frameMs / 1000 * 60;
-	if(Math.isNaN(this.timeScale) || !Math.isFinite(this.timeScale)) this.timeScale = 100 / 1000 * 60;
-	this.frameRate = 1000 / this.frameMs;
-	this.lastTime = time;
-	$s.pop();
-}
-kumite.time.Time.prototype.summand = function(value) {
-	$s.push("kumite.time.Time::summand");
-	var $spos = $s.length;
-	{
-		var $tmp = value * this.timeScale;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-kumite.time.Time.prototype.factor = function(value) {
-	$s.push("kumite.time.Time::factor");
-	var $spos = $s.length;
-	{
-		var $tmp = Math.pow(value,this.timeScale);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-kumite.time.Time.prototype.interpolateTo = function(from,to,f) {
-	$s.push("kumite.time.Time::interpolateTo");
-	var $spos = $s.length;
-	{
-		var $tmp = from * (1 - f * this.timeScale) + to * (f * this.timeScale);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-kumite.time.Time.prototype.__class__ = kumite.time.Time;
-GLCursorClient = function(p) { if( p === $_ ) return; {
-	$s.push("GLCursorClient::new");
-	var $spos = $s.length;
-	this.lastCursor = "";
-	$s.pop();
-}}
-GLCursorClient.__name__ = ["GLCursorClient"];
-GLCursorClient.prototype.lastCursor = null;
-GLCursorClient.prototype.defaultCursor = function() {
-	$s.push("GLCursorClient::defaultCursor");
-	var $spos = $s.length;
-	if(this.lastCursor != GLCursorClient.DEFAULT) {
-		this.lastCursor = GLCursorClient.DEFAULT;
-		GLMouseRegistry.getInstance().setCursor(this.lastCursor);
-	}
-	$s.pop();
-}
-GLCursorClient.prototype.handCursor = function(message) {
-	$s.push("GLCursorClient::handCursor");
-	var $spos = $s.length;
-	if(this.lastCursor != GLCursorClient.HAND) {
-		this.lastCursor = GLCursorClient.HAND;
-		GLMouseRegistry.getInstance().setCursor(this.lastCursor);
-		if(message != null) js.Lib.window.status = message;
-	}
-	$s.pop();
-}
-GLCursorClient.prototype.__class__ = GLCursorClient;
-if(!kumite.camera) kumite.camera = {}
-kumite.camera.Config = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.camera.Config::new");
-	var $spos = $s.length;
-	this.camera = new kumite.camera.Camera();
-	this.cameraMouseMover = new kumite.camera.CameraMouseMover();
-	$s.pop();
-}}
-kumite.camera.Config.__name__ = ["kumite","camera","Config"];
-kumite.camera.Config.prototype.camera = null;
-kumite.camera.Config.prototype.cameraMouseMover = null;
-kumite.camera.Config.prototype.__class__ = kumite.camera.Config;
-kumite.camera.Config.__interfaces__ = [haxe.rtti.Infos];
 GLDisplayObject = function(p) { if( p === $_ ) return; {
 	$s.push("GLDisplayObject::new");
 	var $spos = $s.length;
@@ -934,6 +9,7 @@ GLDisplayObject = function(p) { if( p === $_ ) return; {
 	this.skipDraw = false;
 	this.alpha = 1;
 	this.matrix = new Matrix4();
+	this.graphic = new CanvasGraphic();
 	this.setX(0);
 	this.setY(0);
 	this.setWidth(256);
@@ -941,13 +17,8 @@ GLDisplayObject = function(p) { if( p === $_ ) return; {
 	this.setScaleX(1);
 	this.setScaleY(1);
 	this.transformIsInvalid = true;
-	this.canvas = js.Lib.document.createElement("canvas");
-	this.getCanvas().width = this.width;
-	this.getCanvas().height = this.height;
-	var context = this.getCanvas().getContext("2d");
-	context.fillStyle = "rgba(0, 0, 0, 0.0)";
-	context.fillRect(0,0,this.width,this.height);
-	this.canvasIsInvalid = true;
+	this.graphic.setWidth(this.width);
+	this.graphic.setHeight(this.height);
 	$s.pop();
 }}
 GLDisplayObject.__name__ = ["GLDisplayObject"];
@@ -963,22 +34,27 @@ GLDisplayObject.prototype.height = null;
 GLDisplayObject.prototype.scaleX = null;
 GLDisplayObject.prototype.scaleY = null;
 GLDisplayObject.prototype.transformIsInvalid = null;
-GLDisplayObject.prototype.canvasIsInvalid = null;
-GLDisplayObject.prototype.canvas = null;
-GLDisplayObject.prototype.context = null;
+GLDisplayObject.prototype.graphicIsInvalid = null;
 GLDisplayObject.prototype.matrix = null;
 GLDisplayObject.prototype.enterFrameSignaler = null;
+GLDisplayObject.prototype.graphic = null;
 GLDisplayObject.prototype.validateTransform = function() {
 	$s.push("GLDisplayObject::validateTransform");
 	var $spos = $s.length;
 	if(this.transformIsInvalid) {
+		this.graphic.setWidth(this.width);
+		this.graphic.setHeight(this.height);
 		this.transformIsInvalid = false;
-		if(this.getCanvas().width != this.width) this.getCanvas().width = this.width;
-		if(this.getCanvas().height != this.height) this.getCanvas().height = this.height;
 		this.matrix.identity();
 		this.matrix.appendTranslation(this.x,this.y,0);
 		this.matrix.appendScale(this.scaleX,this.scaleY,1);
 	}
+	$s.pop();
+}
+GLDisplayObject.prototype.validateGraphics = function() {
+	$s.push("GLDisplayObject::validateGraphics");
+	var $spos = $s.length;
+	this.setGraphicIsInvalid(false);
 	$s.pop();
 }
 GLDisplayObject.prototype.toString = function() {
@@ -1048,8 +124,8 @@ GLDisplayObject.prototype.setWidth = function(value) {
 	var $spos = $s.length;
 	if(this.width != value) {
 		this.width = value;
+		this.graphic.setWidth(this.width);
 		this.transformIsInvalid = true;
-		this.canvasIsInvalid = true;
 	}
 	{
 		$s.pop();
@@ -1062,8 +138,8 @@ GLDisplayObject.prototype.setHeight = function(value) {
 	var $spos = $s.length;
 	if(this.height != value) {
 		this.height = value;
+		this.graphic.setHeight(this.height);
 		this.transformIsInvalid = true;
-		this.canvasIsInvalid = true;
 	}
 	{
 		$s.pop();
@@ -1071,74 +147,67 @@ GLDisplayObject.prototype.setHeight = function(value) {
 	}
 	$s.pop();
 }
-GLDisplayObject.prototype.getCanvas = function() {
-	$s.push("GLDisplayObject::getCanvas");
+GLDisplayObject.prototype.getGraphicIsInvalid = function() {
+	$s.push("GLDisplayObject::getGraphicIsInvalid");
 	var $spos = $s.length;
-	this.validateTransform();
 	{
-		var $tmp = this.canvas;
+		var $tmp = this.graphic.isInvalid;
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-GLDisplayObject.prototype.getContext = function() {
-	$s.push("GLDisplayObject::getContext");
+GLDisplayObject.prototype.setGraphicIsInvalid = function(value) {
+	$s.push("GLDisplayObject::setGraphicIsInvalid");
 	var $spos = $s.length;
-	this.validateTransform();
+	this.graphic.isInvalid = value;
 	{
-		var $tmp = this.getCanvas().getContext("2d");
 		$s.pop();
-		return $tmp;
+		return value;
 	}
 	$s.pop();
 }
 GLDisplayObject.prototype.__class__ = GLDisplayObject;
-GLDisplayObjectContainer = function(p) { if( p === $_ ) return; {
-	$s.push("GLDisplayObjectContainer::new");
+GLInteractiveObject = function(p) { if( p === $_ ) return; {
+	$s.push("GLInteractiveObject::new");
 	var $spos = $s.length;
+	this.hitarea = new GLHitarea();
+	this.hitarea.position.x = 0;
+	this.hitarea.position.y = 0;
 	GLDisplayObject.call(this);
-	this.children = new Array();
+	GLDisplayList.getDefault().initInteractiveObject(this);
 	$s.pop();
 }}
-GLDisplayObjectContainer.__name__ = ["GLDisplayObjectContainer"];
-GLDisplayObjectContainer.__super__ = GLDisplayObject;
-for(var k in GLDisplayObject.prototype ) GLDisplayObjectContainer.prototype[k] = GLDisplayObject.prototype[k];
-GLDisplayObjectContainer.prototype.children = null;
-GLDisplayObjectContainer.prototype.addChild = function(child) {
-	$s.push("GLDisplayObjectContainer::addChild");
+GLInteractiveObject.__name__ = ["GLInteractiveObject"];
+GLInteractiveObject.__super__ = GLDisplayObject;
+for(var k in GLDisplayObject.prototype ) GLInteractiveObject.prototype[k] = GLDisplayObject.prototype[k];
+GLInteractiveObject.prototype.hitarea = null;
+GLInteractiveObject.prototype.mouseDownSignaler = null;
+GLInteractiveObject.prototype.setWidth = function(value) {
+	$s.push("GLInteractiveObject::setWidth");
 	var $spos = $s.length;
-	this.children.push(child);
+	var result = GLDisplayObject.prototype.setWidth.call(this,value);
+	this.hitarea.size.x = result;
+	{
+		$s.pop();
+		return result;
+	}
 	$s.pop();
 }
-GLDisplayObjectContainer.prototype.removeChild = function(child) {
-	$s.push("GLDisplayObjectContainer::removeChild");
+GLInteractiveObject.prototype.setHeight = function(value) {
+	$s.push("GLInteractiveObject::setHeight");
 	var $spos = $s.length;
-	this.children.remove(child);
+	var result = GLDisplayObject.prototype.setHeight.call(this,value);
+	this.hitarea.size.y = result;
+	{
+		$s.pop();
+		return result;
+	}
 	$s.pop();
 }
-GLDisplayObjectContainer.prototype.__class__ = GLDisplayObjectContainer;
-GLStage = function(p) { if( p === $_ ) return; {
-	$s.push("GLStage::new");
-	var $spos = $s.length;
-	GLDisplayObjectContainer.call(this);
-	$s.pop();
-}}
-GLStage.__name__ = ["GLStage"];
-GLStage.__super__ = GLDisplayObjectContainer;
-for(var k in GLDisplayObjectContainer.prototype ) GLStage.prototype[k] = GLDisplayObjectContainer.prototype[k];
-GLStage.prototype.stageWidth = null;
-GLStage.prototype.stageHeight = null;
-GLStage.prototype.__class__ = GLStage;
-bpmjs.ContextConfig = function(p) { if( p === $_ ) return; {
-	$s.push("bpmjs.ContextConfig::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-bpmjs.ContextConfig.__name__ = ["bpmjs","ContextConfig"];
-bpmjs.ContextConfig.prototype.frontMessenger = null;
-bpmjs.ContextConfig.prototype.__class__ = bpmjs.ContextConfig;
+GLInteractiveObject.prototype.__class__ = GLInteractiveObject;
+if(typeof haxe=='undefined') haxe = {}
+if(!haxe.rtti) haxe.rtti = {}
 haxe.rtti.XmlParser = function(p) { if( p === $_ ) return; {
 	$s.push("haxe.rtti.XmlParser::new");
 	var $spos = $s.length;
@@ -1882,934 +951,562 @@ haxe.rtti.XmlParser.prototype.defplat = function() {
 	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.__class__ = haxe.rtti.XmlParser;
-GLMouseRegistry = function(p) { if( p === $_ ) return; {
-	$s.push("GLMouseRegistry::new");
+Log = function() { }
+Log.__name__ = ["Log"];
+Log.init = function() {
+	$s.push("Log::init");
 	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-GLMouseRegistry.__name__ = ["GLMouseRegistry"];
-GLMouseRegistry.instance = null;
-GLMouseRegistry.getInstance = function() {
-	$s.push("GLMouseRegistry::getInstance");
-	var $spos = $s.length;
-	if(GLMouseRegistry.instance == null) GLMouseRegistry.instance = new GLMouseRegistry();
 	{
-		var $tmp = GLMouseRegistry.instance;
+		if(!window.console) console = { };
+		console.log = console.log || function() {
+			$s.push("Log::init@10");
+			var $spos = $s.length;
+			null;
+			$s.pop();
+		}
+		console.warn = console.warn || function() {
+			$s.push("Log::init@11");
+			var $spos = $s.length;
+			null;
+			$s.pop();
+		}
+		console.error = console.error || function() {
+			$s.push("Log::init@12");
+			var $spos = $s.length;
+			null;
+			$s.pop();
+		}
+		console.info = console.info || function() {
+			$s.push("Log::init@13");
+			var $spos = $s.length;
+			null;
+			$s.pop();
+		}
+	}
+	haxe.Log.trace = $closure(Log,"infoConsole");
+	$s.pop();
+}
+Log.addFilter = function(filter) {
+	$s.push("Log::addFilter");
+	var $spos = $s.length;
+	Log.filters.push(filter);
+	$s.pop();
+}
+Log.info = function(m0,m1,m2,m3,m4,m5,m6,i) {
+	$s.push("Log::info");
+	var $spos = $s.length;
+	if(Log.infoEnabled(i)) console.log(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i));
+	$s.pop();
+}
+Log.warn = function(m0,m1,m2,m3,m4,m5,m6,i) {
+	$s.push("Log::warn");
+	var $spos = $s.length;
+	if(Log.warnEnabled(i)) console.warn(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i));
+	$s.pop();
+}
+Log.error = function(m0,m1,m2,m3,m4,m5,m6,i) {
+	$s.push("Log::error");
+	var $spos = $s.length;
+	if(Log.errorEnabled(i)) {
+		var exception = haxe.Stack.exceptionStack().join("\n");
+		console.error(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i) + "\nStack:\n" + exception);
+	}
+	$s.pop();
+}
+Log.infoEnabled = function(i) {
+	$s.push("Log::infoEnabled");
+	var $spos = $s.length;
+	{
+		var $tmp = Log.filter(i,LogLevel.INFO);
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-GLMouseRegistry.prototype.mouseDownSignaler = null;
-GLMouseRegistry.prototype.mouseMoveSignaler = null;
-GLMouseRegistry.prototype.canvas = null;
-GLMouseRegistry.prototype.init = function(canvas) {
-	$s.push("GLMouseRegistry::init");
+Log.warnEnabled = function(i) {
+	$s.push("Log::warnEnabled");
 	var $spos = $s.length;
-	this.canvas = canvas;
-	this.mouseDownSignaler = new hsl.haxe.DirectSignaler(this);
-	this.mouseMoveSignaler = new hsl.haxe.DirectSignaler(this);
-	canvas.onmousedown = $closure(this,"onMouseDown");
-	canvas.onmousemove = $closure(this,"onMouseMove");
+	{
+		var $tmp = Log.filter(i,LogLevel.WARN);
+		$s.pop();
+		return $tmp;
+	}
 	$s.pop();
 }
-GLMouseRegistry.prototype.setCursor = function(cursor) {
-	$s.push("GLMouseRegistry::setCursor");
+Log.errorEnabled = function(i) {
+	$s.push("Log::errorEnabled");
 	var $spos = $s.length;
-	this.canvas.style.cursor = cursor;
+	{
+		var $tmp = Log.filter(i,LogLevel.ERROR);
+		$s.pop();
+		return $tmp;
+	}
 	$s.pop();
 }
-GLMouseRegistry.prototype.createCursorClient = function() {
-	$s.push("GLMouseRegistry::createCursorClient");
+Log.groupCollapsed = function(m0,m1,m2,m3,m4,m5,m6,i) {
+	$s.push("Log::groupCollapsed");
 	var $spos = $s.length;
-	var client = new GLCursorClient();
+	if(Log.infoEnabled(i)) console.groupCollapsed(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i));
+	$s.pop();
+}
+Log.groupEnd = function(i) {
+	$s.push("Log::groupEnd");
+	var $spos = $s.length;
+	if(Log.infoEnabled(i)) console.groupEnd();
+	$s.pop();
+}
+Log.filter = function(i,level) {
+	$s.push("Log::filter");
+	var $spos = $s.length;
+	var result = true;
+	{
+		var _g = 0, _g1 = Log.filters;
+		while(_g < _g1.length) {
+			var filter = _g1[_g];
+			++_g;
+			result = filter.enabled(result,i,level);
+		}
+	}
 	{
 		$s.pop();
-		return client;
+		return result;
 	}
 	$s.pop();
 }
-GLMouseRegistry.prototype.onMouseDown = function(e) {
-	$s.push("GLMouseRegistry::onMouseDown");
+Log.createMessage = function(messages,i) {
+	$s.push("Log::createMessage");
 	var $spos = $s.length;
-	try {
-		this.mouseDownSignaler.dispatch(new Vec2(e.layerX / this.canvas.clientWidth,e.layerY / this.canvas.clientHeight),null,{ fileName : "GLMouseRegistry.hx", lineNumber : 50, className : "GLMouseRegistry", methodName : "onMouseDown"});
+	var resultArray = [];
+	{
+		var _g = 0;
+		while(_g < messages.length) {
+			var message = messages[_g];
+			++_g;
+			resultArray.push(Std.string(message));
+		}
 	}
-	catch( $e0 ) {
-		{
-			var e1 = $e0;
-			{
-				$e = [];
-				while($s.length >= $spos) $e.unshift($s.pop());
-				$s.push($e[0]);
-				haxe.Log.trace(e1,{ fileName : "GLMouseRegistry.hx", lineNumber : 54, className : "GLMouseRegistry", methodName : "onMouseDown"});
-			}
+	while(resultArray.length > 0 && resultArray[resultArray.length - 1] == "null") {
+		resultArray.pop();
+	}
+	var from = i.className + "." + i.methodName;
+	{
+		var $tmp = "[" + from + "] " + resultArray.join(", ");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Log.infoConsole = function(v,i) {
+	$s.push("Log::infoConsole");
+	var $spos = $s.length;
+	console.log("" + Log.createMessage([v],i) + " (trace)");
+	$s.pop();
+}
+Log.prototype.__class__ = Log;
+GLDisplayListRenderer = function(p) { if( p === $_ ) return; {
+	$s.push("GLDisplayListRenderer::new");
+	var $spos = $s.length;
+	this.textures = new IntHash();
+	$s.pop();
+}}
+GLDisplayListRenderer.__name__ = ["GLDisplayListRenderer"];
+GLDisplayListRenderer.prototype.shaderProgram = null;
+GLDisplayListRenderer.prototype.vertexPositionAttribute = null;
+GLDisplayListRenderer.prototype.vertexBuffer = null;
+GLDisplayListRenderer.prototype.textureUniform = null;
+GLDisplayListRenderer.prototype.projectionMatrixUniform = null;
+GLDisplayListRenderer.prototype.objectMatrixUniform = null;
+GLDisplayListRenderer.prototype.sizeUniform = null;
+GLDisplayListRenderer.prototype.alphaUniform = null;
+GLDisplayListRenderer.prototype.textures = null;
+GLDisplayListRenderer.prototype.init = function() {
+	$s.push("GLDisplayListRenderer::init");
+	var $spos = $s.length;
+	var gl = GL.gl;
+	this.shaderProgram = GL.createProgram(shader.DisplayObjectVertex,shader.DisplayObjectFragment);
+	this.vertexPositionAttribute = gl.getAttribLocation(this.shaderProgram,"vertexPosition");
+	this.vertexBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER,this.vertexBuffer);
+	var vertices = [0,0,1,0,0,1,1,1];
+	gl.bufferData(gl.ARRAY_BUFFER,new Int8Array(vertices),gl.STATIC_DRAW);
+	this.textureUniform = GL.getUniformLocation("texture");
+	this.projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
+	this.objectMatrixUniform = GL.getUniformLocation("objectMatrix");
+	this.sizeUniform = GL.getUniformLocation("size");
+	this.alphaUniform = GL.getUniformLocation("alpha");
+	$s.pop();
+}
+GLDisplayListRenderer.prototype.render = function(width,height) {
+	$s.push("GLDisplayListRenderer::render");
+	var $spos = $s.length;
+	var gl = GL.gl;
+	GL.useProgram(this.shaderProgram);
+	gl.viewport(0,0,width,height);
+	gl.disable(gl.DEPTH_TEST);
+	gl.enable(gl.BLEND);
+	gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+	gl.bindBuffer(gl.ARRAY_BUFFER,this.vertexBuffer);
+	GL.gl.enableVertexAttribArray(this.vertexPositionAttribute);
+	gl.vertexAttribPointer(this.vertexPositionAttribute,2,gl.BYTE,false,0,0);
+	var projectionMatrix = new Matrix4();
+	projectionMatrix.ortho(0,width,height,0,0,1);
+	gl.uniformMatrix4fv(this.projectionMatrixUniform.location,false,projectionMatrix.buffer);
+	var stage = GLDisplayList.getDefault().stage;
+	gl.activeTexture(gl.TEXTURE0);
+	gl.uniform1i(this.textureUniform.location,0);
+	this.renderRecursive(stage,new Matrix4());
+	gl.disable(gl.BLEND);
+	$s.pop();
+}
+GLDisplayListRenderer.prototype.renderRecursive = function(displayObjectContainer,parentMatrix) {
+	$s.push("GLDisplayListRenderer::renderRecursive");
+	var $spos = $s.length;
+	var _g = 0, _g1 = displayObjectContainer.children;
+	while(_g < _g1.length) {
+		var displayObject = _g1[_g];
+		++_g;
+		var matrix = this.renderDisplayObject(displayObject,parentMatrix);
+		if(Std["is"](displayObject,GLDisplayObjectContainer)) {
+			this.renderRecursive(displayObject,matrix);
 		}
 	}
 	$s.pop();
 }
-GLMouseRegistry.prototype.onMouseMove = function(e) {
-	$s.push("GLMouseRegistry::onMouseMove");
+GLDisplayListRenderer.prototype.renderDisplayObject = function(displayObject,parentMatrix) {
+	$s.push("GLDisplayListRenderer::renderDisplayObject");
 	var $spos = $s.length;
-	try {
-		this.mouseMoveSignaler.dispatch(new Vec2(e.layerX / this.canvas.clientWidth,e.layerY / this.canvas.clientHeight),null,{ fileName : "GLMouseRegistry.hx", lineNumber : 62, className : "GLMouseRegistry", methodName : "onMouseMove"});
+	var gl = GL.gl;
+	displayObject.validateTransform();
+	var result = new Matrix4();
+	result.multiply(parentMatrix);
+	result.multiply(displayObject.matrix);
+	if(displayObject.skipDraw) {
+		$s.pop();
+		return result;
 	}
-	catch( $e0 ) {
-		{
-			var e1 = $e0;
-			{
-				$e = [];
-				while($s.length >= $spos) $e.unshift($s.pop());
-				$s.push($e[0]);
-				haxe.Log.trace(e1,{ fileName : "GLMouseRegistry.hx", lineNumber : 66, className : "GLMouseRegistry", methodName : "onMouseMove"});
-			}
-		}
+	var texture;
+	if(!this.textures.exists(displayObject.id)) {
+		texture = gl.createTexture();
+		gl.bindTexture(gl.TEXTURE_2D,texture);
+		gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+		gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);
+		this.textures.set(displayObject.id,texture);
+	}
+	else {
+		texture = this.textures.get(displayObject.id);
+		gl.bindTexture(gl.TEXTURE_2D,texture);
+	}
+	if(displayObject.getGraphicIsInvalid()) {
+		displayObject.validateGraphics();
+		gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,displayObject.graphic.canvas);
+	}
+	gl.uniformMatrix4fv(this.objectMatrixUniform.location,false,result.buffer);
+	gl.uniform2f(this.sizeUniform.location,displayObject.graphic.canvas.width,displayObject.graphic.canvas.height);
+	gl.uniform1f(this.alphaUniform.location,displayObject.alpha);
+	gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+	{
+		$s.pop();
+		return result;
 	}
 	$s.pop();
 }
-GLMouseRegistry.prototype.__class__ = GLMouseRegistry;
-hsl.haxe.Signaler = function() { }
-hsl.haxe.Signaler.__name__ = ["hsl","haxe","Signaler"];
-hsl.haxe.Signaler.prototype.isListenedTo = null;
-hsl.haxe.Signaler.prototype.subject = null;
-hsl.haxe.Signaler.prototype.addBubblingTarget = null;
-hsl.haxe.Signaler.prototype.addNotificationTarget = null;
-hsl.haxe.Signaler.prototype.bind = null;
-hsl.haxe.Signaler.prototype.bindAdvanced = null;
-hsl.haxe.Signaler.prototype.bindVoid = null;
-hsl.haxe.Signaler.prototype.dispatch = null;
-hsl.haxe.Signaler.prototype.getIsListenedTo = null;
-hsl.haxe.Signaler.prototype.removeBubblingTarget = null;
-hsl.haxe.Signaler.prototype.removeNotificationTarget = null;
-hsl.haxe.Signaler.prototype.unbind = null;
-hsl.haxe.Signaler.prototype.unbindAdvanced = null;
-hsl.haxe.Signaler.prototype.unbindVoid = null;
-hsl.haxe.Signaler.prototype.__class__ = hsl.haxe.Signaler;
-kumite.stage.StageResizeMessage = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.stage.StageResizeMessage::new");
+GLDisplayListRenderer.prototype.__class__ = GLDisplayListRenderer;
+Color = function(r,g,b,a) { if( r === $_ ) return; {
+	$s.push("Color::new");
 	var $spos = $s.length;
-	null;
+	if(a == null) a = 1.0;
+	if(b == null) b = 1.0;
+	if(g == null) g = 0.0;
+	if(r == null) r = 1.0;
+	this.r = r;
+	this.g = g;
+	this.b = b;
+	this.a = a;
 	$s.pop();
 }}
-kumite.stage.StageResizeMessage.__name__ = ["kumite","stage","StageResizeMessage"];
-kumite.stage.StageResizeMessage.prototype.__class__ = kumite.stage.StageResizeMessage;
-kumite.stage.Config = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.stage.Config::new");
+Color.__name__ = ["Color"];
+Color.prototype.r = null;
+Color.prototype.g = null;
+Color.prototype.b = null;
+Color.prototype.a = null;
+Color.prototype.fromHex = function(hex) {
+	$s.push("Color::fromHex");
 	var $spos = $s.length;
-	this.stage = new kumite.stage.Stage();
-	this.stageResizeAction = new kumite.stage.StageResizeAction();
-	$s.pop();
-}}
-kumite.stage.Config.__name__ = ["kumite","stage","Config"];
-kumite.stage.Config.prototype.stage = null;
-kumite.stage.Config.prototype.stageResizeAction = null;
-kumite.stage.Config.prototype.__class__ = kumite.stage.Config;
-kumite.stage.Config.__interfaces__ = [haxe.rtti.Infos];
-if(!kumite.launch) kumite.launch = {}
-kumite.launch.Launcher = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.launch.Launcher::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-kumite.launch.Launcher.__name__ = ["kumite","launch","Launcher"];
-kumite.launch.Launcher.prototype.sequencer = null;
-kumite.launch.Launcher.prototype.handlePostComplete = function() {
-	$s.push("kumite.launch.Launcher::handlePostComplete");
-	var $spos = $s.length;
-	Log.info(null,null,null,null,null,null,null,{ fileName : "Launcher.hx", lineNumber : 15, className : "kumite.launch.Launcher", methodName : "handlePostComplete"});
-	this.sequencer.start("boot");
-	$s.pop();
-}
-kumite.launch.Launcher.prototype.showError = function() {
-	$s.push("kumite.launch.Launcher::showError");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}
-kumite.launch.Launcher.prototype.__class__ = kumite.launch.Launcher;
-kumite.launch.Launcher.__interfaces__ = [haxe.rtti.Infos];
-Vec3 = function(x,y,z) { if( x === $_ ) return; {
-	$s.push("Vec3::new");
-	var $spos = $s.length;
-	this.x = x;
-	this.y = y;
-	this.z = z;
-	$s.pop();
-}}
-Vec3.__name__ = ["Vec3"];
-Vec3.prototype.x = null;
-Vec3.prototype.y = null;
-Vec3.prototype.z = null;
-Vec3.prototype.scale = function(factor) {
-	$s.push("Vec3::scale");
-	var $spos = $s.length;
-	this.x *= factor;
-	this.y *= factor;
-	this.z *= factor;
-	$s.pop();
-}
-Vec3.prototype.multiply = function(x,y,z) {
-	$s.push("Vec3::multiply");
-	var $spos = $s.length;
-	this.x *= x;
-	this.y *= y;
-	this.z *= z;
-	$s.pop();
-}
-Vec3.prototype.subtract = function(x,y,z) {
-	$s.push("Vec3::subtract");
-	var $spos = $s.length;
-	this.x -= x;
-	this.y -= y;
-	this.z -= z;
+	this.r = (hex >> 16 & 255) / 255;
+	this.g = (hex >> 8 & 255) / 255;
+	this.b = (hex & 255) / 255;
+	this.a = 1.0;
 	{
 		$s.pop();
 		return this;
 	}
 	$s.pop();
 }
-Vec3.prototype.normalize = function() {
-	$s.push("Vec3::normalize");
+Color.prototype.scaleRGB = function(factor) {
+	$s.push("Color::scaleRGB");
 	var $spos = $s.length;
-	var length = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
-	this.x /= length;
-	this.y /= length;
-	this.z /= length;
+	this.r *= factor;
+	this.g *= factor;
+	this.b *= factor;
 	$s.pop();
 }
-Vec3.prototype.cross = function(vec) {
-	$s.push("Vec3::cross");
+Color.prototype.mixFrom = function(color1,color2,color1Mix) {
+	$s.push("Color::mixFrom");
 	var $spos = $s.length;
-	var x = this.y * vec.z - this.z * vec.y;
-	var y = this.z * vec.x - this.x * vec.z;
-	var z = this.x * vec.y - this.y * vec.x;
+	if(color1Mix < 0) color1Mix = 0;
+	if(color1Mix > 1) color1Mix = 1;
+	var color2Mix = 1 - color1Mix;
+	this.r = color1.r * color1Mix + color2.r * color2Mix;
+	this.g = color1.g * color1Mix + color2.g * color2Mix;
+	this.b = color1.b * color1Mix + color2.b * color2Mix;
+	$s.pop();
+}
+Color.prototype.toContextRGB = function() {
+	$s.push("Color::toContextRGB");
+	var $spos = $s.length;
 	{
-		var $tmp = new Vec3(x,y,z);
+		var $tmp = "rgb(" + this.r * 255 + "," + this.g * 255 + "," + this.b * 255 + ")";
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-Vec3.prototype.dot = function(vec) {
-	$s.push("Vec3::dot");
+Color.prototype.toContextRGBA = function() {
+	$s.push("Color::toContextRGBA");
 	var $spos = $s.length;
 	{
-		var $tmp = this.x * vec.x + this.y * vec.y + this.z * vec.z;
+		var $tmp = "rgba(" + Std["int"](this.r * 255) + "," + Std["int"](this.g * 255) + "," + Std["int"](this.b * 255) + "," + this.a + ")";
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-Vec3.prototype.transform = function(matrix) {
-	$s.push("Vec3::transform");
-	var $spos = $s.length;
-	var x1 = this.x, y1 = this.y, z1 = this.z;
-	var mat = matrix.buffer;
-	this.x = mat[0] * x1 + mat[4] * y1 + mat[8] * z1 + mat[12];
-	this.y = mat[1] * x1 + mat[5] * y1 + mat[9] * z1 + mat[13];
-	this.z = mat[2] * x1 + mat[6] * y1 + mat[10] * z1 + mat[14];
-	$s.pop();
-}
-Vec3.prototype.setFrom = function(value,vec3) {
-	$s.push("Vec3::setFrom");
-	var $spos = $s.length;
-	if(value != null) {
-		this.x = value;
-		this.y = value;
-		this.z = value;
-	}
-	else if(vec3 != null) {
-		this.x = vec3.x;
-		this.y = vec3.y;
-		this.z = vec3.z;
-	}
-	$s.pop();
-}
-Vec3.prototype.clone = function() {
-	$s.push("Vec3::clone");
+Color.prototype.toString = function() {
+	$s.push("Color::toString");
 	var $spos = $s.length;
 	{
-		var $tmp = new Vec3(this.x,this.y,this.z);
+		var $tmp = "Color: " + this.r + "," + this.g + "," + this.b + "," + this.a;
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-Vec3.prototype.__class__ = Vec3;
-LogFilter = function() { }
-LogFilter.__name__ = ["LogFilter"];
-LogFilter.prototype.enabled = null;
-LogFilter.prototype.__class__ = LogFilter;
-LogLevel = function(value) { if( value === $_ ) return; {
-	$s.push("LogLevel::new");
+Color.prototype.__class__ = Color;
+List = function(p) { if( p === $_ ) return; {
+	$s.push("List::new");
 	var $spos = $s.length;
-	this.value = value;
+	this.length = 0;
 	$s.pop();
 }}
-LogLevel.__name__ = ["LogLevel"];
-LogLevel.prototype.value = null;
-LogLevel.prototype.isSmallerOrEqual = function(level) {
-	$s.push("LogLevel::isSmallerOrEqual");
+List.__name__ = ["List"];
+List.prototype.h = null;
+List.prototype.q = null;
+List.prototype.length = null;
+List.prototype.add = function(item) {
+	$s.push("List::add");
+	var $spos = $s.length;
+	var x = [item];
+	if(this.h == null) this.h = x;
+	else this.q[1] = x;
+	this.q = x;
+	this.length++;
+	$s.pop();
+}
+List.prototype.push = function(item) {
+	$s.push("List::push");
+	var $spos = $s.length;
+	var x = [item,this.h];
+	this.h = x;
+	if(this.q == null) this.q = x;
+	this.length++;
+	$s.pop();
+}
+List.prototype.first = function() {
+	$s.push("List::first");
 	var $spos = $s.length;
 	{
-		var $tmp = this.value <= level.value;
+		var $tmp = this.h == null?null:this.h[0];
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-LogLevel.prototype.__class__ = LogLevel;
-bpmjs.Stats = function() { }
-bpmjs.Stats.__name__ = ["bpmjs","Stats"];
-bpmjs.Stats.initialized = null;
-bpmjs.Stats.lastTime = null;
-bpmjs.Stats.times = null;
-bpmjs.Stats.finishedTimes = null;
-bpmjs.Stats.messages = null;
-bpmjs.Stats.init = function() {
-	$s.push("bpmjs.Stats::init");
+List.prototype.last = function() {
+	$s.push("List::last");
 	var $spos = $s.length;
-	bpmjs.Stats.clear();
-	bpmjs.Stats.initialized = true;
-	$s.pop();
-}
-bpmjs.Stats.clear = function() {
-	$s.push("bpmjs.Stats::clear");
-	var $spos = $s.length;
-	bpmjs.Stats.times = new Array();
-	bpmjs.Stats.finishedTimes = new Array();
-	bpmjs.Stats.messages = new Array();
-	$s.pop();
-}
-bpmjs.Stats.measureFPS = function() {
-	$s.push("bpmjs.Stats::measureFPS");
-	var $spos = $s.length;
-	bpmjs.Stats.checkInit();
-	var time = Date.now().getTime();
-	bpmjs.Stats.fps = 1000 / (time - bpmjs.Stats.lastTime);
-	bpmjs.Stats.lastTime = time;
-	$s.pop();
-}
-bpmjs.Stats.checkStart = function(message) {
-	$s.push("bpmjs.Stats::checkStart");
-	var $spos = $s.length;
-	bpmjs.Stats.checkInit();
-	var time = Date.now().getTime();
-	bpmjs.Stats.times.push({ start : time, stop : 0.0, message : message});
-	$s.pop();
-}
-bpmjs.Stats.addMessage = function(message) {
-	$s.push("bpmjs.Stats::addMessage");
-	var $spos = $s.length;
-	bpmjs.Stats.checkInit();
-	bpmjs.Stats.messages.push(message);
-	$s.pop();
-}
-bpmjs.Stats.checkStop = function() {
-	$s.push("bpmjs.Stats::checkStop");
-	var $spos = $s.length;
-	bpmjs.Stats.checkInit();
-	var timeAndMessage = bpmjs.Stats.times.pop();
-	timeAndMessage.stop = Date.now().getTime();
-	bpmjs.Stats.finishedTimes.push(timeAndMessage);
-	$s.pop();
-}
-bpmjs.Stats.getContents = function() {
-	$s.push("bpmjs.Stats::getContents");
-	var $spos = $s.length;
-	var finalMessages = new Array();
-	finalMessages.push("FPS: " + Math.round(bpmjs.Stats.fps));
 	{
-		var _g = 0, _g1 = bpmjs.Stats.finishedTimes;
-		while(_g < _g1.length) {
-			var timeAndMessage = _g1[_g];
-			++_g;
-			finalMessages.push(" > " + timeAndMessage.message + ": " + (timeAndMessage.stop - timeAndMessage.start) + " ms");
-		}
-	}
-	{
-		var _g = 0, _g1 = bpmjs.Stats.messages;
-		while(_g < _g1.length) {
-			var message = _g1[_g];
-			++_g;
-			finalMessages.push(message);
-		}
-	}
-	{
-		$s.pop();
-		return finalMessages;
-	}
-	$s.pop();
-}
-bpmjs.Stats.checkInit = function() {
-	$s.push("bpmjs.Stats::checkInit");
-	var $spos = $s.length;
-	if(!bpmjs.Stats.initialized) bpmjs.Stats.init();
-	$s.pop();
-}
-bpmjs.Stats.prototype.__class__ = bpmjs.Stats;
-if(!kumite.canvas) kumite.canvas = {}
-kumite.canvas.CanvasCase = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.canvas.CanvasCase::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-kumite.canvas.CanvasCase.__name__ = ["kumite","canvas","CanvasCase"];
-kumite.canvas.CanvasCase.prototype.itself = null;
-kumite.canvas.CanvasCase.prototype.__class__ = kumite.canvas.CanvasCase;
-Reflect = function() { }
-Reflect.__name__ = ["Reflect"];
-Reflect.hasField = function(o,field) {
-	$s.push("Reflect::hasField");
-	var $spos = $s.length;
-	if(o.hasOwnProperty != null) {
-		var $tmp = o.hasOwnProperty(field);
+		var $tmp = this.q == null?null:this.q[0];
 		$s.pop();
 		return $tmp;
 	}
-	var arr = Reflect.fields(o);
-	{ var $it0 = arr.iterator();
-	while( $it0.hasNext() ) { var t = $it0.next();
-	if(t == field) {
+	$s.pop();
+}
+List.prototype.pop = function() {
+	$s.push("List::pop");
+	var $spos = $s.length;
+	if(this.h == null) {
 		$s.pop();
-		return true;
+		return null;
 	}
-	}}
+	var x = this.h[0];
+	this.h = this.h[1];
+	if(this.h == null) this.q = null;
+	this.length--;
 	{
 		$s.pop();
-		return false;
+		return x;
 	}
 	$s.pop();
 }
-Reflect.field = function(o,field) {
-	$s.push("Reflect::field");
+List.prototype.isEmpty = function() {
+	$s.push("List::isEmpty");
 	var $spos = $s.length;
-	var v = null;
-	try {
-		v = o[field];
+	{
+		var $tmp = this.h == null;
+		$s.pop();
+		return $tmp;
 	}
-	catch( $e0 ) {
-		{
-			var e = $e0;
+	$s.pop();
+}
+List.prototype.clear = function() {
+	$s.push("List::clear");
+	var $spos = $s.length;
+	this.h = null;
+	this.q = null;
+	this.length = 0;
+	$s.pop();
+}
+List.prototype.remove = function(v) {
+	$s.push("List::remove");
+	var $spos = $s.length;
+	var prev = null;
+	var l = this.h;
+	while(l != null) {
+		if(l[0] == v) {
+			if(prev == null) this.h = l[1];
+			else prev[1] = l[1];
+			if(this.q == l) this.q = prev;
+			this.length--;
 			{
-				$e = [];
-				while($s.length >= $spos) $e.unshift($s.pop());
-				$s.push($e[0]);
-				null;
+				$s.pop();
+				return true;
 			}
 		}
+		prev = l;
+		l = l[1];
 	}
 	{
-		$s.pop();
-		return v;
-	}
-	$s.pop();
-}
-Reflect.setField = function(o,field,value) {
-	$s.push("Reflect::setField");
-	var $spos = $s.length;
-	o[field] = value;
-	$s.pop();
-}
-Reflect.callMethod = function(o,func,args) {
-	$s.push("Reflect::callMethod");
-	var $spos = $s.length;
-	{
-		var $tmp = func.apply(o,args);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Reflect.fields = function(o) {
-	$s.push("Reflect::fields");
-	var $spos = $s.length;
-	if(o == null) {
-		var $tmp = new Array();
-		$s.pop();
-		return $tmp;
-	}
-	var a = new Array();
-	if(o.hasOwnProperty) {
-		
-				for(var i in o)
-					if( o.hasOwnProperty(i) )
-						a.push(i);
-			;
-	}
-	else {
-		var t;
-		try {
-			t = o.__proto__;
-		}
-		catch( $e0 ) {
-			{
-				var e = $e0;
-				{
-					$e = [];
-					while($s.length >= $spos) $e.unshift($s.pop());
-					$s.push($e[0]);
-					t = null;
-				}
-			}
-		}
-		if(t != null) o.__proto__ = null;
-		
-				for(var i in o)
-					if( i != "__proto__" )
-						a.push(i);
-			;
-		if(t != null) o.__proto__ = t;
-	}
-	{
-		$s.pop();
-		return a;
-	}
-	$s.pop();
-}
-Reflect.isFunction = function(f) {
-	$s.push("Reflect::isFunction");
-	var $spos = $s.length;
-	{
-		var $tmp = typeof(f) == "function" && f.__name__ == null;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Reflect.compare = function(a,b) {
-	$s.push("Reflect::compare");
-	var $spos = $s.length;
-	{
-		var $tmp = a == b?0:a > b?1:-1;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Reflect.compareMethods = function(f1,f2) {
-	$s.push("Reflect::compareMethods");
-	var $spos = $s.length;
-	if(f1 == f2) {
-		$s.pop();
-		return true;
-	}
-	if(!Reflect.isFunction(f1) || !Reflect.isFunction(f2)) {
 		$s.pop();
 		return false;
 	}
-	{
-		var $tmp = f1.scope == f2.scope && f1.method == f2.method && f1.method != null;
-		$s.pop();
-		return $tmp;
-	}
 	$s.pop();
 }
-Reflect.isObject = function(v) {
-	$s.push("Reflect::isObject");
-	var $spos = $s.length;
-	if(v == null) {
-		$s.pop();
-		return false;
-	}
-	var t = typeof(v);
-	{
-		var $tmp = t == "string" || t == "object" && !v.__enum__ || t == "function" && v.__name__ != null;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Reflect.deleteField = function(o,f) {
-	$s.push("Reflect::deleteField");
-	var $spos = $s.length;
-	if(!Reflect.hasField(o,f)) {
-		$s.pop();
-		return false;
-	}
-	delete(o[f]);
-	{
-		$s.pop();
-		return true;
-	}
-	$s.pop();
-}
-Reflect.copy = function(o) {
-	$s.push("Reflect::copy");
-	var $spos = $s.length;
-	var o2 = { };
-	{
-		var _g = 0, _g1 = Reflect.fields(o);
-		while(_g < _g1.length) {
-			var f = _g1[_g];
-			++_g;
-			o2[f] = Reflect.field(o,f);
-		}
-	}
-	{
-		$s.pop();
-		return o2;
-	}
-	$s.pop();
-}
-Reflect.makeVarArgs = function(f) {
-	$s.push("Reflect::makeVarArgs");
+List.prototype.iterator = function() {
+	$s.push("List::iterator");
 	var $spos = $s.length;
 	{
-		var $tmp = function() {
-			$s.push("Reflect::makeVarArgs@116");
+		var $tmp = { h : this.h, hasNext : function() {
+			$s.push("List::iterator@155");
 			var $spos = $s.length;
-			var a = new Array();
 			{
-				var _g1 = 0, _g = arguments.length;
-				while(_g1 < _g) {
-					var i = _g1++;
-					a.push(arguments[i]);
-				}
-			}
-			{
-				var $tmp = f(a);
+				var $tmp = this.h != null;
 				$s.pop();
 				return $tmp;
 			}
 			$s.pop();
-		}
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Reflect.prototype.__class__ = Reflect;
-bpmjs.FrontMessenger = function() { }
-bpmjs.FrontMessenger.__name__ = ["bpmjs","FrontMessenger"];
-bpmjs.FrontMessenger.prototype.addMessenger = null;
-bpmjs.FrontMessenger.prototype.addReceiver = null;
-bpmjs.FrontMessenger.prototype.__class__ = bpmjs.FrontMessenger;
-bpmjs.DefaultFrontMessenger = function(p) { if( p === $_ ) return; {
-	$s.push("bpmjs.DefaultFrontMessenger::new");
-	var $spos = $s.length;
-	this.receivers = new Array();
-	$s.pop();
-}}
-bpmjs.DefaultFrontMessenger.__name__ = ["bpmjs","DefaultFrontMessenger"];
-bpmjs.DefaultFrontMessenger.prototype.receivers = null;
-bpmjs.DefaultFrontMessenger.prototype.addMessenger = function(messenger) {
-	$s.push("bpmjs.DefaultFrontMessenger::addMessenger");
-	var $spos = $s.length;
-	Log.info(Type.getClassName(Type.getClass(messenger)),null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 21, className : "bpmjs.DefaultFrontMessenger", methodName : "addMessenger"});
-	messenger.addReceiver(null,$closure(this,"handleMessage"));
-	$s.pop();
-}
-bpmjs.DefaultFrontMessenger.prototype.addReceiver = function(receivingObject,methodName,type) {
-	$s.push("bpmjs.DefaultFrontMessenger::addReceiver");
-	var $spos = $s.length;
-	Log.info(Type.getClassName(Type.getClass(receivingObject)) + "#" + methodName,Type.getClassName(type),null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 27, className : "bpmjs.DefaultFrontMessenger", methodName : "addReceiver"});
-	this.receivers.push(new bpmjs._FrontMessenger.Receiver(receivingObject,methodName,type));
-	$s.pop();
-}
-bpmjs.DefaultFrontMessenger.prototype.handleMessage = function(message) {
-	$s.push("bpmjs.DefaultFrontMessenger::handleMessage");
-	var $spos = $s.length;
-	Log.info(Type.getClassName(Type.getClass(message)),null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 33, className : "bpmjs.DefaultFrontMessenger", methodName : "handleMessage"});
-	{
-		var _g = 0, _g1 = this.receivers;
-		while(_g < _g1.length) {
-			var receiver = _g1[_g];
-			++_g;
-			if(Type.getClass(message) == receiver.type) {
-				{
-					Log.info(Type.getClassName(Type.getClass(receiver.receiver)) + "#" + receiver.methodName,null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 66, className : "bpmjs._FrontMessenger.Receiver", methodName : "execute"});
-					receiver.method.apply(receiver.receiver,[message]);
-				}
+		}, next : function() {
+			$s.push("List::iterator@158");
+			var $spos = $s.length;
+			if(this.h == null) {
+				$s.pop();
+				return null;
 			}
-		}
-	}
-	$s.pop();
-}
-bpmjs.DefaultFrontMessenger.prototype.__class__ = bpmjs.DefaultFrontMessenger;
-bpmjs.DefaultFrontMessenger.__interfaces__ = [bpmjs.FrontMessenger];
-if(!bpmjs._FrontMessenger) bpmjs._FrontMessenger = {}
-bpmjs._FrontMessenger.Receiver = function(receiver,methodName,type) { if( receiver === $_ ) return; {
-	$s.push("bpmjs._FrontMessenger.Receiver::new");
-	var $spos = $s.length;
-	this.receiver = receiver;
-	this.type = type;
-	this.method = Reflect.field(receiver,methodName);
-	this.methodName = methodName;
-	$s.pop();
-}}
-bpmjs._FrontMessenger.Receiver.__name__ = ["bpmjs","_FrontMessenger","Receiver"];
-bpmjs._FrontMessenger.Receiver.prototype.receiver = null;
-bpmjs._FrontMessenger.Receiver.prototype.method = null;
-bpmjs._FrontMessenger.Receiver.prototype.methodName = null;
-bpmjs._FrontMessenger.Receiver.prototype.type = null;
-bpmjs._FrontMessenger.Receiver.prototype.matches = function(message) {
-	$s.push("bpmjs._FrontMessenger.Receiver::matches");
-	var $spos = $s.length;
-	{
-		var $tmp = Type.getClass(message) == this.type;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-bpmjs._FrontMessenger.Receiver.prototype.execute = function(message) {
-	$s.push("bpmjs._FrontMessenger.Receiver::execute");
-	var $spos = $s.length;
-	Log.info(Type.getClassName(Type.getClass(this.receiver)) + "#" + this.methodName,null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 66, className : "bpmjs._FrontMessenger.Receiver", methodName : "execute"});
-	this.method.apply(this.receiver,[message]);
-	$s.pop();
-}
-bpmjs._FrontMessenger.Receiver.prototype.__class__ = bpmjs._FrontMessenger.Receiver;
-haxe.StackItem = { __ename__ : ["haxe","StackItem"], __constructs__ : ["CFunction","Module","FilePos","Method","Lambda"] }
-haxe.StackItem.CFunction = ["CFunction",0];
-haxe.StackItem.CFunction.toString = $estr;
-haxe.StackItem.CFunction.__enum__ = haxe.StackItem;
-haxe.StackItem.Module = function(m) { var $x = ["Module",1,m]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; }
-haxe.StackItem.FilePos = function(s,file,line) { var $x = ["FilePos",2,s,file,line]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; }
-haxe.StackItem.Method = function(classname,method) { var $x = ["Method",3,classname,method]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; }
-haxe.StackItem.Lambda = function(v) { var $x = ["Lambda",4,v]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; }
-haxe.Stack = function() { }
-haxe.Stack.__name__ = ["haxe","Stack"];
-haxe.Stack.callStack = function() {
-	$s.push("haxe.Stack::callStack");
-	var $spos = $s.length;
-	{
-		var $tmp = haxe.Stack.makeStack("$s");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.Stack.exceptionStack = function() {
-	$s.push("haxe.Stack::exceptionStack");
-	var $spos = $s.length;
-	{
-		var $tmp = haxe.Stack.makeStack("$e");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.Stack.toString = function(stack) {
-	$s.push("haxe.Stack::toString");
-	var $spos = $s.length;
-	var b = new StringBuf();
-	{
-		var _g = 0;
-		while(_g < stack.length) {
-			var s = stack[_g];
-			++_g;
-			b.b[b.b.length] = "\nCalled from ";
-			haxe.Stack.itemToString(b,s);
-		}
-	}
-	{
-		var $tmp = b.b.join("");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.Stack.itemToString = function(b,s) {
-	$s.push("haxe.Stack::itemToString");
-	var $spos = $s.length;
-	var $e = s;
-	switch( $e[1] ) {
-	case 0:
-	{
-		b.b[b.b.length] = "a C function";
-	}break;
-	case 1:
-	var m = $e[2];
-	{
-		b.b[b.b.length] = "module ";
-		b.b[b.b.length] = m;
-	}break;
-	case 2:
-	var line = $e[4], file = $e[3], s1 = $e[2];
-	{
-		if(s1 != null) {
-			haxe.Stack.itemToString(b,s1);
-			b.b[b.b.length] = " (";
-		}
-		b.b[b.b.length] = file;
-		b.b[b.b.length] = " line ";
-		b.b[b.b.length] = line;
-		if(s1 != null) b.b[b.b.length] = ")";
-	}break;
-	case 3:
-	var meth = $e[3], cname = $e[2];
-	{
-		b.b[b.b.length] = cname;
-		b.b[b.b.length] = ".";
-		b.b[b.b.length] = meth;
-	}break;
-	case 4:
-	var n = $e[2];
-	{
-		b.b[b.b.length] = "local function #";
-		b.b[b.b.length] = n;
-	}break;
-	}
-	$s.pop();
-}
-haxe.Stack.makeStack = function(s) {
-	$s.push("haxe.Stack::makeStack");
-	var $spos = $s.length;
-	var a = (function($this) {
-		var $r;
-		try {
-			$r = eval(s);
-		}
-		catch( $e0 ) {
+			var x = this.h[0];
+			this.h = this.h[1];
 			{
-				var e = $e0;
-				$r = (function($this) {
-					var $r;
-					$e = [];
-					while($s.length >= $spos) $e.unshift($s.pop());
-					$s.push($e[0]);
-					$r = [];
-					return $r;
-				}($this));
+				$s.pop();
+				return x;
 			}
-		}
-		return $r;
-	}(this));
-	var m = new Array();
-	{
-		var _g1 = 0, _g = a.length - (s == "$s"?2:0);
-		while(_g1 < _g) {
-			var i = _g1++;
-			var d = a[i].split("::");
-			m.unshift(haxe.StackItem.Method(d[0],d[1]));
-		}
-	}
-	{
-		$s.pop();
-		return m;
-	}
-	$s.pop();
-}
-haxe.Stack.prototype.__class__ = haxe.Stack;
-ERegFilter = function(level,r) { if( level === $_ ) return; {
-	$s.push("ERegFilter::new");
-	var $spos = $s.length;
-	this.level = level;
-	this.r = r;
-	$s.pop();
-}}
-ERegFilter.__name__ = ["ERegFilter"];
-ERegFilter.prototype.level = null;
-ERegFilter.prototype.r = null;
-ERegFilter.prototype.enabled = function(input,i,level) {
-	$s.push("ERegFilter::enabled");
-	var $spos = $s.length;
-	var sender = i.className + "." + i.methodName;
-	var matches = this.r.match(sender);
-	if(!matches) {
-		$s.pop();
-		return input;
-	}
-	{
-		var $tmp = matches && this.level.isSmallerOrEqual(level);
+			$s.pop();
+		}};
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-ERegFilter.prototype.__class__ = ERegFilter;
-ERegFilter.__interfaces__ = [LogFilter];
-GLHitarea = function(p) { if( p === $_ ) return; {
-	$s.push("GLHitarea::new");
+List.prototype.toString = function() {
+	$s.push("List::toString");
 	var $spos = $s.length;
-	this.position = new Vec2();
-	this.size = new Vec2();
-	$s.pop();
-}}
-GLHitarea.__name__ = ["GLHitarea"];
-GLHitarea.prototype.position = null;
-GLHitarea.prototype.size = null;
-GLHitarea.prototype.isUnder = function(matrix,positionOnStage) {
-	$s.push("GLHitarea::isUnder");
-	var $spos = $s.length;
-	var tl = this.position.clone();
-	tl.transform(matrix);
-	var br = this.size.clone();
-	br.transform(matrix);
+	var s = new StringBuf();
+	var first = true;
+	var l = this.h;
+	s.b[s.b.length] = "{";
+	while(l != null) {
+		if(first) first = false;
+		else s.b[s.b.length] = ", ";
+		s.b[s.b.length] = Std.string(l[0]);
+		l = l[1];
+	}
+	s.b[s.b.length] = "}";
 	{
-		var $tmp = tl.x <= positionOnStage.x && br.x >= positionOnStage.x && tl.y <= positionOnStage.y && br.y >= positionOnStage.y;
+		var $tmp = s.b.join("");
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-GLHitarea.prototype.__class__ = GLHitarea;
-kumite.canvas.CanvasController = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.canvas.CanvasController::new");
+List.prototype.join = function(sep) {
+	$s.push("List::join");
 	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-kumite.canvas.CanvasController.__name__ = ["kumite","canvas","CanvasController"];
-kumite.canvas.CanvasController.prototype.canvas = null;
-kumite.canvas.CanvasController.prototype.stage = null;
-kumite.canvas.CanvasController.prototype.initPrepare = function() {
-	$s.push("kumite.canvas.CanvasController::initPrepare");
-	var $spos = $s.length;
-	this.canvas.itself = js.Lib.document.getElementById("content");
-	$s.pop();
-}
-kumite.canvas.CanvasController.prototype.init = function() {
-	$s.push("kumite.canvas.CanvasController::init");
-	var $spos = $s.length;
-	this.updateCanvasSizeFromStage();
-	$s.pop();
-}
-kumite.canvas.CanvasController.prototype.updateCanvasSizeFromStage = function(message) {
-	$s.push("kumite.canvas.CanvasController::updateCanvasSizeFromStage");
-	var $spos = $s.length;
-	this.canvas.itself.width = this.stage.width;
-	this.canvas.itself.height = this.stage.height;
-	$s.pop();
-}
-kumite.canvas.CanvasController.prototype.__class__ = kumite.canvas.CanvasController;
-kumite.canvas.CanvasController.__interfaces__ = [haxe.rtti.Infos];
-IntIter = function(min,max) { if( min === $_ ) return; {
-	$s.push("IntIter::new");
-	var $spos = $s.length;
-	this.min = min;
-	this.max = max;
-	$s.pop();
-}}
-IntIter.__name__ = ["IntIter"];
-IntIter.prototype.min = null;
-IntIter.prototype.max = null;
-IntIter.prototype.hasNext = function() {
-	$s.push("IntIter::hasNext");
-	var $spos = $s.length;
+	var s = new StringBuf();
+	var first = true;
+	var l = this.h;
+	while(l != null) {
+		if(first) first = false;
+		else s.b[s.b.length] = sep;
+		s.b[s.b.length] = l[0];
+		l = l[1];
+	}
 	{
-		var $tmp = this.min < this.max;
+		var $tmp = s.b.join("");
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-IntIter.prototype.next = function() {
-	$s.push("IntIter::next");
+List.prototype.filter = function(f) {
+	$s.push("List::filter");
 	var $spos = $s.length;
+	var l2 = new List();
+	var l = this.h;
+	while(l != null) {
+		var v = l[0];
+		l = l[1];
+		if(f(v)) l2.add(v);
+	}
 	{
-		var $tmp = this.min++;
 		$s.pop();
-		return $tmp;
+		return l2;
 	}
 	$s.pop();
 }
-IntIter.prototype.__class__ = IntIter;
+List.prototype.map = function(f) {
+	$s.push("List::map");
+	var $spos = $s.length;
+	var b = new List();
+	var l = this.h;
+	while(l != null) {
+		var v = l[0];
+		l = l[1];
+		b.add(f(v));
+	}
+	{
+		$s.pop();
+		return b;
+	}
+	$s.pop();
+}
+List.prototype.__class__ = List;
 GLAttribLocation = function(p) { if( p === $_ ) return; {
 	$s.push("GLAttribLocation::new");
 	var $spos = $s.length;
@@ -2850,222 +1547,585 @@ GLAttribLocation.prototype.drawArrays = function(mode,first,count) {
 	$s.pop();
 }
 GLAttribLocation.prototype.__class__ = GLAttribLocation;
-if(!kumite.displaylist) kumite.displaylist = {}
-kumite.displaylist.DisplayListController = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.displaylist.DisplayListController::new");
+IntIter = function(min,max) { if( min === $_ ) return; {
+	$s.push("IntIter::new");
+	var $spos = $s.length;
+	this.min = min;
+	this.max = max;
+	$s.pop();
+}}
+IntIter.__name__ = ["IntIter"];
+IntIter.prototype.min = null;
+IntIter.prototype.max = null;
+IntIter.prototype.hasNext = function() {
+	$s.push("IntIter::hasNext");
+	var $spos = $s.length;
+	{
+		var $tmp = this.min < this.max;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+IntIter.prototype.next = function() {
+	$s.push("IntIter::next");
+	var $spos = $s.length;
+	{
+		var $tmp = this.min++;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+IntIter.prototype.__class__ = IntIter;
+if(typeof kumite=='undefined') kumite = {}
+if(!kumite.canvas) kumite.canvas = {}
+kumite.canvas.CanvasCase = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.canvas.CanvasCase::new");
 	var $spos = $s.length;
 	null;
 	$s.pop();
 }}
-kumite.displaylist.DisplayListController.__name__ = ["kumite","displaylist","DisplayListController"];
-kumite.displaylist.DisplayListController.prototype.stage = null;
-kumite.displaylist.DisplayListController.prototype.renderer = null;
-kumite.displaylist.DisplayListController.prototype.start = function() {
-	$s.push("kumite.displaylist.DisplayListController::start");
+kumite.canvas.CanvasCase.__name__ = ["kumite","canvas","CanvasCase"];
+kumite.canvas.CanvasCase.prototype.itself = null;
+kumite.canvas.CanvasCase.prototype.__class__ = kumite.canvas.CanvasCase;
+haxe.rtti.Infos = function() { }
+haxe.rtti.Infos.__name__ = ["haxe","rtti","Infos"];
+haxe.rtti.Infos.prototype.__class__ = haxe.rtti.Infos;
+if(!kumite.stage) kumite.stage = {}
+kumite.stage.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.stage.Config::new");
 	var $spos = $s.length;
-	this.renderer = new GLDisplayListRenderer();
-	this.renderer.init();
-	var root = GLDisplayList.getDefault().stage;
-	root.addChild(new GLStats());
-	$s.pop();
-}
-kumite.displaylist.DisplayListController.prototype.render = function(tick) {
-	$s.push("kumite.displaylist.DisplayListController::render");
-	var $spos = $s.length;
-	bpmjs.Stats.measureFPS();
-	GLDisplayList.getDefault().dispatchEnterFrame();
-	this.renderer.render(this.stage.width,this.stage.height);
-	$s.pop();
-}
-kumite.displaylist.DisplayListController.prototype.__class__ = kumite.displaylist.DisplayListController;
-kumite.displaylist.DisplayListController.__interfaces__ = [haxe.rtti.Infos];
-if(!haxe.xml) haxe.xml = {}
-if(!haxe.xml._Fast) haxe.xml._Fast = {}
-haxe.xml._Fast.NodeAccess = function(x) { if( x === $_ ) return; {
-	$s.push("haxe.xml._Fast.NodeAccess::new");
-	var $spos = $s.length;
-	this.__x = x;
+	this.stage = new kumite.stage.Stage();
+	this.stageResizeAction = new kumite.stage.StageResizeAction();
 	$s.pop();
 }}
-haxe.xml._Fast.NodeAccess.__name__ = ["haxe","xml","_Fast","NodeAccess"];
-haxe.xml._Fast.NodeAccess.prototype.__x = null;
-haxe.xml._Fast.NodeAccess.prototype.resolve = function(name) {
-	$s.push("haxe.xml._Fast.NodeAccess::resolve");
+kumite.stage.Config.__name__ = ["kumite","stage","Config"];
+kumite.stage.Config.prototype.stage = null;
+kumite.stage.Config.prototype.stageResizeAction = null;
+kumite.stage.Config.prototype.__class__ = kumite.stage.Config;
+kumite.stage.Config.__interfaces__ = [haxe.rtti.Infos];
+Matrix4 = function(cloneFrom) { if( cloneFrom === $_ ) return; {
+	$s.push("Matrix4::new");
 	var $spos = $s.length;
-	var x = this.__x.elementsNamed(name).next();
-	if(x == null) {
-		var xname = this.__x.nodeType == Xml.Document?"Document":this.__x.getNodeName();
-		throw xname + " is missing element " + name;
+	this.buffer = new Float32Array(16);
+	if(cloneFrom != null) {
+		this.setFrom(cloneFrom);
 	}
+	else {
+		this.identity();
+	}
+	$s.pop();
+}}
+Matrix4.__name__ = ["Matrix4"];
+Matrix4.createTranslation = function(x,y,z) {
+	$s.push("Matrix4::createTranslation");
+	var $spos = $s.length;
+	var result = new Matrix4();
+	result.buffer[0] = 1;
+	result.buffer[1] = 0;
+	result.buffer[2] = 0;
+	result.buffer[3] = 0;
+	result.buffer[4] = 0;
+	result.buffer[5] = 1;
+	result.buffer[6] = 0;
+	result.buffer[7] = 0;
+	result.buffer[8] = 0;
+	result.buffer[9] = 0;
+	result.buffer[10] = 1;
+	result.buffer[11] = 0;
+	result.buffer[12] = x;
+	result.buffer[13] = y;
+	result.buffer[14] = z;
+	result.buffer[15] = 1;
 	{
-		var $tmp = new haxe.xml.Fast(x);
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+Matrix4.prototype.buffer = null;
+Matrix4.prototype.identity = function() {
+	$s.push("Matrix4::identity");
+	var $spos = $s.length;
+	this.buffer[0] = 1;
+	this.buffer[1] = 0;
+	this.buffer[2] = 0;
+	this.buffer[3] = 0;
+	this.buffer[4] = 0;
+	this.buffer[5] = 1;
+	this.buffer[6] = 0;
+	this.buffer[7] = 0;
+	this.buffer[8] = 0;
+	this.buffer[9] = 0;
+	this.buffer[10] = 1;
+	this.buffer[11] = 0;
+	this.buffer[12] = 0;
+	this.buffer[13] = 0;
+	this.buffer[14] = 0;
+	this.buffer[15] = 1;
+	$s.pop();
+}
+Matrix4.prototype.setFrom = function(from) {
+	$s.push("Matrix4::setFrom");
+	var $spos = $s.length;
+	this.buffer[0] = from.buffer[0];
+	this.buffer[1] = from.buffer[1];
+	this.buffer[2] = from.buffer[2];
+	this.buffer[3] = from.buffer[3];
+	this.buffer[4] = from.buffer[4];
+	this.buffer[5] = from.buffer[5];
+	this.buffer[6] = from.buffer[6];
+	this.buffer[7] = from.buffer[7];
+	this.buffer[8] = from.buffer[8];
+	this.buffer[9] = from.buffer[9];
+	this.buffer[10] = from.buffer[10];
+	this.buffer[11] = from.buffer[11];
+	this.buffer[12] = from.buffer[12];
+	this.buffer[13] = from.buffer[13];
+	this.buffer[14] = from.buffer[14];
+	this.buffer[15] = from.buffer[15];
+	$s.pop();
+}
+Matrix4.prototype.lookAt = function(eye,center,up) {
+	$s.push("Matrix4::lookAt");
+	var $spos = $s.length;
+	var eyex = eye.x, eyey = eye.y, eyez = eye.z, upx = up.x, upy = up.y, upz = up.z, centerx = center.x, centery = center.y, centerz = center.z;
+	if(eyex == centerx && eyey == centery && eyez == centerz) {
+		this.identity();
+	}
+	var z0, z1, z2, x0, x1, x2, y0, y1, y2, len;
+	z0 = eyex - center.x;
+	z1 = eyey - center.y;
+	z2 = eyez - center.z;
+	len = 1 / Math.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
+	z0 *= len;
+	z1 *= len;
+	z2 *= len;
+	x0 = upy * z2 - upz * z1;
+	x1 = upz * z0 - upx * z2;
+	x2 = upx * z1 - upy * z0;
+	len = Math.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
+	if(Math.isNaN(len)) {
+		x0 = 0;
+		x1 = 0;
+		x2 = 0;
+	}
+	else {
+		len = 1 / len;
+		x0 *= len;
+		x1 *= len;
+		x2 *= len;
+	}
+	y0 = z1 * x2 - z2 * x1;
+	y1 = z2 * x0 - z0 * x2;
+	y2 = z0 * x1 - z1 * x0;
+	len = Math.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
+	if(Math.isNaN(len)) {
+		y0 = 0;
+		y1 = 0;
+		y2 = 0;
+	}
+	else {
+		len = 1 / len;
+		y0 *= len;
+		y1 *= len;
+		y2 *= len;
+	}
+	this.buffer[0] = x0;
+	this.buffer[1] = y0;
+	this.buffer[2] = z0;
+	this.buffer[3] = 0;
+	this.buffer[4] = x1;
+	this.buffer[5] = y1;
+	this.buffer[6] = z1;
+	this.buffer[7] = 0;
+	this.buffer[8] = x2;
+	this.buffer[9] = y2;
+	this.buffer[10] = z2;
+	this.buffer[11] = 0;
+	this.buffer[12] = -(x0 * eyex + x1 * eyey + x2 * eyez);
+	this.buffer[13] = -(y0 * eyex + y1 * eyey + y2 * eyez);
+	this.buffer[14] = -(z0 * eyex + z1 * eyey + z2 * eyez);
+	this.buffer[15] = 1;
+	$s.pop();
+}
+Matrix4.prototype.ortho = function(left,right,bottom,top,near,far) {
+	$s.push("Matrix4::ortho");
+	var $spos = $s.length;
+	var rl = right - left;
+	var tb = top - bottom;
+	var fn = far - near;
+	this.buffer[0] = 2 / rl;
+	this.buffer[1] = 0;
+	this.buffer[2] = 0;
+	this.buffer[3] = 0;
+	this.buffer[4] = 0;
+	this.buffer[5] = 2 / tb;
+	this.buffer[6] = 0;
+	this.buffer[7] = 0;
+	this.buffer[8] = 0;
+	this.buffer[9] = 0;
+	this.buffer[10] = -2 / fn;
+	this.buffer[11] = 0;
+	this.buffer[12] = -(left + right) / rl;
+	this.buffer[13] = -(top + bottom) / tb;
+	this.buffer[14] = -(far + near) / fn;
+	this.buffer[15] = 1;
+	$s.pop();
+}
+Matrix4.prototype.perspective = function(fovy,aspect,near,far) {
+	$s.push("Matrix4::perspective");
+	var $spos = $s.length;
+	var top = near * Math.tan(fovy * Math.PI / 360.0);
+	var right = top * aspect;
+	this.frustum(-right,right,-top,top,near,far);
+	$s.pop();
+}
+Matrix4.prototype.frustum = function(left,right,bottom,top,near,far) {
+	$s.push("Matrix4::frustum");
+	var $spos = $s.length;
+	var rl = right - left;
+	var tb = top - bottom;
+	var fn = far - near;
+	this.buffer[0] = near * 2 / rl;
+	this.buffer[1] = 0;
+	this.buffer[2] = 0;
+	this.buffer[3] = 0;
+	this.buffer[4] = 0;
+	this.buffer[5] = near * 2 / tb;
+	this.buffer[6] = 0;
+	this.buffer[7] = 0;
+	this.buffer[8] = (right + left) / rl;
+	this.buffer[9] = (top + bottom) / tb;
+	this.buffer[10] = -(far + near) / fn;
+	this.buffer[11] = -1;
+	this.buffer[12] = 0;
+	this.buffer[13] = 0;
+	this.buffer[14] = -(far * near * 2) / fn;
+	this.buffer[15] = 0;
+	$s.pop();
+}
+Matrix4.prototype.appendTranslation = function(x,y,z) {
+	$s.push("Matrix4::appendTranslation");
+	var $spos = $s.length;
+	var m = Matrix4.createTranslation(x,y,z);
+	this.multiply(m);
+	$s.pop();
+}
+Matrix4.prototype.appendScale = function(x,y,z) {
+	$s.push("Matrix4::appendScale");
+	var $spos = $s.length;
+	this.buffer[0] = this.buffer[0] * x;
+	this.buffer[1] = this.buffer[1] * x;
+	this.buffer[2] = this.buffer[2] * x;
+	this.buffer[3] = this.buffer[3] * x;
+	this.buffer[4] = this.buffer[4] * y;
+	this.buffer[5] = this.buffer[5] * y;
+	this.buffer[6] = this.buffer[6] * y;
+	this.buffer[7] = this.buffer[7] * y;
+	this.buffer[8] = this.buffer[8] * z;
+	this.buffer[9] = this.buffer[9] * z;
+	this.buffer[10] = this.buffer[10] * z;
+	this.buffer[11] = this.buffer[11] * z;
+	this.buffer[12] = this.buffer[12];
+	this.buffer[13] = this.buffer[13];
+	this.buffer[14] = this.buffer[14];
+	this.buffer[15] = this.buffer[15];
+	$s.pop();
+}
+Matrix4.prototype.appendRotation = function(angle,axis) {
+	$s.push("Matrix4::appendRotation");
+	var $spos = $s.length;
+	var x = axis.x, y = axis.y, z = axis.y;
+	var len = Math.sqrt(x * x + y * y + z * z);
+	len = 1 / len;
+	x *= len;
+	y *= len;
+	z *= len;
+	var s = Math.sin(angle);
+	var c = Math.cos(angle);
+	var t = 1 - c;
+	var a00 = this.buffer[0], a01 = this.buffer[1], a02 = this.buffer[2], a03 = this.buffer[3];
+	var a10 = this.buffer[4], a11 = this.buffer[5], a12 = this.buffer[6], a13 = this.buffer[7];
+	var a20 = this.buffer[8], a21 = this.buffer[9], a22 = this.buffer[10], a23 = this.buffer[11];
+	var b00 = x * x * t + c, b01 = y * x * t + z * s, b02 = z * x * t - y * s;
+	var b10 = x * y * t - z * s, b11 = y * y * t + c, b12 = z * y * t + x * s;
+	var b20 = x * z * t + y * s, b21 = y * z * t - x * s, b22 = z * z * t + c;
+	this.buffer[0] = a00 * b00 + a10 * b01 + a20 * b02;
+	this.buffer[1] = a01 * b00 + a11 * b01 + a21 * b02;
+	this.buffer[2] = a02 * b00 + a12 * b01 + a22 * b02;
+	this.buffer[3] = a03 * b00 + a13 * b01 + a23 * b02;
+	this.buffer[4] = a00 * b10 + a10 * b11 + a20 * b12;
+	this.buffer[5] = a01 * b10 + a11 * b11 + a21 * b12;
+	this.buffer[6] = a02 * b10 + a12 * b11 + a22 * b12;
+	this.buffer[7] = a03 * b10 + a13 * b11 + a23 * b12;
+	this.buffer[8] = a00 * b20 + a10 * b21 + a20 * b22;
+	this.buffer[9] = a01 * b20 + a11 * b21 + a21 * b22;
+	this.buffer[10] = a02 * b20 + a12 * b21 + a22 * b22;
+	this.buffer[11] = a03 * b20 + a13 * b21 + a23 * b22;
+	$s.pop();
+}
+Matrix4.prototype.rotateEuler = function(heading,attitude,bank) {
+	$s.push("Matrix4::rotateEuler");
+	var $spos = $s.length;
+	this.identity();
+	var ch = Math.cos(heading);
+	var sh = Math.sin(heading);
+	var ca = Math.cos(attitude);
+	var sa = Math.sin(attitude);
+	var cb = Math.cos(bank);
+	var sb = Math.sin(bank);
+	this.buffer[0] = ch * ca;
+	this.buffer[1] = sh * sb - ch * sa * cb;
+	this.buffer[2] = ch * sa * sb + sh * cb;
+	this.buffer[4] = sa;
+	this.buffer[5] = ca * cb;
+	this.buffer[6] = -ca * sb;
+	this.buffer[8] = -sh * ca;
+	this.buffer[9] = sh * sa * cb + ch * sb;
+	this.buffer[10] = -sh * sa * sb + ch * cb;
+	$s.pop();
+}
+Matrix4.prototype.appendEulerRotation = function(heading,attitude,bank) {
+	$s.push("Matrix4::appendEulerRotation");
+	var $spos = $s.length;
+	var mEuler = new Matrix4();
+	mEuler.rotateEuler(heading,attitude,bank);
+	this.multiply(mEuler);
+	$s.pop();
+}
+Matrix4.prototype.inverse = function() {
+	$s.push("Matrix4::inverse");
+	var $spos = $s.length;
+	var a00 = this.buffer[0], a01 = this.buffer[1], a02 = this.buffer[2], a03 = this.buffer[3];
+	var a10 = this.buffer[4], a11 = this.buffer[5], a12 = this.buffer[6], a13 = this.buffer[7];
+	var a20 = this.buffer[8], a21 = this.buffer[9], a22 = this.buffer[10], a23 = this.buffer[11];
+	var a30 = this.buffer[12], a31 = this.buffer[13], a32 = this.buffer[14], a33 = this.buffer[15];
+	var b00 = a00 * a11 - a01 * a10;
+	var b01 = a00 * a12 - a02 * a10;
+	var b02 = a00 * a13 - a03 * a10;
+	var b03 = a01 * a12 - a02 * a11;
+	var b04 = a01 * a13 - a03 * a11;
+	var b05 = a02 * a13 - a03 * a12;
+	var b06 = a20 * a31 - a21 * a30;
+	var b07 = a20 * a32 - a22 * a30;
+	var b08 = a20 * a33 - a23 * a30;
+	var b09 = a21 * a32 - a22 * a31;
+	var b10 = a21 * a33 - a23 * a31;
+	var b11 = a22 * a33 - a23 * a32;
+	var invDet = 1 / (b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
+	this.buffer[0] = (a11 * b11 - a12 * b10 + a13 * b09) * invDet;
+	this.buffer[1] = (-a01 * b11 + a02 * b10 - a03 * b09) * invDet;
+	this.buffer[2] = (a31 * b05 - a32 * b04 + a33 * b03) * invDet;
+	this.buffer[3] = (-a21 * b05 + a22 * b04 - a23 * b03) * invDet;
+	this.buffer[4] = (-a10 * b11 + a12 * b08 - a13 * b07) * invDet;
+	this.buffer[5] = (a00 * b11 - a02 * b08 + a03 * b07) * invDet;
+	this.buffer[6] = (-a30 * b05 + a32 * b02 - a33 * b01) * invDet;
+	this.buffer[7] = (a20 * b05 - a22 * b02 + a23 * b01) * invDet;
+	this.buffer[8] = (a10 * b10 - a11 * b08 + a13 * b06) * invDet;
+	this.buffer[9] = (-a00 * b10 + a01 * b08 - a03 * b06) * invDet;
+	this.buffer[10] = (a30 * b04 - a31 * b02 + a33 * b00) * invDet;
+	this.buffer[11] = (-a20 * b04 + a21 * b02 - a23 * b00) * invDet;
+	this.buffer[12] = (-a10 * b09 + a11 * b07 - a12 * b06) * invDet;
+	this.buffer[13] = (a00 * b09 - a01 * b07 + a02 * b06) * invDet;
+	this.buffer[14] = (-a30 * b03 + a31 * b01 - a32 * b00) * invDet;
+	this.buffer[15] = (a20 * b03 - a21 * b01 + a22 * b00) * invDet;
+	$s.pop();
+}
+Matrix4.prototype.multiply = function(mat2) {
+	$s.push("Matrix4::multiply");
+	var $spos = $s.length;
+	var a00 = this.buffer[0], a01 = this.buffer[1], a02 = this.buffer[2], a03 = this.buffer[3];
+	var a10 = this.buffer[4], a11 = this.buffer[5], a12 = this.buffer[6], a13 = this.buffer[7];
+	var a20 = this.buffer[8], a21 = this.buffer[9], a22 = this.buffer[10], a23 = this.buffer[11];
+	var a30 = this.buffer[12], a31 = this.buffer[13], a32 = this.buffer[14], a33 = this.buffer[15];
+	var b00 = mat2.buffer[0], b01 = mat2.buffer[1], b02 = mat2.buffer[2], b03 = mat2.buffer[3];
+	var b10 = mat2.buffer[4], b11 = mat2.buffer[5], b12 = mat2.buffer[6], b13 = mat2.buffer[7];
+	var b20 = mat2.buffer[8], b21 = mat2.buffer[9], b22 = mat2.buffer[10], b23 = mat2.buffer[11];
+	var b30 = mat2.buffer[12], b31 = mat2.buffer[13], b32 = mat2.buffer[14], b33 = mat2.buffer[15];
+	this.buffer[0] = b00 * a00 + b01 * a10 + b02 * a20 + b03 * a30;
+	this.buffer[1] = b00 * a01 + b01 * a11 + b02 * a21 + b03 * a31;
+	this.buffer[2] = b00 * a02 + b01 * a12 + b02 * a22 + b03 * a32;
+	this.buffer[3] = b00 * a03 + b01 * a13 + b02 * a23 + b03 * a33;
+	this.buffer[4] = b10 * a00 + b11 * a10 + b12 * a20 + b13 * a30;
+	this.buffer[5] = b10 * a01 + b11 * a11 + b12 * a21 + b13 * a31;
+	this.buffer[6] = b10 * a02 + b11 * a12 + b12 * a22 + b13 * a32;
+	this.buffer[7] = b10 * a03 + b11 * a13 + b12 * a23 + b13 * a33;
+	this.buffer[8] = b20 * a00 + b21 * a10 + b22 * a20 + b23 * a30;
+	this.buffer[9] = b20 * a01 + b21 * a11 + b22 * a21 + b23 * a31;
+	this.buffer[10] = b20 * a02 + b21 * a12 + b22 * a22 + b23 * a32;
+	this.buffer[11] = b20 * a03 + b21 * a13 + b22 * a23 + b23 * a33;
+	this.buffer[12] = b30 * a00 + b31 * a10 + b32 * a20 + b33 * a30;
+	this.buffer[13] = b30 * a01 + b31 * a11 + b32 * a21 + b33 * a31;
+	this.buffer[14] = b30 * a02 + b31 * a12 + b32 * a22 + b33 * a32;
+	this.buffer[15] = b30 * a03 + b31 * a13 + b32 * a23 + b33 * a33;
+	$s.pop();
+}
+Matrix4.prototype.toInverseMatrix3 = function() {
+	$s.push("Matrix4::toInverseMatrix3");
+	var $spos = $s.length;
+	var a00 = this.buffer[0], a01 = this.buffer[1], a02 = this.buffer[2];
+	var a10 = this.buffer[4], a11 = this.buffer[5], a12 = this.buffer[6];
+	var a20 = this.buffer[8], a21 = this.buffer[9], a22 = this.buffer[10];
+	var b01 = a22 * a11 - a12 * a21;
+	var b11 = -a22 * a10 + a12 * a20;
+	var b21 = a21 * a10 - a11 * a20;
+	var d = a00 * b01 + a01 * b11 + a02 * b21;
+	if(d == null) {
+		$s.pop();
+		return null;
+	}
+	var id = 1 / d;
+	var result = new Matrix3();
+	result.buffer[0] = b01 * id;
+	result.buffer[1] = (-a22 * a01 + a02 * a21) * id;
+	result.buffer[2] = (a12 * a01 - a02 * a11) * id;
+	result.buffer[3] = b11 * id;
+	result.buffer[4] = (a22 * a00 - a02 * a20) * id;
+	result.buffer[5] = (-a12 * a00 + a02 * a10) * id;
+	result.buffer[6] = b21 * id;
+	result.buffer[7] = (-a21 * a00 + a01 * a20) * id;
+	result.buffer[8] = (a11 * a00 - a01 * a10) * id;
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+Matrix4.prototype.clone = function() {
+	$s.push("Matrix4::clone");
+	var $spos = $s.length;
+	{
+		var $tmp = new Matrix4(this);
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-haxe.xml._Fast.NodeAccess.prototype.__class__ = haxe.xml._Fast.NodeAccess;
-haxe.xml._Fast.AttribAccess = function(x) { if( x === $_ ) return; {
-	$s.push("haxe.xml._Fast.AttribAccess::new");
+Matrix4.prototype.toString = function() {
+	$s.push("Matrix4::toString");
 	var $spos = $s.length;
-	this.__x = x;
-	$s.pop();
-}}
-haxe.xml._Fast.AttribAccess.__name__ = ["haxe","xml","_Fast","AttribAccess"];
-haxe.xml._Fast.AttribAccess.prototype.__x = null;
-haxe.xml._Fast.AttribAccess.prototype.resolve = function(name) {
-	$s.push("haxe.xml._Fast.AttribAccess::resolve");
-	var $spos = $s.length;
-	if(this.__x.nodeType == Xml.Document) throw "Cannot access document attribute " + name;
-	var v = this.__x.get(name);
-	if(v == null) throw this.__x.getNodeName() + " is missing attribute " + name;
+	var result = "Matrix4:";
+	result += "\r\t" + this.buffer[0] + "," + this.buffer[1] + "," + this.buffer[2] + "," + this.buffer[3];
+	result += "\r\t" + this.buffer[4] + "," + this.buffer[5] + "," + this.buffer[6] + "," + this.buffer[7];
+	result += "\r\t" + this.buffer[8] + "," + this.buffer[9] + "," + this.buffer[10] + "," + this.buffer[11];
+	result += "\r\t" + this.buffer[12] + "," + this.buffer[13] + "," + this.buffer[14] + "," + this.buffer[15];
 	{
 		$s.pop();
-		return v;
+		return result;
 	}
 	$s.pop();
 }
-haxe.xml._Fast.AttribAccess.prototype.__class__ = haxe.xml._Fast.AttribAccess;
-haxe.xml._Fast.HasAttribAccess = function(x) { if( x === $_ ) return; {
-	$s.push("haxe.xml._Fast.HasAttribAccess::new");
+Matrix4.prototype.__class__ = Matrix4;
+Hash = function(p) { if( p === $_ ) return; {
+	$s.push("Hash::new");
 	var $spos = $s.length;
-	this.__x = x;
+	this.h = {}
+	if(this.h.__proto__ != null) {
+		this.h.__proto__ = null;
+		delete(this.h.__proto__);
+	}
+	else null;
 	$s.pop();
 }}
-haxe.xml._Fast.HasAttribAccess.__name__ = ["haxe","xml","_Fast","HasAttribAccess"];
-haxe.xml._Fast.HasAttribAccess.prototype.__x = null;
-haxe.xml._Fast.HasAttribAccess.prototype.resolve = function(name) {
-	$s.push("haxe.xml._Fast.HasAttribAccess::resolve");
+Hash.__name__ = ["Hash"];
+Hash.prototype.h = null;
+Hash.prototype.set = function(key,value) {
+	$s.push("Hash::set");
 	var $spos = $s.length;
-	if(this.__x.nodeType == Xml.Document) throw "Cannot access document attribute " + name;
+	this.h["$" + key] = value;
+	$s.pop();
+}
+Hash.prototype.get = function(key) {
+	$s.push("Hash::get");
+	var $spos = $s.length;
 	{
-		var $tmp = this.__x.exists(name);
+		var $tmp = this.h["$" + key];
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-haxe.xml._Fast.HasAttribAccess.prototype.__class__ = haxe.xml._Fast.HasAttribAccess;
-haxe.xml._Fast.HasNodeAccess = function(x) { if( x === $_ ) return; {
-	$s.push("haxe.xml._Fast.HasNodeAccess::new");
+Hash.prototype.exists = function(key) {
+	$s.push("Hash::exists");
 	var $spos = $s.length;
-	this.__x = x;
-	$s.pop();
-}}
-haxe.xml._Fast.HasNodeAccess.__name__ = ["haxe","xml","_Fast","HasNodeAccess"];
-haxe.xml._Fast.HasNodeAccess.prototype.__x = null;
-haxe.xml._Fast.HasNodeAccess.prototype.resolve = function(name) {
-	$s.push("haxe.xml._Fast.HasNodeAccess::resolve");
-	var $spos = $s.length;
-	{
-		var $tmp = this.__x.elementsNamed(name).hasNext();
-		$s.pop();
-		return $tmp;
+	try {
+		key = "$" + key;
+		{
+			var $tmp = this.hasOwnProperty.call(this.h,key);
+			$s.pop();
+			return $tmp;
+		}
 	}
-	$s.pop();
-}
-haxe.xml._Fast.HasNodeAccess.prototype.__class__ = haxe.xml._Fast.HasNodeAccess;
-haxe.xml._Fast.NodeListAccess = function(x) { if( x === $_ ) return; {
-	$s.push("haxe.xml._Fast.NodeListAccess::new");
-	var $spos = $s.length;
-	this.__x = x;
-	$s.pop();
-}}
-haxe.xml._Fast.NodeListAccess.__name__ = ["haxe","xml","_Fast","NodeListAccess"];
-haxe.xml._Fast.NodeListAccess.prototype.__x = null;
-haxe.xml._Fast.NodeListAccess.prototype.resolve = function(name) {
-	$s.push("haxe.xml._Fast.NodeListAccess::resolve");
-	var $spos = $s.length;
-	var l = new List();
-	{ var $it0 = this.__x.elementsNamed(name);
-	while( $it0.hasNext() ) { var x = $it0.next();
-	l.add(new haxe.xml.Fast(x));
-	}}
-	{
-		$s.pop();
-		return l;
-	}
-	$s.pop();
-}
-haxe.xml._Fast.NodeListAccess.prototype.__class__ = haxe.xml._Fast.NodeListAccess;
-haxe.xml.Fast = function(x) { if( x === $_ ) return; {
-	$s.push("haxe.xml.Fast::new");
-	var $spos = $s.length;
-	if(x.nodeType != Xml.Document && x.nodeType != Xml.Element) throw "Invalid nodeType " + x.nodeType;
-	this.x = x;
-	this.node = new haxe.xml._Fast.NodeAccess(x);
-	this.nodes = new haxe.xml._Fast.NodeListAccess(x);
-	this.att = new haxe.xml._Fast.AttribAccess(x);
-	this.has = new haxe.xml._Fast.HasAttribAccess(x);
-	this.hasNode = new haxe.xml._Fast.HasNodeAccess(x);
-	$s.pop();
-}}
-haxe.xml.Fast.__name__ = ["haxe","xml","Fast"];
-haxe.xml.Fast.prototype.x = null;
-haxe.xml.Fast.prototype.name = null;
-haxe.xml.Fast.prototype.innerData = null;
-haxe.xml.Fast.prototype.innerHTML = null;
-haxe.xml.Fast.prototype.node = null;
-haxe.xml.Fast.prototype.nodes = null;
-haxe.xml.Fast.prototype.att = null;
-haxe.xml.Fast.prototype.has = null;
-haxe.xml.Fast.prototype.hasNode = null;
-haxe.xml.Fast.prototype.elements = null;
-haxe.xml.Fast.prototype.getName = function() {
-	$s.push("haxe.xml.Fast::getName");
-	var $spos = $s.length;
-	{
-		var $tmp = this.x.nodeType == Xml.Document?"Document":this.x.getNodeName();
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.xml.Fast.prototype.getInnerData = function() {
-	$s.push("haxe.xml.Fast::getInnerData");
-	var $spos = $s.length;
-	var it = this.x.iterator();
-	if(!it.hasNext()) throw this.getName() + " does not have data";
-	var v = it.next();
-	if(it.hasNext()) throw this.getName() + " does not only have data";
-	if(v.nodeType != Xml.PCData && v.nodeType != Xml.CData) throw this.getName() + " does not have data";
-	{
-		var $tmp = v.getNodeValue();
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.xml.Fast.prototype.getInnerHTML = function() {
-	$s.push("haxe.xml.Fast::getInnerHTML");
-	var $spos = $s.length;
-	var s = new StringBuf();
-	{ var $it0 = this.x.iterator();
-	while( $it0.hasNext() ) { var x = $it0.next();
-	s.b[s.b.length] = x.toString();
-	}}
-	{
-		var $tmp = s.b.join("");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.xml.Fast.prototype.getElements = function() {
-	$s.push("haxe.xml.Fast::getElements");
-	var $spos = $s.length;
-	var it = this.x.elements();
-	{
-		var $tmp = { hasNext : $closure(it,"hasNext"), next : function() {
-			$s.push("haxe.xml.Fast::getElements@163");
-			var $spos = $s.length;
-			var x = it.next();
-			if(x == null) {
-				$s.pop();
-				return null;
-			}
+	catch( $e0 ) {
+		{
+			var e = $e0;
 			{
-				var $tmp = new haxe.xml.Fast(x);
+				$e = [];
+				while($s.length >= $spos) $e.unshift($s.pop());
+				$s.push($e[0]);
+				
+				for(var i in this.h)
+					if( i == key ) return true;
+			;
+				{
+					$s.pop();
+					return false;
+				}
+			}
+		}
+	}
+	$s.pop();
+}
+Hash.prototype.remove = function(key) {
+	$s.push("Hash::remove");
+	var $spos = $s.length;
+	if(!this.exists(key)) {
+		$s.pop();
+		return false;
+	}
+	delete(this.h["$" + key]);
+	{
+		$s.pop();
+		return true;
+	}
+	$s.pop();
+}
+Hash.prototype.keys = function() {
+	$s.push("Hash::keys");
+	var $spos = $s.length;
+	var a = new Array();
+	
+			for(var i in this.h)
+				a.push(i.substr(1));
+		;
+	{
+		var $tmp = a.iterator();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Hash.prototype.iterator = function() {
+	$s.push("Hash::iterator");
+	var $spos = $s.length;
+	{
+		var $tmp = { ref : this.h, it : this.keys(), hasNext : function() {
+			$s.push("Hash::iterator@81");
+			var $spos = $s.length;
+			{
+				var $tmp = this.it.hasNext();
+				$s.pop();
+				return $tmp;
+			}
+			$s.pop();
+		}, next : function() {
+			$s.push("Hash::iterator@82");
+			var $spos = $s.length;
+			var i = this.it.next();
+			{
+				var $tmp = this.ref["$" + i];
 				$s.pop();
 				return $tmp;
 			}
@@ -3076,144 +2136,796 @@ haxe.xml.Fast.prototype.getElements = function() {
 	}
 	$s.pop();
 }
-haxe.xml.Fast.prototype.__class__ = haxe.xml.Fast;
-GLAnimationFrame = function() { }
-GLAnimationFrame.__name__ = ["GLAnimationFrame"];
-GLAnimationFrame.run = function(method,ms) {
-	$s.push("GLAnimationFrame::run");
+Hash.prototype.toString = function() {
+	$s.push("Hash::toString");
 	var $spos = $s.length;
-	if(ms == null) ms = 0;
-	var secureMethod = function() {
-		$s.push("GLAnimationFrame::run@8");
-		var $spos = $s.length;
-		try {
-			method();
-		}
-		catch( $e0 ) {
-			{
-				var e = $e0;
-				{
-					$e = [];
-					while($s.length >= $spos) $e.unshift($s.pop());
-					$s.push($e[0]);
-					Log.error("Error executing GLAnimationFrame: " + e,null,null,null,null,null,null,{ fileName : "GLAnimationFrame.hx", lineNumber : 16, className : "GLAnimationFrame", methodName : "run"});
-				}
-			}
-		}
-		$s.pop();
-	}
-	if(ms == 0) {
-		var window = js.Lib.window;
-		var requestAnimationFrame = window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame;
-		if(requestAnimationFrame == null) {
-			var requester = function() {
-				$s.push("GLAnimationFrame::run@30");
-				var $spos = $s.length;
-				requestAnimationFrame(requester);
-				secureMethod();
-				$s.pop();
-			}
-			requestAnimationFrame(requester);
-		}
-		else {
-			var timer = new haxe.Timer(Std["int"](1000 / 60));
-			timer.run = secureMethod;
-		}
-	}
-	else {
-		var timer = new haxe.Timer(Std["int"](1000 / ms));
-		timer.run = secureMethod;
-	}
-	$s.pop();
-}
-GLAnimationFrame.prototype.__class__ = GLAnimationFrame;
-GLDisplayList = function(p) { if( p === $_ ) return; {
-	$s.push("GLDisplayList::new");
-	var $spos = $s.length;
-	this.lastFrameTime = Date.now().getTime();
-	this.startTime = this.lastFrameTime;
-	this.enterFrameSignaler = new hsl.haxe.DirectSignaler(this);
-	this.hitareaPicker = new GLHitareaPicker();
-	GLMouseRegistry.getInstance().mouseDownSignaler.bind($closure(this,"handleMouseDown"));
-	GLMouseRegistry.getInstance().mouseMoveSignaler.bind($closure(this,"handleMouseMove"));
-	this.cursorClient = GLMouseRegistry.getInstance().createCursorClient();
-	$s.pop();
-}}
-GLDisplayList.__name__ = ["GLDisplayList"];
-GLDisplayList.instance = null;
-GLDisplayList.getDefault = function() {
-	$s.push("GLDisplayList::getDefault");
-	var $spos = $s.length;
-	if(GLDisplayList.instance == null) {
-		GLDisplayList.instance = new GLDisplayList();
-		GLDisplayList.instance.stage = new GLStage();
-		GLDisplayList.instance.initDisplayObject(GLDisplayList.instance.stage);
-	}
+	var s = new StringBuf();
+	s.b[s.b.length] = "{";
+	var it = this.keys();
+	{ var $it0 = it;
+	while( $it0.hasNext() ) { var i = $it0.next();
 	{
-		var $tmp = GLDisplayList.instance;
+		s.b[s.b.length] = i;
+		s.b[s.b.length] = " => ";
+		s.b[s.b.length] = Std.string(this.get(i));
+		if(it.hasNext()) s.b[s.b.length] = ", ";
+	}
+	}}
+	s.b[s.b.length] = "}";
+	{
+		var $tmp = s.b.join("");
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-GLDisplayList.prototype.stage = null;
-GLDisplayList.prototype.hitareaPicker = null;
-GLDisplayList.prototype.lastFrameTime = null;
-GLDisplayList.prototype.startTime = null;
-GLDisplayList.prototype.cursorClient = null;
-GLDisplayList.prototype.enterFrameSignaler = null;
-GLDisplayList.prototype.initDisplayObject = function(displayObject) {
-	$s.push("GLDisplayList::initDisplayObject");
+Hash.prototype.__class__ = Hash;
+GLDisplayObjectContainer = function(p) { if( p === $_ ) return; {
+	$s.push("GLDisplayObjectContainer::new");
 	var $spos = $s.length;
-	displayObject.stage = this.stage;
-	displayObject.enterFrameSignaler = this.enterFrameSignaler;
+	GLDisplayObject.call(this);
+	this.children = new Array();
+	$s.pop();
+}}
+GLDisplayObjectContainer.__name__ = ["GLDisplayObjectContainer"];
+GLDisplayObjectContainer.__super__ = GLDisplayObject;
+for(var k in GLDisplayObject.prototype ) GLDisplayObjectContainer.prototype[k] = GLDisplayObject.prototype[k];
+GLDisplayObjectContainer.prototype.children = null;
+GLDisplayObjectContainer.prototype.addChild = function(child) {
+	$s.push("GLDisplayObjectContainer::addChild");
+	var $spos = $s.length;
+	this.children.push(child);
 	$s.pop();
 }
-GLDisplayList.prototype.initInteractiveObject = function(interactiveObject) {
-	$s.push("GLDisplayList::initInteractiveObject");
+GLDisplayObjectContainer.prototype.removeChild = function(child) {
+	$s.push("GLDisplayObjectContainer::removeChild");
 	var $spos = $s.length;
-	interactiveObject.mouseDownSignaler = new hsl.haxe.DirectSignaler(this);
+	this.children.remove(child);
 	$s.pop();
 }
-GLDisplayList.prototype.setStageSize = function(width,height) {
-	$s.push("GLDisplayList::setStageSize");
+GLDisplayObjectContainer.prototype.__class__ = GLDisplayObjectContainer;
+GLStage = function(p) { if( p === $_ ) return; {
+	$s.push("GLStage::new");
 	var $spos = $s.length;
-	this.stage.stageWidth = width;
-	this.stage.stageHeight = height;
+	GLDisplayObjectContainer.call(this);
+	$s.pop();
+}}
+GLStage.__name__ = ["GLStage"];
+GLStage.__super__ = GLDisplayObjectContainer;
+for(var k in GLDisplayObjectContainer.prototype ) GLStage.prototype[k] = GLDisplayObjectContainer.prototype[k];
+GLStage.prototype.stageWidth = null;
+GLStage.prototype.stageHeight = null;
+GLStage.prototype.__class__ = GLStage;
+IntHash = function(p) { if( p === $_ ) return; {
+	$s.push("IntHash::new");
+	var $spos = $s.length;
+	this.h = {}
+	if(this.h.__proto__ != null) {
+		this.h.__proto__ = null;
+		delete(this.h.__proto__);
+	}
+	else null;
+	$s.pop();
+}}
+IntHash.__name__ = ["IntHash"];
+IntHash.prototype.h = null;
+IntHash.prototype.set = function(key,value) {
+	$s.push("IntHash::set");
+	var $spos = $s.length;
+	this.h[key] = value;
 	$s.pop();
 }
-GLDisplayList.prototype.dispatchEnterFrame = function() {
-	$s.push("GLDisplayList::dispatchEnterFrame");
+IntHash.prototype.get = function(key) {
+	$s.push("IntHash::get");
 	var $spos = $s.length;
-	var time = Date.now().getTime();
-	var frame = new GLFrame();
-	frame.time = time;
-	frame.timer = time - this.startTime;
-	frame.frameTime = time - this.lastFrameTime;
-	this.lastFrameTime = time;
-	this.enterFrameSignaler.dispatch(frame,null,{ fileName : "GLDisplayList.hx", lineNumber : 69, className : "GLDisplayList", methodName : "dispatchEnterFrame"});
+	{
+		var $tmp = this.h[key];
+		$s.pop();
+		return $tmp;
+	}
 	$s.pop();
 }
-GLDisplayList.prototype.handleMouseDown = function(position) {
-	$s.push("GLDisplayList::handleMouseDown");
+IntHash.prototype.exists = function(key) {
+	$s.push("IntHash::exists");
 	var $spos = $s.length;
-	var result = this.hitareaPicker.pick(this.stage,position);
-	if(result != null) result.mouseDownSignaler.dispatch(result,null,{ fileName : "GLDisplayList.hx", lineNumber : 76, className : "GLDisplayList", methodName : "handleMouseDown"});
+	{
+		var $tmp = this.h[key] != null;
+		$s.pop();
+		return $tmp;
+	}
 	$s.pop();
 }
-GLDisplayList.prototype.handleMouseMove = function(position) {
-	$s.push("GLDisplayList::handleMouseMove");
+IntHash.prototype.remove = function(key) {
+	$s.push("IntHash::remove");
 	var $spos = $s.length;
-	var result = this.hitareaPicker.pick(this.stage,position);
-	if(result != null) this.cursorClient.handCursor();
-	else this.cursorClient.defaultCursor();
+	if(this.h[key] == null) {
+		$s.pop();
+		return false;
+	}
+	delete(this.h[key]);
+	{
+		$s.pop();
+		return true;
+	}
 	$s.pop();
 }
-GLDisplayList.prototype.__class__ = GLDisplayList;
+IntHash.prototype.keys = function() {
+	$s.push("IntHash::keys");
+	var $spos = $s.length;
+	var a = new Array();
+	
+			for( x in this.h )
+				a.push(x);
+		;
+	{
+		var $tmp = a.iterator();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+IntHash.prototype.iterator = function() {
+	$s.push("IntHash::iterator");
+	var $spos = $s.length;
+	{
+		var $tmp = { ref : this.h, it : this.keys(), hasNext : function() {
+			$s.push("IntHash::iterator@69");
+			var $spos = $s.length;
+			{
+				var $tmp = this.it.hasNext();
+				$s.pop();
+				return $tmp;
+			}
+			$s.pop();
+		}, next : function() {
+			$s.push("IntHash::iterator@70");
+			var $spos = $s.length;
+			var i = this.it.next();
+			{
+				var $tmp = this.ref[i];
+				$s.pop();
+				return $tmp;
+			}
+			$s.pop();
+		}};
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+IntHash.prototype.toString = function() {
+	$s.push("IntHash::toString");
+	var $spos = $s.length;
+	var s = new StringBuf();
+	s.b[s.b.length] = "{";
+	var it = this.keys();
+	{ var $it0 = it;
+	while( $it0.hasNext() ) { var i = $it0.next();
+	{
+		s.b[s.b.length] = i;
+		s.b[s.b.length] = " => ";
+		s.b[s.b.length] = Std.string(this.get(i));
+		if(it.hasNext()) s.b[s.b.length] = ", ";
+	}
+	}}
+	s.b[s.b.length] = "}";
+	{
+		var $tmp = s.b.join("");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+IntHash.prototype.__class__ = IntHash;
+if(!kumite.mouse) kumite.mouse = {}
+kumite.mouse.MouseController = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.mouse.MouseController::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.mouse.MouseController.__name__ = ["kumite","mouse","MouseController"];
+kumite.mouse.MouseController.prototype.canvas = null;
+kumite.mouse.MouseController.prototype.start = function() {
+	$s.push("kumite.mouse.MouseController::start");
+	var $spos = $s.length;
+	GLMouseRegistry.getInstance().init(this.canvas.itself);
+	$s.pop();
+}
+kumite.mouse.MouseController.prototype.__class__ = kumite.mouse.MouseController;
+kumite.mouse.MouseController.__interfaces__ = [haxe.rtti.Infos];
+GLFrame = function(p) { if( p === $_ ) return; {
+	$s.push("GLFrame::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+GLFrame.__name__ = ["GLFrame"];
+GLFrame.prototype.time = null;
+GLFrame.prototype.timer = null;
+GLFrame.prototype.frameTime = null;
+GLFrame.prototype.__class__ = GLFrame;
+if(!kumite.helloworldgl) kumite.helloworldgl = {}
 if(!kumite.helloworldgl.shader) kumite.helloworldgl.shader = {}
 kumite.helloworldgl.shader.Fragment = function() { }
 kumite.helloworldgl.shader.Fragment.__name__ = ["kumite","helloworldgl","shader","Fragment"];
 kumite.helloworldgl.shader.Fragment.prototype.__class__ = kumite.helloworldgl.shader.Fragment;
+GLCursorClient = function(p) { if( p === $_ ) return; {
+	$s.push("GLCursorClient::new");
+	var $spos = $s.length;
+	this.lastCursor = "";
+	$s.pop();
+}}
+GLCursorClient.__name__ = ["GLCursorClient"];
+GLCursorClient.prototype.lastCursor = null;
+GLCursorClient.prototype.defaultCursor = function() {
+	$s.push("GLCursorClient::defaultCursor");
+	var $spos = $s.length;
+	if(this.lastCursor != GLCursorClient.DEFAULT) {
+		this.lastCursor = GLCursorClient.DEFAULT;
+		GLMouseRegistry.getInstance().setCursor(this.lastCursor);
+	}
+	$s.pop();
+}
+GLCursorClient.prototype.handCursor = function(message) {
+	$s.push("GLCursorClient::handCursor");
+	var $spos = $s.length;
+	if(this.lastCursor != GLCursorClient.HAND) {
+		this.lastCursor = GLCursorClient.HAND;
+		GLMouseRegistry.getInstance().setCursor(this.lastCursor);
+		if(message != null) js.Lib.window.status = message;
+	}
+	$s.pop();
+}
+GLCursorClient.prototype.__class__ = GLCursorClient;
+if(typeof hsl=='undefined') hsl = {}
+if(!hsl.haxe) hsl.haxe = {}
+hsl.haxe.Signaler = function() { }
+hsl.haxe.Signaler.__name__ = ["hsl","haxe","Signaler"];
+hsl.haxe.Signaler.prototype.isListenedTo = null;
+hsl.haxe.Signaler.prototype.subject = null;
+hsl.haxe.Signaler.prototype.addBubblingTarget = null;
+hsl.haxe.Signaler.prototype.addNotificationTarget = null;
+hsl.haxe.Signaler.prototype.bind = null;
+hsl.haxe.Signaler.prototype.bindAdvanced = null;
+hsl.haxe.Signaler.prototype.bindVoid = null;
+hsl.haxe.Signaler.prototype.dispatch = null;
+hsl.haxe.Signaler.prototype.getIsListenedTo = null;
+hsl.haxe.Signaler.prototype.removeBubblingTarget = null;
+hsl.haxe.Signaler.prototype.removeNotificationTarget = null;
+hsl.haxe.Signaler.prototype.unbind = null;
+hsl.haxe.Signaler.prototype.unbindAdvanced = null;
+hsl.haxe.Signaler.prototype.unbindVoid = null;
+hsl.haxe.Signaler.prototype.__class__ = hsl.haxe.Signaler;
+hsl.haxe.DirectSignaler = function(subject,rejectNullData) { if( subject === $_ ) return; {
+	$s.push("hsl.haxe.DirectSignaler::new");
+	var $spos = $s.length;
+	if(null == subject) {
+		throw new haxe.exception.ArgumentNullException("subject",1);
+	}
+	this.subject = subject;
+	this.rejectNullData = rejectNullData;
+	this.sentinel = new hsl.haxe._DirectSignaler.SentinelBond();
+	$s.pop();
+}}
+hsl.haxe.DirectSignaler.__name__ = ["hsl","haxe","DirectSignaler"];
+hsl.haxe.DirectSignaler.prototype.bubblingTargets = null;
+hsl.haxe.DirectSignaler.prototype.isListenedTo = null;
+hsl.haxe.DirectSignaler.prototype.notificationTargets = null;
+hsl.haxe.DirectSignaler.prototype.rejectNullData = null;
+hsl.haxe.DirectSignaler.prototype.sentinel = null;
+hsl.haxe.DirectSignaler.prototype.subject = null;
+hsl.haxe.DirectSignaler.prototype.subjectClassNames = null;
+hsl.haxe.DirectSignaler.prototype.addBubblingTarget = function(value) {
+	$s.push("hsl.haxe.DirectSignaler::addBubblingTarget");
+	var $spos = $s.length;
+	if(null == this.bubblingTargets) {
+		this.bubblingTargets = new List();
+	}
+	this.bubblingTargets.add(value);
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.addNotificationTarget = function(value) {
+	$s.push("hsl.haxe.DirectSignaler::addNotificationTarget");
+	var $spos = $s.length;
+	if(null == this.notificationTargets) {
+		this.notificationTargets = new List();
+	}
+	this.notificationTargets.add(value);
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.bind = function(listener) {
+	$s.push("hsl.haxe.DirectSignaler::bind");
+	var $spos = $s.length;
+	if(null == listener) {
+		throw new haxe.exception.ArgumentNullException("listener",1);
+	}
+	{
+		var $tmp = this.sentinel.add(new hsl.haxe._DirectSignaler.RegularBond(listener));
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.bindAdvanced = function(listener) {
+	$s.push("hsl.haxe.DirectSignaler::bindAdvanced");
+	var $spos = $s.length;
+	if(null == listener) {
+		throw new haxe.exception.ArgumentNullException("listener",1);
+	}
+	{
+		var $tmp = this.sentinel.add(new hsl.haxe._DirectSignaler.AdvancedBond(listener));
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.bindVoid = function(listener) {
+	$s.push("hsl.haxe.DirectSignaler::bindVoid");
+	var $spos = $s.length;
+	if(null == listener) {
+		throw new haxe.exception.ArgumentNullException("listener",1);
+	}
+	{
+		var $tmp = this.sentinel.add(new hsl.haxe._DirectSignaler.NiladicBond(listener));
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.bubble = function(data,origin) {
+	$s.push("hsl.haxe.DirectSignaler::bubble");
+	var $spos = $s.length;
+	if(null != this.bubblingTargets) {
+		{ var $it0 = this.bubblingTargets.iterator();
+		while( $it0.hasNext() ) { var bubblingTarget = $it0.next();
+		{
+			bubblingTarget.dispatch(data,origin,{ fileName : "DirectSignaler.hx", lineNumber : 109, className : "hsl.haxe.DirectSignaler", methodName : "bubble"});
+		}
+		}}
+	}
+	if(null != this.notificationTargets) {
+		{ var $it1 = this.notificationTargets.iterator();
+		while( $it1.hasNext() ) { var notificationTarget = $it1.next();
+		{
+			notificationTarget.dispatch(null,origin,{ fileName : "DirectSignaler.hx", lineNumber : 114, className : "hsl.haxe.DirectSignaler", methodName : "bubble"});
+		}
+		}}
+	}
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.dispatch = function(data,origin,positionInformation) {
+	$s.push("hsl.haxe.DirectSignaler::dispatch");
+	var $spos = $s.length;
+	if("dispatchNative" != positionInformation.methodName && "bubble" != positionInformation.methodName) {
+		this.verifyCaller(positionInformation);
+	}
+	if(this.rejectNullData && null == data) {
+		throw new haxe.exception.Exception("Some data that was passed is null, but this signaler has been set to reject null data.",null,1);
+	}
+	origin = null == origin?this.subject:origin;
+	if(3 == this.sentinel.callListener(data,this.subject,origin,3)) {
+		{
+			if(null != this.bubblingTargets) {
+				{ var $it0 = this.bubblingTargets.iterator();
+				while( $it0.hasNext() ) { var bubblingTarget = $it0.next();
+				{
+					bubblingTarget.dispatch(data,origin,{ fileName : "DirectSignaler.hx", lineNumber : 109, className : "hsl.haxe.DirectSignaler", methodName : "bubble"});
+				}
+				}}
+			}
+			if(null != this.notificationTargets) {
+				{ var $it1 = this.notificationTargets.iterator();
+				while( $it1.hasNext() ) { var notificationTarget = $it1.next();
+				{
+					notificationTarget.dispatch(null,origin,{ fileName : "DirectSignaler.hx", lineNumber : 114, className : "hsl.haxe.DirectSignaler", methodName : "bubble"});
+				}
+				}}
+			}
+		}
+	}
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.getIsListenedTo = function() {
+	$s.push("hsl.haxe.DirectSignaler::getIsListenedTo");
+	var $spos = $s.length;
+	{
+		var $tmp = this.sentinel.getIsConnected();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.getOrigin = function(origin) {
+	$s.push("hsl.haxe.DirectSignaler::getOrigin");
+	var $spos = $s.length;
+	{
+		var $tmp = null == origin?this.subject:origin;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.verifyCaller = function(positionInformation) {
+	$s.push("hsl.haxe.DirectSignaler::verifyCaller");
+	var $spos = $s.length;
+	if(null == this.subjectClassNames) {
+		this.subjectClassNames = haxe.TypeTools.getClassNames(this.subject);
+	}
+	{ var $it0 = this.subjectClassNames.iterator();
+	while( $it0.hasNext() ) { var subjectClassName = $it0.next();
+	{
+		if(subjectClassName == positionInformation.className) {
+			{
+				$s.pop();
+				return;
+			}
+		}
+	}
+	}}
+	throw new haxe.exception.Exception("This method may only be called by the subject of the signaler.",null,2);
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.removeBubblingTarget = function(value) {
+	$s.push("hsl.haxe.DirectSignaler::removeBubblingTarget");
+	var $spos = $s.length;
+	if(null != this.bubblingTargets) {
+		this.bubblingTargets.remove(value);
+	}
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.removeNotificationTarget = function(value) {
+	$s.push("hsl.haxe.DirectSignaler::removeNotificationTarget");
+	var $spos = $s.length;
+	if(null != this.notificationTargets) {
+		this.notificationTargets.remove(value);
+	}
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.toString = function() {
+	$s.push("hsl.haxe.DirectSignaler::toString");
+	var $spos = $s.length;
+	{
+		var $tmp = "[Signaler isListenedTo=" + this.getIsListenedTo() + "]";
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.unbind = function(listener) {
+	$s.push("hsl.haxe.DirectSignaler::unbind");
+	var $spos = $s.length;
+	this.sentinel.remove(new hsl.haxe._DirectSignaler.RegularBond(listener));
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.unbindAdvanced = function(listener) {
+	$s.push("hsl.haxe.DirectSignaler::unbindAdvanced");
+	var $spos = $s.length;
+	this.sentinel.remove(new hsl.haxe._DirectSignaler.AdvancedBond(listener));
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.unbindVoid = function(listener) {
+	$s.push("hsl.haxe.DirectSignaler::unbindVoid");
+	var $spos = $s.length;
+	this.sentinel.remove(new hsl.haxe._DirectSignaler.NiladicBond(listener));
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.__class__ = hsl.haxe.DirectSignaler;
+hsl.haxe.DirectSignaler.__interfaces__ = [hsl.haxe.Signaler];
+hsl.haxe.Bond = function(p) { if( p === $_ ) return; {
+	$s.push("hsl.haxe.Bond::new");
+	var $spos = $s.length;
+	this.halted = false;
+	$s.pop();
+}}
+hsl.haxe.Bond.__name__ = ["hsl","haxe","Bond"];
+hsl.haxe.Bond.prototype.halted = null;
+hsl.haxe.Bond.prototype.willDestroyOnUse = null;
+hsl.haxe.Bond.prototype.destroy = function() {
+	$s.push("hsl.haxe.Bond::destroy");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+hsl.haxe.Bond.prototype.destroyOnUse = function() {
+	$s.push("hsl.haxe.Bond::destroyOnUse");
+	var $spos = $s.length;
+	this.willDestroyOnUse = true;
+	{
+		$s.pop();
+		return this;
+	}
+	$s.pop();
+}
+hsl.haxe.Bond.prototype.halt = function() {
+	$s.push("hsl.haxe.Bond::halt");
+	var $spos = $s.length;
+	this.halted = true;
+	$s.pop();
+}
+hsl.haxe.Bond.prototype.resume = function() {
+	$s.push("hsl.haxe.Bond::resume");
+	var $spos = $s.length;
+	this.halted = false;
+	$s.pop();
+}
+hsl.haxe.Bond.prototype.toString = function() {
+	$s.push("hsl.haxe.Bond::toString");
+	var $spos = $s.length;
+	{
+		$s.pop();
+		return "[Bond]";
+	}
+	$s.pop();
+}
+hsl.haxe.Bond.prototype.__class__ = hsl.haxe.Bond;
+if(!hsl.haxe._DirectSignaler) hsl.haxe._DirectSignaler = {}
+hsl.haxe._DirectSignaler.LinkedBond = function(p) { if( p === $_ ) return; {
+	$s.push("hsl.haxe._DirectSignaler.LinkedBond::new");
+	var $spos = $s.length;
+	hsl.haxe.Bond.call(this);
+	this.destroyed = false;
+	$s.pop();
+}}
+hsl.haxe._DirectSignaler.LinkedBond.__name__ = ["hsl","haxe","_DirectSignaler","LinkedBond"];
+hsl.haxe._DirectSignaler.LinkedBond.__super__ = hsl.haxe.Bond;
+for(var k in hsl.haxe.Bond.prototype ) hsl.haxe._DirectSignaler.LinkedBond.prototype[k] = hsl.haxe.Bond.prototype[k];
+hsl.haxe._DirectSignaler.LinkedBond.prototype.destroyed = null;
+hsl.haxe._DirectSignaler.LinkedBond.prototype.next = null;
+hsl.haxe._DirectSignaler.LinkedBond.prototype.previous = null;
+hsl.haxe._DirectSignaler.LinkedBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
+	$s.push("hsl.haxe._DirectSignaler.LinkedBond::callListener");
+	var $spos = $s.length;
+	{
+		$s.pop();
+		return 0;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.LinkedBond.prototype.determineEquals = function(value) {
+	$s.push("hsl.haxe._DirectSignaler.LinkedBond::determineEquals");
+	var $spos = $s.length;
+	{
+		$s.pop();
+		return false;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.LinkedBond.prototype.destroy = function() {
+	$s.push("hsl.haxe._DirectSignaler.LinkedBond::destroy");
+	var $spos = $s.length;
+	if(false == this.destroyed) {
+		this.previous.next = this.next;
+		this.next.previous = this.previous;
+		this.destroyed = true;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.LinkedBond.prototype.unlink = function() {
+	$s.push("hsl.haxe._DirectSignaler.LinkedBond::unlink");
+	var $spos = $s.length;
+	if(false == this.destroyed) {
+		this.previous.next = this.next;
+		this.next.previous = this.previous;
+		this.destroyed = true;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.LinkedBond.prototype.__class__ = hsl.haxe._DirectSignaler.LinkedBond;
+hsl.haxe._DirectSignaler.SentinelBond = function(p) { if( p === $_ ) return; {
+	$s.push("hsl.haxe._DirectSignaler.SentinelBond::new");
+	var $spos = $s.length;
+	hsl.haxe._DirectSignaler.LinkedBond.call(this);
+	this.next = this.previous = this;
+	$s.pop();
+}}
+hsl.haxe._DirectSignaler.SentinelBond.__name__ = ["hsl","haxe","_DirectSignaler","SentinelBond"];
+hsl.haxe._DirectSignaler.SentinelBond.__super__ = hsl.haxe._DirectSignaler.LinkedBond;
+for(var k in hsl.haxe._DirectSignaler.LinkedBond.prototype ) hsl.haxe._DirectSignaler.SentinelBond.prototype[k] = hsl.haxe._DirectSignaler.LinkedBond.prototype[k];
+hsl.haxe._DirectSignaler.SentinelBond.prototype.isConnected = null;
+hsl.haxe._DirectSignaler.SentinelBond.prototype.add = function(value) {
+	$s.push("hsl.haxe._DirectSignaler.SentinelBond::add");
+	var $spos = $s.length;
+	value.next = this;
+	value.previous = this.previous;
+	{
+		var $tmp = this.previous = this.previous.next = value;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.SentinelBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
+	$s.push("hsl.haxe._DirectSignaler.SentinelBond::callListener");
+	var $spos = $s.length;
+	var node = this.next;
+	while(node != this && 1 != propagationStatus) {
+		propagationStatus = node.callListener(data,currentTarget,origin,propagationStatus);
+		node = node.next;
+	}
+	{
+		$s.pop();
+		return propagationStatus;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.SentinelBond.prototype.getIsConnected = function() {
+	$s.push("hsl.haxe._DirectSignaler.SentinelBond::getIsConnected");
+	var $spos = $s.length;
+	{
+		var $tmp = this.next != this;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.SentinelBond.prototype.remove = function(value) {
+	$s.push("hsl.haxe._DirectSignaler.SentinelBond::remove");
+	var $spos = $s.length;
+	var node = this.next;
+	while(node != this) {
+		if(node.determineEquals(value)) {
+			if(false == node.destroyed) {
+				node.previous.next = node.next;
+				node.next.previous = node.previous;
+				node.destroyed = true;
+			}
+			break;
+		}
+		node = node.next;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.SentinelBond.prototype.__class__ = hsl.haxe._DirectSignaler.SentinelBond;
+hsl.haxe._DirectSignaler.RegularBond = function(listener) { if( listener === $_ ) return; {
+	$s.push("hsl.haxe._DirectSignaler.RegularBond::new");
+	var $spos = $s.length;
+	hsl.haxe._DirectSignaler.LinkedBond.call(this);
+	this.listener = listener;
+	$s.pop();
+}}
+hsl.haxe._DirectSignaler.RegularBond.__name__ = ["hsl","haxe","_DirectSignaler","RegularBond"];
+hsl.haxe._DirectSignaler.RegularBond.__super__ = hsl.haxe._DirectSignaler.LinkedBond;
+for(var k in hsl.haxe._DirectSignaler.LinkedBond.prototype ) hsl.haxe._DirectSignaler.RegularBond.prototype[k] = hsl.haxe._DirectSignaler.LinkedBond.prototype[k];
+hsl.haxe._DirectSignaler.RegularBond.prototype.listener = null;
+hsl.haxe._DirectSignaler.RegularBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
+	$s.push("hsl.haxe._DirectSignaler.RegularBond::callListener");
+	var $spos = $s.length;
+	if(false == this.halted) {
+		this.listener(data);
+		if(this.willDestroyOnUse) {
+			if(false == this.destroyed) {
+				this.previous.next = this.next;
+				this.next.previous = this.previous;
+				this.destroyed = true;
+			}
+		}
+	}
+	{
+		$s.pop();
+		return propagationStatus;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.RegularBond.prototype.determineEquals = function(value) {
+	$s.push("hsl.haxe._DirectSignaler.RegularBond::determineEquals");
+	var $spos = $s.length;
+	{
+		var $tmp = Std["is"](value,hsl.haxe._DirectSignaler.RegularBond) && Reflect.compareMethods(value.listener,this.listener);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.RegularBond.prototype.__class__ = hsl.haxe._DirectSignaler.RegularBond;
+hsl.haxe._DirectSignaler.NiladicBond = function(listener) { if( listener === $_ ) return; {
+	$s.push("hsl.haxe._DirectSignaler.NiladicBond::new");
+	var $spos = $s.length;
+	hsl.haxe._DirectSignaler.LinkedBond.call(this);
+	this.listener = listener;
+	$s.pop();
+}}
+hsl.haxe._DirectSignaler.NiladicBond.__name__ = ["hsl","haxe","_DirectSignaler","NiladicBond"];
+hsl.haxe._DirectSignaler.NiladicBond.__super__ = hsl.haxe._DirectSignaler.LinkedBond;
+for(var k in hsl.haxe._DirectSignaler.LinkedBond.prototype ) hsl.haxe._DirectSignaler.NiladicBond.prototype[k] = hsl.haxe._DirectSignaler.LinkedBond.prototype[k];
+hsl.haxe._DirectSignaler.NiladicBond.prototype.listener = null;
+hsl.haxe._DirectSignaler.NiladicBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
+	$s.push("hsl.haxe._DirectSignaler.NiladicBond::callListener");
+	var $spos = $s.length;
+	if(false == this.halted) {
+		this.listener();
+		if(this.willDestroyOnUse) {
+			if(false == this.destroyed) {
+				this.previous.next = this.next;
+				this.next.previous = this.previous;
+				this.destroyed = true;
+			}
+		}
+	}
+	{
+		$s.pop();
+		return propagationStatus;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.NiladicBond.prototype.determineEquals = function(value) {
+	$s.push("hsl.haxe._DirectSignaler.NiladicBond::determineEquals");
+	var $spos = $s.length;
+	{
+		var $tmp = Std["is"](value,hsl.haxe._DirectSignaler.NiladicBond) && Reflect.compareMethods(value.listener,this.listener);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.NiladicBond.prototype.__class__ = hsl.haxe._DirectSignaler.NiladicBond;
+hsl.haxe._DirectSignaler.AdvancedBond = function(listener) { if( listener === $_ ) return; {
+	$s.push("hsl.haxe._DirectSignaler.AdvancedBond::new");
+	var $spos = $s.length;
+	hsl.haxe._DirectSignaler.LinkedBond.call(this);
+	this.listener = listener;
+	$s.pop();
+}}
+hsl.haxe._DirectSignaler.AdvancedBond.__name__ = ["hsl","haxe","_DirectSignaler","AdvancedBond"];
+hsl.haxe._DirectSignaler.AdvancedBond.__super__ = hsl.haxe._DirectSignaler.LinkedBond;
+for(var k in hsl.haxe._DirectSignaler.LinkedBond.prototype ) hsl.haxe._DirectSignaler.AdvancedBond.prototype[k] = hsl.haxe._DirectSignaler.LinkedBond.prototype[k];
+hsl.haxe._DirectSignaler.AdvancedBond.prototype.listener = null;
+hsl.haxe._DirectSignaler.AdvancedBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
+	$s.push("hsl.haxe._DirectSignaler.AdvancedBond::callListener");
+	var $spos = $s.length;
+	if(this.halted == false) {
+		var signal = new hsl.haxe.Signal(data,this,currentTarget,origin);
+		this.listener(signal);
+		if(this.willDestroyOnUse) {
+			if(false == this.destroyed) {
+				this.previous.next = this.next;
+				this.next.previous = this.previous;
+				this.destroyed = true;
+			}
+		}
+		if(signal.immediatePropagationStopped) {
+			{
+				$s.pop();
+				return 1;
+			}
+		}
+		else if(signal.propagationStopped) {
+			{
+				$s.pop();
+				return 2;
+			}
+		}
+	}
+	{
+		$s.pop();
+		return propagationStatus;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.AdvancedBond.prototype.determineEquals = function(value) {
+	$s.push("hsl.haxe._DirectSignaler.AdvancedBond::determineEquals");
+	var $spos = $s.length;
+	{
+		var $tmp = Std["is"](value,hsl.haxe._DirectSignaler.AdvancedBond) && Reflect.compareMethods(value.listener,this.listener);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+hsl.haxe._DirectSignaler.AdvancedBond.prototype.__class__ = hsl.haxe._DirectSignaler.AdvancedBond;
+hsl.haxe._DirectSignaler.PropagationStatus = function() { }
+hsl.haxe._DirectSignaler.PropagationStatus.__name__ = ["hsl","haxe","_DirectSignaler","PropagationStatus"];
+hsl.haxe._DirectSignaler.PropagationStatus.prototype.__class__ = hsl.haxe._DirectSignaler.PropagationStatus;
+kumite.helloworldgl.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.helloworldgl.Config::new");
+	var $spos = $s.length;
+	this.helloWorld = new kumite.helloworldgl.HelloWorld();
+	$s.pop();
+}}
+kumite.helloworldgl.Config.__name__ = ["kumite","helloworldgl","Config"];
+kumite.helloworldgl.Config.prototype.helloWorld = null;
+kumite.helloworldgl.Config.prototype.__class__ = kumite.helloworldgl.Config;
+kumite.helloworldgl.Config.__interfaces__ = [haxe.rtti.Infos];
 hsl.haxe.Signal = function(data,currentBond,currentTarget,origin) { if( data === $_ ) return; {
 	$s.push("hsl.haxe.Signal::new");
 	var $spos = $s.length;
@@ -3266,407 +2978,265 @@ hsl.haxe.Signal.prototype.toString = function() {
 	$s.pop();
 }
 hsl.haxe.Signal.prototype.__class__ = hsl.haxe.Signal;
-ValueType = { __ename__ : ["ValueType"], __constructs__ : ["TNull","TInt","TFloat","TBool","TObject","TFunction","TClass","TEnum","TUnknown"] }
-ValueType.TNull = ["TNull",0];
-ValueType.TNull.toString = $estr;
-ValueType.TNull.__enum__ = ValueType;
-ValueType.TInt = ["TInt",1];
-ValueType.TInt.toString = $estr;
-ValueType.TInt.__enum__ = ValueType;
-ValueType.TFloat = ["TFloat",2];
-ValueType.TFloat.toString = $estr;
-ValueType.TFloat.__enum__ = ValueType;
-ValueType.TBool = ["TBool",3];
-ValueType.TBool.toString = $estr;
-ValueType.TBool.__enum__ = ValueType;
-ValueType.TObject = ["TObject",4];
-ValueType.TObject.toString = $estr;
-ValueType.TObject.__enum__ = ValueType;
-ValueType.TFunction = ["TFunction",5];
-ValueType.TFunction.toString = $estr;
-ValueType.TFunction.__enum__ = ValueType;
-ValueType.TClass = function(c) { var $x = ["TClass",6,c]; $x.__enum__ = ValueType; $x.toString = $estr; return $x; }
-ValueType.TEnum = function(e) { var $x = ["TEnum",7,e]; $x.__enum__ = ValueType; $x.toString = $estr; return $x; }
-ValueType.TUnknown = ["TUnknown",8];
-ValueType.TUnknown.toString = $estr;
-ValueType.TUnknown.__enum__ = ValueType;
-Type = function() { }
-Type.__name__ = ["Type"];
-Type.getClass = function(o) {
-	$s.push("Type::getClass");
+if(typeof bpmjs=='undefined') bpmjs = {}
+bpmjs.Sequencer = function(p) { if( p === $_ ) return; {
+	$s.push("bpmjs.Sequencer::new");
 	var $spos = $s.length;
-	if(o == null) {
-		$s.pop();
-		return null;
-	}
-	if(o.__enum__ != null) {
-		$s.pop();
-		return null;
-	}
-	{
-		var $tmp = o.__class__;
-		$s.pop();
-		return $tmp;
-	}
+	null;
+	$s.pop();
+}}
+bpmjs.Sequencer.__name__ = ["bpmjs","Sequencer"];
+bpmjs.Sequencer.prototype.context = null;
+bpmjs.Sequencer.prototype.start = function(name) {
+	$s.push("bpmjs.Sequencer::start");
+	var $spos = $s.length;
+	Log.groupCollapsed("Sequence: " + name,null,null,null,null,null,null,{ fileName : "Sequencer.hx", lineNumber : 16, className : "bpmjs.Sequencer", methodName : "start"});
+	var sequence = new bpmjs.Sequence(name);
+	sequence.objects = this.context.objects;
+	sequence.execute("initPrepare");
+	sequence.execute("init");
+	sequence.execute("initComplete");
+	sequence.execute("startPrepare");
+	sequence.execute("start");
+	sequence.execute("startComplete");
+	Log.groupEnd({ fileName : "Sequencer.hx", lineNumber : 28, className : "bpmjs.Sequencer", methodName : "start"});
 	$s.pop();
 }
-Type.getEnum = function(o) {
-	$s.push("Type::getEnum");
+bpmjs.Sequencer.prototype.__class__ = bpmjs.Sequencer;
+bpmjs.Sequencer.__interfaces__ = [haxe.rtti.Infos];
+bpmjs.Sequence = function(name) { if( name === $_ ) return; {
+	$s.push("bpmjs.Sequence::new");
 	var $spos = $s.length;
-	if(o == null) {
-		$s.pop();
-		return null;
-	}
-	{
-		var $tmp = o.__enum__;
-		$s.pop();
-		return $tmp;
-	}
+	this.name = name;
 	$s.pop();
-}
-Type.getSuperClass = function(c) {
-	$s.push("Type::getSuperClass");
+}}
+bpmjs.Sequence.__name__ = ["bpmjs","Sequence"];
+bpmjs.Sequence.prototype.name = null;
+bpmjs.Sequence.prototype.objects = null;
+bpmjs.Sequence.prototype.execute = function(phase) {
+	$s.push("bpmjs.Sequence::execute");
 	var $spos = $s.length;
-	{
-		var $tmp = c.__super__;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Type.getClassName = function(c) {
-	$s.push("Type::getClassName");
-	var $spos = $s.length;
-	var a = c.__name__;
-	{
-		var $tmp = a.join(".");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Type.getEnumName = function(e) {
-	$s.push("Type::getEnumName");
-	var $spos = $s.length;
-	var a = e.__ename__;
-	{
-		var $tmp = a.join(".");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Type.resolveClass = function(name) {
-	$s.push("Type::resolveClass");
-	var $spos = $s.length;
-	var cl;
-	try {
-		cl = eval(name);
-	}
-	catch( $e0 ) {
+	var _g = 0, _g1 = this.objects;
+	while(_g < _g1.length) {
+		var contextObject = _g1[_g];
+		++_g;
+		var object = contextObject.object;
+		var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
 		{
-			var e = $e0;
-			{
-				$e = [];
-				while($s.length >= $spos) $e.unshift($s.pop());
-				$s.push($e[0]);
-				cl = null;
-			}
-		}
-	}
-	if(cl == null || cl.__name__ == null) {
-		$s.pop();
-		return null;
-	}
-	{
-		$s.pop();
-		return cl;
-	}
-	$s.pop();
-}
-Type.resolveEnum = function(name) {
-	$s.push("Type::resolveEnum");
-	var $spos = $s.length;
-	var e;
-	try {
-		e = eval(name);
-	}
-	catch( $e0 ) {
-		{
-			var err = $e0;
-			{
-				$e = [];
-				while($s.length >= $spos) $e.unshift($s.pop());
-				$s.push($e[0]);
-				e = null;
-			}
-		}
-	}
-	if(e == null || e.__ename__ == null) {
-		$s.pop();
-		return null;
-	}
-	{
-		$s.pop();
-		return e;
-	}
-	$s.pop();
-}
-Type.createInstance = function(cl,args) {
-	$s.push("Type::createInstance");
-	var $spos = $s.length;
-	if(args.length <= 3) {
-		var $tmp = new cl(args[0],args[1],args[2]);
-		$s.pop();
-		return $tmp;
-	}
-	if(args.length > 8) throw "Too many arguments";
-	{
-		var $tmp = new cl(args[0],args[1],args[2],args[3],args[4],args[5],args[6],args[7]);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Type.createEmptyInstance = function(cl) {
-	$s.push("Type::createEmptyInstance");
-	var $spos = $s.length;
-	{
-		var $tmp = new cl($_);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Type.createEnum = function(e,constr,params) {
-	$s.push("Type::createEnum");
-	var $spos = $s.length;
-	var f = Reflect.field(e,constr);
-	if(f == null) throw "No such constructor " + constr;
-	if(Reflect.isFunction(f)) {
-		if(params == null) throw "Constructor " + constr + " need parameters";
-		{
-			var $tmp = f.apply(e,params);
-			$s.pop();
-			return $tmp;
-		}
-	}
-	if(params != null && params.length != 0) throw "Constructor " + constr + " does not need parameters";
-	{
-		$s.pop();
-		return f;
-	}
-	$s.pop();
-}
-Type.createEnumIndex = function(e,index,params) {
-	$s.push("Type::createEnumIndex");
-	var $spos = $s.length;
-	var c = Type.getEnumConstructs(e)[index];
-	if(c == null) throw index + " is not a valid enum constructor index";
-	{
-		var $tmp = Type.createEnum(e,c,params);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Type.getInstanceFields = function(c) {
-	$s.push("Type::getInstanceFields");
-	var $spos = $s.length;
-	var a = Reflect.fields(c.prototype);
-	a.remove("__class__");
-	{
-		$s.pop();
-		return a;
-	}
-	$s.pop();
-}
-Type.getClassFields = function(c) {
-	$s.push("Type::getClassFields");
-	var $spos = $s.length;
-	var a = Reflect.fields(c);
-	a.remove("__name__");
-	a.remove("__interfaces__");
-	a.remove("__super__");
-	a.remove("prototype");
-	{
-		$s.pop();
-		return a;
-	}
-	$s.pop();
-}
-Type.getEnumConstructs = function(e) {
-	$s.push("Type::getEnumConstructs");
-	var $spos = $s.length;
-	{
-		var $tmp = e.__constructs__;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Type["typeof"] = function(v) {
-	$s.push("Type::typeof");
-	var $spos = $s.length;
-	switch(typeof(v)) {
-	case "boolean":{
-		{
-			var $tmp = ValueType.TBool;
-			$s.pop();
-			return $tmp;
-		}
-	}break;
-	case "string":{
-		{
-			var $tmp = ValueType.TClass(String);
-			$s.pop();
-			return $tmp;
-		}
-	}break;
-	case "number":{
-		if(Math.ceil(v) == v % 2147483648.0) {
-			var $tmp = ValueType.TInt;
-			$s.pop();
-			return $tmp;
-		}
-		{
-			var $tmp = ValueType.TFloat;
-			$s.pop();
-			return $tmp;
-		}
-	}break;
-	case "object":{
-		if(v == null) {
-			var $tmp = ValueType.TNull;
-			$s.pop();
-			return $tmp;
-		}
-		var e = v.__enum__;
-		if(e != null) {
-			var $tmp = ValueType.TEnum(e);
-			$s.pop();
-			return $tmp;
-		}
-		var c = v.__class__;
-		if(c != null) {
-			var $tmp = ValueType.TClass(c);
-			$s.pop();
-			return $tmp;
-		}
-		{
-			var $tmp = ValueType.TObject;
-			$s.pop();
-			return $tmp;
-		}
-	}break;
-	case "function":{
-		if(v.__name__ != null) {
-			var $tmp = ValueType.TObject;
-			$s.pop();
-			return $tmp;
-		}
-		{
-			var $tmp = ValueType.TFunction;
-			$s.pop();
-			return $tmp;
-		}
-	}break;
-	case "undefined":{
-		{
-			var $tmp = ValueType.TNull;
-			$s.pop();
-			return $tmp;
-		}
-	}break;
-	default:{
-		{
-			var $tmp = ValueType.TUnknown;
-			$s.pop();
-			return $tmp;
-		}
-	}break;
-	}
-	$s.pop();
-}
-Type.enumEq = function(a,b) {
-	$s.push("Type::enumEq");
-	var $spos = $s.length;
-	if(a == b) {
-		$s.pop();
-		return true;
-	}
-	try {
-		if(a[0] != b[0]) {
-			$s.pop();
-			return false;
-		}
-		{
-			var _g1 = 2, _g = a.length;
-			while(_g1 < _g) {
-				var i = _g1++;
-				if(!Type.enumEq(a[i],b[i])) {
-					$s.pop();
-					return false;
-				}
-			}
-		}
-		var e = a.__enum__;
-		if(e != b.__enum__ || e == null) {
-			$s.pop();
-			return false;
-		}
-	}
-	catch( $e0 ) {
-		{
-			var e = $e0;
-			{
-				$e = [];
-				while($s.length >= $spos) $e.unshift($s.pop());
-				$s.push($e[0]);
-				{
-					$s.pop();
-					return false;
+			var _g2 = 0, _g3 = Reflect.fields(metaDatas);
+			while(_g2 < _g3.length) {
+				var fieldName = _g3[_g2];
+				++_g2;
+				var meta = Reflect.field(metaDatas,fieldName);
+				if(Reflect.hasField(meta,"Sequence")) {
+					var localName = meta.Sequence[0];
+					var localPhase = meta.Sequence[1];
+					if(localPhase == phase) {
+						Log.info("Phase '" + localPhase + "' " + Type.getClassName(contextObject.type) + "#" + fieldName,null,null,null,null,null,null,{ fileName : "Sequencer.hx", lineNumber : 59, className : "bpmjs.Sequence", methodName : "execute"});
+						Reflect.field(object,fieldName).apply(object,[]);
+					}
 				}
 			}
 		}
 	}
-	{
-		$s.pop();
-		return true;
-	}
 	$s.pop();
 }
-Type.enumConstructor = function(e) {
-	$s.push("Type::enumConstructor");
+bpmjs.Sequence.prototype.__class__ = bpmjs.Sequence;
+Vec2 = function(x,y) { if( x === $_ ) return; {
+	$s.push("Vec2::new");
+	var $spos = $s.length;
+	this.x = x;
+	this.y = y;
+	$s.pop();
+}}
+Vec2.__name__ = ["Vec2"];
+Vec2.prototype.x = null;
+Vec2.prototype.y = null;
+Vec2.prototype.set = function(x,y) {
+	$s.push("Vec2::set");
+	var $spos = $s.length;
+	this.x = x;
+	this.y = y;
+	$s.pop();
+}
+Vec2.prototype.scale = function(factor) {
+	$s.push("Vec2::scale");
+	var $spos = $s.length;
+	this.x *= factor;
+	this.y *= factor;
+	$s.pop();
+}
+Vec2.prototype.multiply = function(x,y) {
+	$s.push("Vec2::multiply");
+	var $spos = $s.length;
+	this.x *= x;
+	this.y *= y;
+	$s.pop();
+}
+Vec2.prototype.subtract = function(x,y) {
+	$s.push("Vec2::subtract");
+	var $spos = $s.length;
+	this.x -= x;
+	this.y -= y;
+	$s.pop();
+}
+Vec2.prototype.normalize = function() {
+	$s.push("Vec2::normalize");
+	var $spos = $s.length;
+	var invLength = 1 / Math.sqrt(this.x * this.x + this.y * this.y);
+	this.x *= invLength;
+	this.y *= invLength;
+	$s.pop();
+}
+Vec2.prototype.transform = function(matrix) {
+	$s.push("Vec2::transform");
+	var $spos = $s.length;
+	var x1 = this.x, y1 = this.y, z1 = 0, w1 = 1;
+	var mat = matrix.buffer;
+	this.x = mat[0] * x1 + mat[4] * y1 + mat[8] * z1 + mat[12] * w1;
+	this.y = mat[1] * x1 + mat[5] * y1 + mat[9] * z1 + mat[13] * w1;
+	$s.pop();
+}
+Vec2.prototype.clone = function() {
+	$s.push("Vec2::clone");
 	var $spos = $s.length;
 	{
-		var $tmp = e[0];
+		var $tmp = new Vec2(this.x,this.y);
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-Type.enumParameters = function(e) {
-	$s.push("Type::enumParameters");
+Vec2.prototype.__class__ = Vec2;
+Math2 = function() { }
+Math2.__name__ = ["Math2"];
+Math2.nextPowerOf2 = function(val) {
+	$s.push("Math2::nextPowerOf2");
+	var $spos = $s.length;
+	val--;
+	val = val >> 1 | val;
+	val = val >> 2 | val;
+	val = val >> 4 | val;
+	val = val >> 8 | val;
+	val = val >> 16 | val;
+	val++;
+	{
+		$s.pop();
+		return val;
+	}
+	$s.pop();
+}
+Math2.prototype.__class__ = Math2;
+LogLevel = function(value) { if( value === $_ ) return; {
+	$s.push("LogLevel::new");
+	var $spos = $s.length;
+	this.value = value;
+	$s.pop();
+}}
+LogLevel.__name__ = ["LogLevel"];
+LogLevel.prototype.value = null;
+LogLevel.prototype.isSmallerOrEqual = function(level) {
+	$s.push("LogLevel::isSmallerOrEqual");
 	var $spos = $s.length;
 	{
-		var $tmp = e.slice(2);
+		var $tmp = this.value <= level.value;
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-Type.enumIndex = function(e) {
-	$s.push("Type::enumIndex");
+LogLevel.prototype.__class__ = LogLevel;
+kumite.canvas.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.canvas.Config::new");
+	var $spos = $s.length;
+	this.canvasCase = new kumite.canvas.CanvasCase();
+	this.canvasController = new kumite.canvas.CanvasController();
+	$s.pop();
+}}
+kumite.canvas.Config.__name__ = ["kumite","canvas","Config"];
+kumite.canvas.Config.prototype.canvasCase = null;
+kumite.canvas.Config.prototype.canvasController = null;
+kumite.canvas.Config.prototype.__class__ = kumite.canvas.Config;
+kumite.canvas.Config.__interfaces__ = [haxe.rtti.Infos];
+bpmjs.Messenger = function(p) { if( p === $_ ) return; {
+	$s.push("bpmjs.Messenger::new");
+	var $spos = $s.length;
+	this.receivers = new Array();
+	$s.pop();
+}}
+bpmjs.Messenger.__name__ = ["bpmjs","Messenger"];
+bpmjs.Messenger.prototype.receivers = null;
+bpmjs.Messenger.prototype.addReceiver = function(type,listener) {
+	$s.push("bpmjs.Messenger::addReceiver");
+	var $spos = $s.length;
+	this.removeReceiver(type,listener);
+	this.receivers.push(new bpmjs._Messenger.ReceiverForType(type,listener));
+	$s.pop();
+}
+bpmjs.Messenger.prototype.removeReceiver = function(type,listener) {
+	$s.push("bpmjs.Messenger::removeReceiver");
+	var $spos = $s.length;
+	var _g = 0, _g1 = this.receivers;
+	while(_g < _g1.length) {
+		var receiver = _g1[_g];
+		++_g;
+		if(receiver.type == type && Reflect.compareMethods(listener,receiver.method)) {
+			this.receivers.remove(receiver);
+			{
+				$s.pop();
+				return;
+			}
+		}
+	}
+	$s.pop();
+}
+bpmjs.Messenger.prototype.send = function(message) {
+	$s.push("bpmjs.Messenger::send");
+	var $spos = $s.length;
+	var _g = 0, _g1 = this.receivers;
+	while(_g < _g1.length) {
+		var receiver = _g1[_g];
+		++_g;
+		if(receiver.type == null || receiver.type == Type.getClass(message)) receiver.method(message);
+	}
+	$s.pop();
+}
+bpmjs.Messenger.prototype.toString = function() {
+	$s.push("bpmjs.Messenger::toString");
 	var $spos = $s.length;
 	{
-		var $tmp = e[1];
+		var $tmp = Type.getClassName(Type.getClass(this));
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-Type.prototype.__class__ = Type;
+bpmjs.Messenger.prototype.__class__ = bpmjs.Messenger;
+if(!bpmjs._Messenger) bpmjs._Messenger = {}
+bpmjs._Messenger.ReceiverForType = function(type,method) { if( type === $_ ) return; {
+	$s.push("bpmjs._Messenger.ReceiverForType::new");
+	var $spos = $s.length;
+	this.type = type;
+	this.method = method;
+	$s.pop();
+}}
+bpmjs._Messenger.ReceiverForType.__name__ = ["bpmjs","_Messenger","ReceiverForType"];
+bpmjs._Messenger.ReceiverForType.prototype.type = null;
+bpmjs._Messenger.ReceiverForType.prototype.method = null;
+bpmjs._Messenger.ReceiverForType.prototype.__class__ = bpmjs._Messenger.ReceiverForType;
+if(!kumite.time) kumite.time = {}
+kumite.time.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.time.Config::new");
+	var $spos = $s.length;
+	this.time = new kumite.time.Time();
+	this.timeController = new kumite.time.TimeController();
+	$s.pop();
+}}
+kumite.time.Config.__name__ = ["kumite","time","Config"];
+kumite.time.Config.prototype.time = null;
+kumite.time.Config.prototype.timeController = null;
+kumite.time.Config.prototype.__class__ = kumite.time.Config;
+kumite.time.Config.__interfaces__ = [haxe.rtti.Infos];
 if(typeof js=='undefined') js = {}
 js.Boot = function() { }
 js.Boot.__name__ = ["js","Boot"];
@@ -4073,6 +3643,4322 @@ js.Boot.__init = function() {
 	$s.pop();
 }
 js.Boot.prototype.__class__ = js.Boot;
+bpmjs.ContextBuilder = function(p) { if( p === $_ ) return; {
+	$s.push("bpmjs.ContextBuilder::new");
+	var $spos = $s.length;
+	this.context = new bpmjs.Context();
+	$s.pop();
+}}
+bpmjs.ContextBuilder.__name__ = ["bpmjs","ContextBuilder"];
+bpmjs.ContextBuilder.defaultContext = null;
+bpmjs.ContextBuilder.build = function(configClass,contextConfig) {
+	$s.push("bpmjs.ContextBuilder::build");
+	var $spos = $s.length;
+	{
+		var $tmp = bpmjs.ContextBuilder.buildAll([configClass],contextConfig);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+bpmjs.ContextBuilder.buildAll = function(configClasses,contextConfig) {
+	$s.push("bpmjs.ContextBuilder::buildAll");
+	var $spos = $s.length;
+	Log.groupCollapsed(null,null,null,null,null,null,null,{ fileName : "ContextBuilder.hx", lineNumber : 20, className : "bpmjs.ContextBuilder", methodName : "buildAll"});
+	var builder = new bpmjs.ContextBuilder();
+	bpmjs.ContextBuilder.defaultContext = builder.context;
+	builder.contextConfig = contextConfig == null?bpmjs.ContextBuilder.createDefaultContextConfig():contextConfig;
+	builder.buildInternal(configClasses);
+	Log.groupEnd({ fileName : "ContextBuilder.hx", lineNumber : 28, className : "bpmjs.ContextBuilder", methodName : "buildAll"});
+	{
+		var $tmp = bpmjs.ContextBuilder.defaultContext;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+bpmjs.ContextBuilder.configure = function(object) {
+	$s.push("bpmjs.ContextBuilder::configure");
+	var $spos = $s.length;
+	var builder = new bpmjs.ContextBuilder();
+	if(bpmjs.ContextBuilder.defaultContext == null) throw builder.createError("Cannot configure Object as no context is available!");
+	builder.contextConfig = bpmjs.ContextBuilder.defaultContext.contextConfig;
+	builder.context = bpmjs.ContextBuilder.defaultContext;
+	builder.configureInternal(object);
+	$s.pop();
+}
+bpmjs.ContextBuilder.createDefaultContextConfig = function() {
+	$s.push("bpmjs.ContextBuilder::createDefaultContextConfig");
+	var $spos = $s.length;
+	var defaultContextConfig = new bpmjs.ContextConfig();
+	defaultContextConfig.frontMessenger = new bpmjs.DefaultFrontMessenger();
+	{
+		$s.pop();
+		return defaultContextConfig;
+	}
+	$s.pop();
+}
+bpmjs.ContextBuilder.prototype.context = null;
+bpmjs.ContextBuilder.prototype.contextConfig = null;
+bpmjs.ContextBuilder.prototype.configureInternal = function(object) {
+	$s.push("bpmjs.ContextBuilder::configureInternal");
+	var $spos = $s.length;
+	var contextObject = this.context.addObject("configured",Type.getClass(object),object);
+	this.wireContextObject(contextObject);
+	this.registerMessengerByObjectTypeForContextObject(contextObject);
+	this.registerMessengersForContextObject(contextObject);
+	this.registerReceiversForContextObject(contextObject);
+	this.doCompleteCallForContextObject(contextObject);
+	$s.pop();
+}
+bpmjs.ContextBuilder.prototype.buildInternal = function(configClasses) {
+	$s.push("bpmjs.ContextBuilder::buildInternal");
+	var $spos = $s.length;
+	this.context.contextConfig = this.contextConfig;
+	{
+		var _g = 0;
+		while(_g < configClasses.length) {
+			var configClass = configClasses[_g];
+			++_g;
+			var config = Type.createInstance(configClass,[]);
+			this.createObjects(config,configClass);
+		}
+	}
+	this.wireInjections();
+	this.registerMessengersByObjectType();
+	this.registerMessengers();
+	this.registerReceivers();
+	this.doCompleteCall();
+	this.doPostCompleteCall();
+	$s.pop();
+}
+bpmjs.ContextBuilder.prototype.createObjects = function(config,configClass) {
+	$s.push("bpmjs.ContextBuilder::createObjects");
+	var $spos = $s.length;
+	if(configClass.__rtti == null) throw this.createError("Config class " + Type.getClassName(configClass) + " must have RTTI enabled!");
+	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(configClass.__rtti).firstElement());
+	var classDef = haxe.rtti.TypeApi.typeInfos(infos);
+	{ var $it0 = classDef.fields.iterator();
+	while( $it0.hasNext() ) { var field = $it0.next();
+	{
+		var $e = field.type;
+		switch( $e[1] ) {
+		case 2:
+		var params = $e[3], name = $e[2];
+		{
+			var type = Type.resolveClass(name);
+			if(type == null) throw "Type of class " + name + " is null!";
+			var instance = Reflect.field(config,field.name);
+			this.context.addObject(field.name,type,instance);
+			if(type == Array) {
+				var list = instance;
+				{
+					var _g = 0;
+					while(_g < list.length) {
+						var listInstance = list[_g];
+						++_g;
+						this.context.addObject("dynamic",Type.getClass(listInstance),listInstance);
+					}
+				}
+			}
+		}break;
+		default:{
+			continue;
+		}break;
+		}
+	}
+	}}
+	$s.pop();
+}
+bpmjs.ContextBuilder.prototype.wireInjections = function() {
+	$s.push("bpmjs.ContextBuilder::wireInjections");
+	var $spos = $s.length;
+	var _g = 0, _g1 = this.context.objects;
+	while(_g < _g1.length) {
+		var contextObject = _g1[_g];
+		++_g;
+		this.wireContextObject(contextObject);
+	}
+	$s.pop();
+}
+bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
+	$s.push("bpmjs.ContextBuilder::wireContextObject");
+	var $spos = $s.length;
+	if(contextObject.type.__rtti == null) {
+		$s.pop();
+		return;
+	}
+	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(contextObject.type.__rtti).firstElement());
+	var classDef = haxe.rtti.TypeApi.typeInfos(infos);
+	var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
+	{ var $it0 = classDef.fields.iterator();
+	while( $it0.hasNext() ) { var field = $it0.next();
+	{
+		var $e = field.type;
+		switch( $e[1] ) {
+		case 2:
+		var params = $e[3], name = $e[2];
+		{
+			var meta = Reflect.field(metaDatas,field.name);
+			if(meta != null && Reflect.hasField(meta,"Inject")) {
+				var type = Type.resolveClass(name);
+				var wiredObject = type == bpmjs.Context?this.context:this.context.getObjectByType(type);
+				if(wiredObject == null) Log.warn("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + field.name + " but could not find object to inject.",null,null,null,null,null,null,{ fileName : "ContextBuilder.hx", lineNumber : 145, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"});
+				else contextObject.object[field.name] = wiredObject;
+			}
+		}break;
+		default:{
+			continue;
+		}break;
+		}
+	}
+	}}
+	$s.pop();
+}
+bpmjs.ContextBuilder.prototype.registerMessengersByObjectType = function() {
+	$s.push("bpmjs.ContextBuilder::registerMessengersByObjectType");
+	var $spos = $s.length;
+	var _g = 0, _g1 = this.context.objects;
+	while(_g < _g1.length) {
+		var contextObject = _g1[_g];
+		++_g;
+		this.registerMessengerByObjectTypeForContextObject(contextObject);
+	}
+	$s.pop();
+}
+bpmjs.ContextBuilder.prototype.registerMessengerByObjectTypeForContextObject = function(contextObject) {
+	$s.push("bpmjs.ContextBuilder::registerMessengerByObjectTypeForContextObject");
+	var $spos = $s.length;
+	if(Std["is"](contextObject.object,bpmjs.Messenger)) {
+		this.contextConfig.frontMessenger.addMessenger(contextObject.object);
+	}
+	$s.pop();
+}
+bpmjs.ContextBuilder.prototype.registerMessengers = function() {
+	$s.push("bpmjs.ContextBuilder::registerMessengers");
+	var $spos = $s.length;
+	var _g = 0, _g1 = this.context.objects;
+	while(_g < _g1.length) {
+		var contextObject = _g1[_g];
+		++_g;
+		this.registerMessengersForContextObject(contextObject);
+	}
+	$s.pop();
+}
+bpmjs.ContextBuilder.prototype.registerMessengersForContextObject = function(contextObject) {
+	$s.push("bpmjs.ContextBuilder::registerMessengersForContextObject");
+	var $spos = $s.length;
+	if(contextObject.type.__rtti == null) {
+		$s.pop();
+		return;
+	}
+	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(contextObject.type.__rtti).firstElement());
+	var classDef = haxe.rtti.TypeApi.typeInfos(infos);
+	var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
+	{ var $it0 = classDef.fields.iterator();
+	while( $it0.hasNext() ) { var field = $it0.next();
+	{
+		var $e = field.type;
+		switch( $e[1] ) {
+		case 2:
+		var params = $e[3], name = $e[2];
+		{
+			var meta = Reflect.field(metaDatas,field.name);
+			if(meta != null && Reflect.hasField(meta,"Messenger")) {
+				var messenger = new bpmjs.Messenger();
+				contextObject.object[field.name] = messenger;
+				this.contextConfig.frontMessenger.addMessenger(messenger);
+			}
+		}break;
+		default:{
+			continue;
+		}break;
+		}
+	}
+	}}
+	$s.pop();
+}
+bpmjs.ContextBuilder.prototype.registerReceivers = function() {
+	$s.push("bpmjs.ContextBuilder::registerReceivers");
+	var $spos = $s.length;
+	var _g = 0, _g1 = this.context.objects;
+	while(_g < _g1.length) {
+		var contextObject = _g1[_g];
+		++_g;
+		this.registerReceiversForContextObject(contextObject);
+	}
+	$s.pop();
+}
+bpmjs.ContextBuilder.prototype.registerReceiversForContextObject = function(contextObject) {
+	$s.push("bpmjs.ContextBuilder::registerReceiversForContextObject");
+	var $spos = $s.length;
+	if(contextObject.type.__rtti == null) {
+		$s.pop();
+		return;
+	}
+	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(contextObject.type.__rtti).firstElement());
+	var classDef = haxe.rtti.TypeApi.typeInfos(infos);
+	var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
+	{ var $it0 = classDef.fields.iterator();
+	while( $it0.hasNext() ) { var field = $it0.next();
+	{
+		var $e = field.type;
+		switch( $e[1] ) {
+		case 4:
+		var ret = $e[3], args = $e[2];
+		{
+			var meta = Reflect.field(metaDatas,field.name);
+			if(meta != null && Reflect.hasField(meta,"Message")) {
+				{ var $it1 = args.iterator();
+				while( $it1.hasNext() ) { var argument = $it1.next();
+				{
+					var $e = argument.t;
+					switch( $e[1] ) {
+					case 2:
+					var params = $e[3], name = $e[2];
+					{
+						var type = Type.resolveClass(name);
+						this.contextConfig.frontMessenger.addReceiver(contextObject.object,field.name,type);
+					}break;
+					default:{
+						continue;
+					}break;
+					}
+					break;
+				}
+				}}
+			}
+		}break;
+		default:{
+			continue;
+		}break;
+		}
+	}
+	}}
+	$s.pop();
+}
+bpmjs.ContextBuilder.prototype.doCompleteCall = function() {
+	$s.push("bpmjs.ContextBuilder::doCompleteCall");
+	var $spos = $s.length;
+	var _g = 0, _g1 = this.context.objects;
+	while(_g < _g1.length) {
+		var contextObject = _g1[_g];
+		++_g;
+		this.doCompleteCallForContextObject(contextObject);
+	}
+	$s.pop();
+}
+bpmjs.ContextBuilder.prototype.doCompleteCallForContextObject = function(contextObject) {
+	$s.push("bpmjs.ContextBuilder::doCompleteCallForContextObject");
+	var $spos = $s.length;
+	var object = contextObject.object;
+	var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
+	{
+		var _g = 0, _g1 = Reflect.fields(metaDatas);
+		while(_g < _g1.length) {
+			var fieldName = _g1[_g];
+			++_g;
+			var meta = Reflect.field(metaDatas,fieldName);
+			if(Reflect.hasField(meta,"Complete")) {
+				Reflect.field(object,fieldName).apply(object,[]);
+			}
+		}
+	}
+	$s.pop();
+}
+bpmjs.ContextBuilder.prototype.doPostCompleteCall = function() {
+	$s.push("bpmjs.ContextBuilder::doPostCompleteCall");
+	var $spos = $s.length;
+	var _g = 0, _g1 = this.context.objects;
+	while(_g < _g1.length) {
+		var contextObject = _g1[_g];
+		++_g;
+		var object = contextObject.object;
+		var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
+		{
+			var _g2 = 0, _g3 = Reflect.fields(metaDatas);
+			while(_g2 < _g3.length) {
+				var fieldName = _g3[_g2];
+				++_g2;
+				var meta = Reflect.field(metaDatas,fieldName);
+				if(Reflect.hasField(meta,"PostComplete")) {
+					Reflect.field(object,fieldName).apply(object,[]);
+				}
+			}
+		}
+	}
+	$s.pop();
+}
+bpmjs.ContextBuilder.prototype.createError = function(message) {
+	$s.push("bpmjs.ContextBuilder::createError");
+	var $spos = $s.length;
+	{
+		var $tmp = "ContextBuilder ERROR: " + message;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+bpmjs.ContextBuilder.prototype.__class__ = bpmjs.ContextBuilder;
+bpmjs.FrontMessenger = function() { }
+bpmjs.FrontMessenger.__name__ = ["bpmjs","FrontMessenger"];
+bpmjs.FrontMessenger.prototype.addMessenger = null;
+bpmjs.FrontMessenger.prototype.addReceiver = null;
+bpmjs.FrontMessenger.prototype.__class__ = bpmjs.FrontMessenger;
+bpmjs.DefaultFrontMessenger = function(p) { if( p === $_ ) return; {
+	$s.push("bpmjs.DefaultFrontMessenger::new");
+	var $spos = $s.length;
+	this.receivers = new Array();
+	$s.pop();
+}}
+bpmjs.DefaultFrontMessenger.__name__ = ["bpmjs","DefaultFrontMessenger"];
+bpmjs.DefaultFrontMessenger.prototype.receivers = null;
+bpmjs.DefaultFrontMessenger.prototype.addMessenger = function(messenger) {
+	$s.push("bpmjs.DefaultFrontMessenger::addMessenger");
+	var $spos = $s.length;
+	Log.info(Type.getClassName(Type.getClass(messenger)),null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 21, className : "bpmjs.DefaultFrontMessenger", methodName : "addMessenger"});
+	messenger.addReceiver(null,$closure(this,"handleMessage"));
+	$s.pop();
+}
+bpmjs.DefaultFrontMessenger.prototype.addReceiver = function(receivingObject,methodName,type) {
+	$s.push("bpmjs.DefaultFrontMessenger::addReceiver");
+	var $spos = $s.length;
+	Log.info(Type.getClassName(Type.getClass(receivingObject)) + "#" + methodName,Type.getClassName(type),null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 27, className : "bpmjs.DefaultFrontMessenger", methodName : "addReceiver"});
+	this.receivers.push(new bpmjs._FrontMessenger.Receiver(receivingObject,methodName,type));
+	$s.pop();
+}
+bpmjs.DefaultFrontMessenger.prototype.handleMessage = function(message) {
+	$s.push("bpmjs.DefaultFrontMessenger::handleMessage");
+	var $spos = $s.length;
+	Log.info(Type.getClassName(Type.getClass(message)),null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 33, className : "bpmjs.DefaultFrontMessenger", methodName : "handleMessage"});
+	{
+		var _g = 0, _g1 = this.receivers;
+		while(_g < _g1.length) {
+			var receiver = _g1[_g];
+			++_g;
+			if(Type.getClass(message) == receiver.type) {
+				{
+					Log.info(Type.getClassName(Type.getClass(receiver.receiver)) + "#" + receiver.methodName,null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 66, className : "bpmjs._FrontMessenger.Receiver", methodName : "execute"});
+					receiver.method.apply(receiver.receiver,[message]);
+				}
+			}
+		}
+	}
+	$s.pop();
+}
+bpmjs.DefaultFrontMessenger.prototype.__class__ = bpmjs.DefaultFrontMessenger;
+bpmjs.DefaultFrontMessenger.__interfaces__ = [bpmjs.FrontMessenger];
+if(!bpmjs._FrontMessenger) bpmjs._FrontMessenger = {}
+bpmjs._FrontMessenger.Receiver = function(receiver,methodName,type) { if( receiver === $_ ) return; {
+	$s.push("bpmjs._FrontMessenger.Receiver::new");
+	var $spos = $s.length;
+	this.receiver = receiver;
+	this.type = type;
+	this.method = Reflect.field(receiver,methodName);
+	this.methodName = methodName;
+	$s.pop();
+}}
+bpmjs._FrontMessenger.Receiver.__name__ = ["bpmjs","_FrontMessenger","Receiver"];
+bpmjs._FrontMessenger.Receiver.prototype.receiver = null;
+bpmjs._FrontMessenger.Receiver.prototype.method = null;
+bpmjs._FrontMessenger.Receiver.prototype.methodName = null;
+bpmjs._FrontMessenger.Receiver.prototype.type = null;
+bpmjs._FrontMessenger.Receiver.prototype.matches = function(message) {
+	$s.push("bpmjs._FrontMessenger.Receiver::matches");
+	var $spos = $s.length;
+	{
+		var $tmp = Type.getClass(message) == this.type;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+bpmjs._FrontMessenger.Receiver.prototype.execute = function(message) {
+	$s.push("bpmjs._FrontMessenger.Receiver::execute");
+	var $spos = $s.length;
+	Log.info(Type.getClassName(Type.getClass(this.receiver)) + "#" + this.methodName,null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 66, className : "bpmjs._FrontMessenger.Receiver", methodName : "execute"});
+	this.method.apply(this.receiver,[message]);
+	$s.pop();
+}
+bpmjs._FrontMessenger.Receiver.prototype.__class__ = bpmjs._FrontMessenger.Receiver;
+GLDisplayList = function(p) { if( p === $_ ) return; {
+	$s.push("GLDisplayList::new");
+	var $spos = $s.length;
+	this.lastFrameTime = Date.now().getTime();
+	this.startTime = this.lastFrameTime;
+	this.enterFrameSignaler = new hsl.haxe.DirectSignaler(this);
+	this.hitareaPicker = new GLHitareaPicker();
+	GLMouseRegistry.getInstance().mouseDownSignaler.bind($closure(this,"handleMouseDown"));
+	GLMouseRegistry.getInstance().mouseMoveSignaler.bind($closure(this,"handleMouseMove"));
+	this.cursorClient = GLMouseRegistry.getInstance().createCursorClient();
+	$s.pop();
+}}
+GLDisplayList.__name__ = ["GLDisplayList"];
+GLDisplayList.instance = null;
+GLDisplayList.getDefault = function() {
+	$s.push("GLDisplayList::getDefault");
+	var $spos = $s.length;
+	if(GLDisplayList.instance == null) {
+		GLDisplayList.instance = new GLDisplayList();
+		GLDisplayList.instance.stage = new GLStage();
+		GLDisplayList.instance.initDisplayObject(GLDisplayList.instance.stage);
+	}
+	{
+		var $tmp = GLDisplayList.instance;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GLDisplayList.prototype.stage = null;
+GLDisplayList.prototype.hitareaPicker = null;
+GLDisplayList.prototype.lastFrameTime = null;
+GLDisplayList.prototype.startTime = null;
+GLDisplayList.prototype.cursorClient = null;
+GLDisplayList.prototype.enterFrameSignaler = null;
+GLDisplayList.prototype.initDisplayObject = function(displayObject) {
+	$s.push("GLDisplayList::initDisplayObject");
+	var $spos = $s.length;
+	displayObject.stage = this.stage;
+	displayObject.enterFrameSignaler = this.enterFrameSignaler;
+	$s.pop();
+}
+GLDisplayList.prototype.initInteractiveObject = function(interactiveObject) {
+	$s.push("GLDisplayList::initInteractiveObject");
+	var $spos = $s.length;
+	interactiveObject.mouseDownSignaler = new hsl.haxe.DirectSignaler(this);
+	$s.pop();
+}
+GLDisplayList.prototype.setStageSize = function(width,height) {
+	$s.push("GLDisplayList::setStageSize");
+	var $spos = $s.length;
+	this.stage.stageWidth = width;
+	this.stage.stageHeight = height;
+	$s.pop();
+}
+GLDisplayList.prototype.dispatchEnterFrame = function() {
+	$s.push("GLDisplayList::dispatchEnterFrame");
+	var $spos = $s.length;
+	var time = Date.now().getTime();
+	var frame = new GLFrame();
+	frame.time = time;
+	frame.timer = time - this.startTime;
+	frame.frameTime = time - this.lastFrameTime;
+	this.lastFrameTime = time;
+	this.enterFrameSignaler.dispatch(frame,null,{ fileName : "GLDisplayList.hx", lineNumber : 69, className : "GLDisplayList", methodName : "dispatchEnterFrame"});
+	$s.pop();
+}
+GLDisplayList.prototype.handleMouseDown = function(position) {
+	$s.push("GLDisplayList::handleMouseDown");
+	var $spos = $s.length;
+	var result = this.hitareaPicker.pick(this.stage,position);
+	if(result != null) {
+		result.mouseDownSignaler.dispatch(result,null,{ fileName : "GLDisplayList.hx", lineNumber : 77, className : "GLDisplayList", methodName : "handleMouseDown"});
+	}
+	$s.pop();
+}
+GLDisplayList.prototype.handleMouseMove = function(position) {
+	$s.push("GLDisplayList::handleMouseMove");
+	var $spos = $s.length;
+	var result = this.hitareaPicker.pick(this.stage,position);
+	if(result != null) this.cursorClient.handCursor();
+	else this.cursorClient.defaultCursor();
+	$s.pop();
+}
+GLDisplayList.prototype.__class__ = GLDisplayList;
+GLAnimationFrame = function() { }
+GLAnimationFrame.__name__ = ["GLAnimationFrame"];
+GLAnimationFrame.run = function(method,ms) {
+	$s.push("GLAnimationFrame::run");
+	var $spos = $s.length;
+	if(ms == null) ms = 0;
+	var secureMethod = function() {
+		$s.push("GLAnimationFrame::run@8");
+		var $spos = $s.length;
+		try {
+			method();
+		}
+		catch( $e0 ) {
+			{
+				var e = $e0;
+				{
+					$e = [];
+					while($s.length >= $spos) $e.unshift($s.pop());
+					$s.push($e[0]);
+					Log.error("Error executing GLAnimationFrame: " + e,null,null,null,null,null,null,{ fileName : "GLAnimationFrame.hx", lineNumber : 16, className : "GLAnimationFrame", methodName : "run"});
+				}
+			}
+		}
+		$s.pop();
+	}
+	if(ms == 0) {
+		var window = js.Lib.window;
+		var requestAnimationFrame = window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame;
+		if(requestAnimationFrame == null) {
+			var requester = function() {
+				$s.push("GLAnimationFrame::run@30");
+				var $spos = $s.length;
+				requestAnimationFrame(requester);
+				secureMethod();
+				$s.pop();
+			}
+			requestAnimationFrame(requester);
+		}
+		else {
+			var timer = new haxe.Timer(Std["int"](1000 / 60));
+			timer.run = secureMethod;
+		}
+	}
+	else {
+		var timer = new haxe.Timer(Std["int"](1000 / ms));
+		timer.run = secureMethod;
+	}
+	$s.pop();
+}
+GLAnimationFrame.prototype.__class__ = GLAnimationFrame;
+if(!kumite.projection) kumite.projection = {}
+kumite.projection.ProjectionController = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.projection.ProjectionController::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.projection.ProjectionController.__name__ = ["kumite","projection","ProjectionController"];
+kumite.projection.ProjectionController.prototype.projection = null;
+kumite.projection.ProjectionController.prototype.stage = null;
+kumite.projection.ProjectionController.prototype.fov = null;
+kumite.projection.ProjectionController.prototype.near = null;
+kumite.projection.ProjectionController.prototype.far = null;
+kumite.projection.ProjectionController.prototype.init = function() {
+	$s.push("kumite.projection.ProjectionController::init");
+	var $spos = $s.length;
+	this.projection.matrix = new Matrix4();
+	this.updateProjectionSizeFromStage();
+	$s.pop();
+}
+kumite.projection.ProjectionController.prototype.updateProjectionSizeFromStage = function(message) {
+	$s.push("kumite.projection.ProjectionController::updateProjectionSizeFromStage");
+	var $spos = $s.length;
+	this.projection.matrix.perspective(this.fov,this.stage.getAspect(),this.near,this.far);
+	$s.pop();
+}
+kumite.projection.ProjectionController.prototype.__class__ = kumite.projection.ProjectionController;
+kumite.projection.ProjectionController.__interfaces__ = [haxe.rtti.Infos];
+haxe.StackItem = { __ename__ : ["haxe","StackItem"], __constructs__ : ["CFunction","Module","FilePos","Method","Lambda"] }
+haxe.StackItem.CFunction = ["CFunction",0];
+haxe.StackItem.CFunction.toString = $estr;
+haxe.StackItem.CFunction.__enum__ = haxe.StackItem;
+haxe.StackItem.Module = function(m) { var $x = ["Module",1,m]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; }
+haxe.StackItem.FilePos = function(s,file,line) { var $x = ["FilePos",2,s,file,line]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; }
+haxe.StackItem.Method = function(classname,method) { var $x = ["Method",3,classname,method]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; }
+haxe.StackItem.Lambda = function(v) { var $x = ["Lambda",4,v]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; }
+haxe.Stack = function() { }
+haxe.Stack.__name__ = ["haxe","Stack"];
+haxe.Stack.callStack = function() {
+	$s.push("haxe.Stack::callStack");
+	var $spos = $s.length;
+	{
+		var $tmp = haxe.Stack.makeStack("$s");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.Stack.exceptionStack = function() {
+	$s.push("haxe.Stack::exceptionStack");
+	var $spos = $s.length;
+	{
+		var $tmp = haxe.Stack.makeStack("$e");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.Stack.toString = function(stack) {
+	$s.push("haxe.Stack::toString");
+	var $spos = $s.length;
+	var b = new StringBuf();
+	{
+		var _g = 0;
+		while(_g < stack.length) {
+			var s = stack[_g];
+			++_g;
+			b.b[b.b.length] = "\nCalled from ";
+			haxe.Stack.itemToString(b,s);
+		}
+	}
+	{
+		var $tmp = b.b.join("");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.Stack.itemToString = function(b,s) {
+	$s.push("haxe.Stack::itemToString");
+	var $spos = $s.length;
+	var $e = s;
+	switch( $e[1] ) {
+	case 0:
+	{
+		b.b[b.b.length] = "a C function";
+	}break;
+	case 1:
+	var m = $e[2];
+	{
+		b.b[b.b.length] = "module ";
+		b.b[b.b.length] = m;
+	}break;
+	case 2:
+	var line = $e[4], file = $e[3], s1 = $e[2];
+	{
+		if(s1 != null) {
+			haxe.Stack.itemToString(b,s1);
+			b.b[b.b.length] = " (";
+		}
+		b.b[b.b.length] = file;
+		b.b[b.b.length] = " line ";
+		b.b[b.b.length] = line;
+		if(s1 != null) b.b[b.b.length] = ")";
+	}break;
+	case 3:
+	var meth = $e[3], cname = $e[2];
+	{
+		b.b[b.b.length] = cname;
+		b.b[b.b.length] = ".";
+		b.b[b.b.length] = meth;
+	}break;
+	case 4:
+	var n = $e[2];
+	{
+		b.b[b.b.length] = "local function #";
+		b.b[b.b.length] = n;
+	}break;
+	}
+	$s.pop();
+}
+haxe.Stack.makeStack = function(s) {
+	$s.push("haxe.Stack::makeStack");
+	var $spos = $s.length;
+	var a = (function($this) {
+		var $r;
+		try {
+			$r = eval(s);
+		}
+		catch( $e0 ) {
+			{
+				var e = $e0;
+				$r = (function($this) {
+					var $r;
+					$e = [];
+					while($s.length >= $spos) $e.unshift($s.pop());
+					$s.push($e[0]);
+					$r = [];
+					return $r;
+				}($this));
+			}
+		}
+		return $r;
+	}(this));
+	var m = new Array();
+	{
+		var _g1 = 0, _g = a.length - (s == "$s"?2:0);
+		while(_g1 < _g) {
+			var i = _g1++;
+			var d = a[i].split("::");
+			m.unshift(haxe.StackItem.Method(d[0],d[1]));
+		}
+	}
+	{
+		$s.pop();
+		return m;
+	}
+	$s.pop();
+}
+haxe.Stack.prototype.__class__ = haxe.Stack;
+kumite.time.Tick = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.time.Tick::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.time.Tick.__name__ = ["kumite","time","Tick"];
+kumite.time.Tick.prototype.__class__ = kumite.time.Tick;
+js.Lib = function() { }
+js.Lib.__name__ = ["js","Lib"];
+js.Lib.isIE = null;
+js.Lib.isOpera = null;
+js.Lib.document = null;
+js.Lib.window = null;
+js.Lib.alert = function(v) {
+	$s.push("js.Lib::alert");
+	var $spos = $s.length;
+	alert(js.Boot.__string_rec(v,""));
+	$s.pop();
+}
+js.Lib.eval = function(code) {
+	$s.push("js.Lib::eval");
+	var $spos = $s.length;
+	{
+		var $tmp = eval(code);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+js.Lib.setErrorHandler = function(f) {
+	$s.push("js.Lib::setErrorHandler");
+	var $spos = $s.length;
+	js.Lib.onerror = f;
+	$s.pop();
+}
+js.Lib.prototype.__class__ = js.Lib;
+ValueType = { __ename__ : ["ValueType"], __constructs__ : ["TNull","TInt","TFloat","TBool","TObject","TFunction","TClass","TEnum","TUnknown"] }
+ValueType.TNull = ["TNull",0];
+ValueType.TNull.toString = $estr;
+ValueType.TNull.__enum__ = ValueType;
+ValueType.TInt = ["TInt",1];
+ValueType.TInt.toString = $estr;
+ValueType.TInt.__enum__ = ValueType;
+ValueType.TFloat = ["TFloat",2];
+ValueType.TFloat.toString = $estr;
+ValueType.TFloat.__enum__ = ValueType;
+ValueType.TBool = ["TBool",3];
+ValueType.TBool.toString = $estr;
+ValueType.TBool.__enum__ = ValueType;
+ValueType.TObject = ["TObject",4];
+ValueType.TObject.toString = $estr;
+ValueType.TObject.__enum__ = ValueType;
+ValueType.TFunction = ["TFunction",5];
+ValueType.TFunction.toString = $estr;
+ValueType.TFunction.__enum__ = ValueType;
+ValueType.TClass = function(c) { var $x = ["TClass",6,c]; $x.__enum__ = ValueType; $x.toString = $estr; return $x; }
+ValueType.TEnum = function(e) { var $x = ["TEnum",7,e]; $x.__enum__ = ValueType; $x.toString = $estr; return $x; }
+ValueType.TUnknown = ["TUnknown",8];
+ValueType.TUnknown.toString = $estr;
+ValueType.TUnknown.__enum__ = ValueType;
+Type = function() { }
+Type.__name__ = ["Type"];
+Type.getClass = function(o) {
+	$s.push("Type::getClass");
+	var $spos = $s.length;
+	if(o == null) {
+		$s.pop();
+		return null;
+	}
+	if(o.__enum__ != null) {
+		$s.pop();
+		return null;
+	}
+	{
+		var $tmp = o.__class__;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Type.getEnum = function(o) {
+	$s.push("Type::getEnum");
+	var $spos = $s.length;
+	if(o == null) {
+		$s.pop();
+		return null;
+	}
+	{
+		var $tmp = o.__enum__;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Type.getSuperClass = function(c) {
+	$s.push("Type::getSuperClass");
+	var $spos = $s.length;
+	{
+		var $tmp = c.__super__;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Type.getClassName = function(c) {
+	$s.push("Type::getClassName");
+	var $spos = $s.length;
+	var a = c.__name__;
+	{
+		var $tmp = a.join(".");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Type.getEnumName = function(e) {
+	$s.push("Type::getEnumName");
+	var $spos = $s.length;
+	var a = e.__ename__;
+	{
+		var $tmp = a.join(".");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Type.resolveClass = function(name) {
+	$s.push("Type::resolveClass");
+	var $spos = $s.length;
+	var cl;
+	try {
+		cl = eval(name);
+	}
+	catch( $e0 ) {
+		{
+			var e = $e0;
+			{
+				$e = [];
+				while($s.length >= $spos) $e.unshift($s.pop());
+				$s.push($e[0]);
+				cl = null;
+			}
+		}
+	}
+	if(cl == null || cl.__name__ == null) {
+		$s.pop();
+		return null;
+	}
+	{
+		$s.pop();
+		return cl;
+	}
+	$s.pop();
+}
+Type.resolveEnum = function(name) {
+	$s.push("Type::resolveEnum");
+	var $spos = $s.length;
+	var e;
+	try {
+		e = eval(name);
+	}
+	catch( $e0 ) {
+		{
+			var err = $e0;
+			{
+				$e = [];
+				while($s.length >= $spos) $e.unshift($s.pop());
+				$s.push($e[0]);
+				e = null;
+			}
+		}
+	}
+	if(e == null || e.__ename__ == null) {
+		$s.pop();
+		return null;
+	}
+	{
+		$s.pop();
+		return e;
+	}
+	$s.pop();
+}
+Type.createInstance = function(cl,args) {
+	$s.push("Type::createInstance");
+	var $spos = $s.length;
+	if(args.length <= 3) {
+		var $tmp = new cl(args[0],args[1],args[2]);
+		$s.pop();
+		return $tmp;
+	}
+	if(args.length > 8) throw "Too many arguments";
+	{
+		var $tmp = new cl(args[0],args[1],args[2],args[3],args[4],args[5],args[6],args[7]);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Type.createEmptyInstance = function(cl) {
+	$s.push("Type::createEmptyInstance");
+	var $spos = $s.length;
+	{
+		var $tmp = new cl($_);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Type.createEnum = function(e,constr,params) {
+	$s.push("Type::createEnum");
+	var $spos = $s.length;
+	var f = Reflect.field(e,constr);
+	if(f == null) throw "No such constructor " + constr;
+	if(Reflect.isFunction(f)) {
+		if(params == null) throw "Constructor " + constr + " need parameters";
+		{
+			var $tmp = f.apply(e,params);
+			$s.pop();
+			return $tmp;
+		}
+	}
+	if(params != null && params.length != 0) throw "Constructor " + constr + " does not need parameters";
+	{
+		$s.pop();
+		return f;
+	}
+	$s.pop();
+}
+Type.createEnumIndex = function(e,index,params) {
+	$s.push("Type::createEnumIndex");
+	var $spos = $s.length;
+	var c = Type.getEnumConstructs(e)[index];
+	if(c == null) throw index + " is not a valid enum constructor index";
+	{
+		var $tmp = Type.createEnum(e,c,params);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Type.getInstanceFields = function(c) {
+	$s.push("Type::getInstanceFields");
+	var $spos = $s.length;
+	var a = Reflect.fields(c.prototype);
+	a.remove("__class__");
+	{
+		$s.pop();
+		return a;
+	}
+	$s.pop();
+}
+Type.getClassFields = function(c) {
+	$s.push("Type::getClassFields");
+	var $spos = $s.length;
+	var a = Reflect.fields(c);
+	a.remove("__name__");
+	a.remove("__interfaces__");
+	a.remove("__super__");
+	a.remove("prototype");
+	{
+		$s.pop();
+		return a;
+	}
+	$s.pop();
+}
+Type.getEnumConstructs = function(e) {
+	$s.push("Type::getEnumConstructs");
+	var $spos = $s.length;
+	{
+		var $tmp = e.__constructs__;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Type["typeof"] = function(v) {
+	$s.push("Type::typeof");
+	var $spos = $s.length;
+	switch(typeof(v)) {
+	case "boolean":{
+		{
+			var $tmp = ValueType.TBool;
+			$s.pop();
+			return $tmp;
+		}
+	}break;
+	case "string":{
+		{
+			var $tmp = ValueType.TClass(String);
+			$s.pop();
+			return $tmp;
+		}
+	}break;
+	case "number":{
+		if(Math.ceil(v) == v % 2147483648.0) {
+			var $tmp = ValueType.TInt;
+			$s.pop();
+			return $tmp;
+		}
+		{
+			var $tmp = ValueType.TFloat;
+			$s.pop();
+			return $tmp;
+		}
+	}break;
+	case "object":{
+		if(v == null) {
+			var $tmp = ValueType.TNull;
+			$s.pop();
+			return $tmp;
+		}
+		var e = v.__enum__;
+		if(e != null) {
+			var $tmp = ValueType.TEnum(e);
+			$s.pop();
+			return $tmp;
+		}
+		var c = v.__class__;
+		if(c != null) {
+			var $tmp = ValueType.TClass(c);
+			$s.pop();
+			return $tmp;
+		}
+		{
+			var $tmp = ValueType.TObject;
+			$s.pop();
+			return $tmp;
+		}
+	}break;
+	case "function":{
+		if(v.__name__ != null) {
+			var $tmp = ValueType.TObject;
+			$s.pop();
+			return $tmp;
+		}
+		{
+			var $tmp = ValueType.TFunction;
+			$s.pop();
+			return $tmp;
+		}
+	}break;
+	case "undefined":{
+		{
+			var $tmp = ValueType.TNull;
+			$s.pop();
+			return $tmp;
+		}
+	}break;
+	default:{
+		{
+			var $tmp = ValueType.TUnknown;
+			$s.pop();
+			return $tmp;
+		}
+	}break;
+	}
+	$s.pop();
+}
+Type.enumEq = function(a,b) {
+	$s.push("Type::enumEq");
+	var $spos = $s.length;
+	if(a == b) {
+		$s.pop();
+		return true;
+	}
+	try {
+		if(a[0] != b[0]) {
+			$s.pop();
+			return false;
+		}
+		{
+			var _g1 = 2, _g = a.length;
+			while(_g1 < _g) {
+				var i = _g1++;
+				if(!Type.enumEq(a[i],b[i])) {
+					$s.pop();
+					return false;
+				}
+			}
+		}
+		var e = a.__enum__;
+		if(e != b.__enum__ || e == null) {
+			$s.pop();
+			return false;
+		}
+	}
+	catch( $e0 ) {
+		{
+			var e = $e0;
+			{
+				$e = [];
+				while($s.length >= $spos) $e.unshift($s.pop());
+				$s.push($e[0]);
+				{
+					$s.pop();
+					return false;
+				}
+			}
+		}
+	}
+	{
+		$s.pop();
+		return true;
+	}
+	$s.pop();
+}
+Type.enumConstructor = function(e) {
+	$s.push("Type::enumConstructor");
+	var $spos = $s.length;
+	{
+		var $tmp = e[0];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Type.enumParameters = function(e) {
+	$s.push("Type::enumParameters");
+	var $spos = $s.length;
+	{
+		var $tmp = e.slice(2);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Type.enumIndex = function(e) {
+	$s.push("Type::enumIndex");
+	var $spos = $s.length;
+	{
+		var $tmp = e[1];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Type.prototype.__class__ = Type;
+kumite.canvas.CanvasController = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.canvas.CanvasController::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.canvas.CanvasController.__name__ = ["kumite","canvas","CanvasController"];
+kumite.canvas.CanvasController.prototype.canvas = null;
+kumite.canvas.CanvasController.prototype.stage = null;
+kumite.canvas.CanvasController.prototype.initPrepare = function() {
+	$s.push("kumite.canvas.CanvasController::initPrepare");
+	var $spos = $s.length;
+	this.canvas.itself = js.Lib.document.getElementById("content");
+	$s.pop();
+}
+kumite.canvas.CanvasController.prototype.init = function() {
+	$s.push("kumite.canvas.CanvasController::init");
+	var $spos = $s.length;
+	this.updateCanvasSizeFromStage();
+	$s.pop();
+}
+kumite.canvas.CanvasController.prototype.updateCanvasSizeFromStage = function(message) {
+	$s.push("kumite.canvas.CanvasController::updateCanvasSizeFromStage");
+	var $spos = $s.length;
+	this.canvas.itself.width = this.stage.width;
+	this.canvas.itself.height = this.stage.height;
+	$s.pop();
+}
+kumite.canvas.CanvasController.prototype.__class__ = kumite.canvas.CanvasController;
+kumite.canvas.CanvasController.__interfaces__ = [haxe.rtti.Infos];
+if(!kumite.launch) kumite.launch = {}
+kumite.launch.Launcher = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.launch.Launcher::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.launch.Launcher.__name__ = ["kumite","launch","Launcher"];
+kumite.launch.Launcher.prototype.sequencer = null;
+kumite.launch.Launcher.prototype.handlePostComplete = function() {
+	$s.push("kumite.launch.Launcher::handlePostComplete");
+	var $spos = $s.length;
+	Log.info(null,null,null,null,null,null,null,{ fileName : "Launcher.hx", lineNumber : 15, className : "kumite.launch.Launcher", methodName : "handlePostComplete"});
+	this.sequencer.start("boot");
+	$s.pop();
+}
+kumite.launch.Launcher.prototype.showError = function() {
+	$s.push("kumite.launch.Launcher::showError");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+kumite.launch.Launcher.prototype.__class__ = kumite.launch.Launcher;
+kumite.launch.Launcher.__interfaces__ = [haxe.rtti.Infos];
+Reflect = function() { }
+Reflect.__name__ = ["Reflect"];
+Reflect.hasField = function(o,field) {
+	$s.push("Reflect::hasField");
+	var $spos = $s.length;
+	if(o.hasOwnProperty != null) {
+		var $tmp = o.hasOwnProperty(field);
+		$s.pop();
+		return $tmp;
+	}
+	var arr = Reflect.fields(o);
+	{ var $it0 = arr.iterator();
+	while( $it0.hasNext() ) { var t = $it0.next();
+	if(t == field) {
+		$s.pop();
+		return true;
+	}
+	}}
+	{
+		$s.pop();
+		return false;
+	}
+	$s.pop();
+}
+Reflect.field = function(o,field) {
+	$s.push("Reflect::field");
+	var $spos = $s.length;
+	var v = null;
+	try {
+		v = o[field];
+	}
+	catch( $e0 ) {
+		{
+			var e = $e0;
+			{
+				$e = [];
+				while($s.length >= $spos) $e.unshift($s.pop());
+				$s.push($e[0]);
+				null;
+			}
+		}
+	}
+	{
+		$s.pop();
+		return v;
+	}
+	$s.pop();
+}
+Reflect.setField = function(o,field,value) {
+	$s.push("Reflect::setField");
+	var $spos = $s.length;
+	o[field] = value;
+	$s.pop();
+}
+Reflect.callMethod = function(o,func,args) {
+	$s.push("Reflect::callMethod");
+	var $spos = $s.length;
+	{
+		var $tmp = func.apply(o,args);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Reflect.fields = function(o) {
+	$s.push("Reflect::fields");
+	var $spos = $s.length;
+	if(o == null) {
+		var $tmp = new Array();
+		$s.pop();
+		return $tmp;
+	}
+	var a = new Array();
+	if(o.hasOwnProperty) {
+		
+				for(var i in o)
+					if( o.hasOwnProperty(i) )
+						a.push(i);
+			;
+	}
+	else {
+		var t;
+		try {
+			t = o.__proto__;
+		}
+		catch( $e0 ) {
+			{
+				var e = $e0;
+				{
+					$e = [];
+					while($s.length >= $spos) $e.unshift($s.pop());
+					$s.push($e[0]);
+					t = null;
+				}
+			}
+		}
+		if(t != null) o.__proto__ = null;
+		
+				for(var i in o)
+					if( i != "__proto__" )
+						a.push(i);
+			;
+		if(t != null) o.__proto__ = t;
+	}
+	{
+		$s.pop();
+		return a;
+	}
+	$s.pop();
+}
+Reflect.isFunction = function(f) {
+	$s.push("Reflect::isFunction");
+	var $spos = $s.length;
+	{
+		var $tmp = typeof(f) == "function" && f.__name__ == null;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Reflect.compare = function(a,b) {
+	$s.push("Reflect::compare");
+	var $spos = $s.length;
+	{
+		var $tmp = a == b?0:a > b?1:-1;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Reflect.compareMethods = function(f1,f2) {
+	$s.push("Reflect::compareMethods");
+	var $spos = $s.length;
+	if(f1 == f2) {
+		$s.pop();
+		return true;
+	}
+	if(!Reflect.isFunction(f1) || !Reflect.isFunction(f2)) {
+		$s.pop();
+		return false;
+	}
+	{
+		var $tmp = f1.scope == f2.scope && f1.method == f2.method && f1.method != null;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Reflect.isObject = function(v) {
+	$s.push("Reflect::isObject");
+	var $spos = $s.length;
+	if(v == null) {
+		$s.pop();
+		return false;
+	}
+	var t = typeof(v);
+	{
+		var $tmp = t == "string" || t == "object" && !v.__enum__ || t == "function" && v.__name__ != null;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Reflect.deleteField = function(o,f) {
+	$s.push("Reflect::deleteField");
+	var $spos = $s.length;
+	if(!Reflect.hasField(o,f)) {
+		$s.pop();
+		return false;
+	}
+	delete(o[f]);
+	{
+		$s.pop();
+		return true;
+	}
+	$s.pop();
+}
+Reflect.copy = function(o) {
+	$s.push("Reflect::copy");
+	var $spos = $s.length;
+	var o2 = { };
+	{
+		var _g = 0, _g1 = Reflect.fields(o);
+		while(_g < _g1.length) {
+			var f = _g1[_g];
+			++_g;
+			o2[f] = Reflect.field(o,f);
+		}
+	}
+	{
+		$s.pop();
+		return o2;
+	}
+	$s.pop();
+}
+Reflect.makeVarArgs = function(f) {
+	$s.push("Reflect::makeVarArgs");
+	var $spos = $s.length;
+	{
+		var $tmp = function() {
+			$s.push("Reflect::makeVarArgs@116");
+			var $spos = $s.length;
+			var a = new Array();
+			{
+				var _g1 = 0, _g = arguments.length;
+				while(_g1 < _g) {
+					var i = _g1++;
+					a.push(arguments[i]);
+				}
+			}
+			{
+				var $tmp = f(a);
+				$s.pop();
+				return $tmp;
+			}
+			$s.pop();
+		}
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Reflect.prototype.__class__ = Reflect;
+haxe.rtti.CType = { __ename__ : ["haxe","rtti","CType"], __constructs__ : ["CUnknown","CEnum","CClass","CTypedef","CFunction","CAnonymous","CDynamic"] }
+haxe.rtti.CType.CUnknown = ["CUnknown",0];
+haxe.rtti.CType.CUnknown.toString = $estr;
+haxe.rtti.CType.CUnknown.__enum__ = haxe.rtti.CType;
+haxe.rtti.CType.CEnum = function(name,params) { var $x = ["CEnum",1,name,params]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
+haxe.rtti.CType.CClass = function(name,params) { var $x = ["CClass",2,name,params]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
+haxe.rtti.CType.CTypedef = function(name,params) { var $x = ["CTypedef",3,name,params]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
+haxe.rtti.CType.CFunction = function(args,ret) { var $x = ["CFunction",4,args,ret]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
+haxe.rtti.CType.CAnonymous = function(fields) { var $x = ["CAnonymous",5,fields]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
+haxe.rtti.CType.CDynamic = function(t) { var $x = ["CDynamic",6,t]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
+haxe.rtti.Rights = { __ename__ : ["haxe","rtti","Rights"], __constructs__ : ["RNormal","RNo","RCall","RMethod","RDynamic","RInline"] }
+haxe.rtti.Rights.RNormal = ["RNormal",0];
+haxe.rtti.Rights.RNormal.toString = $estr;
+haxe.rtti.Rights.RNormal.__enum__ = haxe.rtti.Rights;
+haxe.rtti.Rights.RNo = ["RNo",1];
+haxe.rtti.Rights.RNo.toString = $estr;
+haxe.rtti.Rights.RNo.__enum__ = haxe.rtti.Rights;
+haxe.rtti.Rights.RCall = function(m) { var $x = ["RCall",2,m]; $x.__enum__ = haxe.rtti.Rights; $x.toString = $estr; return $x; }
+haxe.rtti.Rights.RMethod = ["RMethod",3];
+haxe.rtti.Rights.RMethod.toString = $estr;
+haxe.rtti.Rights.RMethod.__enum__ = haxe.rtti.Rights;
+haxe.rtti.Rights.RDynamic = ["RDynamic",4];
+haxe.rtti.Rights.RDynamic.toString = $estr;
+haxe.rtti.Rights.RDynamic.__enum__ = haxe.rtti.Rights;
+haxe.rtti.Rights.RInline = ["RInline",5];
+haxe.rtti.Rights.RInline.toString = $estr;
+haxe.rtti.Rights.RInline.__enum__ = haxe.rtti.Rights;
+haxe.rtti.TypeTree = { __ename__ : ["haxe","rtti","TypeTree"], __constructs__ : ["TPackage","TClassdecl","TEnumdecl","TTypedecl"] }
+haxe.rtti.TypeTree.TPackage = function(name,full,subs) { var $x = ["TPackage",0,name,full,subs]; $x.__enum__ = haxe.rtti.TypeTree; $x.toString = $estr; return $x; }
+haxe.rtti.TypeTree.TClassdecl = function(c) { var $x = ["TClassdecl",1,c]; $x.__enum__ = haxe.rtti.TypeTree; $x.toString = $estr; return $x; }
+haxe.rtti.TypeTree.TEnumdecl = function(e) { var $x = ["TEnumdecl",2,e]; $x.__enum__ = haxe.rtti.TypeTree; $x.toString = $estr; return $x; }
+haxe.rtti.TypeTree.TTypedecl = function(t) { var $x = ["TTypedecl",3,t]; $x.__enum__ = haxe.rtti.TypeTree; $x.toString = $estr; return $x; }
+haxe.rtti.TypeApi = function() { }
+haxe.rtti.TypeApi.__name__ = ["haxe","rtti","TypeApi"];
+haxe.rtti.TypeApi.typeInfos = function(t) {
+	$s.push("haxe.rtti.TypeApi::typeInfos");
+	var $spos = $s.length;
+	var inf;
+	var $e = t;
+	switch( $e[1] ) {
+	case 1:
+	var c = $e[2];
+	{
+		inf = c;
+	}break;
+	case 2:
+	var e = $e[2];
+	{
+		inf = e;
+	}break;
+	case 3:
+	var t1 = $e[2];
+	{
+		inf = t1;
+	}break;
+	case 0:
+	{
+		throw "Unexpected Package";
+	}break;
+	}
+	{
+		$s.pop();
+		return inf;
+	}
+	$s.pop();
+}
+haxe.rtti.TypeApi.isVar = function(t) {
+	$s.push("haxe.rtti.TypeApi::isVar");
+	var $spos = $s.length;
+	{
+		var $tmp = (function($this) {
+			var $r;
+			var $e = t;
+			switch( $e[1] ) {
+			case 4:
+			{
+				$r = false;
+			}break;
+			default:{
+				$r = true;
+			}break;
+			}
+			return $r;
+		}(this));
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.rtti.TypeApi.leq = function(f,l1,l2) {
+	$s.push("haxe.rtti.TypeApi::leq");
+	var $spos = $s.length;
+	var it = l2.iterator();
+	{ var $it0 = l1.iterator();
+	while( $it0.hasNext() ) { var e1 = $it0.next();
+	{
+		if(!it.hasNext()) {
+			$s.pop();
+			return false;
+		}
+		var e2 = it.next();
+		if(!f(e1,e2)) {
+			$s.pop();
+			return false;
+		}
+	}
+	}}
+	if(it.hasNext()) {
+		$s.pop();
+		return false;
+	}
+	{
+		$s.pop();
+		return true;
+	}
+	$s.pop();
+}
+haxe.rtti.TypeApi.rightsEq = function(r1,r2) {
+	$s.push("haxe.rtti.TypeApi::rightsEq");
+	var $spos = $s.length;
+	if(r1 == r2) {
+		$s.pop();
+		return true;
+	}
+	var $e = r1;
+	switch( $e[1] ) {
+	case 2:
+	var m1 = $e[2];
+	{
+		var $e = r2;
+		switch( $e[1] ) {
+		case 2:
+		var m2 = $e[2];
+		{
+			{
+				var $tmp = m1 == m2;
+				$s.pop();
+				return $tmp;
+			}
+		}break;
+		default:{
+			null;
+		}break;
+		}
+	}break;
+	default:{
+		null;
+	}break;
+	}
+	{
+		$s.pop();
+		return false;
+	}
+	$s.pop();
+}
+haxe.rtti.TypeApi.typeEq = function(t1,t2) {
+	$s.push("haxe.rtti.TypeApi::typeEq");
+	var $spos = $s.length;
+	var $e = t1;
+	switch( $e[1] ) {
+	case 0:
+	{
+		{
+			var $tmp = t2 == haxe.rtti.CType.CUnknown;
+			$s.pop();
+			return $tmp;
+		}
+	}break;
+	case 1:
+	var params = $e[3], name = $e[2];
+	{
+		var $e = t2;
+		switch( $e[1] ) {
+		case 1:
+		var params2 = $e[3], name2 = $e[2];
+		{
+			{
+				var $tmp = name == name2 && haxe.rtti.TypeApi.leq($closure(haxe.rtti.TypeApi,"typeEq"),params,params2);
+				$s.pop();
+				return $tmp;
+			}
+		}break;
+		default:{
+			null;
+		}break;
+		}
+	}break;
+	case 2:
+	var params = $e[3], name = $e[2];
+	{
+		var $e = t2;
+		switch( $e[1] ) {
+		case 2:
+		var params2 = $e[3], name2 = $e[2];
+		{
+			{
+				var $tmp = name == name2 && haxe.rtti.TypeApi.leq($closure(haxe.rtti.TypeApi,"typeEq"),params,params2);
+				$s.pop();
+				return $tmp;
+			}
+		}break;
+		default:{
+			null;
+		}break;
+		}
+	}break;
+	case 3:
+	var params = $e[3], name = $e[2];
+	{
+		var $e = t2;
+		switch( $e[1] ) {
+		case 3:
+		var params2 = $e[3], name2 = $e[2];
+		{
+			{
+				var $tmp = name == name2 && haxe.rtti.TypeApi.leq($closure(haxe.rtti.TypeApi,"typeEq"),params,params2);
+				$s.pop();
+				return $tmp;
+			}
+		}break;
+		default:{
+			null;
+		}break;
+		}
+	}break;
+	case 4:
+	var ret = $e[3], args = $e[2];
+	{
+		var $e = t2;
+		switch( $e[1] ) {
+		case 4:
+		var ret2 = $e[3], args2 = $e[2];
+		{
+			{
+				var $tmp = haxe.rtti.TypeApi.leq(function(a,b) {
+					$s.push("haxe.rtti.TypeApi::typeEq@187");
+					var $spos = $s.length;
+					{
+						var $tmp = a.name == b.name && a.opt == b.opt && haxe.rtti.TypeApi.typeEq(a.t,b.t);
+						$s.pop();
+						return $tmp;
+					}
+					$s.pop();
+				},args,args2) && haxe.rtti.TypeApi.typeEq(ret,ret2);
+				$s.pop();
+				return $tmp;
+			}
+		}break;
+		default:{
+			null;
+		}break;
+		}
+	}break;
+	case 5:
+	var fields = $e[2];
+	{
+		var $e = t2;
+		switch( $e[1] ) {
+		case 5:
+		var fields2 = $e[2];
+		{
+			{
+				var $tmp = haxe.rtti.TypeApi.leq(function(a,b) {
+					$s.push("haxe.rtti.TypeApi::typeEq@195");
+					var $spos = $s.length;
+					{
+						var $tmp = a.name == b.name && haxe.rtti.TypeApi.typeEq(a.t,b.t);
+						$s.pop();
+						return $tmp;
+					}
+					$s.pop();
+				},fields,fields2);
+				$s.pop();
+				return $tmp;
+			}
+		}break;
+		default:{
+			null;
+		}break;
+		}
+	}break;
+	case 6:
+	var t = $e[2];
+	{
+		var $e = t2;
+		switch( $e[1] ) {
+		case 6:
+		var t21 = $e[2];
+		{
+			if(t == null != (t21 == null)) {
+				$s.pop();
+				return false;
+			}
+			{
+				var $tmp = t == null || haxe.rtti.TypeApi.typeEq(t,t21);
+				$s.pop();
+				return $tmp;
+			}
+		}break;
+		default:{
+			null;
+		}break;
+		}
+	}break;
+	}
+	{
+		$s.pop();
+		return false;
+	}
+	$s.pop();
+}
+haxe.rtti.TypeApi.fieldEq = function(f1,f2) {
+	$s.push("haxe.rtti.TypeApi::fieldEq");
+	var $spos = $s.length;
+	if(f1.name != f2.name) {
+		$s.pop();
+		return false;
+	}
+	if(!haxe.rtti.TypeApi.typeEq(f1.type,f2.type)) {
+		$s.pop();
+		return false;
+	}
+	if(f1.isPublic != f2.isPublic) {
+		$s.pop();
+		return false;
+	}
+	if(f1.doc != f2.doc) {
+		$s.pop();
+		return false;
+	}
+	if(!haxe.rtti.TypeApi.rightsEq(f1.get,f2.get)) {
+		$s.pop();
+		return false;
+	}
+	if(!haxe.rtti.TypeApi.rightsEq(f1.set,f2.set)) {
+		$s.pop();
+		return false;
+	}
+	if(f1.params == null != (f2.params == null)) {
+		$s.pop();
+		return false;
+	}
+	if(f1.params != null && f1.params.join(":") != f2.params.join(":")) {
+		$s.pop();
+		return false;
+	}
+	{
+		$s.pop();
+		return true;
+	}
+	$s.pop();
+}
+haxe.rtti.TypeApi.constructorEq = function(c1,c2) {
+	$s.push("haxe.rtti.TypeApi::constructorEq");
+	var $spos = $s.length;
+	if(c1.name != c2.name) {
+		$s.pop();
+		return false;
+	}
+	if(c1.doc != c2.doc) {
+		$s.pop();
+		return false;
+	}
+	if(c1.args == null != (c2.args == null)) {
+		$s.pop();
+		return false;
+	}
+	if(c1.args != null && !haxe.rtti.TypeApi.leq(function(a,b) {
+		$s.push("haxe.rtti.TypeApi::constructorEq@239");
+		var $spos = $s.length;
+		{
+			var $tmp = a.name == b.name && a.opt == b.opt && haxe.rtti.TypeApi.typeEq(a.t,b.t);
+			$s.pop();
+			return $tmp;
+		}
+		$s.pop();
+	},c1.args,c2.args)) {
+		$s.pop();
+		return false;
+	}
+	{
+		$s.pop();
+		return true;
+	}
+	$s.pop();
+}
+haxe.rtti.TypeApi.prototype.__class__ = haxe.rtti.TypeApi;
+GLMouseRegistry = function(p) { if( p === $_ ) return; {
+	$s.push("GLMouseRegistry::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+GLMouseRegistry.__name__ = ["GLMouseRegistry"];
+GLMouseRegistry.instance = null;
+GLMouseRegistry.getInstance = function() {
+	$s.push("GLMouseRegistry::getInstance");
+	var $spos = $s.length;
+	if(GLMouseRegistry.instance == null) GLMouseRegistry.instance = new GLMouseRegistry();
+	{
+		var $tmp = GLMouseRegistry.instance;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GLMouseRegistry.prototype.mouseDownSignaler = null;
+GLMouseRegistry.prototype.mouseMoveSignaler = null;
+GLMouseRegistry.prototype.canvas = null;
+GLMouseRegistry.prototype.init = function(canvas) {
+	$s.push("GLMouseRegistry::init");
+	var $spos = $s.length;
+	this.canvas = canvas;
+	this.mouseDownSignaler = new hsl.haxe.DirectSignaler(this);
+	this.mouseMoveSignaler = new hsl.haxe.DirectSignaler(this);
+	canvas.onmousedown = $closure(this,"onMouseDown");
+	canvas.onmousemove = $closure(this,"onMouseMove");
+	$s.pop();
+}
+GLMouseRegistry.prototype.setCursor = function(cursor) {
+	$s.push("GLMouseRegistry::setCursor");
+	var $spos = $s.length;
+	this.canvas.style.cursor = cursor;
+	$s.pop();
+}
+GLMouseRegistry.prototype.createCursorClient = function() {
+	$s.push("GLMouseRegistry::createCursorClient");
+	var $spos = $s.length;
+	var client = new GLCursorClient();
+	{
+		$s.pop();
+		return client;
+	}
+	$s.pop();
+}
+GLMouseRegistry.prototype.onMouseDown = function(e) {
+	$s.push("GLMouseRegistry::onMouseDown");
+	var $spos = $s.length;
+	try {
+		this.mouseDownSignaler.dispatch(new Vec2(e.layerX / this.canvas.clientWidth,e.layerY / this.canvas.clientHeight),null,{ fileName : "GLMouseRegistry.hx", lineNumber : 50, className : "GLMouseRegistry", methodName : "onMouseDown"});
+	}
+	catch( $e0 ) {
+		{
+			var e1 = $e0;
+			{
+				$e = [];
+				while($s.length >= $spos) $e.unshift($s.pop());
+				$s.push($e[0]);
+				haxe.Log.trace(e1,{ fileName : "GLMouseRegistry.hx", lineNumber : 54, className : "GLMouseRegistry", methodName : "onMouseDown"});
+			}
+		}
+	}
+	$s.pop();
+}
+GLMouseRegistry.prototype.onMouseMove = function(e) {
+	$s.push("GLMouseRegistry::onMouseMove");
+	var $spos = $s.length;
+	try {
+		this.mouseMoveSignaler.dispatch(new Vec2(e.layerX / this.canvas.clientWidth,e.layerY / this.canvas.clientHeight),null,{ fileName : "GLMouseRegistry.hx", lineNumber : 62, className : "GLMouseRegistry", methodName : "onMouseMove"});
+	}
+	catch( $e0 ) {
+		{
+			var e1 = $e0;
+			{
+				$e = [];
+				while($s.length >= $spos) $e.unshift($s.pop());
+				$s.push($e[0]);
+				haxe.Log.trace(e1,{ fileName : "GLMouseRegistry.hx", lineNumber : 66, className : "GLMouseRegistry", methodName : "onMouseMove"});
+			}
+		}
+	}
+	$s.pop();
+}
+GLMouseRegistry.prototype.__class__ = GLMouseRegistry;
+Lambda = function() { }
+Lambda.__name__ = ["Lambda"];
+Lambda.array = function(it) {
+	$s.push("Lambda::array");
+	var $spos = $s.length;
+	var a = new Array();
+	{ var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var i = $it0.next();
+	a.push(i);
+	}}
+	{
+		$s.pop();
+		return a;
+	}
+	$s.pop();
+}
+Lambda.list = function(it) {
+	$s.push("Lambda::list");
+	var $spos = $s.length;
+	var l = new List();
+	{ var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var i = $it0.next();
+	l.add(i);
+	}}
+	{
+		$s.pop();
+		return l;
+	}
+	$s.pop();
+}
+Lambda.map = function(it,f) {
+	$s.push("Lambda::map");
+	var $spos = $s.length;
+	var l = new List();
+	{ var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var x = $it0.next();
+	l.add(f(x));
+	}}
+	{
+		$s.pop();
+		return l;
+	}
+	$s.pop();
+}
+Lambda.mapi = function(it,f) {
+	$s.push("Lambda::mapi");
+	var $spos = $s.length;
+	var l = new List();
+	var i = 0;
+	{ var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var x = $it0.next();
+	l.add(f(i++,x));
+	}}
+	{
+		$s.pop();
+		return l;
+	}
+	$s.pop();
+}
+Lambda.has = function(it,elt,cmp) {
+	$s.push("Lambda::has");
+	var $spos = $s.length;
+	if(cmp == null) {
+		{ var $it0 = it.iterator();
+		while( $it0.hasNext() ) { var x = $it0.next();
+		if(x == elt) {
+			$s.pop();
+			return true;
+		}
+		}}
+	}
+	else {
+		{ var $it1 = it.iterator();
+		while( $it1.hasNext() ) { var x = $it1.next();
+		if(cmp(x,elt)) {
+			$s.pop();
+			return true;
+		}
+		}}
+	}
+	{
+		$s.pop();
+		return false;
+	}
+	$s.pop();
+}
+Lambda.exists = function(it,f) {
+	$s.push("Lambda::exists");
+	var $spos = $s.length;
+	{ var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var x = $it0.next();
+	if(f(x)) {
+		$s.pop();
+		return true;
+	}
+	}}
+	{
+		$s.pop();
+		return false;
+	}
+	$s.pop();
+}
+Lambda.foreach = function(it,f) {
+	$s.push("Lambda::foreach");
+	var $spos = $s.length;
+	{ var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var x = $it0.next();
+	if(!f(x)) {
+		$s.pop();
+		return false;
+	}
+	}}
+	{
+		$s.pop();
+		return true;
+	}
+	$s.pop();
+}
+Lambda.iter = function(it,f) {
+	$s.push("Lambda::iter");
+	var $spos = $s.length;
+	{ var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var x = $it0.next();
+	f(x);
+	}}
+	$s.pop();
+}
+Lambda.filter = function(it,f) {
+	$s.push("Lambda::filter");
+	var $spos = $s.length;
+	var l = new List();
+	{ var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var x = $it0.next();
+	if(f(x)) l.add(x);
+	}}
+	{
+		$s.pop();
+		return l;
+	}
+	$s.pop();
+}
+Lambda.fold = function(it,f,first) {
+	$s.push("Lambda::fold");
+	var $spos = $s.length;
+	{ var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var x = $it0.next();
+	first = f(x,first);
+	}}
+	{
+		$s.pop();
+		return first;
+	}
+	$s.pop();
+}
+Lambda.count = function(it,pred) {
+	$s.push("Lambda::count");
+	var $spos = $s.length;
+	var n = 0;
+	if(pred == null) { var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var _ = $it0.next();
+	n++;
+	}}
+	else { var $it1 = it.iterator();
+	while( $it1.hasNext() ) { var x = $it1.next();
+	if(pred(x)) n++;
+	}}
+	{
+		$s.pop();
+		return n;
+	}
+	$s.pop();
+}
+Lambda.empty = function(it) {
+	$s.push("Lambda::empty");
+	var $spos = $s.length;
+	{
+		var $tmp = !it.iterator().hasNext();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Lambda.indexOf = function(it,v) {
+	$s.push("Lambda::indexOf");
+	var $spos = $s.length;
+	var i = 0;
+	{ var $it0 = it.iterator();
+	while( $it0.hasNext() ) { var v2 = $it0.next();
+	{
+		if(v == v2) {
+			$s.pop();
+			return i;
+		}
+		i++;
+	}
+	}}
+	{
+		$s.pop();
+		return -1;
+	}
+	$s.pop();
+}
+Lambda.concat = function(a,b) {
+	$s.push("Lambda::concat");
+	var $spos = $s.length;
+	var l = new List();
+	{ var $it0 = a.iterator();
+	while( $it0.hasNext() ) { var x = $it0.next();
+	l.add(x);
+	}}
+	{ var $it1 = b.iterator();
+	while( $it1.hasNext() ) { var x = $it1.next();
+	l.add(x);
+	}}
+	{
+		$s.pop();
+		return l;
+	}
+	$s.pop();
+}
+Lambda.prototype.__class__ = Lambda;
+CanvasGraphic = function(p) { if( p === $_ ) return; {
+	$s.push("CanvasGraphic::new");
+	var $spos = $s.length;
+	this.canvas = js.Lib.document.createElement("canvas");
+	this.context = this.canvas.getContext("2d");
+	this.setWidth(0);
+	this.setHeight(0);
+	$s.pop();
+}}
+CanvasGraphic.__name__ = ["CanvasGraphic"];
+CanvasGraphic.prototype.width = null;
+CanvasGraphic.prototype.height = null;
+CanvasGraphic.prototype.fillStyle = null;
+CanvasGraphic.prototype.font = null;
+CanvasGraphic.prototype.isInvalid = null;
+CanvasGraphic.prototype.canvas = null;
+CanvasGraphic.prototype.context = null;
+CanvasGraphic.prototype.clear = function(color) {
+	$s.push("CanvasGraphic::clear");
+	var $spos = $s.length;
+	this.canvas.width = Math2.nextPowerOf2(this.width);
+	this.canvas.height = Math2.nextPowerOf2(this.height);
+	this.context.fillStyle = "rgba(0, 0, 255, 0)";
+	this.context.fillRect(0,0,this.canvas.width,this.canvas.width);
+	this.context.fillStyle = color == null?"rgba(0, 0, 0, 0)":color.toContextRGBA();
+	this.context.fillRect(0,0,this.width,this.height);
+	this.isInvalid = true;
+	$s.pop();
+}
+CanvasGraphic.prototype.fillRect = function(x,y,width,height) {
+	$s.push("CanvasGraphic::fillRect");
+	var $spos = $s.length;
+	this.context.fillRect(x,y,width,height);
+	this.isInvalid = true;
+	$s.pop();
+}
+CanvasGraphic.prototype.fillText = function(text,x,y,maxWidth) {
+	$s.push("CanvasGraphic::fillText");
+	var $spos = $s.length;
+	this.context.fillText(text,x,y,maxWidth);
+	this.isInvalid = true;
+	$s.pop();
+}
+CanvasGraphic.prototype.setFont = function(value) {
+	$s.push("CanvasGraphic::setFont");
+	var $spos = $s.length;
+	this.context.font = value;
+	{
+		$s.pop();
+		return value;
+	}
+	$s.pop();
+}
+CanvasGraphic.prototype.setFillStyle = function(value) {
+	$s.push("CanvasGraphic::setFillStyle");
+	var $spos = $s.length;
+	if(Std["is"](value,Color)) this.context.fillStyle = ((function($this) {
+		var $r;
+		var $t = value;
+		if(Std["is"]($t,Color)) $t;
+		else throw "Class cast error";
+		$r = $t;
+		return $r;
+	}(this))).toContextRGBA();
+	{
+		$s.pop();
+		return value;
+	}
+	$s.pop();
+}
+CanvasGraphic.prototype.setWidth = function(width) {
+	$s.push("CanvasGraphic::setWidth");
+	var $spos = $s.length;
+	if(this.width == width) {
+		$s.pop();
+		return width;
+	}
+	this.width = width;
+	this.clear();
+	{
+		$s.pop();
+		return width;
+	}
+	$s.pop();
+}
+CanvasGraphic.prototype.setHeight = function(height) {
+	$s.push("CanvasGraphic::setHeight");
+	var $spos = $s.length;
+	if(this.height == height) {
+		$s.pop();
+		return height;
+	}
+	this.height = height;
+	this.clear();
+	{
+		$s.pop();
+		return height;
+	}
+	$s.pop();
+}
+CanvasGraphic.prototype.__class__ = CanvasGraphic;
+Text = function(p) { if( p === $_ ) return; {
+	$s.push("Text::new");
+	var $spos = $s.length;
+	Text.init();
+	$s.pop();
+}}
+Text.__name__ = ["Text"];
+Text.context = null;
+Text.init = function() {
+	$s.push("Text::init");
+	var $spos = $s.length;
+	if(Text.context == null) {
+		var canvas = js.Lib.document.createElement("canvas");
+		Text.context = canvas.getContext("2d");
+	}
+	$s.pop();
+}
+Text.prototype.text = null;
+Text.prototype.font = null;
+Text.prototype.width = null;
+Text.prototype.getWidth = function() {
+	$s.push("Text::getWidth");
+	var $spos = $s.length;
+	Text.context.font = this.font;
+	{
+		var $tmp = Text.context.measureText(this.text).width;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Text.prototype.__class__ = Text;
+if(!kumite.camera) kumite.camera = {}
+kumite.camera.CameraMouseMover = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.camera.CameraMouseMover::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.camera.CameraMouseMover.__name__ = ["kumite","camera","CameraMouseMover"];
+kumite.camera.CameraMouseMover.prototype.camera = null;
+kumite.camera.CameraMouseMover.prototype.init = function() {
+	$s.push("kumite.camera.CameraMouseMover::init");
+	var $spos = $s.length;
+	this.camera.matrix = new Matrix4();
+	this.updateCamera();
+	$s.pop();
+}
+kumite.camera.CameraMouseMover.prototype.updateCamera = function() {
+	$s.push("kumite.camera.CameraMouseMover::updateCamera");
+	var $spos = $s.length;
+	this.camera.matrix.identity();
+	this.camera.matrix.lookAt(new Vec3(0,0,10),new Vec3(0,0,0),new Vec3(0,1,0));
+	$s.pop();
+}
+kumite.camera.CameraMouseMover.prototype.__class__ = kumite.camera.CameraMouseMover;
+kumite.camera.CameraMouseMover.__interfaces__ = [haxe.rtti.Infos];
+if(!kumite.webgl) kumite.webgl = {}
+kumite.webgl.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.webgl.Config::new");
+	var $spos = $s.length;
+	this.initAction = new kumite.webgl.InitAction();
+	this.initAction.antialias = true;
+	$s.pop();
+}}
+kumite.webgl.Config.__name__ = ["kumite","webgl","Config"];
+kumite.webgl.Config.prototype.initAction = null;
+kumite.webgl.Config.prototype.__class__ = kumite.webgl.Config;
+kumite.webgl.Config.__interfaces__ = [haxe.rtti.Infos];
+kumite.time.TimeController = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.time.TimeController::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.time.TimeController.__name__ = ["kumite","time","TimeController"];
+kumite.time.TimeController.prototype.time = null;
+kumite.time.TimeController.prototype.messenger = null;
+kumite.time.TimeController.prototype.startComplete = function() {
+	$s.push("kumite.time.TimeController::startComplete");
+	var $spos = $s.length;
+	this.time.reset();
+	GLAnimationFrame.run($closure(this,"timerUpdate"));
+	$s.pop();
+}
+kumite.time.TimeController.prototype.timerUpdate = function() {
+	$s.push("kumite.time.TimeController::timerUpdate");
+	var $spos = $s.length;
+	this.time.tick();
+	this.messenger.send(new kumite.time.Tick());
+	$s.pop();
+}
+kumite.time.TimeController.prototype.__class__ = kumite.time.TimeController;
+kumite.time.TimeController.__interfaces__ = [haxe.rtti.Infos];
+GLTexture = function(p) { if( p === $_ ) return; {
+	$s.push("GLTexture::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+GLTexture.__name__ = ["GLTexture"];
+GLTexture.prototype.width = null;
+GLTexture.prototype.height = null;
+GLTexture.prototype.texture = null;
+GLTexture.prototype.__class__ = GLTexture;
+haxe.TypeTools = function() { }
+haxe.TypeTools.__name__ = ["haxe","TypeTools"];
+haxe.TypeTools.getClassNames = function(value) {
+	$s.push("haxe.TypeTools::getClassNames");
+	var $spos = $s.length;
+	var result = new List();
+	var valueClass = Std["is"](value,Class)?value:Type.getClass(value);
+	while(null != valueClass) {
+		result.add(Type.getClassName(valueClass));
+		valueClass = Type.getSuperClass(valueClass);
+	}
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+haxe.TypeTools.prototype.__class__ = haxe.TypeTools;
+Matrix3 = function(cloneFrom) { if( cloneFrom === $_ ) return; {
+	$s.push("Matrix3::new");
+	var $spos = $s.length;
+	this.buffer = new Float32Array(9);
+	if(cloneFrom != null) {
+		this.setFrom(cloneFrom);
+	}
+	else {
+		this.identity();
+	}
+	$s.pop();
+}}
+Matrix3.__name__ = ["Matrix3"];
+Matrix3.prototype.buffer = null;
+Matrix3.prototype.identity = function() {
+	$s.push("Matrix3::identity");
+	var $spos = $s.length;
+	this.buffer[0] = 1;
+	this.buffer[1] = 0;
+	this.buffer[2] = 0;
+	this.buffer[3] = 0;
+	this.buffer[4] = 1;
+	this.buffer[5] = 0;
+	this.buffer[6] = 0;
+	this.buffer[7] = 0;
+	this.buffer[8] = 1;
+	$s.pop();
+}
+Matrix3.prototype.transpose = function() {
+	$s.push("Matrix3::transpose");
+	var $spos = $s.length;
+	var a01 = this.buffer[1], a02 = this.buffer[2];
+	var a12 = this.buffer[5];
+	this.buffer[1] = this.buffer[3];
+	this.buffer[2] = this.buffer[6];
+	this.buffer[3] = a01;
+	this.buffer[5] = this.buffer[7];
+	this.buffer[6] = a02;
+	this.buffer[7] = a12;
+	$s.pop();
+}
+Matrix3.prototype.setFrom = function(from) {
+	$s.push("Matrix3::setFrom");
+	var $spos = $s.length;
+	this.buffer[0] = from.buffer[0];
+	this.buffer[1] = from.buffer[1];
+	this.buffer[2] = from.buffer[2];
+	this.buffer[3] = from.buffer[3];
+	this.buffer[4] = from.buffer[4];
+	this.buffer[5] = from.buffer[5];
+	this.buffer[6] = from.buffer[6];
+	this.buffer[7] = from.buffer[7];
+	this.buffer[8] = from.buffer[8];
+	this.buffer[9] = from.buffer[9];
+	$s.pop();
+}
+Matrix3.prototype.clone = function() {
+	$s.push("Matrix3::clone");
+	var $spos = $s.length;
+	{
+		var $tmp = new Matrix3(this);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix3.prototype.toString = function() {
+	$s.push("Matrix3::toString");
+	var $spos = $s.length;
+	var result = "Matrix3:";
+	result += "\r\t" + this.buffer[0] + "," + this.buffer[1] + "," + this.buffer[2];
+	result += "\r\t" + this.buffer[3] + "," + this.buffer[4] + "," + this.buffer[5];
+	result += "\r\t" + this.buffer[6] + "," + this.buffer[7] + "," + this.buffer[8];
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+Matrix3.prototype.__class__ = Matrix3;
+kumite.projection.Projection = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.projection.Projection::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.projection.Projection.__name__ = ["kumite","projection","Projection"];
+kumite.projection.Projection.prototype.matrix = null;
+kumite.projection.Projection.prototype.__class__ = kumite.projection.Projection;
+kumite.webgl.InitAction = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.webgl.InitAction::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.webgl.InitAction.__name__ = ["kumite","webgl","InitAction"];
+kumite.webgl.InitAction.prototype.canvas = null;
+kumite.webgl.InitAction.prototype.antialias = null;
+kumite.webgl.InitAction.prototype.init = function() {
+	$s.push("kumite.webgl.InitAction::init");
+	var $spos = $s.length;
+	GL.init(this.canvas.itself,this.antialias);
+	$s.pop();
+}
+kumite.webgl.InitAction.prototype.__class__ = kumite.webgl.InitAction;
+kumite.webgl.InitAction.__interfaces__ = [haxe.rtti.Infos];
+StringBuf = function(p) { if( p === $_ ) return; {
+	$s.push("StringBuf::new");
+	var $spos = $s.length;
+	this.b = new Array();
+	$s.pop();
+}}
+StringBuf.__name__ = ["StringBuf"];
+StringBuf.prototype.add = function(x) {
+	$s.push("StringBuf::add");
+	var $spos = $s.length;
+	this.b[this.b.length] = x;
+	$s.pop();
+}
+StringBuf.prototype.addSub = function(s,pos,len) {
+	$s.push("StringBuf::addSub");
+	var $spos = $s.length;
+	this.b[this.b.length] = s.substr(pos,len);
+	$s.pop();
+}
+StringBuf.prototype.addChar = function(c) {
+	$s.push("StringBuf::addChar");
+	var $spos = $s.length;
+	this.b[this.b.length] = String.fromCharCode(c);
+	$s.pop();
+}
+StringBuf.prototype.toString = function() {
+	$s.push("StringBuf::toString");
+	var $spos = $s.length;
+	{
+		var $tmp = this.b.join("");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+StringBuf.prototype.b = null;
+StringBuf.prototype.__class__ = StringBuf;
+kumite.stage.StageResizeMessage = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.stage.StageResizeMessage::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.stage.StageResizeMessage.__name__ = ["kumite","stage","StageResizeMessage"];
+kumite.stage.StageResizeMessage.prototype.__class__ = kumite.stage.StageResizeMessage;
+Main = function(canvas) { if( canvas === $_ ) return; {
+	$s.push("Main::new");
+	var $spos = $s.length;
+	try {
+		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.time.Config,kumite.projection.Config,kumite.camera.Config,kumite.mouse.Config,kumite.helloworldgl.Config,kumite.displaylist.Config,kumite.vjinterface.Config]);
+	}
+	catch( $e0 ) {
+		{
+			var e = $e0;
+			{
+				$e = [];
+				while($s.length >= $spos) $e.unshift($s.pop());
+				$s.push($e[0]);
+				Log.error("Error building application! \n" + e,null,null,null,null,null,null,{ fileName : "Main.hx", lineNumber : 43, className : "Main", methodName : "new"});
+			}
+		}
+	}
+	$s.pop();
+}}
+Main.__name__ = ["Main"];
+Main.globalErrorHandler = function(msg,stack) {
+	$s.push("Main::globalErrorHandler");
+	var $spos = $s.length;
+	haxe.Log.trace("Uncaugt error: " + msg,{ fileName : "Main.hx", lineNumber : 5, className : "Main", methodName : "globalErrorHandler"});
+	{
+		var _g = 0;
+		while(_g < stack.length) {
+			var line = stack[_g];
+			++_g;
+			haxe.Log.trace(line,{ fileName : "Main.hx", lineNumber : 7, className : "Main", methodName : "globalErrorHandler"});
+		}
+	}
+	{
+		$s.pop();
+		return true;
+	}
+	$s.pop();
+}
+Main.main = function() {
+	$s.push("Main::main");
+	var $spos = $s.length;
+	Log.init();
+	Log.addFilter(new ERegFilter(LogLevel.INFO,new EReg(".*","")));
+	Log.addFilter(new ERegFilter(LogLevel.WARN,new EReg(".*FrontMessenger\\.handleMessage.*","")));
+	Log.addFilter(new ERegFilter(LogLevel.WARN,new EReg(".*FrontMessenger\\.Receiver\\.execute.*","")));
+	js.Lib.setErrorHandler($closure(Main,"globalErrorHandler"));
+	$s.pop();
+}
+Main.prototype.__class__ = Main;
+haxe.Log = function() { }
+haxe.Log.__name__ = ["haxe","Log"];
+haxe.Log.trace = function(v,infos) {
+	$s.push("haxe.Log::trace");
+	var $spos = $s.length;
+	js.Boot.__trace(v,infos);
+	$s.pop();
+}
+haxe.Log.clear = function() {
+	$s.push("haxe.Log::clear");
+	var $spos = $s.length;
+	js.Boot.__clear_trace();
+	$s.pop();
+}
+haxe.Log.prototype.__class__ = haxe.Log;
+GLUniformLocation = function(p) { if( p === $_ ) return; {
+	$s.push("GLUniformLocation::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+GLUniformLocation.__name__ = ["GLUniformLocation"];
+GLUniformLocation.prototype.location = null;
+GLUniformLocation.prototype.uniform1f = function(v) {
+	$s.push("GLUniformLocation::uniform1f");
+	var $spos = $s.length;
+	GL.gl.uniform1f(this.location,v);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform1fv = function(v) {
+	$s.push("GLUniformLocation::uniform1fv");
+	var $spos = $s.length;
+	GL.gl.uniform1fv(this.location,v);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform1i = function(v) {
+	$s.push("GLUniformLocation::uniform1i");
+	var $spos = $s.length;
+	GL.gl.uniform1i(this.location,v);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform1iv = function(v) {
+	$s.push("GLUniformLocation::uniform1iv");
+	var $spos = $s.length;
+	GL.gl.uniform1iv(this.location,v);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform2f = function(x,y) {
+	$s.push("GLUniformLocation::uniform2f");
+	var $spos = $s.length;
+	GL.gl.uniform2f(this.location,x,y);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform2fv = function(v) {
+	$s.push("GLUniformLocation::uniform2fv");
+	var $spos = $s.length;
+	GL.gl.uniform2fv(this.location,v);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform2i = function(x,y) {
+	$s.push("GLUniformLocation::uniform2i");
+	var $spos = $s.length;
+	GL.gl.uniform2i(this.location,x,y);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform2iv = function(v) {
+	$s.push("GLUniformLocation::uniform2iv");
+	var $spos = $s.length;
+	GL.gl.uniform2iv(this.location,v);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform3f = function(x,y,z) {
+	$s.push("GLUniformLocation::uniform3f");
+	var $spos = $s.length;
+	GL.gl.uniform3f(this.location,x,y,z);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform3fv = function(v) {
+	$s.push("GLUniformLocation::uniform3fv");
+	var $spos = $s.length;
+	GL.gl.uniform3fv(this.location,v);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform3i = function(x,y,z) {
+	$s.push("GLUniformLocation::uniform3i");
+	var $spos = $s.length;
+	GL.gl.uniform3i(this.location,x,y,z);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform3iv = function(v) {
+	$s.push("GLUniformLocation::uniform3iv");
+	var $spos = $s.length;
+	GL.gl.uniform3iv(this.location,v);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform4f = function(x,y,z,w) {
+	$s.push("GLUniformLocation::uniform4f");
+	var $spos = $s.length;
+	GL.gl.uniform4f(this.location,x,y,z,w);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform4fv = function(v) {
+	$s.push("GLUniformLocation::uniform4fv");
+	var $spos = $s.length;
+	GL.gl.uniform4fv(this.location,v);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform4i = function(x,y,z,w) {
+	$s.push("GLUniformLocation::uniform4i");
+	var $spos = $s.length;
+	GL.gl.uniform4i(this.location,x,y,z,w);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniform4iv = function(v) {
+	$s.push("GLUniformLocation::uniform4iv");
+	var $spos = $s.length;
+	GL.gl.uniform4iv(this.location,v);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniformMatrix2fv = function(transpose,value) {
+	$s.push("GLUniformLocation::uniformMatrix2fv");
+	var $spos = $s.length;
+	if(transpose == null) transpose = false;
+	GL.gl.uniformMatrix2fv(this.location,transpose,value);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniformMatrix3fv = function(transpose,value) {
+	$s.push("GLUniformLocation::uniformMatrix3fv");
+	var $spos = $s.length;
+	if(transpose == null) transpose = false;
+	GL.gl.uniformMatrix3fv(this.location,transpose,value);
+	$s.pop();
+}
+GLUniformLocation.prototype.uniformMatrix4fv = function(transpose,value) {
+	$s.push("GLUniformLocation::uniformMatrix4fv");
+	var $spos = $s.length;
+	if(transpose == null) transpose = false;
+	GL.gl.uniformMatrix4fv(this.location,transpose,value);
+	$s.pop();
+}
+GLUniformLocation.prototype.setMatrix3 = function(matrix) {
+	$s.push("GLUniformLocation::setMatrix3");
+	var $spos = $s.length;
+	GL.gl.uniformMatrix3fv(this.location,false,matrix.buffer);
+	$s.pop();
+}
+GLUniformLocation.prototype.setMatrix4 = function(matrix) {
+	$s.push("GLUniformLocation::setMatrix4");
+	var $spos = $s.length;
+	GL.gl.uniformMatrix4fv(this.location,false,matrix.buffer);
+	$s.pop();
+}
+GLUniformLocation.prototype.setVec3 = function(vec) {
+	$s.push("GLUniformLocation::setVec3");
+	var $spos = $s.length;
+	GL.gl.uniform3f(this.location,vec.x,vec.y,vec.z);
+	$s.pop();
+}
+GLUniformLocation.prototype.setRGB = function(color) {
+	$s.push("GLUniformLocation::setRGB");
+	var $spos = $s.length;
+	GL.gl.uniform3f(this.location,color.r,color.g,color.b);
+	$s.pop();
+}
+GLUniformLocation.prototype.setRGBA = function(color) {
+	$s.push("GLUniformLocation::setRGBA");
+	var $spos = $s.length;
+	GL.gl.uniform4f(this.location,color.r,color.g,color.b,color.a);
+	$s.pop();
+}
+GLUniformLocation.prototype.setTexture = function(texture,index) {
+	$s.push("GLUniformLocation::setTexture");
+	var $spos = $s.length;
+	if(index == null) index = 0;
+	GL.gl.activeTexture(33984 + index);
+	GL.gl.bindTexture(3553,texture.texture);
+	GL.gl.uniform1i(this.location,index);
+	$s.pop();
+}
+GLUniformLocation.prototype.__class__ = GLUniformLocation;
+kumite.projection.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.projection.Config::new");
+	var $spos = $s.length;
+	this.projection = new kumite.projection.Projection();
+	this.projectionController = new kumite.projection.ProjectionController();
+	this.projectionController.fov = 40;
+	this.projectionController.near = 0.1;
+	this.projectionController.far = 500;
+	$s.pop();
+}}
+kumite.projection.Config.__name__ = ["kumite","projection","Config"];
+kumite.projection.Config.prototype.projection = null;
+kumite.projection.Config.prototype.projectionController = null;
+kumite.projection.Config.prototype.__class__ = kumite.projection.Config;
+kumite.projection.Config.__interfaces__ = [haxe.rtti.Infos];
+LogFilter = function() { }
+LogFilter.__name__ = ["LogFilter"];
+LogFilter.prototype.enabled = null;
+LogFilter.prototype.__class__ = LogFilter;
+kumite.camera.Camera = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.camera.Camera::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.camera.Camera.__name__ = ["kumite","camera","Camera"];
+kumite.camera.Camera.prototype.matrix = null;
+kumite.camera.Camera.prototype.__class__ = kumite.camera.Camera;
+if(!kumite.vjinterface) kumite.vjinterface = {}
+kumite.vjinterface.VJInterface = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.vjinterface.VJInterface::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.vjinterface.VJInterface.__name__ = ["kumite","vjinterface","VJInterface"];
+kumite.vjinterface.VJInterface.prototype.stage = null;
+kumite.vjinterface.VJInterface.prototype.cutButton = null;
+kumite.vjinterface.VJInterface.prototype.shortButton = null;
+kumite.vjinterface.VJInterface.prototype.longButton = null;
+kumite.vjinterface.VJInterface.prototype.start = function() {
+	$s.push("kumite.vjinterface.VJInterface::start");
+	var $spos = $s.length;
+	this.stage = GLDisplayList.getDefault().stage;
+	this.stage.addChild(new GLStats());
+	this.cutButton = new GLLabel();
+	this.cutButton.setX(10);
+	this.cutButton.setText("CUT");
+	this.cutButton.setWidth(80);
+	this.cutButton.setHeight(20);
+	this.stage.addChild(this.cutButton);
+	this.shortButton = new GLLabel();
+	this.shortButton.setX(10);
+	this.shortButton.setText("SHORT");
+	this.shortButton.setWidth(80);
+	this.shortButton.setHeight(20);
+	this.stage.addChild(this.shortButton);
+	this.longButton = new GLLabel();
+	this.longButton.setX(10);
+	this.longButton.setText("LONG");
+	this.longButton.setWidth(80);
+	this.longButton.setHeight(20);
+	this.stage.addChild(this.longButton);
+	$s.pop();
+}
+kumite.vjinterface.VJInterface.prototype.render = function(tick) {
+	$s.push("kumite.vjinterface.VJInterface::render");
+	var $spos = $s.length;
+	this.cutButton.setY(this.stage.stageHeight - 90);
+	this.shortButton.setY(this.stage.stageHeight - 60);
+	this.longButton.setY(this.stage.stageHeight - 30);
+	$s.pop();
+}
+kumite.vjinterface.VJInterface.prototype.__class__ = kumite.vjinterface.VJInterface;
+kumite.vjinterface.VJInterface.__interfaces__ = [haxe.rtti.Infos];
+GLHitarea = function(p) { if( p === $_ ) return; {
+	$s.push("GLHitarea::new");
+	var $spos = $s.length;
+	this.position = new Vec2();
+	this.size = new Vec2();
+	$s.pop();
+}}
+GLHitarea.__name__ = ["GLHitarea"];
+GLHitarea.prototype.position = null;
+GLHitarea.prototype.size = null;
+GLHitarea.prototype.isUnder = function(matrix,positionOnStage) {
+	$s.push("GLHitarea::isUnder");
+	var $spos = $s.length;
+	var tl = this.position.clone();
+	tl.transform(matrix);
+	var br = this.size.clone();
+	br.transform(matrix);
+	{
+		var $tmp = tl.x <= positionOnStage.x && br.x >= positionOnStage.x && tl.y <= positionOnStage.y && br.y >= positionOnStage.y;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GLHitarea.prototype.__class__ = GLHitarea;
+if(!kumite.displaylist) kumite.displaylist = {}
+kumite.displaylist.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.displaylist.Config::new");
+	var $spos = $s.length;
+	this.displayListController = new kumite.displaylist.DisplayListController();
+	$s.pop();
+}}
+kumite.displaylist.Config.__name__ = ["kumite","displaylist","Config"];
+kumite.displaylist.Config.prototype.displayListController = null;
+kumite.displaylist.Config.prototype.__class__ = kumite.displaylist.Config;
+kumite.displaylist.Config.__interfaces__ = [haxe.rtti.Infos];
+Std = function() { }
+Std.__name__ = ["Std"];
+Std["is"] = function(v,t) {
+	$s.push("Std::is");
+	var $spos = $s.length;
+	{
+		var $tmp = js.Boot.__instanceof(v,t);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Std.string = function(s) {
+	$s.push("Std::string");
+	var $spos = $s.length;
+	{
+		var $tmp = js.Boot.__string_rec(s,"");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Std["int"] = function(x) {
+	$s.push("Std::int");
+	var $spos = $s.length;
+	if(x < 0) {
+		var $tmp = Math.ceil(x);
+		$s.pop();
+		return $tmp;
+	}
+	{
+		var $tmp = Math.floor(x);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Std.parseInt = function(x) {
+	$s.push("Std::parseInt");
+	var $spos = $s.length;
+	var v = parseInt(x,10);
+	if(v == 0 && x.charCodeAt(1) == 120) v = parseInt(x);
+	if(isNaN(v)) {
+		$s.pop();
+		return null;
+	}
+	{
+		var $tmp = v;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Std.parseFloat = function(x) {
+	$s.push("Std::parseFloat");
+	var $spos = $s.length;
+	{
+		var $tmp = parseFloat(x);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Std.random = function(x) {
+	$s.push("Std::random");
+	var $spos = $s.length;
+	{
+		var $tmp = Math.floor(Math.random() * x);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Std.prototype.__class__ = Std;
+kumite.stage.Stage = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.stage.Stage::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.stage.Stage.__name__ = ["kumite","stage","Stage"];
+kumite.stage.Stage.prototype.width = null;
+kumite.stage.Stage.prototype.height = null;
+kumite.stage.Stage.prototype.aspect = null;
+kumite.stage.Stage.prototype.getAspect = function() {
+	$s.push("kumite.stage.Stage::getAspect");
+	var $spos = $s.length;
+	{
+		var $tmp = this.width / this.height;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+kumite.stage.Stage.prototype.__class__ = kumite.stage.Stage;
+if(!haxe.exception) haxe.exception = {}
+haxe.exception.Exception = function(message,innerException,numberOfStackTraceShifts) { if( message === $_ ) return; {
+	$s.push("haxe.exception.Exception::new");
+	var $spos = $s.length;
+	this.message = null == message?"Unknown exception":message;
+	this.innerException = innerException;
+	this.generateStackTrace(numberOfStackTraceShifts);
+	this.stackTrace = this.stackTraceArray;
+	$s.pop();
+}}
+haxe.exception.Exception.__name__ = ["haxe","exception","Exception"];
+haxe.exception.Exception.prototype.baseException = null;
+haxe.exception.Exception.prototype.innerException = null;
+haxe.exception.Exception.prototype.message = null;
+haxe.exception.Exception.prototype.stackTrace = null;
+haxe.exception.Exception.prototype.stackTraceArray = null;
+haxe.exception.Exception.prototype.generateStackTrace = function(numberOfStackTraceShifts) {
+	$s.push("haxe.exception.Exception::generateStackTrace");
+	var $spos = $s.length;
+	this.stackTraceArray = haxe.Stack.callStack().slice(numberOfStackTraceShifts + 1);
+	var exceptionClass = Type.getClass(this);
+	while(haxe.exception.Exception != exceptionClass) {
+		this.stackTraceArray.shift();
+		exceptionClass = Type.getSuperClass(exceptionClass);
+	}
+	$s.pop();
+}
+haxe.exception.Exception.prototype.getBaseException = function() {
+	$s.push("haxe.exception.Exception::getBaseException");
+	var $spos = $s.length;
+	var result = this;
+	while(null != result.innerException) {
+		result = result.innerException;
+	}
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+haxe.exception.Exception.prototype.toString = function() {
+	$s.push("haxe.exception.Exception::toString");
+	var $spos = $s.length;
+	{
+		var $tmp = this.message + haxe.Stack.toString(this.stackTraceArray);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.exception.Exception.prototype.__class__ = haxe.exception.Exception;
+haxe.Timer = function(time_ms) { if( time_ms === $_ ) return; {
+	$s.push("haxe.Timer::new");
+	var $spos = $s.length;
+	this.id = haxe.Timer.arr.length;
+	haxe.Timer.arr[this.id] = this;
+	this.timerId = window.setInterval("haxe.Timer.arr[" + this.id + "].run();",time_ms);
+	$s.pop();
+}}
+haxe.Timer.__name__ = ["haxe","Timer"];
+haxe.Timer.delay = function(f,time_ms) {
+	$s.push("haxe.Timer::delay");
+	var $spos = $s.length;
+	var t = new haxe.Timer(time_ms);
+	t.run = function() {
+		$s.push("haxe.Timer::delay@78");
+		var $spos = $s.length;
+		t.stop();
+		f();
+		$s.pop();
+	}
+	{
+		$s.pop();
+		return t;
+	}
+	$s.pop();
+}
+haxe.Timer.measure = function(f,pos) {
+	$s.push("haxe.Timer::measure");
+	var $spos = $s.length;
+	var t0 = haxe.Timer.stamp();
+	var r = f();
+	haxe.Log.trace(haxe.Timer.stamp() - t0 + "s",pos);
+	{
+		$s.pop();
+		return r;
+	}
+	$s.pop();
+}
+haxe.Timer.stamp = function() {
+	$s.push("haxe.Timer::stamp");
+	var $spos = $s.length;
+	{
+		var $tmp = Date.now().getTime() / 1000;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.Timer.prototype.id = null;
+haxe.Timer.prototype.timerId = null;
+haxe.Timer.prototype.stop = function() {
+	$s.push("haxe.Timer::stop");
+	var $spos = $s.length;
+	if(this.id == null) {
+		$s.pop();
+		return;
+	}
+	window.clearInterval(this.timerId);
+	haxe.Timer.arr[this.id] = null;
+	if(this.id > 100 && this.id == haxe.Timer.arr.length - 1) {
+		var p = this.id - 1;
+		while(p >= 0 && haxe.Timer.arr[p] == null) p--;
+		haxe.Timer.arr = haxe.Timer.arr.slice(0,p + 1);
+	}
+	this.id = null;
+	$s.pop();
+}
+haxe.Timer.prototype.run = function() {
+	$s.push("haxe.Timer::run");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+haxe.Timer.prototype.__class__ = haxe.Timer;
+Vec3 = function(x,y,z) { if( x === $_ ) return; {
+	$s.push("Vec3::new");
+	var $spos = $s.length;
+	this.x = x;
+	this.y = y;
+	this.z = z;
+	$s.pop();
+}}
+Vec3.__name__ = ["Vec3"];
+Vec3.prototype.x = null;
+Vec3.prototype.y = null;
+Vec3.prototype.z = null;
+Vec3.prototype.scale = function(factor) {
+	$s.push("Vec3::scale");
+	var $spos = $s.length;
+	this.x *= factor;
+	this.y *= factor;
+	this.z *= factor;
+	$s.pop();
+}
+Vec3.prototype.multiply = function(x,y,z) {
+	$s.push("Vec3::multiply");
+	var $spos = $s.length;
+	this.x *= x;
+	this.y *= y;
+	this.z *= z;
+	$s.pop();
+}
+Vec3.prototype.subtract = function(x,y,z) {
+	$s.push("Vec3::subtract");
+	var $spos = $s.length;
+	this.x -= x;
+	this.y -= y;
+	this.z -= z;
+	{
+		$s.pop();
+		return this;
+	}
+	$s.pop();
+}
+Vec3.prototype.normalize = function() {
+	$s.push("Vec3::normalize");
+	var $spos = $s.length;
+	var length = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+	this.x /= length;
+	this.y /= length;
+	this.z /= length;
+	$s.pop();
+}
+Vec3.prototype.cross = function(vec) {
+	$s.push("Vec3::cross");
+	var $spos = $s.length;
+	var x = this.y * vec.z - this.z * vec.y;
+	var y = this.z * vec.x - this.x * vec.z;
+	var z = this.x * vec.y - this.y * vec.x;
+	{
+		var $tmp = new Vec3(x,y,z);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Vec3.prototype.dot = function(vec) {
+	$s.push("Vec3::dot");
+	var $spos = $s.length;
+	{
+		var $tmp = this.x * vec.x + this.y * vec.y + this.z * vec.z;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Vec3.prototype.transform = function(matrix) {
+	$s.push("Vec3::transform");
+	var $spos = $s.length;
+	var x1 = this.x, y1 = this.y, z1 = this.z;
+	var mat = matrix.buffer;
+	this.x = mat[0] * x1 + mat[4] * y1 + mat[8] * z1 + mat[12];
+	this.y = mat[1] * x1 + mat[5] * y1 + mat[9] * z1 + mat[13];
+	this.z = mat[2] * x1 + mat[6] * y1 + mat[10] * z1 + mat[14];
+	$s.pop();
+}
+Vec3.prototype.setFrom = function(value,vec3) {
+	$s.push("Vec3::setFrom");
+	var $spos = $s.length;
+	if(value != null) {
+		this.x = value;
+		this.y = value;
+		this.z = value;
+	}
+	else if(vec3 != null) {
+		this.x = vec3.x;
+		this.y = vec3.y;
+		this.z = vec3.z;
+	}
+	$s.pop();
+}
+Vec3.prototype.clone = function() {
+	$s.push("Vec3::clone");
+	var $spos = $s.length;
+	{
+		var $tmp = new Vec3(this.x,this.y,this.z);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Vec3.prototype.__class__ = Vec3;
+if(!haxe.xml) haxe.xml = {}
+if(!haxe.xml._Fast) haxe.xml._Fast = {}
+haxe.xml._Fast.NodeAccess = function(x) { if( x === $_ ) return; {
+	$s.push("haxe.xml._Fast.NodeAccess::new");
+	var $spos = $s.length;
+	this.__x = x;
+	$s.pop();
+}}
+haxe.xml._Fast.NodeAccess.__name__ = ["haxe","xml","_Fast","NodeAccess"];
+haxe.xml._Fast.NodeAccess.prototype.__x = null;
+haxe.xml._Fast.NodeAccess.prototype.resolve = function(name) {
+	$s.push("haxe.xml._Fast.NodeAccess::resolve");
+	var $spos = $s.length;
+	var x = this.__x.elementsNamed(name).next();
+	if(x == null) {
+		var xname = this.__x.nodeType == Xml.Document?"Document":this.__x.getNodeName();
+		throw xname + " is missing element " + name;
+	}
+	{
+		var $tmp = new haxe.xml.Fast(x);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.xml._Fast.NodeAccess.prototype.__class__ = haxe.xml._Fast.NodeAccess;
+haxe.xml._Fast.AttribAccess = function(x) { if( x === $_ ) return; {
+	$s.push("haxe.xml._Fast.AttribAccess::new");
+	var $spos = $s.length;
+	this.__x = x;
+	$s.pop();
+}}
+haxe.xml._Fast.AttribAccess.__name__ = ["haxe","xml","_Fast","AttribAccess"];
+haxe.xml._Fast.AttribAccess.prototype.__x = null;
+haxe.xml._Fast.AttribAccess.prototype.resolve = function(name) {
+	$s.push("haxe.xml._Fast.AttribAccess::resolve");
+	var $spos = $s.length;
+	if(this.__x.nodeType == Xml.Document) throw "Cannot access document attribute " + name;
+	var v = this.__x.get(name);
+	if(v == null) throw this.__x.getNodeName() + " is missing attribute " + name;
+	{
+		$s.pop();
+		return v;
+	}
+	$s.pop();
+}
+haxe.xml._Fast.AttribAccess.prototype.__class__ = haxe.xml._Fast.AttribAccess;
+haxe.xml._Fast.HasAttribAccess = function(x) { if( x === $_ ) return; {
+	$s.push("haxe.xml._Fast.HasAttribAccess::new");
+	var $spos = $s.length;
+	this.__x = x;
+	$s.pop();
+}}
+haxe.xml._Fast.HasAttribAccess.__name__ = ["haxe","xml","_Fast","HasAttribAccess"];
+haxe.xml._Fast.HasAttribAccess.prototype.__x = null;
+haxe.xml._Fast.HasAttribAccess.prototype.resolve = function(name) {
+	$s.push("haxe.xml._Fast.HasAttribAccess::resolve");
+	var $spos = $s.length;
+	if(this.__x.nodeType == Xml.Document) throw "Cannot access document attribute " + name;
+	{
+		var $tmp = this.__x.exists(name);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.xml._Fast.HasAttribAccess.prototype.__class__ = haxe.xml._Fast.HasAttribAccess;
+haxe.xml._Fast.HasNodeAccess = function(x) { if( x === $_ ) return; {
+	$s.push("haxe.xml._Fast.HasNodeAccess::new");
+	var $spos = $s.length;
+	this.__x = x;
+	$s.pop();
+}}
+haxe.xml._Fast.HasNodeAccess.__name__ = ["haxe","xml","_Fast","HasNodeAccess"];
+haxe.xml._Fast.HasNodeAccess.prototype.__x = null;
+haxe.xml._Fast.HasNodeAccess.prototype.resolve = function(name) {
+	$s.push("haxe.xml._Fast.HasNodeAccess::resolve");
+	var $spos = $s.length;
+	{
+		var $tmp = this.__x.elementsNamed(name).hasNext();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.xml._Fast.HasNodeAccess.prototype.__class__ = haxe.xml._Fast.HasNodeAccess;
+haxe.xml._Fast.NodeListAccess = function(x) { if( x === $_ ) return; {
+	$s.push("haxe.xml._Fast.NodeListAccess::new");
+	var $spos = $s.length;
+	this.__x = x;
+	$s.pop();
+}}
+haxe.xml._Fast.NodeListAccess.__name__ = ["haxe","xml","_Fast","NodeListAccess"];
+haxe.xml._Fast.NodeListAccess.prototype.__x = null;
+haxe.xml._Fast.NodeListAccess.prototype.resolve = function(name) {
+	$s.push("haxe.xml._Fast.NodeListAccess::resolve");
+	var $spos = $s.length;
+	var l = new List();
+	{ var $it0 = this.__x.elementsNamed(name);
+	while( $it0.hasNext() ) { var x = $it0.next();
+	l.add(new haxe.xml.Fast(x));
+	}}
+	{
+		$s.pop();
+		return l;
+	}
+	$s.pop();
+}
+haxe.xml._Fast.NodeListAccess.prototype.__class__ = haxe.xml._Fast.NodeListAccess;
+haxe.xml.Fast = function(x) { if( x === $_ ) return; {
+	$s.push("haxe.xml.Fast::new");
+	var $spos = $s.length;
+	if(x.nodeType != Xml.Document && x.nodeType != Xml.Element) throw "Invalid nodeType " + x.nodeType;
+	this.x = x;
+	this.node = new haxe.xml._Fast.NodeAccess(x);
+	this.nodes = new haxe.xml._Fast.NodeListAccess(x);
+	this.att = new haxe.xml._Fast.AttribAccess(x);
+	this.has = new haxe.xml._Fast.HasAttribAccess(x);
+	this.hasNode = new haxe.xml._Fast.HasNodeAccess(x);
+	$s.pop();
+}}
+haxe.xml.Fast.__name__ = ["haxe","xml","Fast"];
+haxe.xml.Fast.prototype.x = null;
+haxe.xml.Fast.prototype.name = null;
+haxe.xml.Fast.prototype.innerData = null;
+haxe.xml.Fast.prototype.innerHTML = null;
+haxe.xml.Fast.prototype.node = null;
+haxe.xml.Fast.prototype.nodes = null;
+haxe.xml.Fast.prototype.att = null;
+haxe.xml.Fast.prototype.has = null;
+haxe.xml.Fast.prototype.hasNode = null;
+haxe.xml.Fast.prototype.elements = null;
+haxe.xml.Fast.prototype.getName = function() {
+	$s.push("haxe.xml.Fast::getName");
+	var $spos = $s.length;
+	{
+		var $tmp = this.x.nodeType == Xml.Document?"Document":this.x.getNodeName();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.xml.Fast.prototype.getInnerData = function() {
+	$s.push("haxe.xml.Fast::getInnerData");
+	var $spos = $s.length;
+	var it = this.x.iterator();
+	if(!it.hasNext()) throw this.getName() + " does not have data";
+	var v = it.next();
+	if(it.hasNext()) throw this.getName() + " does not only have data";
+	if(v.nodeType != Xml.PCData && v.nodeType != Xml.CData) throw this.getName() + " does not have data";
+	{
+		var $tmp = v.getNodeValue();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.xml.Fast.prototype.getInnerHTML = function() {
+	$s.push("haxe.xml.Fast::getInnerHTML");
+	var $spos = $s.length;
+	var s = new StringBuf();
+	{ var $it0 = this.x.iterator();
+	while( $it0.hasNext() ) { var x = $it0.next();
+	s.b[s.b.length] = x.toString();
+	}}
+	{
+		var $tmp = s.b.join("");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.xml.Fast.prototype.getElements = function() {
+	$s.push("haxe.xml.Fast::getElements");
+	var $spos = $s.length;
+	var it = this.x.elements();
+	{
+		var $tmp = { hasNext : $closure(it,"hasNext"), next : function() {
+			$s.push("haxe.xml.Fast::getElements@163");
+			var $spos = $s.length;
+			var x = it.next();
+			if(x == null) {
+				$s.pop();
+				return null;
+			}
+			{
+				var $tmp = new haxe.xml.Fast(x);
+				$s.pop();
+				return $tmp;
+			}
+			$s.pop();
+		}};
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.xml.Fast.prototype.__class__ = haxe.xml.Fast;
+kumite.helloworldgl.shader.Vertex = function() { }
+kumite.helloworldgl.shader.Vertex.__name__ = ["kumite","helloworldgl","shader","Vertex"];
+kumite.helloworldgl.shader.Vertex.prototype.__class__ = kumite.helloworldgl.shader.Vertex;
+haxe.rtti.Meta = function() { }
+haxe.rtti.Meta.__name__ = ["haxe","rtti","Meta"];
+haxe.rtti.Meta.getType = function(t) {
+	$s.push("haxe.rtti.Meta::getType");
+	var $spos = $s.length;
+	var meta = t.__meta__;
+	{
+		var $tmp = meta == null?meta:meta.obj;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.rtti.Meta.getStatics = function(t) {
+	$s.push("haxe.rtti.Meta::getStatics");
+	var $spos = $s.length;
+	var meta = t.__meta__;
+	{
+		var $tmp = meta == null?meta:meta.statics;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.rtti.Meta.getFields = function(t) {
+	$s.push("haxe.rtti.Meta::getFields");
+	var $spos = $s.length;
+	var meta = t.__meta__;
+	{
+		var $tmp = meta == null?meta:meta.fields;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+haxe.rtti.Meta.prototype.__class__ = haxe.rtti.Meta;
+if(typeof shader=='undefined') shader = {}
+shader.DisplayObjectVertex = function() { }
+shader.DisplayObjectVertex.__name__ = ["shader","DisplayObjectVertex"];
+shader.DisplayObjectVertex.prototype.__class__ = shader.DisplayObjectVertex;
+kumite.stage.StageResizeAction = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.stage.StageResizeAction::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.stage.StageResizeAction.__name__ = ["kumite","stage","StageResizeAction"];
+kumite.stage.StageResizeAction.prototype.messenger = null;
+kumite.stage.StageResizeAction.prototype.stage = null;
+kumite.stage.StageResizeAction.prototype.initPrepare = function() {
+	$s.push("kumite.stage.StageResizeAction::initPrepare");
+	var $spos = $s.length;
+	this.updateSize();
+	$s.pop();
+}
+kumite.stage.StageResizeAction.prototype.startComplete = function() {
+	$s.push("kumite.stage.StageResizeAction::startComplete");
+	var $spos = $s.length;
+	GLAnimationFrame.run($closure(this,"timerUpdate"));
+	js.Lib.window.onresize = $closure(this,"onResize");
+	$s.pop();
+}
+kumite.stage.StageResizeAction.prototype.timerUpdate = function() {
+	$s.push("kumite.stage.StageResizeAction::timerUpdate");
+	var $spos = $s.length;
+	if(this.stage.width != js.Lib.window.innerWidth || this.stage.height != js.Lib.window.innerHeight) this.onResize();
+	$s.pop();
+}
+kumite.stage.StageResizeAction.prototype.onResize = function(event) {
+	$s.push("kumite.stage.StageResizeAction::onResize");
+	var $spos = $s.length;
+	this.updateSize();
+	this.sendResizeMessage();
+	$s.pop();
+}
+kumite.stage.StageResizeAction.prototype.updateSize = function() {
+	$s.push("kumite.stage.StageResizeAction::updateSize");
+	var $spos = $s.length;
+	this.stage.width = Std["int"](js.Lib.window.innerWidth);
+	this.stage.height = Std["int"](js.Lib.window.innerHeight);
+	$s.pop();
+}
+kumite.stage.StageResizeAction.prototype.sendResizeMessage = function() {
+	$s.push("kumite.stage.StageResizeAction::sendResizeMessage");
+	var $spos = $s.length;
+	this.messenger.send(new kumite.stage.StageResizeMessage());
+	$s.pop();
+}
+kumite.stage.StageResizeAction.prototype.__class__ = kumite.stage.StageResizeAction;
+kumite.stage.StageResizeAction.__interfaces__ = [haxe.rtti.Infos];
+GL = function() { }
+GL.__name__ = ["GL"];
+GL.gl = null;
+GL.currentProgramm = null;
+GL.init = function(canvas,antialias) {
+	$s.push("GL::init");
+	var $spos = $s.length;
+	var params = { antialias : antialias};
+	GL.gl = canvas.getContext("webgl",params);
+	if(GL.gl == null) GL.gl = canvas.getContext("experimental-webgl",params);
+	if(GL.gl == null) {
+		throw "Could not initialise WebGL.";
+	}
+	{
+		var $tmp = GL.gl;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GL.useProgram = function(shaderProgramm) {
+	$s.push("GL::useProgram");
+	var $spos = $s.length;
+	GL.currentProgramm = shaderProgramm;
+	GL.gl.useProgram(GL.currentProgramm);
+	$s.pop();
+}
+GL.createProgram = function(vertexSourceClass,fragmentSourceClass) {
+	$s.push("GL::createProgram");
+	var $spos = $s.length;
+	GL.currentProgramm = GL.gl.createProgram();
+	var vs = GL.gl.createShader(GL.gl.VERTEX_SHADER);
+	GL.gl.shaderSource(vs,GL.createGLSLFromClass(vertexSourceClass));
+	GL.gl.compileShader(vs);
+	if(!GL.gl.getShaderParameter(vs,GL.gl.COMPILE_STATUS)) throw GL.gl.getShaderInfoLog(vs);
+	var fs = GL.gl.createShader(GL.gl.FRAGMENT_SHADER);
+	GL.gl.shaderSource(fs,GL.createGLSLFromClass(fragmentSourceClass));
+	GL.gl.compileShader(fs);
+	if(!GL.gl.getShaderParameter(fs,GL.gl.COMPILE_STATUS)) throw GL.gl.getShaderInfoLog(fs);
+	GL.gl.attachShader(GL.currentProgramm,vs);
+	GL.gl.attachShader(GL.currentProgramm,fs);
+	GL.gl.linkProgram(GL.currentProgramm);
+	if(!GL.gl.getProgramParameter(GL.currentProgramm,GL.gl.LINK_STATUS)) throw "Could not link shader!";
+	{
+		var $tmp = GL.currentProgramm;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GL.createGLSLFromClass = function(shaderClass) {
+	$s.push("GL::createGLSLFromClass");
+	var $spos = $s.length;
+	var metaDatas = haxe.rtti.Meta.getType(shaderClass);
+	var glsl = Reflect.field(metaDatas,"GLSL");
+	if(glsl.length != 1) throw "Missing GLSL metadata in shader class: " + shaderClass;
+	{
+		var $tmp = glsl[0];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GL.createArrayBuffer = function(array,type) {
+	$s.push("GL::createArrayBuffer");
+	var $spos = $s.length;
+	if(type == null) type = 35044;
+	var vertexBuffer = GL.gl.createBuffer();
+	GL.gl.bindBuffer(GL.gl.ARRAY_BUFFER,vertexBuffer);
+	GL.gl.bufferData(GL.gl.ARRAY_BUFFER,array,type);
+	{
+		$s.pop();
+		return vertexBuffer;
+	}
+	$s.pop();
+}
+GL.getUniformLocation = function(name) {
+	$s.push("GL::getUniformLocation");
+	var $spos = $s.length;
+	var location = GL.gl.getUniformLocation(GL.currentProgramm,name);
+	if(location == null) haxe.Log.trace("Could not find " + name + " in shader",{ fileName : "GL.hx", lineNumber : 458, className : "GL", methodName : "getUniformLocation"});
+	var result = new GLUniformLocation();
+	result.location = location;
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+GL.getAttribLocation2 = function(name,size,type) {
+	$s.push("GL::getAttribLocation2");
+	var $spos = $s.length;
+	var location = GL.gl.getAttribLocation(GL.currentProgramm,name);
+	if(location == null) haxe.Log.trace("Could not find " + name + " in shader",{ fileName : "GL.hx", lineNumber : 469, className : "GL", methodName : "getAttribLocation2"});
+	var result = new GLAttribLocation();
+	result.location = location;
+	result.size = size;
+	result.type = type;
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+GL.activeTexture = function(texture) {
+	$s.push("GL::activeTexture");
+	var $spos = $s.length;
+	GL.gl.activeTexture(texture);
+	$s.pop();
+}
+GL.bindBuffer = function(target,buffer) {
+	$s.push("GL::bindBuffer");
+	var $spos = $s.length;
+	GL.gl.bindBuffer(target,buffer);
+	$s.pop();
+}
+GL.bindFramebuffer = function(target,framebuffer) {
+	$s.push("GL::bindFramebuffer");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.bindRenderbuffer = function(target,renderbuffer) {
+	$s.push("GL::bindRenderbuffer");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.bindTexture = function(target,texture) {
+	$s.push("GL::bindTexture");
+	var $spos = $s.length;
+	GL.gl.bindTexture(target,texture);
+	$s.pop();
+}
+GL.blendFunc = function(sfactor,dfactor) {
+	$s.push("GL::blendFunc");
+	var $spos = $s.length;
+	GL.gl.blendFunc(sfactor,dfactor);
+	$s.pop();
+}
+GL.bufferData = function(target,data,usage) {
+	$s.push("GL::bufferData");
+	var $spos = $s.length;
+	GL.gl.bufferData(target,data,usage);
+	$s.pop();
+}
+GL.clear = function(mask) {
+	$s.push("GL::clear");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.clearColor = function(red,green,blue,alpha) {
+	$s.push("GL::clearColor");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.clearDepth = function(depth) {
+	$s.push("GL::clearDepth");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.compileShader = function(shader) {
+	$s.push("GL::compileShader");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.createBuffer = function() {
+	$s.push("GL::createBuffer");
+	var $spos = $s.length;
+	{
+		var $tmp = GL.gl.createBuffer();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GL.createFramebuffer = function() {
+	$s.push("GL::createFramebuffer");
+	var $spos = $s.length;
+	{
+		var $tmp = GL.gl.createFramebuffer();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GL.createRenderbuffer = function() {
+	$s.push("GL::createRenderbuffer");
+	var $spos = $s.length;
+	{
+		var $tmp = GL.gl.createRenderbuffer();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GL.createTexture = function() {
+	$s.push("GL::createTexture");
+	var $spos = $s.length;
+	{
+		var $tmp = GL.gl.createTexture();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GL.createShader = function(type) {
+	$s.push("GL::createShader");
+	var $spos = $s.length;
+	{
+		var $tmp = GL.gl.createShader(type);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GL.deleteBuffer = function(buffer) {
+	$s.push("GL::deleteBuffer");
+	var $spos = $s.length;
+	GL.gl.deleteBuffer(buffer);
+	$s.pop();
+}
+GL.disable = function(cap) {
+	$s.push("GL::disable");
+	var $spos = $s.length;
+	GL.gl.disable(cap);
+	$s.pop();
+}
+GL.drawArrays = function(mode,first,count) {
+	$s.push("GL::drawArrays");
+	var $spos = $s.length;
+	GL.gl.drawArrays(mode,first,count);
+	$s.pop();
+}
+GL.enable = function(cap) {
+	$s.push("GL::enable");
+	var $spos = $s.length;
+	GL.gl.enable(cap);
+	$s.pop();
+}
+GL.enableVertexAttribArray = function(index) {
+	$s.push("GL::enableVertexAttribArray");
+	var $spos = $s.length;
+	GL.gl.enableVertexAttribArray(index);
+	$s.pop();
+}
+GL.framebufferRenderbuffer = function(target,attachment,renderbuffertarget,renderbuffer) {
+	$s.push("GL::framebufferRenderbuffer");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.framebufferTexture2D = function(target,attachment,textarget,texture,level) {
+	$s.push("GL::framebufferTexture2D");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.generateMipmap = function(target) {
+	$s.push("GL::generateMipmap");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.getAttribLocation = function(program,name) {
+	$s.push("GL::getAttribLocation");
+	var $spos = $s.length;
+	{
+		var $tmp = GL.gl.getAttribLocation(program,name);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GL.getShaderInfoLog = function(shader) {
+	$s.push("GL::getShaderInfoLog");
+	var $spos = $s.length;
+	{
+		var $tmp = GL.gl.getShaderInfoLog(shader);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GL.getShaderParameter = function(shader,pname) {
+	$s.push("GL::getShaderParameter");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.getProgramParameter = function(program,pname) {
+	$s.push("GL::getProgramParameter");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.linkProgram = function(program) {
+	$s.push("GL::linkProgram");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.renderbufferStorage = function(target,internalformat,width,height) {
+	$s.push("GL::renderbufferStorage");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.shaderSource = function(shader,source) {
+	$s.push("GL::shaderSource");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.texImage2DArrayBufferView = function(target,level,internalformat,width,height,border,format,type,pixels) {
+	$s.push("GL::texImage2DArrayBufferView");
+	var $spos = $s.length;
+	GL.gl.texImage2D(target,level,internalformat,width,height,border,format,type,pixels);
+	$s.pop();
+}
+GL.texImage2DImageData = function(target,level,internalformat,format,type,pixels) {
+	$s.push("GL::texImage2DImageData");
+	var $spos = $s.length;
+	GL.gl.texImage2D(target,level,internalformat,format,type,pixels);
+	$s.pop();
+}
+GL.texImage2DImage = function(target,level,internalformat,format,type,image) {
+	$s.push("GL::texImage2DImage");
+	var $spos = $s.length;
+	GL.gl.texImage2D(target,level,internalformat,format,type,image);
+	$s.pop();
+}
+GL.texImage2DCanvas = function(target,level,internalformat,format,type,canvas) {
+	$s.push("GL::texImage2DCanvas");
+	var $spos = $s.length;
+	GL.gl.texImage2D(target,level,internalformat,format,type,canvas);
+	$s.pop();
+}
+GL.texImage2DVideo = function(target,level,internalformat,format,type,video) {
+	$s.push("GL::texImage2DVideo");
+	var $spos = $s.length;
+	GL.gl.texImage2D(target,level,internalformat,format,type,video);
+	$s.pop();
+}
+GL.texParameteri = function(target,pname,param) {
+	$s.push("GL::texParameteri");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+GL.vertexAttribPointer = function(indx,size,type,normalized,stride,offset) {
+	$s.push("GL::vertexAttribPointer");
+	var $spos = $s.length;
+	GL.gl.vertexAttribPointer(indx,size,type,normalized,stride,offset);
+	$s.pop();
+}
+GL.viewport = function(x,y,width,height) {
+	$s.push("GL::viewport");
+	var $spos = $s.length;
+	GL.gl.viewport(x,y,width,height);
+	$s.pop();
+}
+GL.prototype.__class__ = GL;
+GLStats = function(p) { if( p === $_ ) return; {
+	$s.push("GLStats::new");
+	var $spos = $s.length;
+	GLDisplayObject.call(this);
+	this.setWidth(64);
+	this.setHeight(32);
+	this.enterFrameSignaler.bind($closure(this,"handleEnterFrame"));
+	$s.pop();
+}}
+GLStats.__name__ = ["GLStats"];
+GLStats.__super__ = GLDisplayObject;
+for(var k in GLDisplayObject.prototype ) GLStats.prototype[k] = GLDisplayObject.prototype[k];
+GLStats.prototype.lastDraw = null;
+GLStats.prototype.handleEnterFrame = function(frame) {
+	$s.push("GLStats::handleEnterFrame");
+	var $spos = $s.length;
+	if(this.lastDraw < frame.time - 100) {
+		this.lastDraw = frame.time;
+		this.graphic.clear();
+		this.graphic.setFillStyle(new Color(0,1,0,0.3));
+		this.graphic.fillRect(0,0,this.width - 10,bpmjs.Stats.getContents().length * 12 + 4);
+		this.graphic.setFont("12px Arial");
+		this.graphic.setFillStyle(new Color(0,1,0,1));
+		var line = 0;
+		{
+			var _g = 0, _g1 = bpmjs.Stats.getContents();
+			while(_g < _g1.length) {
+				var message = _g1[_g];
+				++_g;
+				this.graphic.fillText(message,6,12 + line * 12);
+				line++;
+			}
+		}
+	}
+	$s.pop();
+}
+GLStats.prototype.__class__ = GLStats;
+GLHitareaPicker = function(p) { if( p === $_ ) return; {
+	$s.push("GLHitareaPicker::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+GLHitareaPicker.__name__ = ["GLHitareaPicker"];
+GLHitareaPicker.prototype.stageMousePosition = null;
+GLHitareaPicker.prototype.result = null;
+GLHitareaPicker.prototype.pick = function(stage,mousePosition) {
+	$s.push("GLHitareaPicker::pick");
+	var $spos = $s.length;
+	this.stageMousePosition = mousePosition.clone();
+	this.stageMousePosition.multiply(stage.stageWidth,stage.stageHeight);
+	this.result = null;
+	this.pickRecursive(stage,new Matrix4());
+	{
+		var $tmp = this.result;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GLHitareaPicker.prototype.pickRecursive = function(displayObjectContainer,parentMatrix) {
+	$s.push("GLHitareaPicker::pickRecursive");
+	var $spos = $s.length;
+	var _g = 0, _g1 = displayObjectContainer.children;
+	while(_g < _g1.length) {
+		var displayObject = _g1[_g];
+		++_g;
+		var matrix = this.pickDisplayObject(displayObject,parentMatrix);
+		if(Std["is"](displayObject,GLInteractiveObject)) {
+			var interactiveObject = (function($this) {
+				var $r;
+				var $t = displayObject;
+				if(Std["is"]($t,GLInteractiveObject)) $t;
+				else throw "Class cast error";
+				$r = $t;
+				return $r;
+			}(this));
+			if(interactiveObject.hitarea.isUnder(matrix,this.stageMousePosition)) this.result = interactiveObject;
+		}
+		if(Std["is"](displayObject,GLDisplayObjectContainer)) {
+			this.pickRecursive(displayObject,matrix);
+		}
+	}
+	$s.pop();
+}
+GLHitareaPicker.prototype.pickDisplayObject = function(displayObject,parentMatrix) {
+	$s.push("GLHitareaPicker::pickDisplayObject");
+	var $spos = $s.length;
+	displayObject.validateTransform();
+	var result = new Matrix4();
+	result.multiply(parentMatrix);
+	result.multiply(displayObject.matrix);
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+GLHitareaPicker.prototype.__class__ = GLHitareaPicker;
+shader.DisplayObjectFragment = function() { }
+shader.DisplayObjectFragment.__name__ = ["shader","DisplayObjectFragment"];
+shader.DisplayObjectFragment.prototype.__class__ = shader.DisplayObjectFragment;
+kumite.camera.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.camera.Config::new");
+	var $spos = $s.length;
+	this.camera = new kumite.camera.Camera();
+	this.cameraMouseMover = new kumite.camera.CameraMouseMover();
+	$s.pop();
+}}
+kumite.camera.Config.__name__ = ["kumite","camera","Config"];
+kumite.camera.Config.prototype.camera = null;
+kumite.camera.Config.prototype.cameraMouseMover = null;
+kumite.camera.Config.prototype.__class__ = kumite.camera.Config;
+kumite.camera.Config.__interfaces__ = [haxe.rtti.Infos];
+kumite.vjinterface.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.vjinterface.Config::new");
+	var $spos = $s.length;
+	this.vjinterface = new kumite.vjinterface.VJInterface();
+	$s.pop();
+}}
+kumite.vjinterface.Config.__name__ = ["kumite","vjinterface","Config"];
+kumite.vjinterface.Config.prototype.vjinterface = null;
+kumite.vjinterface.Config.prototype.__class__ = kumite.vjinterface.Config;
+kumite.vjinterface.Config.__interfaces__ = [haxe.rtti.Infos];
+kumite.displaylist.DisplayListController = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.displaylist.DisplayListController::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.displaylist.DisplayListController.__name__ = ["kumite","displaylist","DisplayListController"];
+kumite.displaylist.DisplayListController.prototype.stage = null;
+kumite.displaylist.DisplayListController.prototype.renderer = null;
+kumite.displaylist.DisplayListController.prototype.start = function() {
+	$s.push("kumite.displaylist.DisplayListController::start");
+	var $spos = $s.length;
+	this.renderer = new GLDisplayListRenderer();
+	this.renderer.init();
+	$s.pop();
+}
+kumite.displaylist.DisplayListController.prototype.render = function(tick) {
+	$s.push("kumite.displaylist.DisplayListController::render");
+	var $spos = $s.length;
+	bpmjs.Stats.measureFPS();
+	GLDisplayList.getDefault().setStageSize(this.stage.width,this.stage.height);
+	GLDisplayList.getDefault().dispatchEnterFrame();
+	this.renderer.render(this.stage.width,this.stage.height);
+	$s.pop();
+}
+kumite.displaylist.DisplayListController.prototype.__class__ = kumite.displaylist.DisplayListController;
+kumite.displaylist.DisplayListController.__interfaces__ = [haxe.rtti.Infos];
+haxe.exception.ArgumentNullException = function(argumentName,numberOfStackTraceShifts) { if( argumentName === $_ ) return; {
+	$s.push("haxe.exception.ArgumentNullException::new");
+	var $spos = $s.length;
+	haxe.exception.Exception.call(this,"Argument " + argumentName + " must be non-null",null,numberOfStackTraceShifts);
+	$s.pop();
+}}
+haxe.exception.ArgumentNullException.__name__ = ["haxe","exception","ArgumentNullException"];
+haxe.exception.ArgumentNullException.__super__ = haxe.exception.Exception;
+for(var k in haxe.exception.Exception.prototype ) haxe.exception.ArgumentNullException.prototype[k] = haxe.exception.Exception.prototype[k];
+haxe.exception.ArgumentNullException.prototype.__class__ = haxe.exception.ArgumentNullException;
+bpmjs.Context = function(p) { if( p === $_ ) return; {
+	$s.push("bpmjs.Context::new");
+	var $spos = $s.length;
+	this.objects = new Array();
+	$s.pop();
+}}
+bpmjs.Context.__name__ = ["bpmjs","Context"];
+bpmjs.Context.prototype.contextConfig = null;
+bpmjs.Context.prototype.objects = null;
+bpmjs.Context.prototype.addObject = function(name,type,object) {
+	$s.push("bpmjs.Context::addObject");
+	var $spos = $s.length;
+	var contextObject = new bpmjs.ContextObject(name,type,object);
+	this.objects.push(contextObject);
+	{
+		$s.pop();
+		return contextObject;
+	}
+	$s.pop();
+}
+bpmjs.Context.prototype.getObjectByName = function(name) {
+	$s.push("bpmjs.Context::getObjectByName");
+	var $spos = $s.length;
+	{
+		var _g = 0, _g1 = this.objects;
+		while(_g < _g1.length) {
+			var contextObject = _g1[_g];
+			++_g;
+			if(contextObject.name == name) {
+				var $tmp = contextObject.object;
+				$s.pop();
+				return $tmp;
+			}
+		}
+	}
+	{
+		$s.pop();
+		return null;
+	}
+	$s.pop();
+}
+bpmjs.Context.prototype.getObjectByType = function(type) {
+	$s.push("bpmjs.Context::getObjectByType");
+	var $spos = $s.length;
+	{
+		var _g = 0, _g1 = this.objects;
+		while(_g < _g1.length) {
+			var contextObject = _g1[_g];
+			++_g;
+			if(contextObject.type == type) {
+				var $tmp = contextObject.object;
+				$s.pop();
+				return $tmp;
+			}
+		}
+	}
+	{
+		$s.pop();
+		return null;
+	}
+	$s.pop();
+}
+bpmjs.Context.prototype.__class__ = bpmjs.Context;
+bpmjs.ContextObject = function(name,type,object) { if( name === $_ ) return; {
+	$s.push("bpmjs.ContextObject::new");
+	var $spos = $s.length;
+	this.name = name;
+	this.type = type;
+	this.object = object;
+	$s.pop();
+}}
+bpmjs.ContextObject.__name__ = ["bpmjs","ContextObject"];
+bpmjs.ContextObject.prototype.name = null;
+bpmjs.ContextObject.prototype.type = null;
+bpmjs.ContextObject.prototype.object = null;
+bpmjs.ContextObject.prototype.__class__ = bpmjs.ContextObject;
+kumite.mouse.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.mouse.Config::new");
+	var $spos = $s.length;
+	this.mouseController = new kumite.mouse.MouseController();
+	$s.pop();
+}}
+kumite.mouse.Config.__name__ = ["kumite","mouse","Config"];
+kumite.mouse.Config.prototype.mouseController = null;
+kumite.mouse.Config.prototype.__class__ = kumite.mouse.Config;
+kumite.mouse.Config.__interfaces__ = [haxe.rtti.Infos];
+Map = function() { }
+Map.__name__ = ["Map"];
+Map.linear = function(value,min0,max0,min1,max1) {
+	$s.push("Map::linear");
+	var $spos = $s.length;
+	var p0 = 1 / (max0 - min0) * (value - min0);
+	{
+		var $tmp = min1 + (max1 - min1) * p0;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Map.prototype.__class__ = Map;
+bpmjs.ContextConfig = function(p) { if( p === $_ ) return; {
+	$s.push("bpmjs.ContextConfig::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+bpmjs.ContextConfig.__name__ = ["bpmjs","ContextConfig"];
+bpmjs.ContextConfig.prototype.frontMessenger = null;
+bpmjs.ContextConfig.prototype.__class__ = bpmjs.ContextConfig;
+bpmjs.Stats = function() { }
+bpmjs.Stats.__name__ = ["bpmjs","Stats"];
+bpmjs.Stats.initialized = null;
+bpmjs.Stats.lastTime = null;
+bpmjs.Stats.times = null;
+bpmjs.Stats.finishedTimes = null;
+bpmjs.Stats.messages = null;
+bpmjs.Stats.init = function() {
+	$s.push("bpmjs.Stats::init");
+	var $spos = $s.length;
+	bpmjs.Stats.clear();
+	bpmjs.Stats.initialized = true;
+	$s.pop();
+}
+bpmjs.Stats.clear = function() {
+	$s.push("bpmjs.Stats::clear");
+	var $spos = $s.length;
+	bpmjs.Stats.times = new Array();
+	bpmjs.Stats.finishedTimes = new Array();
+	bpmjs.Stats.messages = new Array();
+	$s.pop();
+}
+bpmjs.Stats.measureFPS = function() {
+	$s.push("bpmjs.Stats::measureFPS");
+	var $spos = $s.length;
+	bpmjs.Stats.checkInit();
+	var time = Date.now().getTime();
+	bpmjs.Stats.fps = 1000 / (time - bpmjs.Stats.lastTime);
+	bpmjs.Stats.lastTime = time;
+	$s.pop();
+}
+bpmjs.Stats.checkStart = function(message) {
+	$s.push("bpmjs.Stats::checkStart");
+	var $spos = $s.length;
+	bpmjs.Stats.checkInit();
+	var time = Date.now().getTime();
+	bpmjs.Stats.times.push({ start : time, stop : 0.0, message : message});
+	$s.pop();
+}
+bpmjs.Stats.addMessage = function(message) {
+	$s.push("bpmjs.Stats::addMessage");
+	var $spos = $s.length;
+	bpmjs.Stats.checkInit();
+	bpmjs.Stats.messages.push(message);
+	$s.pop();
+}
+bpmjs.Stats.checkStop = function() {
+	$s.push("bpmjs.Stats::checkStop");
+	var $spos = $s.length;
+	bpmjs.Stats.checkInit();
+	var timeAndMessage = bpmjs.Stats.times.pop();
+	timeAndMessage.stop = Date.now().getTime();
+	bpmjs.Stats.finishedTimes.push(timeAndMessage);
+	$s.pop();
+}
+bpmjs.Stats.getContents = function() {
+	$s.push("bpmjs.Stats::getContents");
+	var $spos = $s.length;
+	var finalMessages = new Array();
+	finalMessages.push("FPS: " + Math.round(bpmjs.Stats.fps));
+	{
+		var _g = 0, _g1 = bpmjs.Stats.finishedTimes;
+		while(_g < _g1.length) {
+			var timeAndMessage = _g1[_g];
+			++_g;
+			finalMessages.push(" > " + timeAndMessage.message + ": " + (timeAndMessage.stop - timeAndMessage.start) + " ms");
+		}
+	}
+	{
+		var _g = 0, _g1 = bpmjs.Stats.messages;
+		while(_g < _g1.length) {
+			var message = _g1[_g];
+			++_g;
+			finalMessages.push(message);
+		}
+	}
+	{
+		$s.pop();
+		return finalMessages;
+	}
+	$s.pop();
+}
+bpmjs.Stats.checkInit = function() {
+	$s.push("bpmjs.Stats::checkInit");
+	var $spos = $s.length;
+	if(!bpmjs.Stats.initialized) bpmjs.Stats.init();
+	$s.pop();
+}
+bpmjs.Stats.prototype.__class__ = bpmjs.Stats;
+ERegFilter = function(level,r) { if( level === $_ ) return; {
+	$s.push("ERegFilter::new");
+	var $spos = $s.length;
+	this.level = level;
+	this.r = r;
+	$s.pop();
+}}
+ERegFilter.__name__ = ["ERegFilter"];
+ERegFilter.prototype.level = null;
+ERegFilter.prototype.r = null;
+ERegFilter.prototype.enabled = function(input,i,level) {
+	$s.push("ERegFilter::enabled");
+	var $spos = $s.length;
+	var sender = i.className + "." + i.methodName;
+	var matches = this.r.match(sender);
+	if(!matches) {
+		$s.pop();
+		return input;
+	}
+	{
+		var $tmp = matches && this.level.isSmallerOrEqual(level);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+ERegFilter.prototype.__class__ = ERegFilter;
+ERegFilter.__interfaces__ = [LogFilter];
+kumite.helloworldgl.HelloWorld = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.helloworldgl.HelloWorld::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.helloworldgl.HelloWorld.__name__ = ["kumite","helloworldgl","HelloWorld"];
+kumite.helloworldgl.HelloWorld.prototype.stage = null;
+kumite.helloworldgl.HelloWorld.prototype.time = null;
+kumite.helloworldgl.HelloWorld.prototype.projection = null;
+kumite.helloworldgl.HelloWorld.prototype.camera = null;
+kumite.helloworldgl.HelloWorld.prototype.shaderProgram = null;
+kumite.helloworldgl.HelloWorld.prototype.vertexPositionAttribute = null;
+kumite.helloworldgl.HelloWorld.prototype.vertexBuffer = null;
+kumite.helloworldgl.HelloWorld.prototype.projectionMatrixUniform = null;
+kumite.helloworldgl.HelloWorld.prototype.worldViewMatrixUniform = null;
+kumite.helloworldgl.HelloWorld.prototype.colorUniform = null;
+kumite.helloworldgl.HelloWorld.prototype.start = function() {
+	$s.push("kumite.helloworldgl.HelloWorld::start");
+	var $spos = $s.length;
+	this.shaderProgram = GL.createProgram(kumite.helloworldgl.shader.Vertex,kumite.helloworldgl.shader.Fragment);
+	this.vertexPositionAttribute = GL.getAttribLocation2("vertexPosition",2,5120);
+	this.vertexPositionAttribute.updateBuffer(new Int8Array([-1,-1,1,-1,-1,1,1,1]));
+	this.projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
+	this.worldViewMatrixUniform = GL.getUniformLocation("worldViewMatrix");
+	this.colorUniform = GL.getUniformLocation("color");
+	$s.pop();
+}
+kumite.helloworldgl.HelloWorld.prototype.render = function(tick) {
+	$s.push("kumite.helloworldgl.HelloWorld::render");
+	var $spos = $s.length;
+	GL.useProgram(this.shaderProgram);
+	GL.gl.viewport(0,0,this.stage.width,this.stage.height);
+	GL.gl.enable(2929);
+	GL.gl.uniformMatrix4fv(this.projectionMatrixUniform.location,false,this.projection.matrix.buffer);
+	this.vertexPositionAttribute.vertexAttribPointer();
+	{
+		var _g = -10;
+		while(_g < 10) {
+			var y = _g++;
+			this.drawRect(0,Map.linear(y,-10,10,-3,3),0,new Color(0,Map.linear(y,-10,10,0,1),0,1));
+		}
+	}
+	{
+		var _g = -10;
+		while(_g < 10) {
+			var z = _g++;
+			this.drawRect(0,0,Map.linear(z,-10,10,-3,3),new Color(0,0,Map.linear(z,-10,10,0,1),1));
+		}
+	}
+	{
+		var _g = -10;
+		while(_g < 10) {
+			var x = _g++;
+			this.drawRect(Map.linear(x,-10,10,-3,3),0,0,new Color(Map.linear(x,-10,10,0,1),0,0,1));
+		}
+	}
+	$s.pop();
+}
+kumite.helloworldgl.HelloWorld.prototype.drawRect = function(x,y,z,color) {
+	$s.push("kumite.helloworldgl.HelloWorld::drawRect");
+	var $spos = $s.length;
+	var worldViewMatrix = new Matrix4(this.camera.matrix);
+	worldViewMatrix.appendRotation(this.time.ms / 50000,new Vec3(1,-1,-1));
+	worldViewMatrix.appendTranslation(x,y,z);
+	worldViewMatrix.appendScale(0.1,0.1,0.1);
+	GL.gl.uniformMatrix4fv(this.worldViewMatrixUniform.location,false,worldViewMatrix.buffer);
+	GL.gl.uniform4f(this.colorUniform.location,color.r,color.g,color.b,color.a);
+	this.vertexPositionAttribute.drawArrays(5);
+	$s.pop();
+}
+kumite.helloworldgl.HelloWorld.prototype.__class__ = kumite.helloworldgl.HelloWorld;
+kumite.helloworldgl.HelloWorld.__interfaces__ = [haxe.rtti.Infos];
+kumite.launch.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.launch.Config::new");
+	var $spos = $s.length;
+	this.launcher = new kumite.launch.Launcher();
+	this.sequencer = new bpmjs.Sequencer();
+	$s.pop();
+}}
+kumite.launch.Config.__name__ = ["kumite","launch","Config"];
+kumite.launch.Config.prototype.sequencer = null;
+kumite.launch.Config.prototype.launcher = null;
+kumite.launch.Config.prototype.__class__ = kumite.launch.Config;
+kumite.launch.Config.__interfaces__ = [haxe.rtti.Infos];
 EReg = function(r,opt) { if( r === $_ ) return; {
 	$s.push("EReg::new");
 	var $spos = $s.length;
@@ -4778,3804 +8664,163 @@ Xml.prototype.toString = function() {
 	$s.pop();
 }
 Xml.prototype.__class__ = Xml;
-GLHitareaPicker = function(p) { if( p === $_ ) return; {
-	$s.push("GLHitareaPicker::new");
+kumite.time.Time = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.time.Time::new");
 	var $spos = $s.length;
-	null;
+	this.reset();
 	$s.pop();
 }}
-GLHitareaPicker.__name__ = ["GLHitareaPicker"];
-GLHitareaPicker.prototype.stageMousePosition = null;
-GLHitareaPicker.prototype.result = null;
-GLHitareaPicker.prototype.pick = function(stage,mousePosition) {
-	$s.push("GLHitareaPicker::pick");
+kumite.time.Time.__name__ = ["kumite","time","Time"];
+kumite.time.Time.prototype.ms = null;
+kumite.time.Time.prototype.frameMs = null;
+kumite.time.Time.prototype.timeScale = null;
+kumite.time.Time.prototype.frame = null;
+kumite.time.Time.prototype.frameRate = null;
+kumite.time.Time.prototype.lastTime = null;
+kumite.time.Time.prototype.reset = function() {
+	$s.push("kumite.time.Time::reset");
 	var $spos = $s.length;
-	this.stageMousePosition = mousePosition.clone();
-	this.stageMousePosition.multiply(stage.stageWidth,stage.stageHeight);
-	this.result = null;
-	this.pickRecursive(stage,new Matrix4());
+	this.frameRate = 60;
+	this.ms = 0;
+	this.frameMs = Std["int"](1000 / 60);
+	this.timeScale = 1;
+	this.frame = 0;
+	this.lastTime = Date.now().getTime();
+	$s.pop();
+}
+kumite.time.Time.prototype.tick = function() {
+	$s.push("kumite.time.Time::tick");
+	var $spos = $s.length;
+	var time = Date.now().getTime();
+	this.frame++;
+	if(this.lastTime == -1) this.lastTime = time - 100;
+	this.frameMs = time - this.lastTime;
+	if(Math.isNaN(this.frameMs) || !Math.isFinite(this.frameMs)) this.frameMs = 100;
+	this.timeScale += (this.frameMs / 1000 * 60 - this.timeScale) * 0.1;
+	if(this.timeScale < 0.25) this.timeScale = 0.25;
+	if(this.timeScale > 3) this.timeScale = 3;
+	if(Math.isNaN(this.timeScale) || !Math.isFinite(this.timeScale)) this.timeScale = 100 / 1000 * 30;
+	this.ms += this.frameMs;
+	this.frameRate = 1000 / this.frameMs;
+	this.lastTime = time;
+	$s.pop();
+}
+kumite.time.Time.prototype.tickInPause = function() {
+	$s.push("kumite.time.Time::tickInPause");
+	var $spos = $s.length;
+	var time = Date.now().getTime();
+	if(this.lastTime == -1) this.lastTime = time - 100;
+	this.frameMs = time - this.lastTime;
+	if(Math.isNaN(this.frameMs) || !Math.isFinite(this.frameMs)) this.frameMs = 100;
+	this.timeScale = this.frameMs / 1000 * 60;
+	if(Math.isNaN(this.timeScale) || !Math.isFinite(this.timeScale)) this.timeScale = 100 / 1000 * 60;
+	this.frameRate = 1000 / this.frameMs;
+	this.lastTime = time;
+	$s.pop();
+}
+kumite.time.Time.prototype.summand = function(value) {
+	$s.push("kumite.time.Time::summand");
+	var $spos = $s.length;
 	{
-		var $tmp = this.result;
+		var $tmp = value * this.timeScale;
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-GLHitareaPicker.prototype.pickRecursive = function(displayObjectContainer,parentMatrix) {
-	$s.push("GLHitareaPicker::pickRecursive");
+kumite.time.Time.prototype.factor = function(value) {
+	$s.push("kumite.time.Time::factor");
 	var $spos = $s.length;
-	var _g = 0, _g1 = displayObjectContainer.children;
-	while(_g < _g1.length) {
-		var displayObject = _g1[_g];
-		++_g;
-		var matrix = this.pickDisplayObject(displayObject,parentMatrix);
-		if(Std["is"](displayObject,GLInteractiveObject)) {
-			var interactiveObject = (function($this) {
-				var $r;
-				var $t = displayObject;
-				if(Std["is"]($t,GLInteractiveObject)) $t;
-				else throw "Class cast error";
-				$r = $t;
-				return $r;
-			}(this));
-			if(interactiveObject.hitarea.isUnder(matrix,this.stageMousePosition)) this.result = interactiveObject;
-		}
-		if(Std["is"](displayObject,GLDisplayObjectContainer)) {
-			this.pickRecursive(displayObject,matrix);
-		}
-	}
-	$s.pop();
-}
-GLHitareaPicker.prototype.pickDisplayObject = function(displayObject,parentMatrix) {
-	$s.push("GLHitareaPicker::pickDisplayObject");
-	var $spos = $s.length;
-	displayObject.validateTransform();
-	var result = new Matrix4();
-	result.multiply(parentMatrix);
-	result.multiply(displayObject.matrix);
 	{
+		var $tmp = Math.pow(value,this.timeScale);
 		$s.pop();
-		return result;
+		return $tmp;
 	}
 	$s.pop();
 }
-GLHitareaPicker.prototype.__class__ = GLHitareaPicker;
-haxe.Timer = function(time_ms) { if( time_ms === $_ ) return; {
-	$s.push("haxe.Timer::new");
+kumite.time.Time.prototype.interpolateTo = function(from,to,f) {
+	$s.push("kumite.time.Time::interpolateTo");
 	var $spos = $s.length;
-	this.id = haxe.Timer.arr.length;
-	haxe.Timer.arr[this.id] = this;
-	this.timerId = window.setInterval("haxe.Timer.arr[" + this.id + "].run();",time_ms);
+	{
+		var $tmp = from * (1 - f * this.timeScale) + to * (f * this.timeScale);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+kumite.time.Time.prototype.__class__ = kumite.time.Time;
+GLLabel = function(p) { if( p === $_ ) return; {
+	$s.push("GLLabel::new");
+	var $spos = $s.length;
+	GLInteractiveObject.call(this);
 	$s.pop();
 }}
-haxe.Timer.__name__ = ["haxe","Timer"];
-haxe.Timer.delay = function(f,time_ms) {
-	$s.push("haxe.Timer::delay");
+GLLabel.__name__ = ["GLLabel"];
+GLLabel.__super__ = GLInteractiveObject;
+for(var k in GLInteractiveObject.prototype ) GLLabel.prototype[k] = GLInteractiveObject.prototype[k];
+GLLabel.prototype.text = null;
+GLLabel.prototype.validateGraphics = function() {
+	$s.push("GLLabel::validateGraphics");
 	var $spos = $s.length;
-	var t = new haxe.Timer(time_ms);
-	t.run = function() {
-		$s.push("haxe.Timer::delay@78");
-		var $spos = $s.length;
-		t.stop();
-		f();
-		$s.pop();
-	}
-	{
-		$s.pop();
-		return t;
-	}
-	$s.pop();
-}
-haxe.Timer.measure = function(f,pos) {
-	$s.push("haxe.Timer::measure");
-	var $spos = $s.length;
-	var t0 = haxe.Timer.stamp();
-	var r = f();
-	haxe.Log.trace(haxe.Timer.stamp() - t0 + "s",pos);
-	{
-		$s.pop();
-		return r;
-	}
-	$s.pop();
-}
-haxe.Timer.stamp = function() {
-	$s.push("haxe.Timer::stamp");
-	var $spos = $s.length;
-	{
-		var $tmp = Date.now().getTime() / 1000;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.Timer.prototype.id = null;
-haxe.Timer.prototype.timerId = null;
-haxe.Timer.prototype.stop = function() {
-	$s.push("haxe.Timer::stop");
-	var $spos = $s.length;
-	if(this.id == null) {
-		$s.pop();
-		return;
-	}
-	window.clearInterval(this.timerId);
-	haxe.Timer.arr[this.id] = null;
-	if(this.id > 100 && this.id == haxe.Timer.arr.length - 1) {
-		var p = this.id - 1;
-		while(p >= 0 && haxe.Timer.arr[p] == null) p--;
-		haxe.Timer.arr = haxe.Timer.arr.slice(0,p + 1);
-	}
-	this.id = null;
-	$s.pop();
-}
-haxe.Timer.prototype.run = function() {
-	$s.push("haxe.Timer::run");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}
-haxe.Timer.prototype.__class__ = haxe.Timer;
-IntHash = function(p) { if( p === $_ ) return; {
-	$s.push("IntHash::new");
-	var $spos = $s.length;
-	this.h = {}
-	if(this.h.__proto__ != null) {
-		this.h.__proto__ = null;
-		delete(this.h.__proto__);
-	}
-	else null;
-	$s.pop();
-}}
-IntHash.__name__ = ["IntHash"];
-IntHash.prototype.h = null;
-IntHash.prototype.set = function(key,value) {
-	$s.push("IntHash::set");
-	var $spos = $s.length;
-	this.h[key] = value;
-	$s.pop();
-}
-IntHash.prototype.get = function(key) {
-	$s.push("IntHash::get");
-	var $spos = $s.length;
-	{
-		var $tmp = this.h[key];
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-IntHash.prototype.exists = function(key) {
-	$s.push("IntHash::exists");
-	var $spos = $s.length;
-	{
-		var $tmp = this.h[key] != null;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-IntHash.prototype.remove = function(key) {
-	$s.push("IntHash::remove");
-	var $spos = $s.length;
-	if(this.h[key] == null) {
-		$s.pop();
-		return false;
-	}
-	delete(this.h[key]);
-	{
-		$s.pop();
-		return true;
-	}
-	$s.pop();
-}
-IntHash.prototype.keys = function() {
-	$s.push("IntHash::keys");
-	var $spos = $s.length;
-	var a = new Array();
-	
-			for( x in this.h )
-				a.push(x);
-		;
-	{
-		var $tmp = a.iterator();
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-IntHash.prototype.iterator = function() {
-	$s.push("IntHash::iterator");
-	var $spos = $s.length;
-	{
-		var $tmp = { ref : this.h, it : this.keys(), hasNext : function() {
-			$s.push("IntHash::iterator@69");
-			var $spos = $s.length;
-			{
-				var $tmp = this.it.hasNext();
-				$s.pop();
-				return $tmp;
-			}
-			$s.pop();
-		}, next : function() {
-			$s.push("IntHash::iterator@70");
-			var $spos = $s.length;
-			var i = this.it.next();
-			{
-				var $tmp = this.ref[i];
-				$s.pop();
-				return $tmp;
-			}
-			$s.pop();
-		}};
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-IntHash.prototype.toString = function() {
-	$s.push("IntHash::toString");
-	var $spos = $s.length;
-	var s = new StringBuf();
-	s.b[s.b.length] = "{";
-	var it = this.keys();
-	{ var $it0 = it;
-	while( $it0.hasNext() ) { var i = $it0.next();
-	{
-		s.b[s.b.length] = i;
-		s.b[s.b.length] = " => ";
-		s.b[s.b.length] = Std.string(this.get(i));
-		if(it.hasNext()) s.b[s.b.length] = ", ";
-	}
-	}}
-	s.b[s.b.length] = "}";
-	{
-		var $tmp = s.b.join("");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-IntHash.prototype.__class__ = IntHash;
-kumite.stage.Stage = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.stage.Stage::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-kumite.stage.Stage.__name__ = ["kumite","stage","Stage"];
-kumite.stage.Stage.prototype.width = null;
-kumite.stage.Stage.prototype.height = null;
-kumite.stage.Stage.prototype.aspect = null;
-kumite.stage.Stage.prototype.getAspect = function() {
-	$s.push("kumite.stage.Stage::getAspect");
-	var $spos = $s.length;
-	{
-		var $tmp = this.width / this.height;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-kumite.stage.Stage.prototype.__class__ = kumite.stage.Stage;
-GLStats = function(p) { if( p === $_ ) return; {
-	$s.push("GLStats::new");
-	var $spos = $s.length;
-	GLDisplayObject.call(this);
-	this.setWidth(64);
-	this.setHeight(32);
-	this.getContext().fillStyle = "rgba(0, 40, 0, 0.6)";
-	this.getContext().fillRect(0,0,this.width,this.height);
-	this.enterFrameSignaler.bind($closure(this,"handleEnterFrame"));
-	$s.pop();
-}}
-GLStats.__name__ = ["GLStats"];
-GLStats.__super__ = GLDisplayObject;
-for(var k in GLDisplayObject.prototype ) GLStats.prototype[k] = GLDisplayObject.prototype[k];
-GLStats.prototype.lastDraw = null;
-GLStats.prototype.handleEnterFrame = function(frame) {
-	$s.push("GLStats::handleEnterFrame");
-	var $spos = $s.length;
-	if(this.lastDraw < frame.time - 100) {
-		this.lastDraw = frame.time;
-		this.getContext().clearRect(0,0,this.width,this.height);
-		this.getContext().fillStyle = "rgba(0, 0, 0, 0.2)";
-		this.getContext().fillRect(0,0,this.width,bpmjs.Stats.getContents().length * 12 + 4);
-		this.getContext().font = "12px Arial";
-		this.getContext().fillStyle = "rgba(0, 255, 0, 0.4)";
-		var line = 0;
-		{
-			var _g = 0, _g1 = bpmjs.Stats.getContents();
-			while(_g < _g1.length) {
-				var message = _g1[_g];
-				++_g;
-				this.getContext().fillText(message,6,12 + line * 12);
-				line++;
-			}
-		}
-		this.canvasIsInvalid = true;
-	}
-	$s.pop();
-}
-GLStats.prototype.__class__ = GLStats;
-if(typeof shader=='undefined') shader = {}
-shader.DisplayObjectVertex = function() { }
-shader.DisplayObjectVertex.__name__ = ["shader","DisplayObjectVertex"];
-shader.DisplayObjectVertex.prototype.__class__ = shader.DisplayObjectVertex;
-hsl.haxe.DirectSignaler = function(subject,rejectNullData) { if( subject === $_ ) return; {
-	$s.push("hsl.haxe.DirectSignaler::new");
-	var $spos = $s.length;
-	if(null == subject) {
-		throw new haxe.exception.ArgumentNullException("subject",1);
-	}
-	this.subject = subject;
-	this.rejectNullData = rejectNullData;
-	this.sentinel = new hsl.haxe._DirectSignaler.SentinelBond();
-	$s.pop();
-}}
-hsl.haxe.DirectSignaler.__name__ = ["hsl","haxe","DirectSignaler"];
-hsl.haxe.DirectSignaler.prototype.bubblingTargets = null;
-hsl.haxe.DirectSignaler.prototype.isListenedTo = null;
-hsl.haxe.DirectSignaler.prototype.notificationTargets = null;
-hsl.haxe.DirectSignaler.prototype.rejectNullData = null;
-hsl.haxe.DirectSignaler.prototype.sentinel = null;
-hsl.haxe.DirectSignaler.prototype.subject = null;
-hsl.haxe.DirectSignaler.prototype.subjectClassNames = null;
-hsl.haxe.DirectSignaler.prototype.addBubblingTarget = function(value) {
-	$s.push("hsl.haxe.DirectSignaler::addBubblingTarget");
-	var $spos = $s.length;
-	if(null == this.bubblingTargets) {
-		this.bubblingTargets = new List();
-	}
-	this.bubblingTargets.add(value);
-	$s.pop();
-}
-hsl.haxe.DirectSignaler.prototype.addNotificationTarget = function(value) {
-	$s.push("hsl.haxe.DirectSignaler::addNotificationTarget");
-	var $spos = $s.length;
-	if(null == this.notificationTargets) {
-		this.notificationTargets = new List();
-	}
-	this.notificationTargets.add(value);
-	$s.pop();
-}
-hsl.haxe.DirectSignaler.prototype.bind = function(listener) {
-	$s.push("hsl.haxe.DirectSignaler::bind");
-	var $spos = $s.length;
-	if(null == listener) {
-		throw new haxe.exception.ArgumentNullException("listener",1);
-	}
-	{
-		var $tmp = this.sentinel.add(new hsl.haxe._DirectSignaler.RegularBond(listener));
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-hsl.haxe.DirectSignaler.prototype.bindAdvanced = function(listener) {
-	$s.push("hsl.haxe.DirectSignaler::bindAdvanced");
-	var $spos = $s.length;
-	if(null == listener) {
-		throw new haxe.exception.ArgumentNullException("listener",1);
-	}
-	{
-		var $tmp = this.sentinel.add(new hsl.haxe._DirectSignaler.AdvancedBond(listener));
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-hsl.haxe.DirectSignaler.prototype.bindVoid = function(listener) {
-	$s.push("hsl.haxe.DirectSignaler::bindVoid");
-	var $spos = $s.length;
-	if(null == listener) {
-		throw new haxe.exception.ArgumentNullException("listener",1);
-	}
-	{
-		var $tmp = this.sentinel.add(new hsl.haxe._DirectSignaler.NiladicBond(listener));
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-hsl.haxe.DirectSignaler.prototype.bubble = function(data,origin) {
-	$s.push("hsl.haxe.DirectSignaler::bubble");
-	var $spos = $s.length;
-	if(null != this.bubblingTargets) {
-		{ var $it0 = this.bubblingTargets.iterator();
-		while( $it0.hasNext() ) { var bubblingTarget = $it0.next();
-		{
-			bubblingTarget.dispatch(data,origin,{ fileName : "DirectSignaler.hx", lineNumber : 109, className : "hsl.haxe.DirectSignaler", methodName : "bubble"});
-		}
-		}}
-	}
-	if(null != this.notificationTargets) {
-		{ var $it1 = this.notificationTargets.iterator();
-		while( $it1.hasNext() ) { var notificationTarget = $it1.next();
-		{
-			notificationTarget.dispatch(null,origin,{ fileName : "DirectSignaler.hx", lineNumber : 114, className : "hsl.haxe.DirectSignaler", methodName : "bubble"});
-		}
-		}}
-	}
-	$s.pop();
-}
-hsl.haxe.DirectSignaler.prototype.dispatch = function(data,origin,positionInformation) {
-	$s.push("hsl.haxe.DirectSignaler::dispatch");
-	var $spos = $s.length;
-	if("dispatchNative" != positionInformation.methodName && "bubble" != positionInformation.methodName) {
-		this.verifyCaller(positionInformation);
-	}
-	if(this.rejectNullData && null == data) {
-		throw new haxe.exception.Exception("Some data that was passed is null, but this signaler has been set to reject null data.",null,1);
-	}
-	origin = null == origin?this.subject:origin;
-	if(3 == this.sentinel.callListener(data,this.subject,origin,3)) {
-		{
-			if(null != this.bubblingTargets) {
-				{ var $it0 = this.bubblingTargets.iterator();
-				while( $it0.hasNext() ) { var bubblingTarget = $it0.next();
-				{
-					bubblingTarget.dispatch(data,origin,{ fileName : "DirectSignaler.hx", lineNumber : 109, className : "hsl.haxe.DirectSignaler", methodName : "bubble"});
-				}
-				}}
-			}
-			if(null != this.notificationTargets) {
-				{ var $it1 = this.notificationTargets.iterator();
-				while( $it1.hasNext() ) { var notificationTarget = $it1.next();
-				{
-					notificationTarget.dispatch(null,origin,{ fileName : "DirectSignaler.hx", lineNumber : 114, className : "hsl.haxe.DirectSignaler", methodName : "bubble"});
-				}
-				}}
-			}
-		}
-	}
-	$s.pop();
-}
-hsl.haxe.DirectSignaler.prototype.getIsListenedTo = function() {
-	$s.push("hsl.haxe.DirectSignaler::getIsListenedTo");
-	var $spos = $s.length;
-	{
-		var $tmp = this.sentinel.getIsConnected();
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-hsl.haxe.DirectSignaler.prototype.getOrigin = function(origin) {
-	$s.push("hsl.haxe.DirectSignaler::getOrigin");
-	var $spos = $s.length;
-	{
-		var $tmp = null == origin?this.subject:origin;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-hsl.haxe.DirectSignaler.prototype.verifyCaller = function(positionInformation) {
-	$s.push("hsl.haxe.DirectSignaler::verifyCaller");
-	var $spos = $s.length;
-	if(null == this.subjectClassNames) {
-		this.subjectClassNames = haxe.TypeTools.getClassNames(this.subject);
-	}
-	{ var $it0 = this.subjectClassNames.iterator();
-	while( $it0.hasNext() ) { var subjectClassName = $it0.next();
-	{
-		if(subjectClassName == positionInformation.className) {
-			{
-				$s.pop();
-				return;
-			}
-		}
-	}
-	}}
-	throw new haxe.exception.Exception("This method may only be called by the subject of the signaler.",null,2);
-	$s.pop();
-}
-hsl.haxe.DirectSignaler.prototype.removeBubblingTarget = function(value) {
-	$s.push("hsl.haxe.DirectSignaler::removeBubblingTarget");
-	var $spos = $s.length;
-	if(null != this.bubblingTargets) {
-		this.bubblingTargets.remove(value);
-	}
-	$s.pop();
-}
-hsl.haxe.DirectSignaler.prototype.removeNotificationTarget = function(value) {
-	$s.push("hsl.haxe.DirectSignaler::removeNotificationTarget");
-	var $spos = $s.length;
-	if(null != this.notificationTargets) {
-		this.notificationTargets.remove(value);
-	}
-	$s.pop();
-}
-hsl.haxe.DirectSignaler.prototype.toString = function() {
-	$s.push("hsl.haxe.DirectSignaler::toString");
-	var $spos = $s.length;
-	{
-		var $tmp = "[Signaler isListenedTo=" + this.getIsListenedTo() + "]";
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-hsl.haxe.DirectSignaler.prototype.unbind = function(listener) {
-	$s.push("hsl.haxe.DirectSignaler::unbind");
-	var $spos = $s.length;
-	this.sentinel.remove(new hsl.haxe._DirectSignaler.RegularBond(listener));
-	$s.pop();
-}
-hsl.haxe.DirectSignaler.prototype.unbindAdvanced = function(listener) {
-	$s.push("hsl.haxe.DirectSignaler::unbindAdvanced");
-	var $spos = $s.length;
-	this.sentinel.remove(new hsl.haxe._DirectSignaler.AdvancedBond(listener));
-	$s.pop();
-}
-hsl.haxe.DirectSignaler.prototype.unbindVoid = function(listener) {
-	$s.push("hsl.haxe.DirectSignaler::unbindVoid");
-	var $spos = $s.length;
-	this.sentinel.remove(new hsl.haxe._DirectSignaler.NiladicBond(listener));
-	$s.pop();
-}
-hsl.haxe.DirectSignaler.prototype.__class__ = hsl.haxe.DirectSignaler;
-hsl.haxe.DirectSignaler.__interfaces__ = [hsl.haxe.Signaler];
-if(!hsl.haxe._DirectSignaler) hsl.haxe._DirectSignaler = {}
-hsl.haxe._DirectSignaler.LinkedBond = function(p) { if( p === $_ ) return; {
-	$s.push("hsl.haxe._DirectSignaler.LinkedBond::new");
-	var $spos = $s.length;
-	hsl.haxe.Bond.call(this);
-	this.destroyed = false;
-	$s.pop();
-}}
-hsl.haxe._DirectSignaler.LinkedBond.__name__ = ["hsl","haxe","_DirectSignaler","LinkedBond"];
-hsl.haxe._DirectSignaler.LinkedBond.__super__ = hsl.haxe.Bond;
-for(var k in hsl.haxe.Bond.prototype ) hsl.haxe._DirectSignaler.LinkedBond.prototype[k] = hsl.haxe.Bond.prototype[k];
-hsl.haxe._DirectSignaler.LinkedBond.prototype.destroyed = null;
-hsl.haxe._DirectSignaler.LinkedBond.prototype.next = null;
-hsl.haxe._DirectSignaler.LinkedBond.prototype.previous = null;
-hsl.haxe._DirectSignaler.LinkedBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
-	$s.push("hsl.haxe._DirectSignaler.LinkedBond::callListener");
-	var $spos = $s.length;
-	{
-		$s.pop();
-		return 0;
-	}
-	$s.pop();
-}
-hsl.haxe._DirectSignaler.LinkedBond.prototype.determineEquals = function(value) {
-	$s.push("hsl.haxe._DirectSignaler.LinkedBond::determineEquals");
-	var $spos = $s.length;
-	{
-		$s.pop();
-		return false;
-	}
-	$s.pop();
-}
-hsl.haxe._DirectSignaler.LinkedBond.prototype.destroy = function() {
-	$s.push("hsl.haxe._DirectSignaler.LinkedBond::destroy");
-	var $spos = $s.length;
-	if(false == this.destroyed) {
-		this.previous.next = this.next;
-		this.next.previous = this.previous;
-		this.destroyed = true;
-	}
-	$s.pop();
-}
-hsl.haxe._DirectSignaler.LinkedBond.prototype.unlink = function() {
-	$s.push("hsl.haxe._DirectSignaler.LinkedBond::unlink");
-	var $spos = $s.length;
-	if(false == this.destroyed) {
-		this.previous.next = this.next;
-		this.next.previous = this.previous;
-		this.destroyed = true;
-	}
-	$s.pop();
-}
-hsl.haxe._DirectSignaler.LinkedBond.prototype.__class__ = hsl.haxe._DirectSignaler.LinkedBond;
-hsl.haxe._DirectSignaler.SentinelBond = function(p) { if( p === $_ ) return; {
-	$s.push("hsl.haxe._DirectSignaler.SentinelBond::new");
-	var $spos = $s.length;
-	hsl.haxe._DirectSignaler.LinkedBond.call(this);
-	this.next = this.previous = this;
-	$s.pop();
-}}
-hsl.haxe._DirectSignaler.SentinelBond.__name__ = ["hsl","haxe","_DirectSignaler","SentinelBond"];
-hsl.haxe._DirectSignaler.SentinelBond.__super__ = hsl.haxe._DirectSignaler.LinkedBond;
-for(var k in hsl.haxe._DirectSignaler.LinkedBond.prototype ) hsl.haxe._DirectSignaler.SentinelBond.prototype[k] = hsl.haxe._DirectSignaler.LinkedBond.prototype[k];
-hsl.haxe._DirectSignaler.SentinelBond.prototype.isConnected = null;
-hsl.haxe._DirectSignaler.SentinelBond.prototype.add = function(value) {
-	$s.push("hsl.haxe._DirectSignaler.SentinelBond::add");
-	var $spos = $s.length;
-	value.next = this;
-	value.previous = this.previous;
-	{
-		var $tmp = this.previous = this.previous.next = value;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-hsl.haxe._DirectSignaler.SentinelBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
-	$s.push("hsl.haxe._DirectSignaler.SentinelBond::callListener");
-	var $spos = $s.length;
-	var node = this.next;
-	while(node != this && 1 != propagationStatus) {
-		propagationStatus = node.callListener(data,currentTarget,origin,propagationStatus);
-		node = node.next;
-	}
-	{
-		$s.pop();
-		return propagationStatus;
-	}
-	$s.pop();
-}
-hsl.haxe._DirectSignaler.SentinelBond.prototype.getIsConnected = function() {
-	$s.push("hsl.haxe._DirectSignaler.SentinelBond::getIsConnected");
-	var $spos = $s.length;
-	{
-		var $tmp = this.next != this;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-hsl.haxe._DirectSignaler.SentinelBond.prototype.remove = function(value) {
-	$s.push("hsl.haxe._DirectSignaler.SentinelBond::remove");
-	var $spos = $s.length;
-	var node = this.next;
-	while(node != this) {
-		if(node.determineEquals(value)) {
-			if(false == node.destroyed) {
-				node.previous.next = node.next;
-				node.next.previous = node.previous;
-				node.destroyed = true;
-			}
-			break;
-		}
-		node = node.next;
-	}
-	$s.pop();
-}
-hsl.haxe._DirectSignaler.SentinelBond.prototype.__class__ = hsl.haxe._DirectSignaler.SentinelBond;
-hsl.haxe._DirectSignaler.RegularBond = function(listener) { if( listener === $_ ) return; {
-	$s.push("hsl.haxe._DirectSignaler.RegularBond::new");
-	var $spos = $s.length;
-	hsl.haxe._DirectSignaler.LinkedBond.call(this);
-	this.listener = listener;
-	$s.pop();
-}}
-hsl.haxe._DirectSignaler.RegularBond.__name__ = ["hsl","haxe","_DirectSignaler","RegularBond"];
-hsl.haxe._DirectSignaler.RegularBond.__super__ = hsl.haxe._DirectSignaler.LinkedBond;
-for(var k in hsl.haxe._DirectSignaler.LinkedBond.prototype ) hsl.haxe._DirectSignaler.RegularBond.prototype[k] = hsl.haxe._DirectSignaler.LinkedBond.prototype[k];
-hsl.haxe._DirectSignaler.RegularBond.prototype.listener = null;
-hsl.haxe._DirectSignaler.RegularBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
-	$s.push("hsl.haxe._DirectSignaler.RegularBond::callListener");
-	var $spos = $s.length;
-	if(false == this.halted) {
-		this.listener(data);
-		if(this.willDestroyOnUse) {
-			if(false == this.destroyed) {
-				this.previous.next = this.next;
-				this.next.previous = this.previous;
-				this.destroyed = true;
-			}
-		}
-	}
-	{
-		$s.pop();
-		return propagationStatus;
-	}
-	$s.pop();
-}
-hsl.haxe._DirectSignaler.RegularBond.prototype.determineEquals = function(value) {
-	$s.push("hsl.haxe._DirectSignaler.RegularBond::determineEquals");
-	var $spos = $s.length;
-	{
-		var $tmp = Std["is"](value,hsl.haxe._DirectSignaler.RegularBond) && Reflect.compareMethods(value.listener,this.listener);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-hsl.haxe._DirectSignaler.RegularBond.prototype.__class__ = hsl.haxe._DirectSignaler.RegularBond;
-hsl.haxe._DirectSignaler.NiladicBond = function(listener) { if( listener === $_ ) return; {
-	$s.push("hsl.haxe._DirectSignaler.NiladicBond::new");
-	var $spos = $s.length;
-	hsl.haxe._DirectSignaler.LinkedBond.call(this);
-	this.listener = listener;
-	$s.pop();
-}}
-hsl.haxe._DirectSignaler.NiladicBond.__name__ = ["hsl","haxe","_DirectSignaler","NiladicBond"];
-hsl.haxe._DirectSignaler.NiladicBond.__super__ = hsl.haxe._DirectSignaler.LinkedBond;
-for(var k in hsl.haxe._DirectSignaler.LinkedBond.prototype ) hsl.haxe._DirectSignaler.NiladicBond.prototype[k] = hsl.haxe._DirectSignaler.LinkedBond.prototype[k];
-hsl.haxe._DirectSignaler.NiladicBond.prototype.listener = null;
-hsl.haxe._DirectSignaler.NiladicBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
-	$s.push("hsl.haxe._DirectSignaler.NiladicBond::callListener");
-	var $spos = $s.length;
-	if(false == this.halted) {
-		this.listener();
-		if(this.willDestroyOnUse) {
-			if(false == this.destroyed) {
-				this.previous.next = this.next;
-				this.next.previous = this.previous;
-				this.destroyed = true;
-			}
-		}
-	}
-	{
-		$s.pop();
-		return propagationStatus;
-	}
-	$s.pop();
-}
-hsl.haxe._DirectSignaler.NiladicBond.prototype.determineEquals = function(value) {
-	$s.push("hsl.haxe._DirectSignaler.NiladicBond::determineEquals");
-	var $spos = $s.length;
-	{
-		var $tmp = Std["is"](value,hsl.haxe._DirectSignaler.NiladicBond) && Reflect.compareMethods(value.listener,this.listener);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-hsl.haxe._DirectSignaler.NiladicBond.prototype.__class__ = hsl.haxe._DirectSignaler.NiladicBond;
-hsl.haxe._DirectSignaler.AdvancedBond = function(listener) { if( listener === $_ ) return; {
-	$s.push("hsl.haxe._DirectSignaler.AdvancedBond::new");
-	var $spos = $s.length;
-	hsl.haxe._DirectSignaler.LinkedBond.call(this);
-	this.listener = listener;
-	$s.pop();
-}}
-hsl.haxe._DirectSignaler.AdvancedBond.__name__ = ["hsl","haxe","_DirectSignaler","AdvancedBond"];
-hsl.haxe._DirectSignaler.AdvancedBond.__super__ = hsl.haxe._DirectSignaler.LinkedBond;
-for(var k in hsl.haxe._DirectSignaler.LinkedBond.prototype ) hsl.haxe._DirectSignaler.AdvancedBond.prototype[k] = hsl.haxe._DirectSignaler.LinkedBond.prototype[k];
-hsl.haxe._DirectSignaler.AdvancedBond.prototype.listener = null;
-hsl.haxe._DirectSignaler.AdvancedBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
-	$s.push("hsl.haxe._DirectSignaler.AdvancedBond::callListener");
-	var $spos = $s.length;
-	if(this.halted == false) {
-		var signal = new hsl.haxe.Signal(data,this,currentTarget,origin);
-		this.listener(signal);
-		if(this.willDestroyOnUse) {
-			if(false == this.destroyed) {
-				this.previous.next = this.next;
-				this.next.previous = this.previous;
-				this.destroyed = true;
-			}
-		}
-		if(signal.immediatePropagationStopped) {
-			{
-				$s.pop();
-				return 1;
-			}
-		}
-		else if(signal.propagationStopped) {
-			{
-				$s.pop();
-				return 2;
-			}
-		}
-	}
-	{
-		$s.pop();
-		return propagationStatus;
-	}
-	$s.pop();
-}
-hsl.haxe._DirectSignaler.AdvancedBond.prototype.determineEquals = function(value) {
-	$s.push("hsl.haxe._DirectSignaler.AdvancedBond::determineEquals");
-	var $spos = $s.length;
-	{
-		var $tmp = Std["is"](value,hsl.haxe._DirectSignaler.AdvancedBond) && Reflect.compareMethods(value.listener,this.listener);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-hsl.haxe._DirectSignaler.AdvancedBond.prototype.__class__ = hsl.haxe._DirectSignaler.AdvancedBond;
-hsl.haxe._DirectSignaler.PropagationStatus = function() { }
-hsl.haxe._DirectSignaler.PropagationStatus.__name__ = ["hsl","haxe","_DirectSignaler","PropagationStatus"];
-hsl.haxe._DirectSignaler.PropagationStatus.prototype.__class__ = hsl.haxe._DirectSignaler.PropagationStatus;
-GLTexture = function(p) { if( p === $_ ) return; {
-	$s.push("GLTexture::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-GLTexture.__name__ = ["GLTexture"];
-GLTexture.prototype.width = null;
-GLTexture.prototype.height = null;
-GLTexture.prototype.texture = null;
-GLTexture.prototype.__class__ = GLTexture;
-StringBuf = function(p) { if( p === $_ ) return; {
-	$s.push("StringBuf::new");
-	var $spos = $s.length;
-	this.b = new Array();
-	$s.pop();
-}}
-StringBuf.__name__ = ["StringBuf"];
-StringBuf.prototype.add = function(x) {
-	$s.push("StringBuf::add");
-	var $spos = $s.length;
-	this.b[this.b.length] = x;
-	$s.pop();
-}
-StringBuf.prototype.addSub = function(s,pos,len) {
-	$s.push("StringBuf::addSub");
-	var $spos = $s.length;
-	this.b[this.b.length] = s.substr(pos,len);
-	$s.pop();
-}
-StringBuf.prototype.addChar = function(c) {
-	$s.push("StringBuf::addChar");
-	var $spos = $s.length;
-	this.b[this.b.length] = String.fromCharCode(c);
-	$s.pop();
-}
-StringBuf.prototype.toString = function() {
-	$s.push("StringBuf::toString");
-	var $spos = $s.length;
-	{
-		var $tmp = this.b.join("");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-StringBuf.prototype.b = null;
-StringBuf.prototype.__class__ = StringBuf;
-GLUniformLocation = function(p) { if( p === $_ ) return; {
-	$s.push("GLUniformLocation::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-GLUniformLocation.__name__ = ["GLUniformLocation"];
-GLUniformLocation.prototype.location = null;
-GLUniformLocation.prototype.uniform1f = function(v) {
-	$s.push("GLUniformLocation::uniform1f");
-	var $spos = $s.length;
-	GL.gl.uniform1f(this.location,v);
-	$s.pop();
-}
-GLUniformLocation.prototype.uniform1fv = function(v) {
-	$s.push("GLUniformLocation::uniform1fv");
-	var $spos = $s.length;
-	GL.gl.uniform1fv(this.location,v);
-	$s.pop();
-}
-GLUniformLocation.prototype.uniform1i = function(v) {
-	$s.push("GLUniformLocation::uniform1i");
-	var $spos = $s.length;
-	GL.gl.uniform1i(this.location,v);
-	$s.pop();
-}
-GLUniformLocation.prototype.uniform1iv = function(v) {
-	$s.push("GLUniformLocation::uniform1iv");
-	var $spos = $s.length;
-	GL.gl.uniform1iv(this.location,v);
-	$s.pop();
-}
-GLUniformLocation.prototype.uniform2f = function(x,y) {
-	$s.push("GLUniformLocation::uniform2f");
-	var $spos = $s.length;
-	GL.gl.uniform2f(this.location,x,y);
-	$s.pop();
-}
-GLUniformLocation.prototype.uniform2fv = function(v) {
-	$s.push("GLUniformLocation::uniform2fv");
-	var $spos = $s.length;
-	GL.gl.uniform2fv(this.location,v);
-	$s.pop();
-}
-GLUniformLocation.prototype.uniform2i = function(x,y) {
-	$s.push("GLUniformLocation::uniform2i");
-	var $spos = $s.length;
-	GL.gl.uniform2i(this.location,x,y);
-	$s.pop();
-}
-GLUniformLocation.prototype.uniform2iv = function(v) {
-	$s.push("GLUniformLocation::uniform2iv");
-	var $spos = $s.length;
-	GL.gl.uniform2iv(this.location,v);
-	$s.pop();
-}
-GLUniformLocation.prototype.uniform3f = function(x,y,z) {
-	$s.push("GLUniformLocation::uniform3f");
-	var $spos = $s.length;
-	GL.gl.uniform3f(this.location,x,y,z);
-	$s.pop();
-}
-GLUniformLocation.prototype.uniform3fv = function(v) {
-	$s.push("GLUniformLocation::uniform3fv");
-	var $spos = $s.length;
-	GL.gl.uniform3fv(this.location,v);
-	$s.pop();
-}
-GLUniformLocation.prototype.uniform3i = function(x,y,z) {
-	$s.push("GLUniformLocation::uniform3i");
-	var $spos = $s.length;
-	GL.gl.uniform3i(this.location,x,y,z);
-	$s.pop();
-}
-GLUniformLocation.prototype.uniform3iv = function(v) {
-	$s.push("GLUniformLocation::uniform3iv");
-	var $spos = $s.length;
-	GL.gl.uniform3iv(this.location,v);
-	$s.pop();
-}
-GLUniformLocation.prototype.uniform4f = function(x,y,z,w) {
-	$s.push("GLUniformLocation::uniform4f");
-	var $spos = $s.length;
-	GL.gl.uniform4f(this.location,x,y,z,w);
-	$s.pop();
-}
-GLUniformLocation.prototype.uniform4fv = function(v) {
-	$s.push("GLUniformLocation::uniform4fv");
-	var $spos = $s.length;
-	GL.gl.uniform4fv(this.location,v);
-	$s.pop();
-}
-GLUniformLocation.prototype.uniform4i = function(x,y,z,w) {
-	$s.push("GLUniformLocation::uniform4i");
-	var $spos = $s.length;
-	GL.gl.uniform4i(this.location,x,y,z,w);
-	$s.pop();
-}
-GLUniformLocation.prototype.uniform4iv = function(v) {
-	$s.push("GLUniformLocation::uniform4iv");
-	var $spos = $s.length;
-	GL.gl.uniform4iv(this.location,v);
-	$s.pop();
-}
-GLUniformLocation.prototype.uniformMatrix2fv = function(transpose,value) {
-	$s.push("GLUniformLocation::uniformMatrix2fv");
-	var $spos = $s.length;
-	if(transpose == null) transpose = false;
-	GL.gl.uniformMatrix2fv(this.location,transpose,value);
-	$s.pop();
-}
-GLUniformLocation.prototype.uniformMatrix3fv = function(transpose,value) {
-	$s.push("GLUniformLocation::uniformMatrix3fv");
-	var $spos = $s.length;
-	if(transpose == null) transpose = false;
-	GL.gl.uniformMatrix3fv(this.location,transpose,value);
-	$s.pop();
-}
-GLUniformLocation.prototype.uniformMatrix4fv = function(transpose,value) {
-	$s.push("GLUniformLocation::uniformMatrix4fv");
-	var $spos = $s.length;
-	if(transpose == null) transpose = false;
-	GL.gl.uniformMatrix4fv(this.location,transpose,value);
-	$s.pop();
-}
-GLUniformLocation.prototype.setMatrix3 = function(matrix) {
-	$s.push("GLUniformLocation::setMatrix3");
-	var $spos = $s.length;
-	GL.gl.uniformMatrix3fv(this.location,false,matrix.buffer);
-	$s.pop();
-}
-GLUniformLocation.prototype.setMatrix4 = function(matrix) {
-	$s.push("GLUniformLocation::setMatrix4");
-	var $spos = $s.length;
-	GL.gl.uniformMatrix4fv(this.location,false,matrix.buffer);
-	$s.pop();
-}
-GLUniformLocation.prototype.setVec3 = function(vec) {
-	$s.push("GLUniformLocation::setVec3");
-	var $spos = $s.length;
-	GL.gl.uniform3f(this.location,vec.x,vec.y,vec.z);
-	$s.pop();
-}
-GLUniformLocation.prototype.setRGB = function(color) {
-	$s.push("GLUniformLocation::setRGB");
-	var $spos = $s.length;
-	GL.gl.uniform3f(this.location,color.r,color.g,color.b);
-	$s.pop();
-}
-GLUniformLocation.prototype.setRGBA = function(color) {
-	$s.push("GLUniformLocation::setRGBA");
-	var $spos = $s.length;
-	GL.gl.uniform4f(this.location,color.r,color.g,color.b,color.a);
-	$s.pop();
-}
-GLUniformLocation.prototype.setTexture = function(texture,index) {
-	$s.push("GLUniformLocation::setTexture");
-	var $spos = $s.length;
-	if(index == null) index = 0;
-	GL.gl.activeTexture(33984 + index);
-	GL.gl.bindTexture(3553,texture.texture);
-	GL.gl.uniform1i(this.location,index);
-	$s.pop();
-}
-GLUniformLocation.prototype.__class__ = GLUniformLocation;
-if(!kumite.projection) kumite.projection = {}
-kumite.projection.Config = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.projection.Config::new");
-	var $spos = $s.length;
-	this.projection = new kumite.projection.Projection();
-	this.projectionController = new kumite.projection.ProjectionController();
-	this.projectionController.fov = 40;
-	this.projectionController.near = 0.1;
-	this.projectionController.far = 500;
-	$s.pop();
-}}
-kumite.projection.Config.__name__ = ["kumite","projection","Config"];
-kumite.projection.Config.prototype.projection = null;
-kumite.projection.Config.prototype.projectionController = null;
-kumite.projection.Config.prototype.__class__ = kumite.projection.Config;
-kumite.projection.Config.__interfaces__ = [haxe.rtti.Infos];
-kumite.time.Config = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.time.Config::new");
-	var $spos = $s.length;
-	this.time = new kumite.time.Time();
-	this.timeController = new kumite.time.TimeController();
-	$s.pop();
-}}
-kumite.time.Config.__name__ = ["kumite","time","Config"];
-kumite.time.Config.prototype.time = null;
-kumite.time.Config.prototype.timeController = null;
-kumite.time.Config.prototype.__class__ = kumite.time.Config;
-kumite.time.Config.__interfaces__ = [haxe.rtti.Infos];
-GLInteractiveObject = function(p) { if( p === $_ ) return; {
-	$s.push("GLInteractiveObject::new");
-	var $spos = $s.length;
-	GLDisplayObject.call(this);
-	GLDisplayList.getDefault().initInteractiveObject(this);
-	this.hitarea = new GLHitarea();
-	$s.pop();
-}}
-GLInteractiveObject.__name__ = ["GLInteractiveObject"];
-GLInteractiveObject.__super__ = GLDisplayObject;
-for(var k in GLDisplayObject.prototype ) GLInteractiveObject.prototype[k] = GLDisplayObject.prototype[k];
-GLInteractiveObject.prototype.hitarea = null;
-GLInteractiveObject.prototype.mouseDownSignaler = null;
-GLInteractiveObject.prototype.__class__ = GLInteractiveObject;
-kumite.time.TimeController = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.time.TimeController::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-kumite.time.TimeController.__name__ = ["kumite","time","TimeController"];
-kumite.time.TimeController.prototype.time = null;
-kumite.time.TimeController.prototype.messenger = null;
-kumite.time.TimeController.prototype.startComplete = function() {
-	$s.push("kumite.time.TimeController::startComplete");
-	var $spos = $s.length;
-	this.time.reset();
-	GLAnimationFrame.run($closure(this,"timerUpdate"));
-	$s.pop();
-}
-kumite.time.TimeController.prototype.timerUpdate = function() {
-	$s.push("kumite.time.TimeController::timerUpdate");
-	var $spos = $s.length;
-	this.time.tick();
-	this.messenger.send(new kumite.time.Tick());
-	$s.pop();
-}
-kumite.time.TimeController.prototype.__class__ = kumite.time.TimeController;
-kumite.time.TimeController.__interfaces__ = [haxe.rtti.Infos];
-kumite.projection.ProjectionController = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.projection.ProjectionController::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-kumite.projection.ProjectionController.__name__ = ["kumite","projection","ProjectionController"];
-kumite.projection.ProjectionController.prototype.projection = null;
-kumite.projection.ProjectionController.prototype.stage = null;
-kumite.projection.ProjectionController.prototype.fov = null;
-kumite.projection.ProjectionController.prototype.near = null;
-kumite.projection.ProjectionController.prototype.far = null;
-kumite.projection.ProjectionController.prototype.init = function() {
-	$s.push("kumite.projection.ProjectionController::init");
-	var $spos = $s.length;
-	this.projection.matrix = new Matrix4();
-	this.updateProjectionSizeFromStage();
-	$s.pop();
-}
-kumite.projection.ProjectionController.prototype.updateProjectionSizeFromStage = function(message) {
-	$s.push("kumite.projection.ProjectionController::updateProjectionSizeFromStage");
-	var $spos = $s.length;
-	this.projection.matrix.perspective(this.fov,this.stage.getAspect(),this.near,this.far);
-	$s.pop();
-}
-kumite.projection.ProjectionController.prototype.__class__ = kumite.projection.ProjectionController;
-kumite.projection.ProjectionController.__interfaces__ = [haxe.rtti.Infos];
-Lambda = function() { }
-Lambda.__name__ = ["Lambda"];
-Lambda.array = function(it) {
-	$s.push("Lambda::array");
-	var $spos = $s.length;
-	var a = new Array();
-	{ var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var i = $it0.next();
-	a.push(i);
-	}}
-	{
-		$s.pop();
-		return a;
-	}
-	$s.pop();
-}
-Lambda.list = function(it) {
-	$s.push("Lambda::list");
-	var $spos = $s.length;
-	var l = new List();
-	{ var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var i = $it0.next();
-	l.add(i);
-	}}
-	{
-		$s.pop();
-		return l;
-	}
-	$s.pop();
-}
-Lambda.map = function(it,f) {
-	$s.push("Lambda::map");
-	var $spos = $s.length;
-	var l = new List();
-	{ var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var x = $it0.next();
-	l.add(f(x));
-	}}
-	{
-		$s.pop();
-		return l;
-	}
-	$s.pop();
-}
-Lambda.mapi = function(it,f) {
-	$s.push("Lambda::mapi");
-	var $spos = $s.length;
-	var l = new List();
-	var i = 0;
-	{ var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var x = $it0.next();
-	l.add(f(i++,x));
-	}}
-	{
-		$s.pop();
-		return l;
-	}
-	$s.pop();
-}
-Lambda.has = function(it,elt,cmp) {
-	$s.push("Lambda::has");
-	var $spos = $s.length;
-	if(cmp == null) {
-		{ var $it0 = it.iterator();
-		while( $it0.hasNext() ) { var x = $it0.next();
-		if(x == elt) {
-			$s.pop();
-			return true;
-		}
-		}}
-	}
-	else {
-		{ var $it1 = it.iterator();
-		while( $it1.hasNext() ) { var x = $it1.next();
-		if(cmp(x,elt)) {
-			$s.pop();
-			return true;
-		}
-		}}
-	}
-	{
-		$s.pop();
-		return false;
-	}
-	$s.pop();
-}
-Lambda.exists = function(it,f) {
-	$s.push("Lambda::exists");
-	var $spos = $s.length;
-	{ var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var x = $it0.next();
-	if(f(x)) {
-		$s.pop();
-		return true;
-	}
-	}}
-	{
-		$s.pop();
-		return false;
-	}
-	$s.pop();
-}
-Lambda.foreach = function(it,f) {
-	$s.push("Lambda::foreach");
-	var $spos = $s.length;
-	{ var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var x = $it0.next();
-	if(!f(x)) {
-		$s.pop();
-		return false;
-	}
-	}}
-	{
-		$s.pop();
-		return true;
-	}
-	$s.pop();
-}
-Lambda.iter = function(it,f) {
-	$s.push("Lambda::iter");
-	var $spos = $s.length;
-	{ var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var x = $it0.next();
-	f(x);
-	}}
-	$s.pop();
-}
-Lambda.filter = function(it,f) {
-	$s.push("Lambda::filter");
-	var $spos = $s.length;
-	var l = new List();
-	{ var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var x = $it0.next();
-	if(f(x)) l.add(x);
-	}}
-	{
-		$s.pop();
-		return l;
-	}
-	$s.pop();
-}
-Lambda.fold = function(it,f,first) {
-	$s.push("Lambda::fold");
-	var $spos = $s.length;
-	{ var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var x = $it0.next();
-	first = f(x,first);
-	}}
-	{
-		$s.pop();
-		return first;
-	}
-	$s.pop();
-}
-Lambda.count = function(it,pred) {
-	$s.push("Lambda::count");
-	var $spos = $s.length;
-	var n = 0;
-	if(pred == null) { var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var _ = $it0.next();
-	n++;
-	}}
-	else { var $it1 = it.iterator();
-	while( $it1.hasNext() ) { var x = $it1.next();
-	if(pred(x)) n++;
-	}}
-	{
-		$s.pop();
-		return n;
-	}
-	$s.pop();
-}
-Lambda.empty = function(it) {
-	$s.push("Lambda::empty");
-	var $spos = $s.length;
-	{
-		var $tmp = !it.iterator().hasNext();
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Lambda.indexOf = function(it,v) {
-	$s.push("Lambda::indexOf");
-	var $spos = $s.length;
-	var i = 0;
-	{ var $it0 = it.iterator();
-	while( $it0.hasNext() ) { var v2 = $it0.next();
-	{
-		if(v == v2) {
-			$s.pop();
-			return i;
-		}
-		i++;
-	}
-	}}
-	{
-		$s.pop();
-		return -1;
-	}
-	$s.pop();
-}
-Lambda.concat = function(a,b) {
-	$s.push("Lambda::concat");
-	var $spos = $s.length;
-	var l = new List();
-	{ var $it0 = a.iterator();
-	while( $it0.hasNext() ) { var x = $it0.next();
-	l.add(x);
-	}}
-	{ var $it1 = b.iterator();
-	while( $it1.hasNext() ) { var x = $it1.next();
-	l.add(x);
-	}}
-	{
-		$s.pop();
-		return l;
-	}
-	$s.pop();
-}
-Lambda.prototype.__class__ = Lambda;
-haxe.rtti.Meta = function() { }
-haxe.rtti.Meta.__name__ = ["haxe","rtti","Meta"];
-haxe.rtti.Meta.getType = function(t) {
-	$s.push("haxe.rtti.Meta::getType");
-	var $spos = $s.length;
-	var meta = t.__meta__;
-	{
-		var $tmp = meta == null?meta:meta.obj;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.rtti.Meta.getStatics = function(t) {
-	$s.push("haxe.rtti.Meta::getStatics");
-	var $spos = $s.length;
-	var meta = t.__meta__;
-	{
-		var $tmp = meta == null?meta:meta.statics;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.rtti.Meta.getFields = function(t) {
-	$s.push("haxe.rtti.Meta::getFields");
-	var $spos = $s.length;
-	var meta = t.__meta__;
-	{
-		var $tmp = meta == null?meta:meta.fields;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.rtti.Meta.prototype.__class__ = haxe.rtti.Meta;
-bpmjs.Messenger = function(p) { if( p === $_ ) return; {
-	$s.push("bpmjs.Messenger::new");
-	var $spos = $s.length;
-	this.receivers = new Array();
-	$s.pop();
-}}
-bpmjs.Messenger.__name__ = ["bpmjs","Messenger"];
-bpmjs.Messenger.prototype.receivers = null;
-bpmjs.Messenger.prototype.addReceiver = function(type,listener) {
-	$s.push("bpmjs.Messenger::addReceiver");
-	var $spos = $s.length;
-	this.removeReceiver(type,listener);
-	this.receivers.push(new bpmjs._Messenger.ReceiverForType(type,listener));
-	$s.pop();
-}
-bpmjs.Messenger.prototype.removeReceiver = function(type,listener) {
-	$s.push("bpmjs.Messenger::removeReceiver");
-	var $spos = $s.length;
-	var _g = 0, _g1 = this.receivers;
-	while(_g < _g1.length) {
-		var receiver = _g1[_g];
-		++_g;
-		if(receiver.type == type && Reflect.compareMethods(listener,receiver.method)) {
-			this.receivers.remove(receiver);
-			{
-				$s.pop();
-				return;
-			}
-		}
-	}
-	$s.pop();
-}
-bpmjs.Messenger.prototype.send = function(message) {
-	$s.push("bpmjs.Messenger::send");
-	var $spos = $s.length;
-	var _g = 0, _g1 = this.receivers;
-	while(_g < _g1.length) {
-		var receiver = _g1[_g];
-		++_g;
-		if(receiver.type == null || receiver.type == Type.getClass(message)) receiver.method(message);
-	}
-	$s.pop();
-}
-bpmjs.Messenger.prototype.toString = function() {
-	$s.push("bpmjs.Messenger::toString");
-	var $spos = $s.length;
-	{
-		var $tmp = Type.getClassName(Type.getClass(this));
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-bpmjs.Messenger.prototype.__class__ = bpmjs.Messenger;
-if(!bpmjs._Messenger) bpmjs._Messenger = {}
-bpmjs._Messenger.ReceiverForType = function(type,method) { if( type === $_ ) return; {
-	$s.push("bpmjs._Messenger.ReceiverForType::new");
-	var $spos = $s.length;
-	this.type = type;
-	this.method = method;
-	$s.pop();
-}}
-bpmjs._Messenger.ReceiverForType.__name__ = ["bpmjs","_Messenger","ReceiverForType"];
-bpmjs._Messenger.ReceiverForType.prototype.type = null;
-bpmjs._Messenger.ReceiverForType.prototype.method = null;
-bpmjs._Messenger.ReceiverForType.prototype.__class__ = bpmjs._Messenger.ReceiverForType;
-bpmjs.ContextBuilder = function(p) { if( p === $_ ) return; {
-	$s.push("bpmjs.ContextBuilder::new");
-	var $spos = $s.length;
-	this.context = new bpmjs.Context();
-	$s.pop();
-}}
-bpmjs.ContextBuilder.__name__ = ["bpmjs","ContextBuilder"];
-bpmjs.ContextBuilder.defaultContext = null;
-bpmjs.ContextBuilder.build = function(configClass,contextConfig) {
-	$s.push("bpmjs.ContextBuilder::build");
-	var $spos = $s.length;
-	{
-		var $tmp = bpmjs.ContextBuilder.buildAll([configClass],contextConfig);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-bpmjs.ContextBuilder.buildAll = function(configClasses,contextConfig) {
-	$s.push("bpmjs.ContextBuilder::buildAll");
-	var $spos = $s.length;
-	Log.groupCollapsed(null,null,null,null,null,null,null,{ fileName : "ContextBuilder.hx", lineNumber : 20, className : "bpmjs.ContextBuilder", methodName : "buildAll"});
-	var builder = new bpmjs.ContextBuilder();
-	bpmjs.ContextBuilder.defaultContext = builder.context;
-	builder.contextConfig = contextConfig == null?bpmjs.ContextBuilder.createDefaultContextConfig():contextConfig;
-	builder.buildInternal(configClasses);
-	Log.groupEnd({ fileName : "ContextBuilder.hx", lineNumber : 28, className : "bpmjs.ContextBuilder", methodName : "buildAll"});
-	{
-		var $tmp = bpmjs.ContextBuilder.defaultContext;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-bpmjs.ContextBuilder.configure = function(object) {
-	$s.push("bpmjs.ContextBuilder::configure");
-	var $spos = $s.length;
-	var builder = new bpmjs.ContextBuilder();
-	if(bpmjs.ContextBuilder.defaultContext == null) throw builder.createError("Cannot configure Object as no context is available!");
-	builder.contextConfig = bpmjs.ContextBuilder.defaultContext.contextConfig;
-	builder.context = bpmjs.ContextBuilder.defaultContext;
-	builder.configureInternal(object);
-	$s.pop();
-}
-bpmjs.ContextBuilder.createDefaultContextConfig = function() {
-	$s.push("bpmjs.ContextBuilder::createDefaultContextConfig");
-	var $spos = $s.length;
-	var defaultContextConfig = new bpmjs.ContextConfig();
-	defaultContextConfig.frontMessenger = new bpmjs.DefaultFrontMessenger();
-	{
-		$s.pop();
-		return defaultContextConfig;
-	}
-	$s.pop();
-}
-bpmjs.ContextBuilder.prototype.context = null;
-bpmjs.ContextBuilder.prototype.contextConfig = null;
-bpmjs.ContextBuilder.prototype.configureInternal = function(object) {
-	$s.push("bpmjs.ContextBuilder::configureInternal");
-	var $spos = $s.length;
-	var contextObject = this.context.addObject("configured",Type.getClass(object),object);
-	this.wireContextObject(contextObject);
-	this.registerMessengerByObjectTypeForContextObject(contextObject);
-	this.registerMessengersForContextObject(contextObject);
-	this.registerReceiversForContextObject(contextObject);
-	this.doCompleteCallForContextObject(contextObject);
-	$s.pop();
-}
-bpmjs.ContextBuilder.prototype.buildInternal = function(configClasses) {
-	$s.push("bpmjs.ContextBuilder::buildInternal");
-	var $spos = $s.length;
-	this.context.contextConfig = this.contextConfig;
-	{
-		var _g = 0;
-		while(_g < configClasses.length) {
-			var configClass = configClasses[_g];
-			++_g;
-			var config = Type.createInstance(configClass,[]);
-			this.createObjects(config,configClass);
-		}
-	}
-	this.wireInjections();
-	this.registerMessengersByObjectType();
-	this.registerMessengers();
-	this.registerReceivers();
-	this.doCompleteCall();
-	this.doPostCompleteCall();
-	$s.pop();
-}
-bpmjs.ContextBuilder.prototype.createObjects = function(config,configClass) {
-	$s.push("bpmjs.ContextBuilder::createObjects");
-	var $spos = $s.length;
-	if(configClass.__rtti == null) throw this.createError("Config class " + Type.getClassName(configClass) + " must have RTTI enabled!");
-	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(configClass.__rtti).firstElement());
-	var classDef = haxe.rtti.TypeApi.typeInfos(infos);
-	{ var $it0 = classDef.fields.iterator();
-	while( $it0.hasNext() ) { var field = $it0.next();
-	{
-		var $e = field.type;
-		switch( $e[1] ) {
-		case 2:
-		var params = $e[3], name = $e[2];
-		{
-			var type = Type.resolveClass(name);
-			if(type == null) throw "Type of class " + name + " is null!";
-			var instance = Reflect.field(config,field.name);
-			this.context.addObject(field.name,type,instance);
-			if(type == Array) {
-				var list = instance;
-				{
-					var _g = 0;
-					while(_g < list.length) {
-						var listInstance = list[_g];
-						++_g;
-						this.context.addObject("dynamic",Type.getClass(listInstance),listInstance);
-					}
-				}
-			}
-		}break;
-		default:{
-			continue;
-		}break;
-		}
-	}
-	}}
-	$s.pop();
-}
-bpmjs.ContextBuilder.prototype.wireInjections = function() {
-	$s.push("bpmjs.ContextBuilder::wireInjections");
-	var $spos = $s.length;
-	var _g = 0, _g1 = this.context.objects;
-	while(_g < _g1.length) {
-		var contextObject = _g1[_g];
-		++_g;
-		this.wireContextObject(contextObject);
-	}
-	$s.pop();
-}
-bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
-	$s.push("bpmjs.ContextBuilder::wireContextObject");
-	var $spos = $s.length;
-	if(contextObject.type.__rtti == null) {
-		$s.pop();
-		return;
-	}
-	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(contextObject.type.__rtti).firstElement());
-	var classDef = haxe.rtti.TypeApi.typeInfos(infos);
-	var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
-	{ var $it0 = classDef.fields.iterator();
-	while( $it0.hasNext() ) { var field = $it0.next();
-	{
-		var $e = field.type;
-		switch( $e[1] ) {
-		case 2:
-		var params = $e[3], name = $e[2];
-		{
-			var meta = Reflect.field(metaDatas,field.name);
-			if(meta != null && Reflect.hasField(meta,"Inject")) {
-				var type = Type.resolveClass(name);
-				var wiredObject = type == bpmjs.Context?this.context:this.context.getObjectByType(type);
-				if(wiredObject == null) Log.warn("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + field.name + " but could not find object to inject.",null,null,null,null,null,null,{ fileName : "ContextBuilder.hx", lineNumber : 145, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"});
-				else contextObject.object[field.name] = wiredObject;
-			}
-		}break;
-		default:{
-			continue;
-		}break;
-		}
-	}
-	}}
-	$s.pop();
-}
-bpmjs.ContextBuilder.prototype.registerMessengersByObjectType = function() {
-	$s.push("bpmjs.ContextBuilder::registerMessengersByObjectType");
-	var $spos = $s.length;
-	var _g = 0, _g1 = this.context.objects;
-	while(_g < _g1.length) {
-		var contextObject = _g1[_g];
-		++_g;
-		this.registerMessengerByObjectTypeForContextObject(contextObject);
-	}
-	$s.pop();
-}
-bpmjs.ContextBuilder.prototype.registerMessengerByObjectTypeForContextObject = function(contextObject) {
-	$s.push("bpmjs.ContextBuilder::registerMessengerByObjectTypeForContextObject");
-	var $spos = $s.length;
-	if(Std["is"](contextObject.object,bpmjs.Messenger)) {
-		this.contextConfig.frontMessenger.addMessenger(contextObject.object);
-	}
-	$s.pop();
-}
-bpmjs.ContextBuilder.prototype.registerMessengers = function() {
-	$s.push("bpmjs.ContextBuilder::registerMessengers");
-	var $spos = $s.length;
-	var _g = 0, _g1 = this.context.objects;
-	while(_g < _g1.length) {
-		var contextObject = _g1[_g];
-		++_g;
-		this.registerMessengersForContextObject(contextObject);
-	}
-	$s.pop();
-}
-bpmjs.ContextBuilder.prototype.registerMessengersForContextObject = function(contextObject) {
-	$s.push("bpmjs.ContextBuilder::registerMessengersForContextObject");
-	var $spos = $s.length;
-	if(contextObject.type.__rtti == null) {
-		$s.pop();
-		return;
-	}
-	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(contextObject.type.__rtti).firstElement());
-	var classDef = haxe.rtti.TypeApi.typeInfos(infos);
-	var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
-	{ var $it0 = classDef.fields.iterator();
-	while( $it0.hasNext() ) { var field = $it0.next();
-	{
-		var $e = field.type;
-		switch( $e[1] ) {
-		case 2:
-		var params = $e[3], name = $e[2];
-		{
-			var meta = Reflect.field(metaDatas,field.name);
-			if(meta != null && Reflect.hasField(meta,"Messenger")) {
-				var messenger = new bpmjs.Messenger();
-				contextObject.object[field.name] = messenger;
-				this.contextConfig.frontMessenger.addMessenger(messenger);
-			}
-		}break;
-		default:{
-			continue;
-		}break;
-		}
-	}
-	}}
-	$s.pop();
-}
-bpmjs.ContextBuilder.prototype.registerReceivers = function() {
-	$s.push("bpmjs.ContextBuilder::registerReceivers");
-	var $spos = $s.length;
-	var _g = 0, _g1 = this.context.objects;
-	while(_g < _g1.length) {
-		var contextObject = _g1[_g];
-		++_g;
-		this.registerReceiversForContextObject(contextObject);
-	}
-	$s.pop();
-}
-bpmjs.ContextBuilder.prototype.registerReceiversForContextObject = function(contextObject) {
-	$s.push("bpmjs.ContextBuilder::registerReceiversForContextObject");
-	var $spos = $s.length;
-	if(contextObject.type.__rtti == null) {
-		$s.pop();
-		return;
-	}
-	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(contextObject.type.__rtti).firstElement());
-	var classDef = haxe.rtti.TypeApi.typeInfos(infos);
-	var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
-	{ var $it0 = classDef.fields.iterator();
-	while( $it0.hasNext() ) { var field = $it0.next();
-	{
-		var $e = field.type;
-		switch( $e[1] ) {
-		case 4:
-		var ret = $e[3], args = $e[2];
-		{
-			var meta = Reflect.field(metaDatas,field.name);
-			if(meta != null && Reflect.hasField(meta,"Message")) {
-				{ var $it1 = args.iterator();
-				while( $it1.hasNext() ) { var argument = $it1.next();
-				{
-					var $e = argument.t;
-					switch( $e[1] ) {
-					case 2:
-					var params = $e[3], name = $e[2];
-					{
-						var type = Type.resolveClass(name);
-						this.contextConfig.frontMessenger.addReceiver(contextObject.object,field.name,type);
-					}break;
-					default:{
-						continue;
-					}break;
-					}
-					break;
-				}
-				}}
-			}
-		}break;
-		default:{
-			continue;
-		}break;
-		}
-	}
-	}}
-	$s.pop();
-}
-bpmjs.ContextBuilder.prototype.doCompleteCall = function() {
-	$s.push("bpmjs.ContextBuilder::doCompleteCall");
-	var $spos = $s.length;
-	var _g = 0, _g1 = this.context.objects;
-	while(_g < _g1.length) {
-		var contextObject = _g1[_g];
-		++_g;
-		this.doCompleteCallForContextObject(contextObject);
-	}
-	$s.pop();
-}
-bpmjs.ContextBuilder.prototype.doCompleteCallForContextObject = function(contextObject) {
-	$s.push("bpmjs.ContextBuilder::doCompleteCallForContextObject");
-	var $spos = $s.length;
-	var object = contextObject.object;
-	var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
-	{
-		var _g = 0, _g1 = Reflect.fields(metaDatas);
-		while(_g < _g1.length) {
-			var fieldName = _g1[_g];
-			++_g;
-			var meta = Reflect.field(metaDatas,fieldName);
-			if(Reflect.hasField(meta,"Complete")) {
-				Reflect.field(object,fieldName).apply(object,[]);
-			}
-		}
-	}
-	$s.pop();
-}
-bpmjs.ContextBuilder.prototype.doPostCompleteCall = function() {
-	$s.push("bpmjs.ContextBuilder::doPostCompleteCall");
-	var $spos = $s.length;
-	var _g = 0, _g1 = this.context.objects;
-	while(_g < _g1.length) {
-		var contextObject = _g1[_g];
-		++_g;
-		var object = contextObject.object;
-		var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
-		{
-			var _g2 = 0, _g3 = Reflect.fields(metaDatas);
-			while(_g2 < _g3.length) {
-				var fieldName = _g3[_g2];
-				++_g2;
-				var meta = Reflect.field(metaDatas,fieldName);
-				if(Reflect.hasField(meta,"PostComplete")) {
-					Reflect.field(object,fieldName).apply(object,[]);
-				}
-			}
-		}
-	}
-	$s.pop();
-}
-bpmjs.ContextBuilder.prototype.createError = function(message) {
-	$s.push("bpmjs.ContextBuilder::createError");
-	var $spos = $s.length;
-	{
-		var $tmp = "ContextBuilder ERROR: " + message;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-bpmjs.ContextBuilder.prototype.__class__ = bpmjs.ContextBuilder;
-Log = function() { }
-Log.__name__ = ["Log"];
-Log.init = function() {
-	$s.push("Log::init");
-	var $spos = $s.length;
-	{
-		if(!window.console) console = { };
-		console.log = console.log || function() {
-			$s.push("Log::init@10");
-			var $spos = $s.length;
-			null;
-			$s.pop();
-		}
-		console.warn = console.warn || function() {
-			$s.push("Log::init@11");
-			var $spos = $s.length;
-			null;
-			$s.pop();
-		}
-		console.error = console.error || function() {
-			$s.push("Log::init@12");
-			var $spos = $s.length;
-			null;
-			$s.pop();
-		}
-		console.info = console.info || function() {
-			$s.push("Log::init@13");
-			var $spos = $s.length;
-			null;
-			$s.pop();
-		}
-	}
-	haxe.Log.trace = $closure(Log,"infoConsole");
-	$s.pop();
-}
-Log.addFilter = function(filter) {
-	$s.push("Log::addFilter");
-	var $spos = $s.length;
-	Log.filters.push(filter);
-	$s.pop();
-}
-Log.info = function(m0,m1,m2,m3,m4,m5,m6,i) {
-	$s.push("Log::info");
-	var $spos = $s.length;
-	if(Log.infoEnabled(i)) console.log(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i));
-	$s.pop();
-}
-Log.warn = function(m0,m1,m2,m3,m4,m5,m6,i) {
-	$s.push("Log::warn");
-	var $spos = $s.length;
-	if(Log.warnEnabled(i)) console.warn(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i));
-	$s.pop();
-}
-Log.error = function(m0,m1,m2,m3,m4,m5,m6,i) {
-	$s.push("Log::error");
-	var $spos = $s.length;
-	if(Log.errorEnabled(i)) {
-		var exception = haxe.Stack.exceptionStack().join("\n");
-		console.error(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i) + "\nStack:\n" + exception);
-	}
-	$s.pop();
-}
-Log.infoEnabled = function(i) {
-	$s.push("Log::infoEnabled");
-	var $spos = $s.length;
-	{
-		var $tmp = Log.filter(i,LogLevel.INFO);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Log.warnEnabled = function(i) {
-	$s.push("Log::warnEnabled");
-	var $spos = $s.length;
-	{
-		var $tmp = Log.filter(i,LogLevel.WARN);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Log.errorEnabled = function(i) {
-	$s.push("Log::errorEnabled");
-	var $spos = $s.length;
-	{
-		var $tmp = Log.filter(i,LogLevel.ERROR);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Log.groupCollapsed = function(m0,m1,m2,m3,m4,m5,m6,i) {
-	$s.push("Log::groupCollapsed");
-	var $spos = $s.length;
-	if(Log.infoEnabled(i)) console.groupCollapsed(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i));
-	$s.pop();
-}
-Log.groupEnd = function(i) {
-	$s.push("Log::groupEnd");
-	var $spos = $s.length;
-	if(Log.infoEnabled(i)) console.groupEnd();
-	$s.pop();
-}
-Log.filter = function(i,level) {
-	$s.push("Log::filter");
-	var $spos = $s.length;
-	var result = true;
-	{
-		var _g = 0, _g1 = Log.filters;
-		while(_g < _g1.length) {
-			var filter = _g1[_g];
-			++_g;
-			result = filter.enabled(result,i,level);
-		}
-	}
-	{
-		$s.pop();
-		return result;
-	}
-	$s.pop();
-}
-Log.createMessage = function(messages,i) {
-	$s.push("Log::createMessage");
-	var $spos = $s.length;
-	var resultArray = [];
-	{
-		var _g = 0;
-		while(_g < messages.length) {
-			var message = messages[_g];
-			++_g;
-			resultArray.push(Std.string(message));
-		}
-	}
-	while(resultArray.length > 0 && resultArray[resultArray.length - 1] == "null") {
-		resultArray.pop();
-	}
-	var from = i.className + "." + i.methodName;
-	{
-		var $tmp = "[" + from + "] " + resultArray.join(", ");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Log.infoConsole = function(v,i) {
-	$s.push("Log::infoConsole");
-	var $spos = $s.length;
-	console.log("" + Log.createMessage([v],i) + " (trace)");
-	$s.pop();
-}
-Log.prototype.__class__ = Log;
-kumite.displaylist.Config = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.displaylist.Config::new");
-	var $spos = $s.length;
-	this.displayListController = new kumite.displaylist.DisplayListController();
-	$s.pop();
-}}
-kumite.displaylist.Config.__name__ = ["kumite","displaylist","Config"];
-kumite.displaylist.Config.prototype.displayListController = null;
-kumite.displaylist.Config.prototype.__class__ = kumite.displaylist.Config;
-kumite.displaylist.Config.__interfaces__ = [haxe.rtti.Infos];
-Matrix3 = function(cloneFrom) { if( cloneFrom === $_ ) return; {
-	$s.push("Matrix3::new");
-	var $spos = $s.length;
-	this.buffer = new Float32Array(9);
-	if(cloneFrom != null) {
-		this.setFrom(cloneFrom);
-	}
-	else {
-		this.identity();
-	}
-	$s.pop();
-}}
-Matrix3.__name__ = ["Matrix3"];
-Matrix3.prototype.buffer = null;
-Matrix3.prototype.identity = function() {
-	$s.push("Matrix3::identity");
-	var $spos = $s.length;
-	this.buffer[0] = 1;
-	this.buffer[1] = 0;
-	this.buffer[2] = 0;
-	this.buffer[3] = 0;
-	this.buffer[4] = 1;
-	this.buffer[5] = 0;
-	this.buffer[6] = 0;
-	this.buffer[7] = 0;
-	this.buffer[8] = 1;
-	$s.pop();
-}
-Matrix3.prototype.transpose = function() {
-	$s.push("Matrix3::transpose");
-	var $spos = $s.length;
-	var a01 = this.buffer[1], a02 = this.buffer[2];
-	var a12 = this.buffer[5];
-	this.buffer[1] = this.buffer[3];
-	this.buffer[2] = this.buffer[6];
-	this.buffer[3] = a01;
-	this.buffer[5] = this.buffer[7];
-	this.buffer[6] = a02;
-	this.buffer[7] = a12;
-	$s.pop();
-}
-Matrix3.prototype.setFrom = function(from) {
-	$s.push("Matrix3::setFrom");
-	var $spos = $s.length;
-	this.buffer[0] = from.buffer[0];
-	this.buffer[1] = from.buffer[1];
-	this.buffer[2] = from.buffer[2];
-	this.buffer[3] = from.buffer[3];
-	this.buffer[4] = from.buffer[4];
-	this.buffer[5] = from.buffer[5];
-	this.buffer[6] = from.buffer[6];
-	this.buffer[7] = from.buffer[7];
-	this.buffer[8] = from.buffer[8];
-	this.buffer[9] = from.buffer[9];
-	$s.pop();
-}
-Matrix3.prototype.clone = function() {
-	$s.push("Matrix3::clone");
-	var $spos = $s.length;
-	{
-		var $tmp = new Matrix3(this);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Matrix3.prototype.toString = function() {
-	$s.push("Matrix3::toString");
-	var $spos = $s.length;
-	var result = "Matrix3:";
-	result += "\r\t" + this.buffer[0] + "," + this.buffer[1] + "," + this.buffer[2];
-	result += "\r\t" + this.buffer[3] + "," + this.buffer[4] + "," + this.buffer[5];
-	result += "\r\t" + this.buffer[6] + "," + this.buffer[7] + "," + this.buffer[8];
-	{
-		$s.pop();
-		return result;
-	}
-	$s.pop();
-}
-Matrix3.prototype.__class__ = Matrix3;
-GLFrame = function(p) { if( p === $_ ) return; {
-	$s.push("GLFrame::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-GLFrame.__name__ = ["GLFrame"];
-GLFrame.prototype.time = null;
-GLFrame.prototype.timer = null;
-GLFrame.prototype.frameTime = null;
-GLFrame.prototype.__class__ = GLFrame;
-haxe.Log = function() { }
-haxe.Log.__name__ = ["haxe","Log"];
-haxe.Log.trace = function(v,infos) {
-	$s.push("haxe.Log::trace");
-	var $spos = $s.length;
-	js.Boot.__trace(v,infos);
-	$s.pop();
-}
-haxe.Log.clear = function() {
-	$s.push("haxe.Log::clear");
-	var $spos = $s.length;
-	js.Boot.__clear_trace();
-	$s.pop();
-}
-haxe.Log.prototype.__class__ = haxe.Log;
-shader.DisplayObjectFragment = function() { }
-shader.DisplayObjectFragment.__name__ = ["shader","DisplayObjectFragment"];
-shader.DisplayObjectFragment.prototype.__class__ = shader.DisplayObjectFragment;
-Hash = function(p) { if( p === $_ ) return; {
-	$s.push("Hash::new");
-	var $spos = $s.length;
-	this.h = {}
-	if(this.h.__proto__ != null) {
-		this.h.__proto__ = null;
-		delete(this.h.__proto__);
-	}
-	else null;
-	$s.pop();
-}}
-Hash.__name__ = ["Hash"];
-Hash.prototype.h = null;
-Hash.prototype.set = function(key,value) {
-	$s.push("Hash::set");
-	var $spos = $s.length;
-	this.h["$" + key] = value;
-	$s.pop();
-}
-Hash.prototype.get = function(key) {
-	$s.push("Hash::get");
-	var $spos = $s.length;
-	{
-		var $tmp = this.h["$" + key];
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Hash.prototype.exists = function(key) {
-	$s.push("Hash::exists");
-	var $spos = $s.length;
-	try {
-		key = "$" + key;
-		{
-			var $tmp = this.hasOwnProperty.call(this.h,key);
-			$s.pop();
-			return $tmp;
-		}
-	}
-	catch( $e0 ) {
-		{
-			var e = $e0;
-			{
-				$e = [];
-				while($s.length >= $spos) $e.unshift($s.pop());
-				$s.push($e[0]);
-				
-				for(var i in this.h)
-					if( i == key ) return true;
-			;
-				{
-					$s.pop();
-					return false;
-				}
-			}
-		}
-	}
-	$s.pop();
-}
-Hash.prototype.remove = function(key) {
-	$s.push("Hash::remove");
-	var $spos = $s.length;
-	if(!this.exists(key)) {
-		$s.pop();
-		return false;
-	}
-	delete(this.h["$" + key]);
-	{
-		$s.pop();
-		return true;
-	}
-	$s.pop();
-}
-Hash.prototype.keys = function() {
-	$s.push("Hash::keys");
-	var $spos = $s.length;
-	var a = new Array();
-	
-			for(var i in this.h)
-				a.push(i.substr(1));
-		;
-	{
-		var $tmp = a.iterator();
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Hash.prototype.iterator = function() {
-	$s.push("Hash::iterator");
-	var $spos = $s.length;
-	{
-		var $tmp = { ref : this.h, it : this.keys(), hasNext : function() {
-			$s.push("Hash::iterator@81");
-			var $spos = $s.length;
-			{
-				var $tmp = this.it.hasNext();
-				$s.pop();
-				return $tmp;
-			}
-			$s.pop();
-		}, next : function() {
-			$s.push("Hash::iterator@82");
-			var $spos = $s.length;
-			var i = this.it.next();
-			{
-				var $tmp = this.ref["$" + i];
-				$s.pop();
-				return $tmp;
-			}
-			$s.pop();
-		}};
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Hash.prototype.toString = function() {
-	$s.push("Hash::toString");
-	var $spos = $s.length;
-	var s = new StringBuf();
-	s.b[s.b.length] = "{";
-	var it = this.keys();
-	{ var $it0 = it;
-	while( $it0.hasNext() ) { var i = $it0.next();
-	{
-		s.b[s.b.length] = i;
-		s.b[s.b.length] = " => ";
-		s.b[s.b.length] = Std.string(this.get(i));
-		if(it.hasNext()) s.b[s.b.length] = ", ";
-	}
-	}}
-	s.b[s.b.length] = "}";
-	{
-		var $tmp = s.b.join("");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Hash.prototype.__class__ = Hash;
-kumite.projection.Projection = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.projection.Projection::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-kumite.projection.Projection.__name__ = ["kumite","projection","Projection"];
-kumite.projection.Projection.prototype.matrix = null;
-kumite.projection.Projection.prototype.__class__ = kumite.projection.Projection;
-kumite.camera.CameraMouseMover = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.camera.CameraMouseMover::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-kumite.camera.CameraMouseMover.__name__ = ["kumite","camera","CameraMouseMover"];
-kumite.camera.CameraMouseMover.prototype.camera = null;
-kumite.camera.CameraMouseMover.prototype.init = function() {
-	$s.push("kumite.camera.CameraMouseMover::init");
-	var $spos = $s.length;
-	this.camera.matrix = new Matrix4();
-	this.updateCamera();
-	$s.pop();
-}
-kumite.camera.CameraMouseMover.prototype.updateCamera = function() {
-	$s.push("kumite.camera.CameraMouseMover::updateCamera");
-	var $spos = $s.length;
-	this.camera.matrix.identity();
-	this.camera.matrix.lookAt(new Vec3(0,0,10),new Vec3(0,0,0),new Vec3(0,1,0));
-	$s.pop();
-}
-kumite.camera.CameraMouseMover.prototype.__class__ = kumite.camera.CameraMouseMover;
-kumite.camera.CameraMouseMover.__interfaces__ = [haxe.rtti.Infos];
-Std = function() { }
-Std.__name__ = ["Std"];
-Std["is"] = function(v,t) {
-	$s.push("Std::is");
-	var $spos = $s.length;
-	{
-		var $tmp = js.Boot.__instanceof(v,t);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Std.string = function(s) {
-	$s.push("Std::string");
-	var $spos = $s.length;
-	{
-		var $tmp = js.Boot.__string_rec(s,"");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Std["int"] = function(x) {
-	$s.push("Std::int");
-	var $spos = $s.length;
-	if(x < 0) {
-		var $tmp = Math.ceil(x);
-		$s.pop();
-		return $tmp;
-	}
-	{
-		var $tmp = Math.floor(x);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Std.parseInt = function(x) {
-	$s.push("Std::parseInt");
-	var $spos = $s.length;
-	var v = parseInt(x,10);
-	if(v == 0 && x.charCodeAt(1) == 120) v = parseInt(x);
-	if(isNaN(v)) {
-		$s.pop();
-		return null;
-	}
-	{
-		var $tmp = v;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Std.parseFloat = function(x) {
-	$s.push("Std::parseFloat");
-	var $spos = $s.length;
-	{
-		var $tmp = parseFloat(x);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Std.random = function(x) {
-	$s.push("Std::random");
-	var $spos = $s.length;
-	{
-		var $tmp = Math.floor(Math.random() * x);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Std.prototype.__class__ = Std;
-kumite.mouse.MouseController = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.mouse.MouseController::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-kumite.mouse.MouseController.__name__ = ["kumite","mouse","MouseController"];
-kumite.mouse.MouseController.prototype.canvas = null;
-kumite.mouse.MouseController.prototype.start = function() {
-	$s.push("kumite.mouse.MouseController::start");
-	var $spos = $s.length;
-	GLMouseRegistry.getInstance().init(this.canvas.itself);
-	$s.pop();
-}
-kumite.mouse.MouseController.prototype.__class__ = kumite.mouse.MouseController;
-kumite.mouse.MouseController.__interfaces__ = [haxe.rtti.Infos];
-kumite.camera.Camera = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.camera.Camera::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-kumite.camera.Camera.__name__ = ["kumite","camera","Camera"];
-kumite.camera.Camera.prototype.matrix = null;
-kumite.camera.Camera.prototype.__class__ = kumite.camera.Camera;
-haxe.TypeTools = function() { }
-haxe.TypeTools.__name__ = ["haxe","TypeTools"];
-haxe.TypeTools.getClassNames = function(value) {
-	$s.push("haxe.TypeTools::getClassNames");
-	var $spos = $s.length;
-	var result = new List();
-	var valueClass = Std["is"](value,Class)?value:Type.getClass(value);
-	while(null != valueClass) {
-		result.add(Type.getClassName(valueClass));
-		valueClass = Type.getSuperClass(valueClass);
-	}
-	{
-		$s.pop();
-		return result;
-	}
-	$s.pop();
-}
-haxe.TypeTools.prototype.__class__ = haxe.TypeTools;
-kumite.canvas.Config = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.canvas.Config::new");
-	var $spos = $s.length;
-	this.canvasCase = new kumite.canvas.CanvasCase();
-	this.canvasController = new kumite.canvas.CanvasController();
-	$s.pop();
-}}
-kumite.canvas.Config.__name__ = ["kumite","canvas","Config"];
-kumite.canvas.Config.prototype.canvasCase = null;
-kumite.canvas.Config.prototype.canvasController = null;
-kumite.canvas.Config.prototype.__class__ = kumite.canvas.Config;
-kumite.canvas.Config.__interfaces__ = [haxe.rtti.Infos];
-Main = function(canvas) { if( canvas === $_ ) return; {
-	$s.push("Main::new");
-	var $spos = $s.length;
-	try {
-		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.time.Config,kumite.projection.Config,kumite.camera.Config,kumite.mouse.Config,kumite.displaylist.Config,kumite.helloworldgl.Config]);
-	}
-	catch( $e0 ) {
-		{
-			var e = $e0;
-			{
-				$e = [];
-				while($s.length >= $spos) $e.unshift($s.pop());
-				$s.push($e[0]);
-				Log.error("Error building application! \n" + e,null,null,null,null,null,null,{ fileName : "Main.hx", lineNumber : 42, className : "Main", methodName : "new"});
-			}
-		}
-	}
-	$s.pop();
-}}
-Main.__name__ = ["Main"];
-Main.globalErrorHandler = function(msg,stack) {
-	$s.push("Main::globalErrorHandler");
-	var $spos = $s.length;
-	haxe.Log.trace("Uncaugt error: " + msg,{ fileName : "Main.hx", lineNumber : 5, className : "Main", methodName : "globalErrorHandler"});
-	{
-		var _g = 0;
-		while(_g < stack.length) {
-			var line = stack[_g];
-			++_g;
-			haxe.Log.trace(line,{ fileName : "Main.hx", lineNumber : 7, className : "Main", methodName : "globalErrorHandler"});
-		}
-	}
-	{
-		$s.pop();
-		return true;
-	}
-	$s.pop();
-}
-Main.main = function() {
-	$s.push("Main::main");
-	var $spos = $s.length;
-	Log.init();
-	Log.addFilter(new ERegFilter(LogLevel.INFO,new EReg(".*","")));
-	Log.addFilter(new ERegFilter(LogLevel.WARN,new EReg(".*FrontMessenger\\.handleMessage.*","")));
-	Log.addFilter(new ERegFilter(LogLevel.WARN,new EReg(".*FrontMessenger\\.Receiver\\.execute.*","")));
-	js.Lib.setErrorHandler($closure(Main,"globalErrorHandler"));
-	$s.pop();
-}
-Main.prototype.__class__ = Main;
-kumite.helloworldgl.shader.Vertex = function() { }
-kumite.helloworldgl.shader.Vertex.__name__ = ["kumite","helloworldgl","shader","Vertex"];
-kumite.helloworldgl.shader.Vertex.prototype.__class__ = kumite.helloworldgl.shader.Vertex;
-kumite.webgl.InitAction = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.webgl.InitAction::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-kumite.webgl.InitAction.__name__ = ["kumite","webgl","InitAction"];
-kumite.webgl.InitAction.prototype.canvas = null;
-kumite.webgl.InitAction.prototype.antialias = null;
-kumite.webgl.InitAction.prototype.init = function() {
-	$s.push("kumite.webgl.InitAction::init");
-	var $spos = $s.length;
-	GL.init(this.canvas.itself,this.antialias);
-	$s.pop();
-}
-kumite.webgl.InitAction.prototype.__class__ = kumite.webgl.InitAction;
-kumite.webgl.InitAction.__interfaces__ = [haxe.rtti.Infos];
-GLDisplayListRenderer = function(p) { if( p === $_ ) return; {
-	$s.push("GLDisplayListRenderer::new");
-	var $spos = $s.length;
-	this.textures = new IntHash();
-	$s.pop();
-}}
-GLDisplayListRenderer.__name__ = ["GLDisplayListRenderer"];
-GLDisplayListRenderer.prototype.shaderProgram = null;
-GLDisplayListRenderer.prototype.vertexPositionAttribute = null;
-GLDisplayListRenderer.prototype.vertexBuffer = null;
-GLDisplayListRenderer.prototype.textureUniform = null;
-GLDisplayListRenderer.prototype.projectionMatrixUniform = null;
-GLDisplayListRenderer.prototype.objectMatrixUniform = null;
-GLDisplayListRenderer.prototype.sizeUniform = null;
-GLDisplayListRenderer.prototype.alphaUniform = null;
-GLDisplayListRenderer.prototype.textures = null;
-GLDisplayListRenderer.prototype.init = function() {
-	$s.push("GLDisplayListRenderer::init");
-	var $spos = $s.length;
-	var gl = GL.gl;
-	this.shaderProgram = GL.createProgram(shader.DisplayObjectVertex,shader.DisplayObjectFragment);
-	this.vertexPositionAttribute = gl.getAttribLocation(this.shaderProgram,"vertexPosition");
-	this.vertexBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER,this.vertexBuffer);
-	var vertices = [0,0,1,0,0,1,1,1];
-	gl.bufferData(gl.ARRAY_BUFFER,new Int8Array(vertices),gl.STATIC_DRAW);
-	this.textureUniform = GL.getUniformLocation("texture");
-	this.projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
-	this.objectMatrixUniform = GL.getUniformLocation("objectMatrix");
-	this.sizeUniform = GL.getUniformLocation("size");
-	this.alphaUniform = GL.getUniformLocation("alpha");
-	$s.pop();
-}
-GLDisplayListRenderer.prototype.render = function(width,height) {
-	$s.push("GLDisplayListRenderer::render");
-	var $spos = $s.length;
-	var gl = GL.gl;
-	GL.useProgram(this.shaderProgram);
-	gl.viewport(0,0,width,height);
-	gl.enable(gl.BLEND);
-	gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
-	gl.bindBuffer(gl.ARRAY_BUFFER,this.vertexBuffer);
-	GL.gl.enableVertexAttribArray(this.vertexPositionAttribute);
-	gl.vertexAttribPointer(this.vertexPositionAttribute,2,gl.BYTE,false,0,0);
-	var projectionMatrix = new Matrix4();
-	projectionMatrix.ortho(0,width,height,0,0,1);
-	gl.uniformMatrix4fv(this.projectionMatrixUniform.location,false,projectionMatrix.buffer);
-	var stage = GLDisplayList.getDefault().stage;
-	gl.activeTexture(gl.TEXTURE0);
-	gl.uniform1i(this.textureUniform.location,0);
-	this.renderRecursive(stage,new Matrix4());
-	gl.disable(gl.BLEND);
-	$s.pop();
-}
-GLDisplayListRenderer.prototype.renderRecursive = function(displayObjectContainer,parentMatrix) {
-	$s.push("GLDisplayListRenderer::renderRecursive");
-	var $spos = $s.length;
-	var _g = 0, _g1 = displayObjectContainer.children;
-	while(_g < _g1.length) {
-		var displayObject = _g1[_g];
-		++_g;
-		var matrix = this.renderDisplayObject(displayObject,parentMatrix);
-		if(Std["is"](displayObject,GLDisplayObjectContainer)) {
-			this.renderRecursive(displayObject,matrix);
-		}
-	}
-	$s.pop();
-}
-GLDisplayListRenderer.prototype.renderDisplayObject = function(displayObject,parentMatrix) {
-	$s.push("GLDisplayListRenderer::renderDisplayObject");
-	var $spos = $s.length;
-	var gl = GL.gl;
-	displayObject.validateTransform();
-	var result = new Matrix4();
-	result.multiply(parentMatrix);
-	result.multiply(displayObject.matrix);
-	if(displayObject.skipDraw) {
-		$s.pop();
-		return result;
-	}
-	var texture;
-	if(!this.textures.exists(displayObject.id)) {
-		texture = gl.createTexture();
-		gl.bindTexture(gl.TEXTURE_2D,texture);
-		gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
-		gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);
-		this.textures.set(displayObject.id,texture);
-	}
-	else {
-		texture = this.textures.get(displayObject.id);
-		gl.bindTexture(gl.TEXTURE_2D,texture);
-	}
-	if(displayObject.canvasIsInvalid) {
-		gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,displayObject.getCanvas());
-		displayObject.canvasIsInvalid = false;
-	}
-	gl.uniformMatrix4fv(this.objectMatrixUniform.location,false,result.buffer);
-	gl.uniform2f(this.sizeUniform.location,displayObject.width,displayObject.height);
-	gl.uniform1f(this.alphaUniform.location,displayObject.alpha);
-	gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
-	{
-		$s.pop();
-		return result;
-	}
-	$s.pop();
-}
-GLDisplayListRenderer.prototype.__class__ = GLDisplayListRenderer;
-haxe.rtti.CType = { __ename__ : ["haxe","rtti","CType"], __constructs__ : ["CUnknown","CEnum","CClass","CTypedef","CFunction","CAnonymous","CDynamic"] }
-haxe.rtti.CType.CUnknown = ["CUnknown",0];
-haxe.rtti.CType.CUnknown.toString = $estr;
-haxe.rtti.CType.CUnknown.__enum__ = haxe.rtti.CType;
-haxe.rtti.CType.CEnum = function(name,params) { var $x = ["CEnum",1,name,params]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
-haxe.rtti.CType.CClass = function(name,params) { var $x = ["CClass",2,name,params]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
-haxe.rtti.CType.CTypedef = function(name,params) { var $x = ["CTypedef",3,name,params]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
-haxe.rtti.CType.CFunction = function(args,ret) { var $x = ["CFunction",4,args,ret]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
-haxe.rtti.CType.CAnonymous = function(fields) { var $x = ["CAnonymous",5,fields]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
-haxe.rtti.CType.CDynamic = function(t) { var $x = ["CDynamic",6,t]; $x.__enum__ = haxe.rtti.CType; $x.toString = $estr; return $x; }
-haxe.rtti.Rights = { __ename__ : ["haxe","rtti","Rights"], __constructs__ : ["RNormal","RNo","RCall","RMethod","RDynamic","RInline"] }
-haxe.rtti.Rights.RNormal = ["RNormal",0];
-haxe.rtti.Rights.RNormal.toString = $estr;
-haxe.rtti.Rights.RNormal.__enum__ = haxe.rtti.Rights;
-haxe.rtti.Rights.RNo = ["RNo",1];
-haxe.rtti.Rights.RNo.toString = $estr;
-haxe.rtti.Rights.RNo.__enum__ = haxe.rtti.Rights;
-haxe.rtti.Rights.RCall = function(m) { var $x = ["RCall",2,m]; $x.__enum__ = haxe.rtti.Rights; $x.toString = $estr; return $x; }
-haxe.rtti.Rights.RMethod = ["RMethod",3];
-haxe.rtti.Rights.RMethod.toString = $estr;
-haxe.rtti.Rights.RMethod.__enum__ = haxe.rtti.Rights;
-haxe.rtti.Rights.RDynamic = ["RDynamic",4];
-haxe.rtti.Rights.RDynamic.toString = $estr;
-haxe.rtti.Rights.RDynamic.__enum__ = haxe.rtti.Rights;
-haxe.rtti.Rights.RInline = ["RInline",5];
-haxe.rtti.Rights.RInline.toString = $estr;
-haxe.rtti.Rights.RInline.__enum__ = haxe.rtti.Rights;
-haxe.rtti.TypeTree = { __ename__ : ["haxe","rtti","TypeTree"], __constructs__ : ["TPackage","TClassdecl","TEnumdecl","TTypedecl"] }
-haxe.rtti.TypeTree.TPackage = function(name,full,subs) { var $x = ["TPackage",0,name,full,subs]; $x.__enum__ = haxe.rtti.TypeTree; $x.toString = $estr; return $x; }
-haxe.rtti.TypeTree.TClassdecl = function(c) { var $x = ["TClassdecl",1,c]; $x.__enum__ = haxe.rtti.TypeTree; $x.toString = $estr; return $x; }
-haxe.rtti.TypeTree.TEnumdecl = function(e) { var $x = ["TEnumdecl",2,e]; $x.__enum__ = haxe.rtti.TypeTree; $x.toString = $estr; return $x; }
-haxe.rtti.TypeTree.TTypedecl = function(t) { var $x = ["TTypedecl",3,t]; $x.__enum__ = haxe.rtti.TypeTree; $x.toString = $estr; return $x; }
-haxe.rtti.TypeApi = function() { }
-haxe.rtti.TypeApi.__name__ = ["haxe","rtti","TypeApi"];
-haxe.rtti.TypeApi.typeInfos = function(t) {
-	$s.push("haxe.rtti.TypeApi::typeInfos");
-	var $spos = $s.length;
-	var inf;
-	var $e = t;
-	switch( $e[1] ) {
-	case 1:
-	var c = $e[2];
-	{
-		inf = c;
-	}break;
-	case 2:
-	var e = $e[2];
-	{
-		inf = e;
-	}break;
-	case 3:
-	var t1 = $e[2];
-	{
-		inf = t1;
-	}break;
-	case 0:
-	{
-		throw "Unexpected Package";
-	}break;
-	}
-	{
-		$s.pop();
-		return inf;
-	}
-	$s.pop();
-}
-haxe.rtti.TypeApi.isVar = function(t) {
-	$s.push("haxe.rtti.TypeApi::isVar");
-	var $spos = $s.length;
-	{
-		var $tmp = (function($this) {
-			var $r;
-			var $e = t;
-			switch( $e[1] ) {
-			case 4:
-			{
-				$r = false;
-			}break;
-			default:{
-				$r = true;
-			}break;
-			}
-			return $r;
-		}(this));
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-haxe.rtti.TypeApi.leq = function(f,l1,l2) {
-	$s.push("haxe.rtti.TypeApi::leq");
-	var $spos = $s.length;
-	var it = l2.iterator();
-	{ var $it0 = l1.iterator();
-	while( $it0.hasNext() ) { var e1 = $it0.next();
-	{
-		if(!it.hasNext()) {
-			$s.pop();
-			return false;
-		}
-		var e2 = it.next();
-		if(!f(e1,e2)) {
-			$s.pop();
-			return false;
-		}
-	}
-	}}
-	if(it.hasNext()) {
-		$s.pop();
-		return false;
-	}
-	{
-		$s.pop();
-		return true;
-	}
-	$s.pop();
-}
-haxe.rtti.TypeApi.rightsEq = function(r1,r2) {
-	$s.push("haxe.rtti.TypeApi::rightsEq");
-	var $spos = $s.length;
-	if(r1 == r2) {
-		$s.pop();
-		return true;
-	}
-	var $e = r1;
-	switch( $e[1] ) {
-	case 2:
-	var m1 = $e[2];
-	{
-		var $e = r2;
-		switch( $e[1] ) {
-		case 2:
-		var m2 = $e[2];
-		{
-			{
-				var $tmp = m1 == m2;
-				$s.pop();
-				return $tmp;
-			}
-		}break;
-		default:{
-			null;
-		}break;
-		}
-	}break;
-	default:{
-		null;
-	}break;
-	}
-	{
-		$s.pop();
-		return false;
-	}
-	$s.pop();
-}
-haxe.rtti.TypeApi.typeEq = function(t1,t2) {
-	$s.push("haxe.rtti.TypeApi::typeEq");
-	var $spos = $s.length;
-	var $e = t1;
-	switch( $e[1] ) {
-	case 0:
-	{
-		{
-			var $tmp = t2 == haxe.rtti.CType.CUnknown;
-			$s.pop();
-			return $tmp;
-		}
-	}break;
-	case 1:
-	var params = $e[3], name = $e[2];
-	{
-		var $e = t2;
-		switch( $e[1] ) {
-		case 1:
-		var params2 = $e[3], name2 = $e[2];
-		{
-			{
-				var $tmp = name == name2 && haxe.rtti.TypeApi.leq($closure(haxe.rtti.TypeApi,"typeEq"),params,params2);
-				$s.pop();
-				return $tmp;
-			}
-		}break;
-		default:{
-			null;
-		}break;
-		}
-	}break;
-	case 2:
-	var params = $e[3], name = $e[2];
-	{
-		var $e = t2;
-		switch( $e[1] ) {
-		case 2:
-		var params2 = $e[3], name2 = $e[2];
-		{
-			{
-				var $tmp = name == name2 && haxe.rtti.TypeApi.leq($closure(haxe.rtti.TypeApi,"typeEq"),params,params2);
-				$s.pop();
-				return $tmp;
-			}
-		}break;
-		default:{
-			null;
-		}break;
-		}
-	}break;
-	case 3:
-	var params = $e[3], name = $e[2];
-	{
-		var $e = t2;
-		switch( $e[1] ) {
-		case 3:
-		var params2 = $e[3], name2 = $e[2];
-		{
-			{
-				var $tmp = name == name2 && haxe.rtti.TypeApi.leq($closure(haxe.rtti.TypeApi,"typeEq"),params,params2);
-				$s.pop();
-				return $tmp;
-			}
-		}break;
-		default:{
-			null;
-		}break;
-		}
-	}break;
-	case 4:
-	var ret = $e[3], args = $e[2];
-	{
-		var $e = t2;
-		switch( $e[1] ) {
-		case 4:
-		var ret2 = $e[3], args2 = $e[2];
-		{
-			{
-				var $tmp = haxe.rtti.TypeApi.leq(function(a,b) {
-					$s.push("haxe.rtti.TypeApi::typeEq@187");
-					var $spos = $s.length;
-					{
-						var $tmp = a.name == b.name && a.opt == b.opt && haxe.rtti.TypeApi.typeEq(a.t,b.t);
-						$s.pop();
-						return $tmp;
-					}
-					$s.pop();
-				},args,args2) && haxe.rtti.TypeApi.typeEq(ret,ret2);
-				$s.pop();
-				return $tmp;
-			}
-		}break;
-		default:{
-			null;
-		}break;
-		}
-	}break;
-	case 5:
-	var fields = $e[2];
-	{
-		var $e = t2;
-		switch( $e[1] ) {
-		case 5:
-		var fields2 = $e[2];
-		{
-			{
-				var $tmp = haxe.rtti.TypeApi.leq(function(a,b) {
-					$s.push("haxe.rtti.TypeApi::typeEq@195");
-					var $spos = $s.length;
-					{
-						var $tmp = a.name == b.name && haxe.rtti.TypeApi.typeEq(a.t,b.t);
-						$s.pop();
-						return $tmp;
-					}
-					$s.pop();
-				},fields,fields2);
-				$s.pop();
-				return $tmp;
-			}
-		}break;
-		default:{
-			null;
-		}break;
-		}
-	}break;
-	case 6:
-	var t = $e[2];
-	{
-		var $e = t2;
-		switch( $e[1] ) {
-		case 6:
-		var t21 = $e[2];
-		{
-			if(t == null != (t21 == null)) {
-				$s.pop();
-				return false;
-			}
-			{
-				var $tmp = t == null || haxe.rtti.TypeApi.typeEq(t,t21);
-				$s.pop();
-				return $tmp;
-			}
-		}break;
-		default:{
-			null;
-		}break;
-		}
-	}break;
-	}
-	{
-		$s.pop();
-		return false;
-	}
-	$s.pop();
-}
-haxe.rtti.TypeApi.fieldEq = function(f1,f2) {
-	$s.push("haxe.rtti.TypeApi::fieldEq");
-	var $spos = $s.length;
-	if(f1.name != f2.name) {
-		$s.pop();
-		return false;
-	}
-	if(!haxe.rtti.TypeApi.typeEq(f1.type,f2.type)) {
-		$s.pop();
-		return false;
-	}
-	if(f1.isPublic != f2.isPublic) {
-		$s.pop();
-		return false;
-	}
-	if(f1.doc != f2.doc) {
-		$s.pop();
-		return false;
-	}
-	if(!haxe.rtti.TypeApi.rightsEq(f1.get,f2.get)) {
-		$s.pop();
-		return false;
-	}
-	if(!haxe.rtti.TypeApi.rightsEq(f1.set,f2.set)) {
-		$s.pop();
-		return false;
-	}
-	if(f1.params == null != (f2.params == null)) {
-		$s.pop();
-		return false;
-	}
-	if(f1.params != null && f1.params.join(":") != f2.params.join(":")) {
-		$s.pop();
-		return false;
-	}
-	{
-		$s.pop();
-		return true;
-	}
-	$s.pop();
-}
-haxe.rtti.TypeApi.constructorEq = function(c1,c2) {
-	$s.push("haxe.rtti.TypeApi::constructorEq");
-	var $spos = $s.length;
-	if(c1.name != c2.name) {
-		$s.pop();
-		return false;
-	}
-	if(c1.doc != c2.doc) {
-		$s.pop();
-		return false;
-	}
-	if(c1.args == null != (c2.args == null)) {
-		$s.pop();
-		return false;
-	}
-	if(c1.args != null && !haxe.rtti.TypeApi.leq(function(a,b) {
-		$s.push("haxe.rtti.TypeApi::constructorEq@239");
-		var $spos = $s.length;
-		{
-			var $tmp = a.name == b.name && a.opt == b.opt && haxe.rtti.TypeApi.typeEq(a.t,b.t);
-			$s.pop();
-			return $tmp;
-		}
-		$s.pop();
-	},c1.args,c2.args)) {
-		$s.pop();
-		return false;
-	}
-	{
-		$s.pop();
-		return true;
-	}
-	$s.pop();
-}
-haxe.rtti.TypeApi.prototype.__class__ = haxe.rtti.TypeApi;
-GL = function() { }
-GL.__name__ = ["GL"];
-GL.gl = null;
-GL.currentProgramm = null;
-GL.init = function(canvas,antialias) {
-	$s.push("GL::init");
-	var $spos = $s.length;
-	var params = { antialias : antialias};
-	GL.gl = canvas.getContext("webgl",params);
-	if(GL.gl == null) GL.gl = canvas.getContext("experimental-webgl",params);
-	if(GL.gl == null) {
-		throw "Could not initialise WebGL.";
-	}
-	{
-		var $tmp = GL.gl;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-GL.useProgram = function(shaderProgramm) {
-	$s.push("GL::useProgram");
-	var $spos = $s.length;
-	GL.currentProgramm = shaderProgramm;
-	GL.gl.useProgram(GL.currentProgramm);
-	$s.pop();
-}
-GL.createProgram = function(vertexSourceClass,fragmentSourceClass) {
-	$s.push("GL::createProgram");
-	var $spos = $s.length;
-	GL.currentProgramm = GL.gl.createProgram();
-	var vs = GL.gl.createShader(GL.gl.VERTEX_SHADER);
-	GL.gl.shaderSource(vs,GL.createGLSLFromClass(vertexSourceClass));
-	GL.gl.compileShader(vs);
-	if(!GL.gl.getShaderParameter(vs,GL.gl.COMPILE_STATUS)) throw GL.gl.getShaderInfoLog(vs);
-	var fs = GL.gl.createShader(GL.gl.FRAGMENT_SHADER);
-	GL.gl.shaderSource(fs,GL.createGLSLFromClass(fragmentSourceClass));
-	GL.gl.compileShader(fs);
-	if(!GL.gl.getShaderParameter(fs,GL.gl.COMPILE_STATUS)) throw GL.gl.getShaderInfoLog(fs);
-	GL.gl.attachShader(GL.currentProgramm,vs);
-	GL.gl.attachShader(GL.currentProgramm,fs);
-	GL.gl.linkProgram(GL.currentProgramm);
-	if(!GL.gl.getProgramParameter(GL.currentProgramm,GL.gl.LINK_STATUS)) throw "Could not link shader!";
-	{
-		var $tmp = GL.currentProgramm;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-GL.createGLSLFromClass = function(shaderClass) {
-	$s.push("GL::createGLSLFromClass");
-	var $spos = $s.length;
-	var metaDatas = haxe.rtti.Meta.getType(shaderClass);
-	var glsl = Reflect.field(metaDatas,"GLSL");
-	if(glsl.length != 1) throw "Missing GLSL metadata in shader class: " + shaderClass;
-	{
-		var $tmp = glsl[0];
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-GL.createArrayBuffer = function(array,type) {
-	$s.push("GL::createArrayBuffer");
-	var $spos = $s.length;
-	if(type == null) type = 35044;
-	var vertexBuffer = GL.gl.createBuffer();
-	GL.gl.bindBuffer(GL.gl.ARRAY_BUFFER,vertexBuffer);
-	GL.gl.bufferData(GL.gl.ARRAY_BUFFER,array,type);
-	{
-		$s.pop();
-		return vertexBuffer;
-	}
-	$s.pop();
-}
-GL.getUniformLocation = function(name) {
-	$s.push("GL::getUniformLocation");
-	var $spos = $s.length;
-	var location = GL.gl.getUniformLocation(GL.currentProgramm,name);
-	if(location == null) haxe.Log.trace("Could not find " + name + " in shader",{ fileName : "GL.hx", lineNumber : 458, className : "GL", methodName : "getUniformLocation"});
-	var result = new GLUniformLocation();
-	result.location = location;
-	{
-		$s.pop();
-		return result;
-	}
-	$s.pop();
-}
-GL.getAttribLocation2 = function(name,size,type) {
-	$s.push("GL::getAttribLocation2");
-	var $spos = $s.length;
-	var location = GL.gl.getAttribLocation(GL.currentProgramm,name);
-	if(location == null) haxe.Log.trace("Could not find " + name + " in shader",{ fileName : "GL.hx", lineNumber : 469, className : "GL", methodName : "getAttribLocation2"});
-	var result = new GLAttribLocation();
-	result.location = location;
-	result.size = size;
-	result.type = type;
-	{
-		$s.pop();
-		return result;
-	}
-	$s.pop();
-}
-GL.activeTexture = function(texture) {
-	$s.push("GL::activeTexture");
-	var $spos = $s.length;
-	GL.gl.activeTexture(texture);
-	$s.pop();
-}
-GL.bindBuffer = function(target,buffer) {
-	$s.push("GL::bindBuffer");
-	var $spos = $s.length;
-	GL.gl.bindBuffer(target,buffer);
-	$s.pop();
-}
-GL.bindFramebuffer = function(target,framebuffer) {
-	$s.push("GL::bindFramebuffer");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}
-GL.bindRenderbuffer = function(target,renderbuffer) {
-	$s.push("GL::bindRenderbuffer");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}
-GL.bindTexture = function(target,texture) {
-	$s.push("GL::bindTexture");
-	var $spos = $s.length;
-	GL.gl.bindTexture(target,texture);
-	$s.pop();
-}
-GL.blendFunc = function(sfactor,dfactor) {
-	$s.push("GL::blendFunc");
-	var $spos = $s.length;
-	GL.gl.blendFunc(sfactor,dfactor);
-	$s.pop();
-}
-GL.bufferData = function(target,data,usage) {
-	$s.push("GL::bufferData");
-	var $spos = $s.length;
-	GL.gl.bufferData(target,data,usage);
-	$s.pop();
-}
-GL.clear = function(mask) {
-	$s.push("GL::clear");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}
-GL.clearColor = function(red,green,blue,alpha) {
-	$s.push("GL::clearColor");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}
-GL.clearDepth = function(depth) {
-	$s.push("GL::clearDepth");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}
-GL.compileShader = function(shader) {
-	$s.push("GL::compileShader");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}
-GL.createBuffer = function() {
-	$s.push("GL::createBuffer");
-	var $spos = $s.length;
-	{
-		var $tmp = GL.gl.createBuffer();
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-GL.createFramebuffer = function() {
-	$s.push("GL::createFramebuffer");
-	var $spos = $s.length;
-	{
-		var $tmp = GL.gl.createFramebuffer();
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-GL.createRenderbuffer = function() {
-	$s.push("GL::createRenderbuffer");
-	var $spos = $s.length;
-	{
-		var $tmp = GL.gl.createRenderbuffer();
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-GL.createTexture = function() {
-	$s.push("GL::createTexture");
-	var $spos = $s.length;
-	{
-		var $tmp = GL.gl.createTexture();
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-GL.createShader = function(type) {
-	$s.push("GL::createShader");
-	var $spos = $s.length;
-	{
-		var $tmp = GL.gl.createShader(type);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-GL.deleteBuffer = function(buffer) {
-	$s.push("GL::deleteBuffer");
-	var $spos = $s.length;
-	GL.gl.deleteBuffer(buffer);
-	$s.pop();
-}
-GL.disable = function(cap) {
-	$s.push("GL::disable");
-	var $spos = $s.length;
-	GL.gl.disable(cap);
-	$s.pop();
-}
-GL.drawArrays = function(mode,first,count) {
-	$s.push("GL::drawArrays");
-	var $spos = $s.length;
-	GL.gl.drawArrays(mode,first,count);
-	$s.pop();
-}
-GL.enable = function(cap) {
-	$s.push("GL::enable");
-	var $spos = $s.length;
-	GL.gl.enable(cap);
-	$s.pop();
-}
-GL.enableVertexAttribArray = function(index) {
-	$s.push("GL::enableVertexAttribArray");
-	var $spos = $s.length;
-	GL.gl.enableVertexAttribArray(index);
-	$s.pop();
-}
-GL.framebufferRenderbuffer = function(target,attachment,renderbuffertarget,renderbuffer) {
-	$s.push("GL::framebufferRenderbuffer");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}
-GL.framebufferTexture2D = function(target,attachment,textarget,texture,level) {
-	$s.push("GL::framebufferTexture2D");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}
-GL.generateMipmap = function(target) {
-	$s.push("GL::generateMipmap");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}
-GL.getAttribLocation = function(program,name) {
-	$s.push("GL::getAttribLocation");
-	var $spos = $s.length;
-	{
-		var $tmp = GL.gl.getAttribLocation(program,name);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-GL.getShaderInfoLog = function(shader) {
-	$s.push("GL::getShaderInfoLog");
-	var $spos = $s.length;
-	{
-		var $tmp = GL.gl.getShaderInfoLog(shader);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-GL.getShaderParameter = function(shader,pname) {
-	$s.push("GL::getShaderParameter");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}
-GL.getProgramParameter = function(program,pname) {
-	$s.push("GL::getProgramParameter");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}
-GL.linkProgram = function(program) {
-	$s.push("GL::linkProgram");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}
-GL.renderbufferStorage = function(target,internalformat,width,height) {
-	$s.push("GL::renderbufferStorage");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}
-GL.shaderSource = function(shader,source) {
-	$s.push("GL::shaderSource");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}
-GL.texImage2DArrayBufferView = function(target,level,internalformat,width,height,border,format,type,pixels) {
-	$s.push("GL::texImage2DArrayBufferView");
-	var $spos = $s.length;
-	GL.gl.texImage2D(target,level,internalformat,width,height,border,format,type,pixels);
-	$s.pop();
-}
-GL.texImage2DImageData = function(target,level,internalformat,format,type,pixels) {
-	$s.push("GL::texImage2DImageData");
-	var $spos = $s.length;
-	GL.gl.texImage2D(target,level,internalformat,format,type,pixels);
-	$s.pop();
-}
-GL.texImage2DImage = function(target,level,internalformat,format,type,image) {
-	$s.push("GL::texImage2DImage");
-	var $spos = $s.length;
-	GL.gl.texImage2D(target,level,internalformat,format,type,image);
-	$s.pop();
-}
-GL.texImage2DCanvas = function(target,level,internalformat,format,type,canvas) {
-	$s.push("GL::texImage2DCanvas");
-	var $spos = $s.length;
-	GL.gl.texImage2D(target,level,internalformat,format,type,canvas);
-	$s.pop();
-}
-GL.texImage2DVideo = function(target,level,internalformat,format,type,video) {
-	$s.push("GL::texImage2DVideo");
-	var $spos = $s.length;
-	GL.gl.texImage2D(target,level,internalformat,format,type,video);
-	$s.pop();
-}
-GL.texParameteri = function(target,pname,param) {
-	$s.push("GL::texParameteri");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}
-GL.vertexAttribPointer = function(indx,size,type,normalized,stride,offset) {
-	$s.push("GL::vertexAttribPointer");
-	var $spos = $s.length;
-	GL.gl.vertexAttribPointer(indx,size,type,normalized,stride,offset);
-	$s.pop();
-}
-GL.viewport = function(x,y,width,height) {
-	$s.push("GL::viewport");
-	var $spos = $s.length;
-	GL.gl.viewport(x,y,width,height);
-	$s.pop();
-}
-GL.prototype.__class__ = GL;
-Matrix4 = function(cloneFrom) { if( cloneFrom === $_ ) return; {
-	$s.push("Matrix4::new");
-	var $spos = $s.length;
-	this.buffer = new Float32Array(16);
-	if(cloneFrom != null) {
-		this.setFrom(cloneFrom);
-	}
-	else {
-		this.identity();
-	}
-	$s.pop();
-}}
-Matrix4.__name__ = ["Matrix4"];
-Matrix4.createTranslation = function(x,y,z) {
-	$s.push("Matrix4::createTranslation");
-	var $spos = $s.length;
-	var result = new Matrix4();
-	result.buffer[0] = 1;
-	result.buffer[1] = 0;
-	result.buffer[2] = 0;
-	result.buffer[3] = 0;
-	result.buffer[4] = 0;
-	result.buffer[5] = 1;
-	result.buffer[6] = 0;
-	result.buffer[7] = 0;
-	result.buffer[8] = 0;
-	result.buffer[9] = 0;
-	result.buffer[10] = 1;
-	result.buffer[11] = 0;
-	result.buffer[12] = x;
-	result.buffer[13] = y;
-	result.buffer[14] = z;
-	result.buffer[15] = 1;
-	{
-		$s.pop();
-		return result;
-	}
-	$s.pop();
-}
-Matrix4.prototype.buffer = null;
-Matrix4.prototype.identity = function() {
-	$s.push("Matrix4::identity");
-	var $spos = $s.length;
-	this.buffer[0] = 1;
-	this.buffer[1] = 0;
-	this.buffer[2] = 0;
-	this.buffer[3] = 0;
-	this.buffer[4] = 0;
-	this.buffer[5] = 1;
-	this.buffer[6] = 0;
-	this.buffer[7] = 0;
-	this.buffer[8] = 0;
-	this.buffer[9] = 0;
-	this.buffer[10] = 1;
-	this.buffer[11] = 0;
-	this.buffer[12] = 0;
-	this.buffer[13] = 0;
-	this.buffer[14] = 0;
-	this.buffer[15] = 1;
-	$s.pop();
-}
-Matrix4.prototype.setFrom = function(from) {
-	$s.push("Matrix4::setFrom");
-	var $spos = $s.length;
-	this.buffer[0] = from.buffer[0];
-	this.buffer[1] = from.buffer[1];
-	this.buffer[2] = from.buffer[2];
-	this.buffer[3] = from.buffer[3];
-	this.buffer[4] = from.buffer[4];
-	this.buffer[5] = from.buffer[5];
-	this.buffer[6] = from.buffer[6];
-	this.buffer[7] = from.buffer[7];
-	this.buffer[8] = from.buffer[8];
-	this.buffer[9] = from.buffer[9];
-	this.buffer[10] = from.buffer[10];
-	this.buffer[11] = from.buffer[11];
-	this.buffer[12] = from.buffer[12];
-	this.buffer[13] = from.buffer[13];
-	this.buffer[14] = from.buffer[14];
-	this.buffer[15] = from.buffer[15];
-	$s.pop();
-}
-Matrix4.prototype.lookAt = function(eye,center,up) {
-	$s.push("Matrix4::lookAt");
-	var $spos = $s.length;
-	var eyex = eye.x, eyey = eye.y, eyez = eye.z, upx = up.x, upy = up.y, upz = up.z, centerx = center.x, centery = center.y, centerz = center.z;
-	if(eyex == centerx && eyey == centery && eyez == centerz) {
-		this.identity();
-	}
-	var z0, z1, z2, x0, x1, x2, y0, y1, y2, len;
-	z0 = eyex - center.x;
-	z1 = eyey - center.y;
-	z2 = eyez - center.z;
-	len = 1 / Math.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
-	z0 *= len;
-	z1 *= len;
-	z2 *= len;
-	x0 = upy * z2 - upz * z1;
-	x1 = upz * z0 - upx * z2;
-	x2 = upx * z1 - upy * z0;
-	len = Math.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
-	if(Math.isNaN(len)) {
-		x0 = 0;
-		x1 = 0;
-		x2 = 0;
-	}
-	else {
-		len = 1 / len;
-		x0 *= len;
-		x1 *= len;
-		x2 *= len;
-	}
-	y0 = z1 * x2 - z2 * x1;
-	y1 = z2 * x0 - z0 * x2;
-	y2 = z0 * x1 - z1 * x0;
-	len = Math.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
-	if(Math.isNaN(len)) {
-		y0 = 0;
-		y1 = 0;
-		y2 = 0;
-	}
-	else {
-		len = 1 / len;
-		y0 *= len;
-		y1 *= len;
-		y2 *= len;
-	}
-	this.buffer[0] = x0;
-	this.buffer[1] = y0;
-	this.buffer[2] = z0;
-	this.buffer[3] = 0;
-	this.buffer[4] = x1;
-	this.buffer[5] = y1;
-	this.buffer[6] = z1;
-	this.buffer[7] = 0;
-	this.buffer[8] = x2;
-	this.buffer[9] = y2;
-	this.buffer[10] = z2;
-	this.buffer[11] = 0;
-	this.buffer[12] = -(x0 * eyex + x1 * eyey + x2 * eyez);
-	this.buffer[13] = -(y0 * eyex + y1 * eyey + y2 * eyez);
-	this.buffer[14] = -(z0 * eyex + z1 * eyey + z2 * eyez);
-	this.buffer[15] = 1;
-	$s.pop();
-}
-Matrix4.prototype.ortho = function(left,right,bottom,top,near,far) {
-	$s.push("Matrix4::ortho");
-	var $spos = $s.length;
-	var rl = right - left;
-	var tb = top - bottom;
-	var fn = far - near;
-	this.buffer[0] = 2 / rl;
-	this.buffer[1] = 0;
-	this.buffer[2] = 0;
-	this.buffer[3] = 0;
-	this.buffer[4] = 0;
-	this.buffer[5] = 2 / tb;
-	this.buffer[6] = 0;
-	this.buffer[7] = 0;
-	this.buffer[8] = 0;
-	this.buffer[9] = 0;
-	this.buffer[10] = -2 / fn;
-	this.buffer[11] = 0;
-	this.buffer[12] = -(left + right) / rl;
-	this.buffer[13] = -(top + bottom) / tb;
-	this.buffer[14] = -(far + near) / fn;
-	this.buffer[15] = 1;
-	$s.pop();
-}
-Matrix4.prototype.perspective = function(fovy,aspect,near,far) {
-	$s.push("Matrix4::perspective");
-	var $spos = $s.length;
-	var top = near * Math.tan(fovy * Math.PI / 360.0);
-	var right = top * aspect;
-	this.frustum(-right,right,-top,top,near,far);
-	$s.pop();
-}
-Matrix4.prototype.frustum = function(left,right,bottom,top,near,far) {
-	$s.push("Matrix4::frustum");
-	var $spos = $s.length;
-	var rl = right - left;
-	var tb = top - bottom;
-	var fn = far - near;
-	this.buffer[0] = near * 2 / rl;
-	this.buffer[1] = 0;
-	this.buffer[2] = 0;
-	this.buffer[3] = 0;
-	this.buffer[4] = 0;
-	this.buffer[5] = near * 2 / tb;
-	this.buffer[6] = 0;
-	this.buffer[7] = 0;
-	this.buffer[8] = (right + left) / rl;
-	this.buffer[9] = (top + bottom) / tb;
-	this.buffer[10] = -(far + near) / fn;
-	this.buffer[11] = -1;
-	this.buffer[12] = 0;
-	this.buffer[13] = 0;
-	this.buffer[14] = -(far * near * 2) / fn;
-	this.buffer[15] = 0;
-	$s.pop();
-}
-Matrix4.prototype.appendTranslation = function(x,y,z) {
-	$s.push("Matrix4::appendTranslation");
-	var $spos = $s.length;
-	var m = Matrix4.createTranslation(x,y,z);
-	this.multiply(m);
-	$s.pop();
-}
-Matrix4.prototype.appendScale = function(x,y,z) {
-	$s.push("Matrix4::appendScale");
-	var $spos = $s.length;
-	this.buffer[0] = this.buffer[0] * x;
-	this.buffer[1] = this.buffer[1] * x;
-	this.buffer[2] = this.buffer[2] * x;
-	this.buffer[3] = this.buffer[3] * x;
-	this.buffer[4] = this.buffer[4] * y;
-	this.buffer[5] = this.buffer[5] * y;
-	this.buffer[6] = this.buffer[6] * y;
-	this.buffer[7] = this.buffer[7] * y;
-	this.buffer[8] = this.buffer[8] * z;
-	this.buffer[9] = this.buffer[9] * z;
-	this.buffer[10] = this.buffer[10] * z;
-	this.buffer[11] = this.buffer[11] * z;
-	this.buffer[12] = this.buffer[12];
-	this.buffer[13] = this.buffer[13];
-	this.buffer[14] = this.buffer[14];
-	this.buffer[15] = this.buffer[15];
-	$s.pop();
-}
-Matrix4.prototype.appendRotation = function(angle,axis) {
-	$s.push("Matrix4::appendRotation");
-	var $spos = $s.length;
-	var x = axis.x, y = axis.y, z = axis.y;
-	var len = Math.sqrt(x * x + y * y + z * z);
-	len = 1 / len;
-	x *= len;
-	y *= len;
-	z *= len;
-	var s = Math.sin(angle);
-	var c = Math.cos(angle);
-	var t = 1 - c;
-	var a00 = this.buffer[0], a01 = this.buffer[1], a02 = this.buffer[2], a03 = this.buffer[3];
-	var a10 = this.buffer[4], a11 = this.buffer[5], a12 = this.buffer[6], a13 = this.buffer[7];
-	var a20 = this.buffer[8], a21 = this.buffer[9], a22 = this.buffer[10], a23 = this.buffer[11];
-	var b00 = x * x * t + c, b01 = y * x * t + z * s, b02 = z * x * t - y * s;
-	var b10 = x * y * t - z * s, b11 = y * y * t + c, b12 = z * y * t + x * s;
-	var b20 = x * z * t + y * s, b21 = y * z * t - x * s, b22 = z * z * t + c;
-	this.buffer[0] = a00 * b00 + a10 * b01 + a20 * b02;
-	this.buffer[1] = a01 * b00 + a11 * b01 + a21 * b02;
-	this.buffer[2] = a02 * b00 + a12 * b01 + a22 * b02;
-	this.buffer[3] = a03 * b00 + a13 * b01 + a23 * b02;
-	this.buffer[4] = a00 * b10 + a10 * b11 + a20 * b12;
-	this.buffer[5] = a01 * b10 + a11 * b11 + a21 * b12;
-	this.buffer[6] = a02 * b10 + a12 * b11 + a22 * b12;
-	this.buffer[7] = a03 * b10 + a13 * b11 + a23 * b12;
-	this.buffer[8] = a00 * b20 + a10 * b21 + a20 * b22;
-	this.buffer[9] = a01 * b20 + a11 * b21 + a21 * b22;
-	this.buffer[10] = a02 * b20 + a12 * b21 + a22 * b22;
-	this.buffer[11] = a03 * b20 + a13 * b21 + a23 * b22;
-	$s.pop();
-}
-Matrix4.prototype.rotateEuler = function(heading,attitude,bank) {
-	$s.push("Matrix4::rotateEuler");
-	var $spos = $s.length;
-	this.identity();
-	var ch = Math.cos(heading);
-	var sh = Math.sin(heading);
-	var ca = Math.cos(attitude);
-	var sa = Math.sin(attitude);
-	var cb = Math.cos(bank);
-	var sb = Math.sin(bank);
-	this.buffer[0] = ch * ca;
-	this.buffer[1] = sh * sb - ch * sa * cb;
-	this.buffer[2] = ch * sa * sb + sh * cb;
-	this.buffer[4] = sa;
-	this.buffer[5] = ca * cb;
-	this.buffer[6] = -ca * sb;
-	this.buffer[8] = -sh * ca;
-	this.buffer[9] = sh * sa * cb + ch * sb;
-	this.buffer[10] = -sh * sa * sb + ch * cb;
-	$s.pop();
-}
-Matrix4.prototype.appendEulerRotation = function(heading,attitude,bank) {
-	$s.push("Matrix4::appendEulerRotation");
-	var $spos = $s.length;
-	var mEuler = new Matrix4();
-	mEuler.rotateEuler(heading,attitude,bank);
-	this.multiply(mEuler);
-	$s.pop();
-}
-Matrix4.prototype.inverse = function() {
-	$s.push("Matrix4::inverse");
-	var $spos = $s.length;
-	var a00 = this.buffer[0], a01 = this.buffer[1], a02 = this.buffer[2], a03 = this.buffer[3];
-	var a10 = this.buffer[4], a11 = this.buffer[5], a12 = this.buffer[6], a13 = this.buffer[7];
-	var a20 = this.buffer[8], a21 = this.buffer[9], a22 = this.buffer[10], a23 = this.buffer[11];
-	var a30 = this.buffer[12], a31 = this.buffer[13], a32 = this.buffer[14], a33 = this.buffer[15];
-	var b00 = a00 * a11 - a01 * a10;
-	var b01 = a00 * a12 - a02 * a10;
-	var b02 = a00 * a13 - a03 * a10;
-	var b03 = a01 * a12 - a02 * a11;
-	var b04 = a01 * a13 - a03 * a11;
-	var b05 = a02 * a13 - a03 * a12;
-	var b06 = a20 * a31 - a21 * a30;
-	var b07 = a20 * a32 - a22 * a30;
-	var b08 = a20 * a33 - a23 * a30;
-	var b09 = a21 * a32 - a22 * a31;
-	var b10 = a21 * a33 - a23 * a31;
-	var b11 = a22 * a33 - a23 * a32;
-	var invDet = 1 / (b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
-	this.buffer[0] = (a11 * b11 - a12 * b10 + a13 * b09) * invDet;
-	this.buffer[1] = (-a01 * b11 + a02 * b10 - a03 * b09) * invDet;
-	this.buffer[2] = (a31 * b05 - a32 * b04 + a33 * b03) * invDet;
-	this.buffer[3] = (-a21 * b05 + a22 * b04 - a23 * b03) * invDet;
-	this.buffer[4] = (-a10 * b11 + a12 * b08 - a13 * b07) * invDet;
-	this.buffer[5] = (a00 * b11 - a02 * b08 + a03 * b07) * invDet;
-	this.buffer[6] = (-a30 * b05 + a32 * b02 - a33 * b01) * invDet;
-	this.buffer[7] = (a20 * b05 - a22 * b02 + a23 * b01) * invDet;
-	this.buffer[8] = (a10 * b10 - a11 * b08 + a13 * b06) * invDet;
-	this.buffer[9] = (-a00 * b10 + a01 * b08 - a03 * b06) * invDet;
-	this.buffer[10] = (a30 * b04 - a31 * b02 + a33 * b00) * invDet;
-	this.buffer[11] = (-a20 * b04 + a21 * b02 - a23 * b00) * invDet;
-	this.buffer[12] = (-a10 * b09 + a11 * b07 - a12 * b06) * invDet;
-	this.buffer[13] = (a00 * b09 - a01 * b07 + a02 * b06) * invDet;
-	this.buffer[14] = (-a30 * b03 + a31 * b01 - a32 * b00) * invDet;
-	this.buffer[15] = (a20 * b03 - a21 * b01 + a22 * b00) * invDet;
-	$s.pop();
-}
-Matrix4.prototype.multiply = function(mat2) {
-	$s.push("Matrix4::multiply");
-	var $spos = $s.length;
-	var a00 = this.buffer[0], a01 = this.buffer[1], a02 = this.buffer[2], a03 = this.buffer[3];
-	var a10 = this.buffer[4], a11 = this.buffer[5], a12 = this.buffer[6], a13 = this.buffer[7];
-	var a20 = this.buffer[8], a21 = this.buffer[9], a22 = this.buffer[10], a23 = this.buffer[11];
-	var a30 = this.buffer[12], a31 = this.buffer[13], a32 = this.buffer[14], a33 = this.buffer[15];
-	var b00 = mat2.buffer[0], b01 = mat2.buffer[1], b02 = mat2.buffer[2], b03 = mat2.buffer[3];
-	var b10 = mat2.buffer[4], b11 = mat2.buffer[5], b12 = mat2.buffer[6], b13 = mat2.buffer[7];
-	var b20 = mat2.buffer[8], b21 = mat2.buffer[9], b22 = mat2.buffer[10], b23 = mat2.buffer[11];
-	var b30 = mat2.buffer[12], b31 = mat2.buffer[13], b32 = mat2.buffer[14], b33 = mat2.buffer[15];
-	this.buffer[0] = b00 * a00 + b01 * a10 + b02 * a20 + b03 * a30;
-	this.buffer[1] = b00 * a01 + b01 * a11 + b02 * a21 + b03 * a31;
-	this.buffer[2] = b00 * a02 + b01 * a12 + b02 * a22 + b03 * a32;
-	this.buffer[3] = b00 * a03 + b01 * a13 + b02 * a23 + b03 * a33;
-	this.buffer[4] = b10 * a00 + b11 * a10 + b12 * a20 + b13 * a30;
-	this.buffer[5] = b10 * a01 + b11 * a11 + b12 * a21 + b13 * a31;
-	this.buffer[6] = b10 * a02 + b11 * a12 + b12 * a22 + b13 * a32;
-	this.buffer[7] = b10 * a03 + b11 * a13 + b12 * a23 + b13 * a33;
-	this.buffer[8] = b20 * a00 + b21 * a10 + b22 * a20 + b23 * a30;
-	this.buffer[9] = b20 * a01 + b21 * a11 + b22 * a21 + b23 * a31;
-	this.buffer[10] = b20 * a02 + b21 * a12 + b22 * a22 + b23 * a32;
-	this.buffer[11] = b20 * a03 + b21 * a13 + b22 * a23 + b23 * a33;
-	this.buffer[12] = b30 * a00 + b31 * a10 + b32 * a20 + b33 * a30;
-	this.buffer[13] = b30 * a01 + b31 * a11 + b32 * a21 + b33 * a31;
-	this.buffer[14] = b30 * a02 + b31 * a12 + b32 * a22 + b33 * a32;
-	this.buffer[15] = b30 * a03 + b31 * a13 + b32 * a23 + b33 * a33;
-	$s.pop();
-}
-Matrix4.prototype.toInverseMatrix3 = function() {
-	$s.push("Matrix4::toInverseMatrix3");
-	var $spos = $s.length;
-	var a00 = this.buffer[0], a01 = this.buffer[1], a02 = this.buffer[2];
-	var a10 = this.buffer[4], a11 = this.buffer[5], a12 = this.buffer[6];
-	var a20 = this.buffer[8], a21 = this.buffer[9], a22 = this.buffer[10];
-	var b01 = a22 * a11 - a12 * a21;
-	var b11 = -a22 * a10 + a12 * a20;
-	var b21 = a21 * a10 - a11 * a20;
-	var d = a00 * b01 + a01 * b11 + a02 * b21;
-	if(d == null) {
-		$s.pop();
-		return null;
-	}
-	var id = 1 / d;
-	var result = new Matrix3();
-	result.buffer[0] = b01 * id;
-	result.buffer[1] = (-a22 * a01 + a02 * a21) * id;
-	result.buffer[2] = (a12 * a01 - a02 * a11) * id;
-	result.buffer[3] = b11 * id;
-	result.buffer[4] = (a22 * a00 - a02 * a20) * id;
-	result.buffer[5] = (-a12 * a00 + a02 * a10) * id;
-	result.buffer[6] = b21 * id;
-	result.buffer[7] = (-a21 * a00 + a01 * a20) * id;
-	result.buffer[8] = (a11 * a00 - a01 * a10) * id;
-	{
-		$s.pop();
-		return result;
+	if(this.getGraphicIsInvalid()) {
+		this.renderText();
+		GLInteractiveObject.prototype.validateGraphics.call(this);
 	}
 	$s.pop();
 }
-Matrix4.prototype.clone = function() {
-	$s.push("Matrix4::clone");
+GLLabel.prototype.renderText = function() {
+	$s.push("GLLabel::renderText");
 	var $spos = $s.length;
-	{
-		var $tmp = new Matrix4(this);
-		$s.pop();
-		return $tmp;
-	}
+	var textMetrics = new Text();
+	textMetrics.text = this.text;
+	textMetrics.font = "12px Arial";
+	this.graphic.clear(new Color(0,1,0,0.3));
+	this.graphic.setFillStyle(new Color(0,1,0,1));
+	this.graphic.setFont(textMetrics.font);
+	this.graphic.fillText(textMetrics.text,(this.width - textMetrics.getWidth()) / 2,14);
 	$s.pop();
 }
-Matrix4.prototype.toString = function() {
-	$s.push("Matrix4::toString");
+GLLabel.prototype.setText = function(text) {
+	$s.push("GLLabel::setText");
 	var $spos = $s.length;
-	var result = "Matrix4:";
-	result += "\r\t" + this.buffer[0] + "," + this.buffer[1] + "," + this.buffer[2] + "," + this.buffer[3];
-	result += "\r\t" + this.buffer[4] + "," + this.buffer[5] + "," + this.buffer[6] + "," + this.buffer[7];
-	result += "\r\t" + this.buffer[8] + "," + this.buffer[9] + "," + this.buffer[10] + "," + this.buffer[11];
-	result += "\r\t" + this.buffer[12] + "," + this.buffer[13] + "," + this.buffer[14] + "," + this.buffer[15];
-	{
-		$s.pop();
-		return result;
+	if(this.text != text) {
+		this.setGraphicIsInvalid(true);
+		this.text = text;
 	}
-	$s.pop();
-}
-Matrix4.prototype.__class__ = Matrix4;
-kumite.launch.Config = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.launch.Config::new");
-	var $spos = $s.length;
-	this.launcher = new kumite.launch.Launcher();
-	this.sequencer = new bpmjs.Sequencer();
-	$s.pop();
-}}
-kumite.launch.Config.__name__ = ["kumite","launch","Config"];
-kumite.launch.Config.prototype.sequencer = null;
-kumite.launch.Config.prototype.launcher = null;
-kumite.launch.Config.prototype.__class__ = kumite.launch.Config;
-kumite.launch.Config.__interfaces__ = [haxe.rtti.Infos];
-js.Lib = function() { }
-js.Lib.__name__ = ["js","Lib"];
-js.Lib.isIE = null;
-js.Lib.isOpera = null;
-js.Lib.document = null;
-js.Lib.window = null;
-js.Lib.alert = function(v) {
-	$s.push("js.Lib::alert");
-	var $spos = $s.length;
-	alert(js.Boot.__string_rec(v,""));
-	$s.pop();
-}
-js.Lib.eval = function(code) {
-	$s.push("js.Lib::eval");
-	var $spos = $s.length;
 	{
-		var $tmp = eval(code);
 		$s.pop();
-		return $tmp;
+		return text;
 	}
-	$s.pop();
-}
-js.Lib.setErrorHandler = function(f) {
-	$s.push("js.Lib::setErrorHandler");
-	var $spos = $s.length;
-	js.Lib.onerror = f;
 	$s.pop();
 }
-js.Lib.prototype.__class__ = js.Lib;
+GLLabel.prototype.__class__ = GLLabel;
 $_ = {}
 js.Boot.__res = {}
 $s = [];
 $e = [];
 js.Boot.__init();
 {
-	Math.__name__ = ["Math"];
-	Math.NaN = Number["NaN"];
-	Math.NEGATIVE_INFINITY = Number["NEGATIVE_INFINITY"];
-	Math.POSITIVE_INFINITY = Number["POSITIVE_INFINITY"];
-	Math.isFinite = function(i) {
-		$s.push("js.Lib::setErrorHandler");
-		var $spos = $s.length;
-		{
-			var $tmp = isFinite(i);
-			$s.pop();
-			return $tmp;
+	js.Lib.document = document;
+	js.Lib.window = window;
+	onerror = function(msg,url,line) {
+		var stack = $s.copy();
+		var f = js.Lib.onerror;
+		$s.splice(0,$s.length);
+		if( f == null ) {
+			var i = stack.length;
+			var s = "";
+			while( --i >= 0 )
+				s += "Called from "+stack[i]+"\n";
+			alert(msg+"\n\n"+s);
+			return false;
 		}
-		$s.pop();
+		return f(msg,stack);
 	}
-	Math.isNaN = function(i) {
-		$s.push("js.Lib::setErrorHandler");
-		var $spos = $s.length;
-		{
-			var $tmp = isNaN(i);
-			$s.pop();
-			return $tmp;
-		}
-		$s.pop();
-	}
-}
-{
-	Xml.Element = "element";
-	Xml.PCData = "pcdata";
-	Xml.CData = "cdata";
-	Xml.Comment = "comment";
-	Xml.DocType = "doctype";
-	Xml.Prolog = "prolog";
-	Xml.Document = "document";
-}
-{
-	String.prototype.__class__ = String;
-	String.__name__ = ["String"];
-	Array.prototype.__class__ = Array;
-	Array.__name__ = ["Array"];
-	Int = { __name__ : ["Int"]};
-	Dynamic = { __name__ : ["Dynamic"]};
-	Float = Number;
-	Float.__name__ = ["Float"];
-	Bool = { __ename__ : ["Bool"]};
-	Class = { __name__ : ["Class"]};
-	Enum = { };
-	Void = { __ename__ : ["Void"]};
 }
 {
 	var d = Date;
 	d.now = function() {
-		$s.push("js.Lib::setErrorHandler");
+		$s.push("GLLabel::setText");
 		var $spos = $s.length;
 		{
 			var $tmp = new Date();
@@ -8585,7 +8830,7 @@ js.Boot.__init();
 		$s.pop();
 	}
 	d.fromTime = function(t) {
-		$s.push("js.Lib::setErrorHandler");
+		$s.push("GLLabel::setText");
 		var $spos = $s.length;
 		var d1 = new Date();
 		d1["setTime"](t);
@@ -8596,7 +8841,7 @@ js.Boot.__init();
 		$s.pop();
 	}
 	d.fromString = function(s) {
-		$s.push("js.Lib::setErrorHandler");
+		$s.push("GLLabel::setText");
 		var $spos = $s.length;
 		switch(s.length) {
 		case 8:{
@@ -8636,7 +8881,7 @@ js.Boot.__init();
 		$s.pop();
 	}
 	d.prototype["toString"] = function() {
-		$s.push("js.Lib::setErrorHandler");
+		$s.push("GLLabel::setText");
 		var $spos = $s.length;
 		var date = this;
 		var m = date.getMonth() + 1;
@@ -8655,83 +8900,96 @@ js.Boot.__init();
 	d.__name__ = ["Date"];
 }
 {
-	js.Lib.document = document;
-	js.Lib.window = window;
-	onerror = function(msg,url,line) {
-		var stack = $s.copy();
-		var f = js.Lib.onerror;
-		$s.splice(0,$s.length);
-		if( f == null ) {
-			var i = stack.length;
-			var s = "";
-			while( --i >= 0 )
-				s += "Called from "+stack[i]+"\n";
-			alert(msg+"\n\n"+s);
-			return false;
+	Math.__name__ = ["Math"];
+	Math.NaN = Number["NaN"];
+	Math.NEGATIVE_INFINITY = Number["NEGATIVE_INFINITY"];
+	Math.POSITIVE_INFINITY = Number["POSITIVE_INFINITY"];
+	Math.isFinite = function(i) {
+		$s.push("GLLabel::setText");
+		var $spos = $s.length;
+		{
+			var $tmp = isFinite(i);
+			$s.pop();
+			return $tmp;
 		}
-		return f(msg,stack);
+		$s.pop();
+	}
+	Math.isNaN = function(i) {
+		$s.push("GLLabel::setText");
+		var $spos = $s.length;
+		{
+			var $tmp = isNaN(i);
+			$s.pop();
+			return $tmp;
+		}
+		$s.pop();
 	}
 }
-kumite.helloworldgl.HelloWorld.__meta__ = { fields : { stage : { Inject : null}, time : { Inject : null}, projection : { Inject : null}, camera : { Inject : null}, start : { Sequence : ["boot","start"]}, render : { Message : null}}};
-kumite.helloworldgl.HelloWorld.__rtti = "<class path=\"kumite.helloworldgl.HelloWorld\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<worldViewMatrixUniform><c path=\"GLUniformLocation\"/></worldViewMatrixUniform>\n\t<colorUniform><c path=\"GLUniformLocation\"/></colorUniform>\n\t<start public=\"1\" set=\"method\" line=\"36\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<render public=\"1\" set=\"method\" line=\"54\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<drawRect set=\"method\" line=\"75\"><f a=\"x:y:z:color\">\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Color\"/>\n\t<e path=\"Void\"/>\n</f></drawRect>\n\t<new public=\"1\" set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.stage.StageResizeAction.__meta__ = { fields : { messenger : { Messenger : null}, stage : { Inject : null}, initPrepare : { Sequence : ["boot","initPrepare"]}, startComplete : { Sequence : ["boot","startComplete"]}}};
-kumite.stage.StageResizeAction.__rtti = "<class path=\"kumite.stage.StageResizeAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<startComplete public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<onResize set=\"method\" line=\"39\"><f a=\"?event\">\n\t<t path=\"js.Event\"/>\n\t<e path=\"Void\"/>\n</f></onResize>\n\t<updateSize set=\"method\" line=\"45\"><f a=\"\"><e path=\"Void\"/></f></updateSize>\n\t<sendResizeMessage set=\"method\" line=\"51\"><f a=\"\"><e path=\"Void\"/></f></sendResizeMessage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.mouse.Config.__rtti = "<class path=\"kumite.mouse.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<mouseController public=\"1\"><c path=\"kumite.mouse.MouseController\"/></mouseController>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.webgl.Config.__rtti = "<class path=\"kumite.webgl.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<initAction public=\"1\"><c path=\"kumite.webgl.InitAction\"/></initAction>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+{
+	String.prototype.__class__ = String;
+	String.__name__ = ["String"];
+	Array.prototype.__class__ = Array;
+	Array.__name__ = ["Array"];
+	Int = { __name__ : ["Int"]};
+	Dynamic = { __name__ : ["Dynamic"]};
+	Float = Number;
+	Float.__name__ = ["Float"];
+	Bool = { __ename__ : ["Bool"]};
+	Class = { __name__ : ["Class"]};
+	Enum = { };
+	Void = { __ename__ : ["Void"]};
+}
+{
+	Xml.Element = "element";
+	Xml.PCData = "pcdata";
+	Xml.CData = "cdata";
+	Xml.Comment = "comment";
+	Xml.DocType = "doctype";
+	Xml.Prolog = "prolog";
+	Xml.Document = "document";
+}
+Log.filters = new Array();
+kumite.stage.Config.__rtti = "<class path=\"kumite.stage.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<stageResizeAction public=\"1\"><c path=\"kumite.stage.StageResizeAction\"/></stageResizeAction>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.mouse.MouseController.__meta__ = { fields : { canvas : { Inject : null}, start : { Sequence : ["boot","init"]}}};
+kumite.mouse.MouseController.__rtti = "<class path=\"kumite.mouse.MouseController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<start public=\"1\" set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<new public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.helloworldgl.shader.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform vec4 color;\n\n\tvoid main(void)\n\t{\n\t\tgl_FragColor = color;\n\t}\n\n"]}};
+GLCursorClient.DEFAULT = "default";
+GLCursorClient.HAND = "pointer";
+hsl.haxe._DirectSignaler.PropagationStatus.IMMEDIATELY_STOPPED = 1;
+hsl.haxe._DirectSignaler.PropagationStatus.STOPPED = 2;
+hsl.haxe._DirectSignaler.PropagationStatus.UNDISTURBED = 3;
 kumite.helloworldgl.Config.__rtti = "<class path=\"kumite.helloworldgl.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<helloWorld public=\"1\"><c path=\"kumite.helloworldgl.HelloWorld\"/></helloWorld>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs.Sequencer.__meta__ = { fields : { context : { Inject : null}}};
 bpmjs.Sequencer.__rtti = "<class path=\"bpmjs.Sequencer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context public=\"1\"><c path=\"bpmjs.Context\"/></context>\n\t<start public=\"1\" set=\"method\" line=\"14\"><f a=\"name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></start>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.time.Time.EXPECTED_FRAMERATE = 60;
-GLCursorClient.DEFAULT = "default";
-GLCursorClient.HAND = "pointer";
-kumite.camera.Config.__rtti = "<class path=\"kumite.camera.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<cameraMouseMover public=\"1\"><c path=\"kumite.camera.CameraMouseMover\"/></cameraMouseMover>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.stage.Config.__rtti = "<class path=\"kumite.stage.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<stageResizeAction public=\"1\"><c path=\"kumite.stage.StageResizeAction\"/></stageResizeAction>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.launch.Launcher.__meta__ = { fields : { sequencer : { Inject : null}, handlePostComplete : { PostComplete : null}, showError : { Sequence : ["boot","error"]}}};
-kumite.launch.Launcher.__rtti = "<class path=\"kumite.launch.Launcher\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<handlePostComplete public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></handlePostComplete>\n\t<showError public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></showError>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 LogLevel.INFO = new LogLevel(1);
 LogLevel.WARN = new LogLevel(2);
 LogLevel.ERROR = new LogLevel(3);
 LogLevel.OFF = new LogLevel(4);
-bpmjs.Stats.fps = 0;
-kumite.canvas.CanvasController.__meta__ = { fields : { canvas : { Inject : null}, stage : { Inject : null}, initPrepare : { Sequence : ["boot","initPrepare"]}, init : { Sequence : ["boot","init"]}, updateCanvasSizeFromStage : { Message : null}}};
-kumite.canvas.CanvasController.__rtti = "<class path=\"kumite.canvas.CanvasController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<init public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateCanvasSizeFromStage public=\"1\" set=\"method\" line=\"33\"><f a=\"?message\">\n\t<c path=\"kumite.stage.StageResizeMessage\"/>\n\t<e path=\"Void\"/>\n</f></updateCanvasSizeFromStage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.displaylist.DisplayListController.__meta__ = { fields : { stage : { Inject : null}, start : { Sequence : ["boot","start"]}, render : { Message : null}}};
-kumite.displaylist.DisplayListController.__rtti = "<class path=\"kumite.displaylist.DisplayListController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<renderer><c path=\"GLDisplayListRenderer\"/></renderer>\n\t<start public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<render public=\"1\" set=\"method\" line=\"30\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"17\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.helloworldgl.shader.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform vec4 color;\n\n\tvoid main(void)\n\t{\n\t\tgl_FragColor = color;\n\t}\n\n"]}};
-Xml.enode = new EReg("^<([a-zA-Z0-9:_-]+)","");
-Xml.ecdata = new EReg("^<!\\[CDATA\\[","i");
-Xml.edoctype = new EReg("^<!DOCTYPE ","i");
-Xml.eend = new EReg("^</([a-zA-Z0-9:_-]+)>","");
-Xml.epcdata = new EReg("^[^<]+","");
-Xml.ecomment = new EReg("^<!--","");
-Xml.eprolog = new EReg("^<\\?[^\\?]+\\?>","");
-Xml.eattribute = new EReg("^\\s*([a-zA-Z0-9:_-]+)\\s*=\\s*([\"'])([^\\2]*?)\\2","");
-Xml.eclose = new EReg("^[ \r\n\t]*(>|(/>))","");
-Xml.ecdata_end = new EReg("\\]\\]>","");
-Xml.edoctype_elt = new EReg("[\\[|\\]>]","");
-Xml.ecomment_end = new EReg("-->","");
-haxe.Timer.arr = new Array();
-shader.DisplayObjectVertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 objectMatrix;\n\tuniform vec2 size;\n\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * objectMatrix * (vec4(size, 1.0, 1.0) * vec4(vertexPosition, 0.0, 1.0));\n\t\ttextureCoord = vertexPosition.xy;\n\t}\n\n"]}};
-hsl.haxe._DirectSignaler.PropagationStatus.IMMEDIATELY_STOPPED = 1;
-hsl.haxe._DirectSignaler.PropagationStatus.STOPPED = 2;
-hsl.haxe._DirectSignaler.PropagationStatus.UNDISTURBED = 3;
-kumite.projection.Config.__rtti = "<class path=\"kumite.projection.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<projectionController public=\"1\"><c path=\"kumite.projection.ProjectionController\"/></projectionController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.canvas.Config.__rtti = "<class path=\"kumite.canvas.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvasCase public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvasCase>\n\t<canvasController public=\"1\"><c path=\"kumite.canvas.CanvasController\"/></canvasController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.time.Config.__rtti = "<class path=\"kumite.time.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<timeController public=\"1\"><c path=\"kumite.time.TimeController\"/></timeController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.time.TimeController.__meta__ = { fields : { time : { Inject : null}, messenger : { Messenger : null}, startComplete : { Sequence : ["boot","startComplete"]}}};
-kumite.time.TimeController.__rtti = "<class path=\"kumite.time.TimeController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<startComplete public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"24\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<new public=\"1\" set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.projection.ProjectionController.__meta__ = { fields : { projection : { Inject : null}, stage : { Inject : null}, init : { Sequence : ["boot","init"]}, updateProjectionSizeFromStage : { Message : null}}};
 kumite.projection.ProjectionController.__rtti = "<class path=\"kumite.projection.ProjectionController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<fov public=\"1\"><c path=\"Float\"/></fov>\n\t<near public=\"1\"><c path=\"Float\"/></near>\n\t<far public=\"1\"><c path=\"Float\"/></far>\n\t<init public=\"1\" set=\"method\" line=\"23\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateProjectionSizeFromStage public=\"1\" set=\"method\" line=\"30\"><f a=\"?message\">\n\t<c path=\"kumite.stage.StageResizeMessage\"/>\n\t<e path=\"Void\"/>\n</f></updateProjectionSizeFromStage>\n\t<new public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-Log.filters = new Array();
-kumite.displaylist.Config.__rtti = "<class path=\"kumite.displaylist.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<displayListController public=\"1\"><c path=\"kumite.displaylist.DisplayListController\"/></displayListController>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-shader.DisplayObjectFragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform sampler2D texture;\n\tuniform float alpha;\n\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tvec4 color = texture2D(texture, textureCoord);\n\t\tgl_FragColor = color * vec4(1.0, 1.0, 1.0, alpha);\n\t}\n\n"]}};
+js.Lib.onerror = null;
+kumite.canvas.CanvasController.__meta__ = { fields : { canvas : { Inject : null}, stage : { Inject : null}, initPrepare : { Sequence : ["boot","initPrepare"]}, init : { Sequence : ["boot","init"]}, updateCanvasSizeFromStage : { Message : null}}};
+kumite.canvas.CanvasController.__rtti = "<class path=\"kumite.canvas.CanvasController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<init public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateCanvasSizeFromStage public=\"1\" set=\"method\" line=\"33\"><f a=\"?message\">\n\t<c path=\"kumite.stage.StageResizeMessage\"/>\n\t<e path=\"Void\"/>\n</f></updateCanvasSizeFromStage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.launch.Launcher.__meta__ = { fields : { sequencer : { Inject : null}, handlePostComplete : { PostComplete : null}, showError : { Sequence : ["boot","error"]}}};
+kumite.launch.Launcher.__rtti = "<class path=\"kumite.launch.Launcher\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<handlePostComplete public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></handlePostComplete>\n\t<showError public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></showError>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.camera.CameraMouseMover.__meta__ = { fields : { camera : { Inject : null}, init : { Sequence : ["boot","init"]}}};
 kumite.camera.CameraMouseMover.__rtti = "<class path=\"kumite.camera.CameraMouseMover\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<init public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateCamera set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></updateCamera>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.mouse.MouseController.__meta__ = { fields : { canvas : { Inject : null}, start : { Sequence : ["boot","init"]}}};
-kumite.mouse.MouseController.__rtti = "<class path=\"kumite.mouse.MouseController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<start public=\"1\" set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<new public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.canvas.Config.__rtti = "<class path=\"kumite.canvas.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvasCase public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvasCase>\n\t<canvasController public=\"1\"><c path=\"kumite.canvas.CanvasController\"/></canvasController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.helloworldgl.shader.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 worldViewMatrix;\n\n\tvarying vec4 vertex;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);\n\t\tvertex = vec4(vertexPosition, 0.0, 1.0);\n\t}\n\n"]}};
+kumite.webgl.Config.__rtti = "<class path=\"kumite.webgl.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<initAction public=\"1\"><c path=\"kumite.webgl.InitAction\"/></initAction>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.time.TimeController.__meta__ = { fields : { time : { Inject : null}, messenger : { Messenger : null}, startComplete : { Sequence : ["boot","startComplete"]}}};
+kumite.time.TimeController.__rtti = "<class path=\"kumite.time.TimeController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<startComplete public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"24\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<new public=\"1\" set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.webgl.InitAction.__meta__ = { fields : { canvas : { Inject : null}, antialias : { Inject : null}, init : { Sequence : ["boot","init"]}}};
 kumite.webgl.InitAction.__rtti = "<class path=\"kumite.webgl.InitAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<antialias public=\"1\"><e path=\"Bool\"/></antialias>\n\t<init public=\"1\" set=\"method\" line=\"17\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<new public=\"1\" set=\"method\" line=\"14\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.projection.Config.__rtti = "<class path=\"kumite.projection.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<projectionController public=\"1\"><c path=\"kumite.projection.ProjectionController\"/></projectionController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.vjinterface.VJInterface.__meta__ = { fields : { start : { Sequence : ["boot","start"]}, render : { Message : null}}};
+kumite.vjinterface.VJInterface.__rtti = "<class path=\"kumite.vjinterface.VJInterface\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage><c path=\"GLStage\"/></stage>\n\t<cutButton><c path=\"GLLabel\"/></cutButton>\n\t<shortButton><c path=\"GLLabel\"/></shortButton>\n\t<longButton><c path=\"GLLabel\"/></longButton>\n\t<start public=\"1\" set=\"method\" line=\"17\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<render public=\"1\" set=\"method\" line=\"45\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"14\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.displaylist.Config.__rtti = "<class path=\"kumite.displaylist.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<displayListController public=\"1\"><c path=\"kumite.displaylist.DisplayListController\"/></displayListController>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+haxe.Timer.arr = new Array();
+kumite.helloworldgl.shader.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 worldViewMatrix;\n\n\tvarying vec4 vertex;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);\n\t\tvertex = vec4(vertexPosition, 0.0, 1.0);\n\t}\n\n"]}};
+shader.DisplayObjectVertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 objectMatrix;\n\tuniform vec2 size;\n\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * objectMatrix * (vec4(size, 1.0, 1.0) * vec4(vertexPosition, 0.0, 1.0));\n\t\ttextureCoord = vertexPosition.xy;\n\t}\n\n"]}};
+kumite.stage.StageResizeAction.__meta__ = { fields : { messenger : { Messenger : null}, stage : { Inject : null}, initPrepare : { Sequence : ["boot","initPrepare"]}, startComplete : { Sequence : ["boot","startComplete"]}}};
+kumite.stage.StageResizeAction.__rtti = "<class path=\"kumite.stage.StageResizeAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<startComplete public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<onResize set=\"method\" line=\"39\"><f a=\"?event\">\n\t<t path=\"js.Event\"/>\n\t<e path=\"Void\"/>\n</f></onResize>\n\t<updateSize set=\"method\" line=\"45\"><f a=\"\"><e path=\"Void\"/></f></updateSize>\n\t<sendResizeMessage set=\"method\" line=\"51\"><f a=\"\"><e path=\"Void\"/></f></sendResizeMessage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 GL.DEPTH_BUFFER_BIT = 256;
 GL.STENCIL_BUFFER_BIT = 1024;
 GL.COLOR_BUFFER_BIT = 16384;
@@ -9029,6 +9287,27 @@ GL.FRAMEBUFFER_BINDING = 36006;
 GL.RENDERBUFFER_BINDING = 36007;
 GL.MAX_RENDERBUFFER_SIZE = 34024;
 GL.INVALID_FRAMEBUFFER_OPERATION = 1286;
+shader.DisplayObjectFragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform sampler2D texture;\n\tuniform float alpha;\n\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tvec4 color = texture2D(texture, textureCoord);\n\t\tgl_FragColor = color * vec4(1.0, 1.0, 1.0, alpha);\n\t}\n\n"]}};
+kumite.camera.Config.__rtti = "<class path=\"kumite.camera.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<cameraMouseMover public=\"1\"><c path=\"kumite.camera.CameraMouseMover\"/></cameraMouseMover>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.vjinterface.Config.__rtti = "<class path=\"kumite.vjinterface.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<vjinterface public=\"1\"><c path=\"kumite.vjinterface.VJInterface\"/></vjinterface>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.displaylist.DisplayListController.__meta__ = { fields : { stage : { Inject : null}, start : { Sequence : ["boot","start"]}, render : { Message : null}}};
+kumite.displaylist.DisplayListController.__rtti = "<class path=\"kumite.displaylist.DisplayListController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<renderer><c path=\"GLDisplayListRenderer\"/></renderer>\n\t<start public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<render public=\"1\" set=\"method\" line=\"27\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"17\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.mouse.Config.__rtti = "<class path=\"kumite.mouse.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<mouseController public=\"1\"><c path=\"kumite.mouse.MouseController\"/></mouseController>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+bpmjs.Stats.fps = 0;
+kumite.helloworldgl.HelloWorld.__meta__ = { fields : { stage : { Inject : null}, time : { Inject : null}, projection : { Inject : null}, camera : { Inject : null}, start : { Sequence : ["boot","start"]}, render : { Message : null}}};
+kumite.helloworldgl.HelloWorld.__rtti = "<class path=\"kumite.helloworldgl.HelloWorld\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<worldViewMatrixUniform><c path=\"GLUniformLocation\"/></worldViewMatrixUniform>\n\t<colorUniform><c path=\"GLUniformLocation\"/></colorUniform>\n\t<start public=\"1\" set=\"method\" line=\"36\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<render public=\"1\" set=\"method\" line=\"54\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<drawRect set=\"method\" line=\"75\"><f a=\"x:y:z:color\">\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Color\"/>\n\t<e path=\"Void\"/>\n</f></drawRect>\n\t<new public=\"1\" set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.launch.Config.__rtti = "<class path=\"kumite.launch.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<launcher public=\"1\"><c path=\"kumite.launch.Launcher\"/></launcher>\n\t<new public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-js.Lib.onerror = null;
+Xml.enode = new EReg("^<([a-zA-Z0-9:_-]+)","");
+Xml.ecdata = new EReg("^<!\\[CDATA\\[","i");
+Xml.edoctype = new EReg("^<!DOCTYPE ","i");
+Xml.eend = new EReg("^</([a-zA-Z0-9:_-]+)>","");
+Xml.epcdata = new EReg("^[^<]+","");
+Xml.ecomment = new EReg("^<!--","");
+Xml.eprolog = new EReg("^<\\?[^\\?]+\\?>","");
+Xml.eattribute = new EReg("^\\s*([a-zA-Z0-9:_-]+)\\s*=\\s*([\"'])([^\\2]*?)\\2","");
+Xml.eclose = new EReg("^[ \r\n\t]*(>|(/>))","");
+Xml.ecdata_end = new EReg("\\]\\]>","");
+Xml.edoctype_elt = new EReg("[\\[|\\]>]","");
+Xml.ecomment_end = new EReg("-->","");
+kumite.time.Time.EXPECTED_FRAMERATE = 60;
 Main.main()

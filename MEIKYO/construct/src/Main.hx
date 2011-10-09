@@ -33,8 +33,9 @@ class Main {
 					kumite.projection.Config,
 					kumite.camera.Config,
 					kumite.mouse.Config,
-					kumite.displaylist.Config,
 					kumite.helloworldgl.Config,
+					kumite.displaylist.Config,
+					kumite.vjinterface.Config,
 				]);
 		}
 		catch(e : Dynamic)

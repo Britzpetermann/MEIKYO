@@ -49,8 +49,8 @@ class GLTextureRegistry
 
 	public function createGLTextureFromCanvas(canvas : Canvas)
 	{
-		var testPowerOfTwoWidth = Std.int(GLMathUtil.getNextPowerOfTwo(canvas.width));
-		var testPowerOfTwoHight = Std.int(GLMathUtil.getNextPowerOfTwo(canvas.height));
+		var testPowerOfTwoWidth = Std.int(Math2.getNextPowerOfTwo(canvas.width));
+		var testPowerOfTwoHight = Std.int(Math2.getNextPowerOfTwo(canvas.height));
 		if (testPowerOfTwoWidth != canvas.width || testPowerOfTwoHight != canvas.height)
 			throw "Canvas size must be a valid texture size!";
 
@@ -70,8 +70,8 @@ class GLTextureRegistry
 
 	public function updateGLTextureFromCanvas(texture : GLTexture, canvas : Canvas)
 	{
-		var testPowerOfTwoWidth = Std.int(GLMathUtil.getNextPowerOfTwo(canvas.width));
-		var testPowerOfTwoHight = Std.int(GLMathUtil.getNextPowerOfTwo(canvas.height));
+		var testPowerOfTwoWidth = Std.int(Math2.getNextPowerOfTwo(canvas.width));
+		var testPowerOfTwoHight = Std.int(Math2.getNextPowerOfTwo(canvas.height));
 		if (testPowerOfTwoWidth != canvas.width || testPowerOfTwoHight != canvas.height)
 			throw "Canvas size must be a valid texture size!";
 

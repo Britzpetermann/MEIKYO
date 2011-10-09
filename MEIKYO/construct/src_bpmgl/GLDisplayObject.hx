@@ -16,20 +16,19 @@ class GLDisplayObject
 	public var alpha : Float;
 	public var x(default, setX) : Float;
 	public var y(default, setY) : Float;
-	public var width(default, setWidth) : Float;
-	public var height(default, setHeight) : Float;
+	public var width(default, setWidth) : Int;
+	public var height(default, setHeight) : Int;
 	public var scaleX(default, setScaleX) : Float;
 	public var scaleY(default, setScaleY) : Float;
 
 	public var transformIsInvalid : Bool;
-	public var canvasIsInvalid : Bool;
-
-	public var canvas(getCanvas, null) : Canvas;
-	public var context(getContext, null) : CanvasRenderingContext2D;
+	public var graphicIsInvalid(getGraphicIsInvalid, setGraphicIsInvalid) : Bool;
 
 	public var matrix : Matrix4;
 
 	public var enterFrameSignaler : Signaler<GLFrame>;
+	
+	public var graphic : CanvasGraphic;
 
 	public function new()
 	{
@@ -45,6 +44,8 @@ class GLDisplayObject
 		alpha = 1;
 
 		matrix = new Matrix4();
+		
+		graphic = new CanvasGraphic();
 
 		x = 0;
 		y = 0;
@@ -53,34 +54,28 @@ class GLDisplayObject
 		scaleX = 1;
 		scaleY = 1;
 		transformIsInvalid = true;
-
-		canvas = cast Lib.document.createElement("canvas");
-		canvas.width = width;
-		canvas.height = height;
-
-		var context = canvas.getContext("2d");
-		context.fillStyle = "rgba(0, 0, 0, 0.0)";
-		context.fillRect (0, 0, width, height);
-
-		canvasIsInvalid = true;
+		
+		graphic.width = width;
+		graphic.height = height;
 	}
 
 	public function validateTransform()
 	{
 		if (transformIsInvalid)
 		{
+			graphic.width = width;
+			graphic.height = height;
+			
 			transformIsInvalid = false;
-
-			if (canvas.width != width)
-				canvas.width = width;
-
-			if (canvas.height != height)
-				canvas.height = height;
-
 			matrix.identity();
 			matrix.appendTranslation(x, y, 0);
 			matrix.appendScale(scaleX, scaleY, 1);
 		}
+	}
+	
+	public function validateGraphics()
+	{
+		graphicIsInvalid = false;
 	}
 
 	public function toString()
@@ -128,37 +123,36 @@ class GLDisplayObject
 		return value;
 	}
 
-	function setWidth(?value : Float)
+	function setWidth(?value : Int)
 	{
 		if (width != value)
 		{
 			width = value;
+			graphic.width = width;
 			transformIsInvalid = true;
-			canvasIsInvalid = true;
 		}
 		return value;
 	}
 
-	function setHeight(?value : Float)
+	function setHeight(?value : Int)
 	{
 		if (height != value)
 		{
 			height = value;
+			graphic.height = height;
 			transformIsInvalid = true;
-			canvasIsInvalid = true;
 		}
 		return value;
 	}
-
-	function getCanvas()
+	
+	function getGraphicIsInvalid() : Bool
 	{
-		validateTransform();
-		return canvas;
+		return graphic.isInvalid;
 	}
 
-	function getContext()
+	function setGraphicIsInvalid(value : Bool)
 	{
-		validateTransform();
-		return canvas.getContext("2d");
+		graphic.isInvalid = value;
+		return value;
 	}
 }

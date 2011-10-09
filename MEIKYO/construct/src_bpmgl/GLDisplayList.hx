@@ -73,7 +73,9 @@ class GLDisplayList
 	{
 		var result : GLInteractiveObject = hitareaPicker.pick(stage, position);
 		if (result != null)
+		{
 			result.mouseDownSignaler.dispatch(result);
+		}
 	}
 
 	function handleMouseMove(position : Vec2)
