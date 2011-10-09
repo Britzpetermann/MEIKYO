@@ -13,6 +13,7 @@ import bpmjs.TestFrontMessenger;
 import bpmjs.TestSequencer;
 import bpmjs.integration.TestMessaging;
 import bpmjs.integration.TestMultipleConfigs;
+import kumite.scene.TestLayerOrder;
 
 class TestRunner {
 
@@ -32,6 +33,7 @@ class TestRunner {
 		addFrontMessengerTests();
 		addIntegrationTests();
 		addSequencerTests();
+		addSceneTests();
 
 		var startTime = Date.now().getTime();
 		runner.run();
@@ -67,6 +69,11 @@ class TestRunner {
 	function addSequencerTests()
 	{
 		runner.add(new TestSequencer());
+	}
+	
+	function addSceneTests()
+	{
+		runner.add(new TestLayerOrder());
 	}
 }
 

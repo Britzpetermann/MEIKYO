@@ -83,5 +83,26 @@ T	b1	b2	e1	e2	e3	e4
 | long  |	|scene1|    |scene2|    |scene3|    |scene4|    |scene5|    |scene6|    |scene7|
 
 
-
-
+SceneContext:
+	ms
+	frame
+	transition [IN_START, IN, IN_END, OUT_START, OUT, OUT_END]
+	transitionMs
+	transitionDuration
+	
+Renderer:
+	init
+	start
+	renderTransition(sceneContext)
+	render(sceneContext)
+	renderTransition(sceneContext)
+	stop
+	
+Scene:
+	getRenderers()
+	
+SceneController
+	currentRenderer
+	nextRenderers
+	
+	...call renderer or In or Out
