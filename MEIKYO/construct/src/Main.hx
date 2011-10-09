@@ -36,6 +36,8 @@ class Main {
 					kumite.helloworldgl.Config,
 					kumite.displaylist.Config,
 					kumite.vjinterface.Config,
+					kumite.scene.Config,
+					kumite.testscene.Config,
 				]);
 		}
 		catch(e : Dynamic)

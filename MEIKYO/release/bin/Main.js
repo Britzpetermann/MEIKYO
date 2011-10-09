@@ -1,4 +1,28 @@
 $estr = function() { return js.Boot.__string_rec(this,''); }
+if(typeof kumite=='undefined') kumite = {}
+if(!kumite.scene) kumite.scene = {}
+kumite.scene.Layer = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.scene.Layer::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.scene.Layer.__name__ = ["kumite","scene","Layer"];
+kumite.scene.Layer.prototype.id = null;
+kumite.scene.Layer.prototype.__class__ = kumite.scene.Layer;
+kumite.scene.DelegateLayer = function(layerLifecycle) { if( layerLifecycle === $_ ) return; {
+	$s.push("kumite.scene.DelegateLayer::new");
+	var $spos = $s.length;
+	kumite.scene.Layer.call(this);
+	this.id = Type.getClassName(Type.getClass(layerLifecycle));
+	this.layerLifecycle = layerLifecycle;
+	$s.pop();
+}}
+kumite.scene.DelegateLayer.__name__ = ["kumite","scene","DelegateLayer"];
+kumite.scene.DelegateLayer.__super__ = kumite.scene.Layer;
+for(var k in kumite.scene.Layer.prototype ) kumite.scene.DelegateLayer.prototype[k] = kumite.scene.Layer.prototype[k];
+kumite.scene.DelegateLayer.prototype.layerLifecycle = null;
+kumite.scene.DelegateLayer.prototype.__class__ = kumite.scene.DelegateLayer;
 GLDisplayObject = function(p) { if( p === $_ ) return; {
 	$s.push("GLDisplayObject::new");
 	var $spos = $s.length;
@@ -1547,6 +1571,19 @@ GLAttribLocation.prototype.drawArrays = function(mode,first,count) {
 	$s.pop();
 }
 GLAttribLocation.prototype.__class__ = GLAttribLocation;
+haxe.rtti.Infos = function() { }
+haxe.rtti.Infos.__name__ = ["haxe","rtti","Infos"];
+haxe.rtti.Infos.prototype.__class__ = haxe.rtti.Infos;
+kumite.scene.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.scene.Config::new");
+	var $spos = $s.length;
+	this.sceneController = new kumite.scene.SceneController();
+	$s.pop();
+}}
+kumite.scene.Config.__name__ = ["kumite","scene","Config"];
+kumite.scene.Config.prototype.sceneController = null;
+kumite.scene.Config.prototype.__class__ = kumite.scene.Config;
+kumite.scene.Config.__interfaces__ = [haxe.rtti.Infos];
 IntIter = function(min,max) { if( min === $_ ) return; {
 	$s.push("IntIter::new");
 	var $spos = $s.length;
@@ -1578,7 +1615,6 @@ IntIter.prototype.next = function() {
 	$s.pop();
 }
 IntIter.prototype.__class__ = IntIter;
-if(typeof kumite=='undefined') kumite = {}
 if(!kumite.canvas) kumite.canvas = {}
 kumite.canvas.CanvasCase = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.canvas.CanvasCase::new");
@@ -1589,9 +1625,6 @@ kumite.canvas.CanvasCase = function(p) { if( p === $_ ) return; {
 kumite.canvas.CanvasCase.__name__ = ["kumite","canvas","CanvasCase"];
 kumite.canvas.CanvasCase.prototype.itself = null;
 kumite.canvas.CanvasCase.prototype.__class__ = kumite.canvas.CanvasCase;
-haxe.rtti.Infos = function() { }
-haxe.rtti.Infos.__name__ = ["haxe","rtti","Infos"];
-haxe.rtti.Infos.prototype.__class__ = haxe.rtti.Infos;
 if(!kumite.stage) kumite.stage = {}
 kumite.stage.Config = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.stage.Config::new");
@@ -2916,6 +2949,27 @@ hsl.haxe._DirectSignaler.AdvancedBond.prototype.__class__ = hsl.haxe._DirectSign
 hsl.haxe._DirectSignaler.PropagationStatus = function() { }
 hsl.haxe._DirectSignaler.PropagationStatus.__name__ = ["hsl","haxe","_DirectSignaler","PropagationStatus"];
 hsl.haxe._DirectSignaler.PropagationStatus.prototype.__class__ = hsl.haxe._DirectSignaler.PropagationStatus;
+kumite.scene.SceneLifecycle = function() { }
+kumite.scene.SceneLifecycle.__name__ = ["kumite","scene","SceneLifecycle"];
+kumite.scene.SceneLifecycle.prototype.sceneInit = null;
+kumite.scene.SceneLifecycle.prototype.__class__ = kumite.scene.SceneLifecycle;
+if(!kumite.testscene) kumite.testscene = {}
+kumite.testscene.TestScene1 = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.testscene.TestScene1::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.testscene.TestScene1.__name__ = ["kumite","testscene","TestScene1"];
+kumite.testscene.TestScene1.prototype.testLayer1 = null;
+kumite.testscene.TestScene1.prototype.sceneInit = function(scene) {
+	$s.push("kumite.testscene.TestScene1::sceneInit");
+	var $spos = $s.length;
+	scene.addLayer(new kumite.scene.DelegateLayer(this.testLayer1));
+	$s.pop();
+}
+kumite.testscene.TestScene1.prototype.__class__ = kumite.testscene.TestScene1;
+kumite.testscene.TestScene1.__interfaces__ = [kumite.scene.SceneLifecycle];
 kumite.helloworldgl.Config = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.helloworldgl.Config::new");
 	var $spos = $s.length;
@@ -4868,6 +4922,18 @@ kumite.launch.Launcher.prototype.showError = function() {
 }
 kumite.launch.Launcher.prototype.__class__ = kumite.launch.Launcher;
 kumite.launch.Launcher.__interfaces__ = [haxe.rtti.Infos];
+kumite.testscene.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.testscene.Config::new");
+	var $spos = $s.length;
+	this.testLayer1 = new kumite.testscene.TestLayer1();
+	this.testScene1 = new kumite.testscene.TestScene1();
+	$s.pop();
+}}
+kumite.testscene.Config.__name__ = ["kumite","testscene","Config"];
+kumite.testscene.Config.prototype.testLayer1 = null;
+kumite.testscene.Config.prototype.testScene1 = null;
+kumite.testscene.Config.prototype.__class__ = kumite.testscene.Config;
+kumite.testscene.Config.__interfaces__ = [haxe.rtti.Infos];
 Reflect = function() { }
 Reflect.__name__ = ["Reflect"];
 Reflect.hasField = function(o,field) {
@@ -5786,6 +5852,42 @@ Lambda.concat = function(a,b) {
 	$s.pop();
 }
 Lambda.prototype.__class__ = Lambda;
+kumite.scene.LayerLifecycle = function() { }
+kumite.scene.LayerLifecycle.__name__ = ["kumite","scene","LayerLifecycle"];
+kumite.scene.LayerLifecycle.prototype.layerInit = null;
+kumite.scene.LayerLifecycle.prototype.__class__ = kumite.scene.LayerLifecycle;
+Text = function(p) { if( p === $_ ) return; {
+	$s.push("Text::new");
+	var $spos = $s.length;
+	Text.init();
+	$s.pop();
+}}
+Text.__name__ = ["Text"];
+Text.context = null;
+Text.init = function() {
+	$s.push("Text::init");
+	var $spos = $s.length;
+	if(Text.context == null) {
+		var canvas = js.Lib.document.createElement("canvas");
+		Text.context = canvas.getContext("2d");
+	}
+	$s.pop();
+}
+Text.prototype.text = null;
+Text.prototype.font = null;
+Text.prototype.width = null;
+Text.prototype.getWidth = function() {
+	$s.push("Text::getWidth");
+	var $spos = $s.length;
+	Text.context.font = this.font;
+	{
+		var $tmp = Text.context.measureText(this.text).width;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Text.prototype.__class__ = Text;
 CanvasGraphic = function(p) { if( p === $_ ) return; {
 	$s.push("CanvasGraphic::new");
 	var $spos = $s.length;
@@ -5887,38 +5989,24 @@ CanvasGraphic.prototype.setHeight = function(height) {
 	$s.pop();
 }
 CanvasGraphic.prototype.__class__ = CanvasGraphic;
-Text = function(p) { if( p === $_ ) return; {
-	$s.push("Text::new");
+kumite.scene.SceneController = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.scene.SceneController::new");
 	var $spos = $s.length;
-	Text.init();
+	null;
 	$s.pop();
 }}
-Text.__name__ = ["Text"];
-Text.context = null;
-Text.init = function() {
-	$s.push("Text::init");
+kumite.scene.SceneController.__name__ = ["kumite","scene","SceneController"];
+kumite.scene.SceneController.prototype.createScene = function() {
+	$s.push("kumite.scene.SceneController::createScene");
 	var $spos = $s.length;
-	if(Text.context == null) {
-		var canvas = js.Lib.document.createElement("canvas");
-		Text.context = canvas.getContext("2d");
-	}
-	$s.pop();
-}
-Text.prototype.text = null;
-Text.prototype.font = null;
-Text.prototype.width = null;
-Text.prototype.getWidth = function() {
-	$s.push("Text::getWidth");
-	var $spos = $s.length;
-	Text.context.font = this.font;
 	{
-		var $tmp = Text.context.measureText(this.text).width;
+		var $tmp = new kumite.scene.Scene();
 		$s.pop();
 		return $tmp;
 	}
 	$s.pop();
 }
-Text.prototype.__class__ = Text;
+kumite.scene.SceneController.prototype.__class__ = kumite.scene.SceneController;
 if(!kumite.camera) kumite.camera = {}
 kumite.camera.CameraMouseMover = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.camera.CameraMouseMover::new");
@@ -6165,7 +6253,7 @@ Main = function(canvas) { if( canvas === $_ ) return; {
 	$s.push("Main::new");
 	var $spos = $s.length;
 	try {
-		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.time.Config,kumite.projection.Config,kumite.camera.Config,kumite.mouse.Config,kumite.helloworldgl.Config,kumite.displaylist.Config,kumite.vjinterface.Config]);
+		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.time.Config,kumite.projection.Config,kumite.camera.Config,kumite.mouse.Config,kumite.helloworldgl.Config,kumite.displaylist.Config,kumite.vjinterface.Config,kumite.scene.Config,kumite.testscene.Config]);
 	}
 	catch( $e0 ) {
 		{
@@ -6174,7 +6262,7 @@ Main = function(canvas) { if( canvas === $_ ) return; {
 				$e = [];
 				while($s.length >= $spos) $e.unshift($s.pop());
 				$s.push($e[0]);
-				Log.error("Error building application! \n" + e,null,null,null,null,null,null,{ fileName : "Main.hx", lineNumber : 43, className : "Main", methodName : "new"});
+				Log.error("Error building application! \n" + e,null,null,null,null,null,null,{ fileName : "Main.hx", lineNumber : 45, className : "Main", methodName : "new"});
 			}
 		}
 	}
@@ -7030,6 +7118,10 @@ haxe.xml.Fast.prototype.__class__ = haxe.xml.Fast;
 kumite.helloworldgl.shader.Vertex = function() { }
 kumite.helloworldgl.shader.Vertex.__name__ = ["kumite","helloworldgl","shader","Vertex"];
 kumite.helloworldgl.shader.Vertex.prototype.__class__ = kumite.helloworldgl.shader.Vertex;
+if(typeof shader=='undefined') shader = {}
+shader.DisplayObjectVertex = function() { }
+shader.DisplayObjectVertex.__name__ = ["shader","DisplayObjectVertex"];
+shader.DisplayObjectVertex.prototype.__class__ = shader.DisplayObjectVertex;
 haxe.rtti.Meta = function() { }
 haxe.rtti.Meta.__name__ = ["haxe","rtti","Meta"];
 haxe.rtti.Meta.getType = function(t) {
@@ -7066,10 +7158,6 @@ haxe.rtti.Meta.getFields = function(t) {
 	$s.pop();
 }
 haxe.rtti.Meta.prototype.__class__ = haxe.rtti.Meta;
-if(typeof shader=='undefined') shader = {}
-shader.DisplayObjectVertex = function() { }
-shader.DisplayObjectVertex.__name__ = ["shader","DisplayObjectVertex"];
-shader.DisplayObjectVertex.prototype.__class__ = shader.DisplayObjectVertex;
 kumite.stage.StageResizeAction = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.stage.StageResizeAction::new");
 	var $spos = $s.length;
@@ -7487,6 +7575,21 @@ GL.viewport = function(x,y,width,height) {
 	$s.pop();
 }
 GL.prototype.__class__ = GL;
+kumite.testscene.TestLayer1 = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.testscene.TestLayer1::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.testscene.TestLayer1.__name__ = ["kumite","testscene","TestLayer1"];
+kumite.testscene.TestLayer1.prototype.layerInit = function(layer) {
+	$s.push("kumite.testscene.TestLayer1::layerInit");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+kumite.testscene.TestLayer1.prototype.__class__ = kumite.testscene.TestLayer1;
+kumite.testscene.TestLayer1.__interfaces__ = [kumite.scene.LayerLifecycle];
 GLStats = function(p) { if( p === $_ ) return; {
 	$s.push("GLStats::new");
 	var $spos = $s.length;
@@ -7748,6 +7851,61 @@ Map.linear = function(value,min0,max0,min1,max1) {
 	$s.pop();
 }
 Map.prototype.__class__ = Map;
+kumite.scene.Scene = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.scene.Scene::new");
+	var $spos = $s.length;
+	this.layers = new Array();
+	$s.pop();
+}}
+kumite.scene.Scene.__name__ = ["kumite","scene","Scene"];
+kumite.scene.Scene.prototype.layers = null;
+kumite.scene.Scene.prototype.name = null;
+kumite.scene.Scene.prototype.addLayer = function(layer) {
+	$s.push("kumite.scene.Scene::addLayer");
+	var $spos = $s.length;
+	this.layers.push(layer);
+	$s.pop();
+}
+kumite.scene.Scene.prototype.containsLayer = function(layer) {
+	$s.push("kumite.scene.Scene::containsLayer");
+	var $spos = $s.length;
+	{
+		var _g = 0, _g1 = this.layers;
+		while(_g < _g1.length) {
+			var sceneLayer = _g1[_g];
+			++_g;
+			if(sceneLayer.id == layer.id) {
+				$s.pop();
+				return true;
+			}
+		}
+	}
+	{
+		$s.pop();
+		return false;
+	}
+	$s.pop();
+}
+kumite.scene.Scene.prototype.getLayerIndex = function(layer) {
+	$s.push("kumite.scene.Scene::getLayerIndex");
+	var $spos = $s.length;
+	{
+		var _g1 = 0, _g = this.layers.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			if(this.layers[i].id == layer.id) {
+				$s.pop();
+				return i;
+			}
+		}
+	}
+	{
+		$s.pop();
+		return -1;
+	}
+	$s.pop();
+}
+kumite.scene.Scene.prototype.__class__ = kumite.scene.Scene;
 bpmjs.ContextConfig = function(p) { if( p === $_ ) return; {
 	$s.push("bpmjs.ContextConfig::new");
 	var $spos = $s.length;
@@ -8949,6 +9107,7 @@ js.Boot.__init();
 	Xml.Document = "document";
 }
 Log.filters = new Array();
+kumite.scene.Config.__rtti = "<class path=\"kumite.scene.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sceneController public=\"1\"><c path=\"kumite.scene.SceneController\"/></sceneController>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.stage.Config.__rtti = "<class path=\"kumite.stage.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<stageResizeAction public=\"1\"><c path=\"kumite.stage.StageResizeAction\"/></stageResizeAction>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.mouse.MouseController.__meta__ = { fields : { canvas : { Inject : null}, start : { Sequence : ["boot","init"]}}};
 kumite.mouse.MouseController.__rtti = "<class path=\"kumite.mouse.MouseController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<start public=\"1\" set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<new public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
@@ -8958,6 +9117,7 @@ GLCursorClient.HAND = "pointer";
 hsl.haxe._DirectSignaler.PropagationStatus.IMMEDIATELY_STOPPED = 1;
 hsl.haxe._DirectSignaler.PropagationStatus.STOPPED = 2;
 hsl.haxe._DirectSignaler.PropagationStatus.UNDISTURBED = 3;
+kumite.testscene.TestScene1.__meta__ = { fields : { testLayer1 : { Inject : null}}};
 kumite.helloworldgl.Config.__rtti = "<class path=\"kumite.helloworldgl.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<helloWorld public=\"1\"><c path=\"kumite.helloworldgl.HelloWorld\"/></helloWorld>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs.Sequencer.__meta__ = { fields : { context : { Inject : null}}};
 bpmjs.Sequencer.__rtti = "<class path=\"bpmjs.Sequencer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context public=\"1\"><c path=\"bpmjs.Context\"/></context>\n\t<start public=\"1\" set=\"method\" line=\"14\"><f a=\"name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></start>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
@@ -8974,6 +9134,7 @@ kumite.canvas.CanvasController.__meta__ = { fields : { canvas : { Inject : null}
 kumite.canvas.CanvasController.__rtti = "<class path=\"kumite.canvas.CanvasController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<init public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateCanvasSizeFromStage public=\"1\" set=\"method\" line=\"33\"><f a=\"?message\">\n\t<c path=\"kumite.stage.StageResizeMessage\"/>\n\t<e path=\"Void\"/>\n</f></updateCanvasSizeFromStage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.launch.Launcher.__meta__ = { fields : { sequencer : { Inject : null}, handlePostComplete : { PostComplete : null}, showError : { Sequence : ["boot","error"]}}};
 kumite.launch.Launcher.__rtti = "<class path=\"kumite.launch.Launcher\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<handlePostComplete public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></handlePostComplete>\n\t<showError public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></showError>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.testscene.Config.__rtti = "<class path=\"kumite.testscene.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<testLayer1 public=\"1\"><c path=\"kumite.testscene.TestLayer1\"/></testLayer1>\n\t<testScene1 public=\"1\"><c path=\"kumite.testscene.TestScene1\"/></testScene1>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.camera.CameraMouseMover.__meta__ = { fields : { camera : { Inject : null}, init : { Sequence : ["boot","init"]}}};
 kumite.camera.CameraMouseMover.__rtti = "<class path=\"kumite.camera.CameraMouseMover\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<init public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateCamera set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></updateCamera>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.webgl.Config.__rtti = "<class path=\"kumite.webgl.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<initAction public=\"1\"><c path=\"kumite.webgl.InitAction\"/></initAction>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
