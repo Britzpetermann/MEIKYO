@@ -6,7 +6,8 @@ import haxe.rtti.Infos;
 
 class Config implements Infos
 {
-	public var testBackgroundLayer : TestBackgroundLayer;
+	public var testBackgroundLayer1 : TestBackgroundLayer;
+	public var testBackgroundLayer2 : TestBackgroundLayer;
 	
 	public var testLayer1 : TestLayer;
 	public var testLayer2 : TestLayer;
@@ -19,7 +20,15 @@ class Config implements Infos
 	
 	public function new()
 	{
-		testBackgroundLayer = new TestBackgroundLayer();
+		testBackgroundLayer1 = new TestBackgroundLayer();
+		testBackgroundLayer1.color = new Color(1, 1, 1, 0.2);
+		testBackgroundLayer1.direction = -1;
+		testBackgroundLayer1.layerId = "testBackgroundLayer1";
+		
+		testBackgroundLayer2 = new TestBackgroundLayer();
+		testBackgroundLayer2.color = new Color(1, 0.5, 1, 0.2);
+		testBackgroundLayer2.direction = 1;
+		testBackgroundLayer2.layerId = "testBackgroundLayer2";
 		
 		testLayer1 = new TestLayer();
 		testLayer1.layerId = "testLayer1";

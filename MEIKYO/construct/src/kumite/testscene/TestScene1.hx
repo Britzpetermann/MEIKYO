@@ -14,14 +14,14 @@ class TestScene1 implements SceneLifecycle, implements Infos
 	public var displayList : DisplayListLayer;
 	
 	@Inject
-	public var testBackgroundLayer : TestBackgroundLayer;
+	public var testBackgroundLayer1 : TestBackgroundLayer;
 	
 	public function new();
 	
 	public function sceneInit(scene : Scene)
 	{
 		scene.id = scene.name = "EMPTY";
-		scene.addLayer(new DelegateLayer(testBackgroundLayer));
+		scene.addLayer(new DelegateLayer(testBackgroundLayer1));
 		scene.addLayer(new DelegateLayer(displayList));
 	}
 	

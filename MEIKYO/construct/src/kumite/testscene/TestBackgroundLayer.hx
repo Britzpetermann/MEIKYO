@@ -18,19 +18,12 @@ class TestBackgroundLayer implements LayerLifecycle, implements Infos
 	@Inject
 	public var time : Time;
 	
-	@Inject
-	public var projection : Projection;
-	
-	@Inject
-	public var camera : Camera;
-	
 	public var layerId : String;
 	
 	public var color : Color;
-	public var scale : Float;
-	public var position : Vec3;
+	public var direction : Int;
 	
-	var transitionAlpha : Float;
+	var transition : Float;
 	
 	var shaderProgram : WebGLProgram;
 	var vertexPositionAttribute : GLAttribLocation;
@@ -44,9 +37,8 @@ class TestBackgroundLayer implements LayerLifecycle, implements Infos
 	{
 		layerId = "TestBackgroundLayer";
 		color = new Color(1, 1, 1, 0.2);
-		scale = 7;
-		position = new Vec3(0, 0, 0);
-		transitionAlpha = 1;
+		transition = 1;
+		direction = 1;
 	}
 	
 	public function init()
@@ -55,10 +47,10 @@ class TestBackgroundLayer implements LayerLifecycle, implements Infos
 
 		vertexPositionAttribute = GL.getAttribLocation2("vertexPosition", 2, GL.BYTE);
 		vertexPositionAttribute.updateBuffer(new Int8Array([
-			-1, -1,
-			1, -1,
-			-1, 1,
-			1, 1,
+			0,  0,
+			1,  0,
+			0,  1,
+			1,  1,
 		]));
 
 		projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
@@ -68,7 +60,7 @@ class TestBackgroundLayer implements LayerLifecycle, implements Infos
 	
 	public function renderTransition(transitionContext : TransitionContext)
 	{
-		transitionAlpha = transitionContext.transition;
+		transition = transitionContext.transition;
 		render();
 	}
 		
@@ -81,17 +73,19 @@ class TestBackgroundLayer implements LayerLifecycle, implements Infos
 		GL.enable(GL.BLEND);
 		GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 
-		projectionMatrixUniform.setMatrix4(projection.matrix);
+		var projectionMatrix = new Matrix4();
+		projectionMatrix.ortho(0, stage.width, stage.height, 0, 0, 1);
+		projectionMatrixUniform.setMatrix4(projectionMatrix);
+		
 		vertexPositionAttribute.vertexAttribPointer();
 
-		var worldViewMatrix = new Matrix4(camera.matrix);
-		worldViewMatrix.appendRotation(time.ms / 4000, new Vec3(1, 1, 1));
-		worldViewMatrix.appendTranslation(position.x, position.y, position.z);
-		worldViewMatrix.appendScale(scale, scale, scale);
+		var worldViewMatrix = new Matrix4();
+		worldViewMatrix.appendScale(stage.width, stage.height, 1);
+		worldViewMatrix.appendTranslation(direction * (1 - transition), 0, 0);
 		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
 		
 		var colorWithTransition = color.clone();
-		colorWithTransition.a *= transitionAlpha;
+		//colorWithTransition.a *= transition;
 		colorUniform.setRGBA(colorWithTransition);
 		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
 	}

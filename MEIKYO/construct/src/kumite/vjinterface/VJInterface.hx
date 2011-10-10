@@ -82,7 +82,7 @@ class VJInterface implements Infos
 			var sceneButton = new GLLabel();
 			sceneButton.x = currentX;
 			sceneButton.text = sceneAndLifecycle.scene.name;
-			sceneButton.width = 80;
+			sceneButton.width = 100;
 			sceneButton.height = 20;
 			sceneButton.mouseDownSignaler.bind(createSceneRequest(sceneAndLifecycle.scene));
 			sceneContainer.addChild(sceneButton);

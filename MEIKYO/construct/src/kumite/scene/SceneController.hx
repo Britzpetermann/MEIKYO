@@ -197,7 +197,7 @@ class TransitionState extends State
 	override function enter()
 	{
 		enterTime = time.ms;
-		exitTime = time.ms + 500;
+		exitTime = time.ms + 700;
 	}
 		
 	override function render()

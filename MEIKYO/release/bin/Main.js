@@ -133,21 +133,17 @@ kumite.testscene.TestBackgroundLayer = function(p) { if( p === $_ ) return; {
 	var $spos = $s.length;
 	this.layerId = "TestBackgroundLayer";
 	this.color = new Color(1,1,1,0.2);
-	this.scale = 7;
-	this.position = new Vec3(0,0,0);
-	this.transitionAlpha = 1;
+	this.transition = 1;
+	this.direction = 1;
 	$s.pop();
 }}
 kumite.testscene.TestBackgroundLayer.__name__ = ["kumite","testscene","TestBackgroundLayer"];
 kumite.testscene.TestBackgroundLayer.prototype.stage = null;
 kumite.testscene.TestBackgroundLayer.prototype.time = null;
-kumite.testscene.TestBackgroundLayer.prototype.projection = null;
-kumite.testscene.TestBackgroundLayer.prototype.camera = null;
 kumite.testscene.TestBackgroundLayer.prototype.layerId = null;
 kumite.testscene.TestBackgroundLayer.prototype.color = null;
-kumite.testscene.TestBackgroundLayer.prototype.scale = null;
-kumite.testscene.TestBackgroundLayer.prototype.position = null;
-kumite.testscene.TestBackgroundLayer.prototype.transitionAlpha = null;
+kumite.testscene.TestBackgroundLayer.prototype.direction = null;
+kumite.testscene.TestBackgroundLayer.prototype.transition = null;
 kumite.testscene.TestBackgroundLayer.prototype.shaderProgram = null;
 kumite.testscene.TestBackgroundLayer.prototype.vertexPositionAttribute = null;
 kumite.testscene.TestBackgroundLayer.prototype.vertexBuffer = null;
@@ -159,7 +155,7 @@ kumite.testscene.TestBackgroundLayer.prototype.init = function() {
 	var $spos = $s.length;
 	this.shaderProgram = GL.createProgram(kumite.helloworldgl.shader.Vertex,kumite.helloworldgl.shader.Fragment);
 	this.vertexPositionAttribute = GL.getAttribLocation2("vertexPosition",2,5120);
-	this.vertexPositionAttribute.updateBuffer(new Int8Array([-1,-1,1,-1,-1,1,1,1]));
+	this.vertexPositionAttribute.updateBuffer(new Int8Array([0,0,1,0,0,1,1,1]));
 	this.projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
 	this.worldViewMatrixUniform = GL.getUniformLocation("worldViewMatrix");
 	this.colorUniform = GL.getUniformLocation("color");
@@ -168,7 +164,7 @@ kumite.testscene.TestBackgroundLayer.prototype.init = function() {
 kumite.testscene.TestBackgroundLayer.prototype.renderTransition = function(transitionContext) {
 	$s.push("kumite.testscene.TestBackgroundLayer::renderTransition");
 	var $spos = $s.length;
-	this.transitionAlpha = transitionContext.transition;
+	this.transition = transitionContext.transition;
 	this.render();
 	$s.pop();
 }
@@ -180,15 +176,15 @@ kumite.testscene.TestBackgroundLayer.prototype.render = function() {
 	GL.gl.disable(2929);
 	GL.gl.enable(3042);
 	GL.gl.blendFunc(770,771);
-	GL.gl.uniformMatrix4fv(this.projectionMatrixUniform.location,false,this.projection.matrix.buffer);
+	var projectionMatrix = new Matrix4();
+	projectionMatrix.ortho(0,this.stage.width,this.stage.height,0,0,1);
+	GL.gl.uniformMatrix4fv(this.projectionMatrixUniform.location,false,projectionMatrix.buffer);
 	this.vertexPositionAttribute.vertexAttribPointer();
-	var worldViewMatrix = new Matrix4(this.camera.matrix);
-	worldViewMatrix.appendRotation(this.time.ms / 4000,new Vec3(1,1,1));
-	worldViewMatrix.appendTranslation(this.position.x,this.position.y,this.position.z);
-	worldViewMatrix.appendScale(this.scale,this.scale,this.scale);
+	var worldViewMatrix = new Matrix4();
+	worldViewMatrix.appendScale(this.stage.width,this.stage.height,1);
+	worldViewMatrix.appendTranslation(this.direction * (1 - this.transition),0,0);
 	GL.gl.uniformMatrix4fv(this.worldViewMatrixUniform.location,false,worldViewMatrix.buffer);
 	var colorWithTransition = this.color.clone();
-	colorWithTransition.a *= this.transitionAlpha;
 	GL.gl.uniform4f(this.colorUniform.location,colorWithTransition.r,colorWithTransition.g,colorWithTransition.b,colorWithTransition.a);
 	this.vertexPositionAttribute.drawArrays(5);
 	$s.pop();
@@ -2774,11 +2770,13 @@ kumite.testscene.TestScene2 = function(p) { if( p === $_ ) return; {
 kumite.testscene.TestScene2.__name__ = ["kumite","testscene","TestScene2"];
 kumite.testscene.TestScene2.prototype.testLayer1 = null;
 kumite.testscene.TestScene2.prototype.testLayer2 = null;
+kumite.testscene.TestScene2.prototype.testBackgroundLayer2 = null;
 kumite.testscene.TestScene2.prototype.displayListLayer = null;
 kumite.testscene.TestScene2.prototype.sceneInit = function(scene) {
 	$s.push("kumite.testscene.TestScene2::sceneInit");
 	var $spos = $s.length;
 	scene.id = scene.name = "RED-GREEN";
+	scene.addLayer(new kumite.scene.DelegateLayer(this.testBackgroundLayer2));
 	scene.addLayer(new kumite.scene.DelegateLayer(this.testLayer1));
 	scene.addLayer(new kumite.scene.DelegateLayer(this.testLayer2));
 	scene.addLayer(new kumite.scene.DelegateLayer(this.displayListLayer));
@@ -2851,12 +2849,12 @@ kumite.testscene.TestScene1 = function(p) { if( p === $_ ) return; {
 }}
 kumite.testscene.TestScene1.__name__ = ["kumite","testscene","TestScene1"];
 kumite.testscene.TestScene1.prototype.displayList = null;
-kumite.testscene.TestScene1.prototype.testBackgroundLayer = null;
+kumite.testscene.TestScene1.prototype.testBackgroundLayer1 = null;
 kumite.testscene.TestScene1.prototype.sceneInit = function(scene) {
 	$s.push("kumite.testscene.TestScene1::sceneInit");
 	var $spos = $s.length;
 	scene.id = scene.name = "EMPTY";
-	scene.addLayer(new kumite.scene.DelegateLayer(this.testBackgroundLayer));
+	scene.addLayer(new kumite.scene.DelegateLayer(this.testBackgroundLayer1));
 	scene.addLayer(new kumite.scene.DelegateLayer(this.displayList));
 	$s.pop();
 }
@@ -5507,7 +5505,14 @@ kumite.launch.Launcher.__interfaces__ = [haxe.rtti.Infos];
 kumite.testscene.Config = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.testscene.Config::new");
 	var $spos = $s.length;
-	this.testBackgroundLayer = new kumite.testscene.TestBackgroundLayer();
+	this.testBackgroundLayer1 = new kumite.testscene.TestBackgroundLayer();
+	this.testBackgroundLayer1.color = new Color(1,1,1,0.2);
+	this.testBackgroundLayer1.direction = -1;
+	this.testBackgroundLayer1.layerId = "testBackgroundLayer1";
+	this.testBackgroundLayer2 = new kumite.testscene.TestBackgroundLayer();
+	this.testBackgroundLayer2.color = new Color(1,0.5,1,0.2);
+	this.testBackgroundLayer2.direction = 1;
+	this.testBackgroundLayer2.layerId = "testBackgroundLayer2";
 	this.testLayer1 = new kumite.testscene.TestLayer();
 	this.testLayer1.layerId = "testLayer1";
 	this.testLayer1.color = new Color(1,0,0,0.8);
@@ -5530,7 +5535,8 @@ kumite.testscene.Config = function(p) { if( p === $_ ) return; {
 	$s.pop();
 }}
 kumite.testscene.Config.__name__ = ["kumite","testscene","Config"];
-kumite.testscene.Config.prototype.testBackgroundLayer = null;
+kumite.testscene.Config.prototype.testBackgroundLayer1 = null;
+kumite.testscene.Config.prototype.testBackgroundLayer2 = null;
 kumite.testscene.Config.prototype.testLayer1 = null;
 kumite.testscene.Config.prototype.testLayer2 = null;
 kumite.testscene.Config.prototype.testLayer3 = null;
@@ -6896,7 +6902,7 @@ kumite.scene.TransitionState.prototype.enter = function() {
 	$s.push("kumite.scene.TransitionState::enter");
 	var $spos = $s.length;
 	this.enterTime = this.time.ms;
-	this.exitTime = this.time.ms + 500;
+	this.exitTime = this.time.ms + 700;
 	$s.pop();
 }
 kumite.scene.TransitionState.prototype.render = function() {
@@ -7784,7 +7790,7 @@ kumite.vjinterface.VJInterface.prototype.addSceneButtons = function() {
 			var sceneButton = new GLLabel();
 			sceneButton.setX(currentX);
 			sceneButton.setText(sceneAndLifecycle.scene.name);
-			sceneButton.setWidth(80);
+			sceneButton.setWidth(100);
 			sceneButton.setHeight(20);
 			sceneButton.mouseDownSignaler.bind(this.createSceneRequest(sceneAndLifecycle.scene));
 			this.sceneContainer.addChild(sceneButton);
@@ -10422,8 +10428,8 @@ js.Boot.__init();
 	Xml.Prolog = "prolog";
 	Xml.Document = "document";
 }
-kumite.testscene.TestBackgroundLayer.__meta__ = { fields : { stage : { Inject : null}, time : { Inject : null}, projection : { Inject : null}, camera : { Inject : null}}};
-kumite.testscene.TestBackgroundLayer.__rtti = "<class path=\"kumite.testscene.TestBackgroundLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<layerId public=\"1\"><c path=\"String\"/></layerId>\n\t<color public=\"1\"><c path=\"Color\"/></color>\n\t<scale public=\"1\"><c path=\"Float\"/></scale>\n\t<position public=\"1\"><c path=\"Vec3\"/></position>\n\t<transitionAlpha><c path=\"Float\"/></transitionAlpha>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<worldViewMatrixUniform><c path=\"GLUniformLocation\"/></worldViewMatrixUniform>\n\t<colorUniform><c path=\"GLUniformLocation\"/></colorUniform>\n\t<init public=\"1\" set=\"method\" line=\"52\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"69\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"75\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"43\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.testscene.TestBackgroundLayer.__meta__ = { fields : { stage : { Inject : null}, time : { Inject : null}}};
+kumite.testscene.TestBackgroundLayer.__rtti = "<class path=\"kumite.testscene.TestBackgroundLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<layerId public=\"1\"><c path=\"String\"/></layerId>\n\t<color public=\"1\"><c path=\"Color\"/></color>\n\t<direction public=\"1\"><c path=\"Int\"/></direction>\n\t<transition><c path=\"Float\"/></transition>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<worldViewMatrixUniform><c path=\"GLUniformLocation\"/></worldViewMatrixUniform>\n\t<colorUniform><c path=\"GLUniformLocation\"/></colorUniform>\n\t<init public=\"1\" set=\"method\" line=\"44\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"61\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"67\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"36\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Log.filters = new Array();
 Log.args = new Array();
 kumite.scene.Config.__rtti = "<class path=\"kumite.scene.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<scenes public=\"1\"><c path=\"kumite.scene.Scenes\"/></scenes>\n\t<sceneController public=\"1\"><c path=\"kumite.scene.SceneController\"/></sceneController>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
@@ -10437,13 +10443,13 @@ kumite.scene.LayerState.IN = new kumite.scene.LayerState("IN");
 kumite.scene.LayerState.KEEP = new kumite.scene.LayerState("KEEP");
 kumite.mouse.MouseController.__meta__ = { fields : { canvas : { Inject : null}, start : { Sequence : ["boot","init"]}}};
 kumite.mouse.MouseController.__rtti = "<class path=\"kumite.mouse.MouseController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<start public=\"1\" set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<new public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.testscene.TestScene2.__meta__ = { fields : { testLayer1 : { Inject : null}, testLayer2 : { Inject : null}, displayListLayer : { Inject : null}}};
-kumite.testscene.TestScene2.__rtti = "<class path=\"kumite.testscene.TestScene2\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.SceneLifecycle\"/>\n\t<testLayer1 public=\"1\"><c path=\"kumite.testscene.TestLayer\"/></testLayer1>\n\t<testLayer2 public=\"1\"><c path=\"kumite.testscene.TestLayer\"/></testLayer2>\n\t<displayListLayer public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayListLayer>\n\t<sceneInit public=\"1\" set=\"method\" line=\"24\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></sceneInit>\n\t<renderTransition public=\"1\" set=\"method\" line=\"32\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"37\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"22\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.testscene.TestScene2.__meta__ = { fields : { testLayer1 : { Inject : null}, testLayer2 : { Inject : null}, testBackgroundLayer2 : { Inject : null}, displayListLayer : { Inject : null}}};
+kumite.testscene.TestScene2.__rtti = "<class path=\"kumite.testscene.TestScene2\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.SceneLifecycle\"/>\n\t<testLayer1 public=\"1\"><c path=\"kumite.testscene.TestLayer\"/></testLayer1>\n\t<testLayer2 public=\"1\"><c path=\"kumite.testscene.TestLayer\"/></testLayer2>\n\t<testBackgroundLayer2 public=\"1\"><c path=\"kumite.testscene.TestBackgroundLayer\"/></testBackgroundLayer2>\n\t<displayListLayer public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayListLayer>\n\t<sceneInit public=\"1\" set=\"method\" line=\"27\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></sceneInit>\n\t<renderTransition public=\"1\" set=\"method\" line=\"36\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"41\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"25\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 GLCursorClient.DEFAULT = "default";
 GLCursorClient.HAND = "pointer";
 kumite.helloworldgl.shader.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform vec4 color;\n\n\tvoid main(void)\n\t{\n\t\tgl_FragColor = color;\n\t}\n\n"]}};
-kumite.testscene.TestScene1.__meta__ = { fields : { displayList : { Inject : null}, testBackgroundLayer : { Inject : null}}};
-kumite.testscene.TestScene1.__rtti = "<class path=\"kumite.testscene.TestScene1\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.SceneLifecycle\"/>\n\t<displayList public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayList>\n\t<testBackgroundLayer public=\"1\"><c path=\"kumite.testscene.TestBackgroundLayer\"/></testBackgroundLayer>\n\t<sceneInit public=\"1\" set=\"method\" line=\"21\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></sceneInit>\n\t<renderTransition public=\"1\" set=\"method\" line=\"28\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"19\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.testscene.TestScene1.__meta__ = { fields : { displayList : { Inject : null}, testBackgroundLayer1 : { Inject : null}}};
+kumite.testscene.TestScene1.__rtti = "<class path=\"kumite.testscene.TestScene1\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.SceneLifecycle\"/>\n\t<displayList public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayList>\n\t<testBackgroundLayer1 public=\"1\"><c path=\"kumite.testscene.TestBackgroundLayer\"/></testBackgroundLayer1>\n\t<sceneInit public=\"1\" set=\"method\" line=\"21\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></sceneInit>\n\t<renderTransition public=\"1\" set=\"method\" line=\"28\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"19\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 hsl.haxe._DirectSignaler.PropagationStatus.IMMEDIATELY_STOPPED = 1;
 hsl.haxe._DirectSignaler.PropagationStatus.STOPPED = 2;
 hsl.haxe._DirectSignaler.PropagationStatus.UNDISTURBED = 3;
@@ -10463,7 +10469,7 @@ kumite.canvas.CanvasController.__meta__ = { fields : { canvas : { Inject : null}
 kumite.canvas.CanvasController.__rtti = "<class path=\"kumite.canvas.CanvasController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<init public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateCanvasSizeFromStage public=\"1\" set=\"method\" line=\"33\"><f a=\"?message\">\n\t<c path=\"kumite.stage.StageResizeMessage\"/>\n\t<e path=\"Void\"/>\n</f></updateCanvasSizeFromStage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.launch.Launcher.__meta__ = { fields : { sequencer : { Inject : null}, handlePostComplete : { PostComplete : null}, showError : { Sequence : ["boot","error"]}}};
 kumite.launch.Launcher.__rtti = "<class path=\"kumite.launch.Launcher\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<handlePostComplete public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></handlePostComplete>\n\t<showError public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></showError>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.testscene.Config.__rtti = "<class path=\"kumite.testscene.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<testBackgroundLayer public=\"1\"><c path=\"kumite.testscene.TestBackgroundLayer\"/></testBackgroundLayer>\n\t<testLayer1 public=\"1\"><c path=\"kumite.testscene.TestLayer\"/></testLayer1>\n\t<testLayer2 public=\"1\"><c path=\"kumite.testscene.TestLayer\"/></testLayer2>\n\t<testLayer3 public=\"1\"><c path=\"kumite.testscene.TestLayer\"/></testLayer3>\n\t<testScene1 public=\"1\"><c path=\"kumite.testscene.TestScene1\"/></testScene1>\n\t<testScene2 public=\"1\"><c path=\"kumite.testscene.TestScene2\"/></testScene2>\n\t<testScene3 public=\"1\"><c path=\"kumite.testscene.TestScene3\"/></testScene3>\n\t<testScene4 public=\"1\"><c path=\"kumite.testscene.TestScene4\"/></testScene4>\n\t<new public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.testscene.Config.__rtti = "<class path=\"kumite.testscene.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<testBackgroundLayer1 public=\"1\"><c path=\"kumite.testscene.TestBackgroundLayer\"/></testBackgroundLayer1>\n\t<testBackgroundLayer2 public=\"1\"><c path=\"kumite.testscene.TestBackgroundLayer\"/></testBackgroundLayer2>\n\t<testLayer1 public=\"1\"><c path=\"kumite.testscene.TestLayer\"/></testLayer1>\n\t<testLayer2 public=\"1\"><c path=\"kumite.testscene.TestLayer\"/></testLayer2>\n\t<testLayer3 public=\"1\"><c path=\"kumite.testscene.TestLayer\"/></testLayer3>\n\t<testScene1 public=\"1\"><c path=\"kumite.testscene.TestScene1\"/></testScene1>\n\t<testScene2 public=\"1\"><c path=\"kumite.testscene.TestScene2\"/></testScene2>\n\t<testScene3 public=\"1\"><c path=\"kumite.testscene.TestScene3\"/></testScene3>\n\t<testScene4 public=\"1\"><c path=\"kumite.testscene.TestScene4\"/></testScene4>\n\t<new public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.scene.SceneController.__meta__ = { fields : { scenes : { Inject : null}, time : { Inject : null}, init : { Complete : null}, handleSceneLifecycleAdded : { Observe : null}, start : { Sequence : ["boot","start"]}, handleSceneChangeRequest : { Message : null}, render : { Message : null}}};
 kumite.scene.SceneController.__rtti = "<class path=\"kumite.scene.SceneController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<scenes public=\"1\"><c path=\"kumite.scene.Scenes\"/></scenes>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<transitionContext public=\"1\"><c path=\"kumite.scene.TransitionContext\"/></transitionContext>\n\t<initState public=\"1\"><c path=\"kumite.scene.InitState\"/></initState>\n\t<idleState public=\"1\"><c path=\"kumite.scene.IdleState\"/></idleState>\n\t<transitionState public=\"1\"><c path=\"kumite.scene.TransitionState\"/></transitionState>\n\t<state><c path=\"kumite.scene.State\"/></state>\n\t<currentScene><c path=\"kumite.scene.SceneAndLifecycle\"/></currentScene>\n\t<lastScene><c path=\"kumite.scene.SceneAndLifecycle\"/></lastScene>\n\t<init public=\"1\" set=\"method\" line=\"30\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<handleSceneLifecycleAdded public=\"1\" set=\"method\" line=\"46\"><f a=\"lifecycle\">\n\t<c path=\"kumite.scene.SceneLifecycle\"/>\n\t<e path=\"Void\"/>\n</f></handleSceneLifecycleAdded>\n\t<start public=\"1\" set=\"method\" line=\"59\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<handleSceneChangeRequest public=\"1\" set=\"method\" line=\"80\"><f a=\"message\">\n\t<c path=\"kumite.scene.SceneChangeRequest\"/>\n\t<e path=\"Void\"/>\n</f></handleSceneChangeRequest>\n\t<render public=\"1\" set=\"method\" line=\"86\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<renderTransition public=\"1\" set=\"method\" line=\"91\"><f a=\"\"><e path=\"Void\"/></f></renderTransition>\n\t<renderNormal public=\"1\" set=\"method\" line=\"115\"><f a=\"\"><e path=\"Void\"/></f></renderNormal>\n\t<enterScene set=\"method\" line=\"124\"><f a=\"newScene\">\n\t<c path=\"kumite.scene.SceneAndLifecycle\"/>\n\t<e path=\"Void\"/>\n</f></enterScene>\n\t<setState public=\"1\" set=\"method\" line=\"134\"><f a=\"state\">\n\t<c path=\"kumite.scene.State\"/>\n\t<e path=\"Void\"/>\n</f></setState>\n\t<new public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.camera.CameraMouseMover.__meta__ = { fields : { camera : { Inject : null}, init : { Sequence : ["boot","init"]}}};
