@@ -15,11 +15,26 @@ class DelegateLayer extends Layer
 	
 	override public function init()
 	{
-		 lifecycle.init();
+		try
+		{
+			lifecycle.init();
+		}
+		catch(e : Dynamic)
+		{
+			Log.error("Error initializing layer:", id, e);	
+		}
 	}
 	
 	override public function render()
 	{
-		 lifecycle.render();
+		try
+		{
+			lifecycle.render();
+		}
+		catch(e : Dynamic)
+		{
+			Log.error("Error rendering layer:", id, e);	
+		}
 	}
+	
 }

@@ -35,11 +35,17 @@ class SceneController implements Infos
 			return;
 		}
 		
-		currentScene = scenes.all[0];
-		for (layer in currentScene.scene.layers)
+		Log.info("Init all scenes and layers...");
+		for(scene in scenes.all)
 		{
-			layer.init();
+			for (layer in scene.scene.layers)
+			{
+				layer.init();
+			}			
 		}
+		
+		currentScene = scenes.all[0];
+		
 	}
 	
 	@Message
