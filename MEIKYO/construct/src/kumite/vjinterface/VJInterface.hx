@@ -1,14 +1,21 @@
 package kumite.vjinterface;
 
 import kumite.time.Tick;
+import kumite.scene.Scene;
 import kumite.scene.Scenes;
 
+import bpmjs.Messenger;
+
 import haxe.rtti.Infos;
+import kumite.scene.SceneChangeRequest;
 
 class VJInterface implements Infos
 {
 	@Inject
 	public var scenes : Scenes;
+	
+	@Messenger
+	public var messenger : Messenger;
 	
 	var stage : GLStage;
 	var cutButton : GLLabel;
@@ -77,9 +84,24 @@ class VJInterface implements Infos
 			sceneButton.text = sceneAndLifecycle.scene.name;
 			sceneButton.width = 80;
 			sceneButton.height = 20;
+			sceneButton.mouseDownSignaler.bind(createSceneRequest(sceneAndLifecycle.scene));
 			sceneContainer.addChild(sceneButton);
 			
 			currentX += sceneButton.width + 10;
 		}
+	}
+	
+	function createSceneRequest(scene : Scene)
+	{
+		var inst = this;
+		return function(button : GLInteractiveObject)
+		{
+			inst.handleButtonClick(scene);
+		}
+	}
+	
+	function handleButtonClick(scene : Scene)
+	{
+		messenger.send(new SceneChangeRequest(scene.id));
 	}
 }

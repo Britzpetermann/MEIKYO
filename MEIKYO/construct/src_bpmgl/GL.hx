@@ -502,8 +502,16 @@ class GL
 		gl.bufferData(target, data, usage);
 	}
 
-	public static inline function clear(mask : GLbitfield) : Void;
-	public static inline function clearColor(red : GLclampf, green : GLclampf, blue : GLclampf, alpha : GLclampf) : Void;
+	public static inline function clear(mask : GLbitfield) : Void
+	{
+		gl.clear(mask);
+	}
+	
+	public static inline function clearColor(red : GLclampf, green : GLclampf, blue : GLclampf, alpha : GLclampf) : Void
+	{
+		gl.clearColor(red, green, blue, alpha);
+	}
+	
 	public static inline function clearDepth(depth : GLclampf) : Void;
 	public static inline function compileShader(shader : WebGLShader) : Void;
 

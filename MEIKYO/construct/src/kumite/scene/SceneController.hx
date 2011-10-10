@@ -29,6 +29,12 @@ class SceneController implements Infos
 	@Sequence("boot", "start")	
 	public function start()
 	{
+		if (scenes.all.length == 0)
+		{
+			Log.warn("No scenes were added!");
+			return;
+		}
+		
 		currentScene = scenes.all[0];
 		for (layer in currentScene.scene.layers)
 		{
@@ -37,8 +43,18 @@ class SceneController implements Infos
 	}
 	
 	@Message
+	public function handleSceneChangeRequest(message : SceneChangeRequest)
+	{
+		currentScene = scenes.getSceneById(message.sceneId);
+	}
+	
+	@Message
 	public function render(tick : Tick)
 	{
+		if (currentScene == null)
+			return;
+		
+		currentScene.lifecycle.render();
 		for (layer in currentScene.scene.layers)
 		{
 			layer.render();

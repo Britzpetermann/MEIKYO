@@ -49,6 +49,7 @@ class GLDisplayListRenderer
 		var gl = GL.gl;
 
 		GL.useProgram(shaderProgram);
+		
 		gl.viewport(0, 0, width, height);
 
 		gl.disable(gl.DEPTH_TEST);

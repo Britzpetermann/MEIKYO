@@ -9,13 +9,13 @@ import kumite.camera.Camera;
 
 import haxe.rtti.Infos;
 
-class TestLayer1 extends TestLayer
+class TestLayer2 extends TestLayer
 {
 	public function new()
 	{
 		super();
-		color = new Color(1, 0, 0, 0.8);
+		color = new Color(0, 1, 0, 0.6);
 		scale = 2;
-		position = new Vec3(1, 0, 2);
+		position = new Vec3(-1, 0, 1);
 	}
 }

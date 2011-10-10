@@ -7,7 +7,7 @@ import kumite.displaylist.DisplayListLayer;
 
 import haxe.rtti.Infos;
 
-class TestScene1 implements SceneLifecycle, implements Infos
+class TestScene2 implements SceneLifecycle, implements Infos
 {
 	@Inject
 	public var testLayer1 : TestLayer1;
@@ -22,9 +22,9 @@ class TestScene1 implements SceneLifecycle, implements Infos
 	
 	public function sceneInit(scene : Scene)
 	{
-		scene.id = scene.name = "TEST 1";
-		scene.addLayer(new DelegateLayer(testLayer1));
+		scene.id = scene.name = "TEST 2";
 		scene.addLayer(new DelegateLayer(testLayer2));
+		scene.addLayer(new DelegateLayer(testLayer1));
 		scene.addLayer(new DelegateLayer(displayList));
 	}
 	

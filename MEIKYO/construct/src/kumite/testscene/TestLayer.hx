@@ -24,6 +24,8 @@ class TestLayer implements LayerLifecycle, implements Infos
 	public var camera : Camera;
 	
 	public var color : Color;
+	public var scale : Float;
+	public var position : Vec3;
 	
 	var shaderProgram : WebGLProgram;
 	var vertexPositionAttribute : GLAttribLocation;
@@ -36,6 +38,8 @@ class TestLayer implements LayerLifecycle, implements Infos
 	public function new()
 	{
 		color = new Color(1, 1, 0, 0.5);
+		scale = 1;
+		position = new Vec3(0, 0, 0);
 	}
 	
 	public function init()
@@ -60,7 +64,7 @@ class TestLayer implements LayerLifecycle, implements Infos
 		GL.useProgram(shaderProgram);
 		GL.viewport(0, 0, stage.width, stage.height);
 		
-		GL.enable(GL.DEPTH_TEST);
+		GL.disable(GL.DEPTH_TEST);
 		GL.enable(GL.BLEND);
 		GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 
@@ -68,8 +72,8 @@ class TestLayer implements LayerLifecycle, implements Infos
 		vertexPositionAttribute.vertexAttribPointer();
 
 		var worldViewMatrix = new Matrix4(camera.matrix);
-		worldViewMatrix.appendTranslation(0, 0, 0);
-		worldViewMatrix.appendScale(0.4, 0.4, 0.4);
+		worldViewMatrix.appendTranslation(position.x, position.y, position.z);
+		worldViewMatrix.appendScale(scale, scale, scale);
 		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
 		
 		colorUniform.setRGBA(color);

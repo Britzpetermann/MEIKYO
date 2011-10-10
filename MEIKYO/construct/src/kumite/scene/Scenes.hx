@@ -8,4 +8,12 @@ class Scenes
 	{
 		all = new Array();
 	}
+	
+	public function getSceneById(id : String) : SceneAndLifecycle
+	{
+		for (result in all)
+			if (result.scene.id == id)
+				return result;
+		throw "Cannot find scene: " + id;
+	}
 }

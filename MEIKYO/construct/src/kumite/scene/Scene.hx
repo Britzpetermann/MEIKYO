@@ -4,6 +4,8 @@ class Scene
 {
 	public var layers : Array<Layer>;
 	
+	public var id : String;
+	
 	public var name : String;
 	
 	public function new()

@@ -4316,6 +4316,7 @@ kumite.scene.Scene = function(p) { if( p === $_ ) return; {
 }}
 kumite.scene.Scene.__name__ = ["kumite","scene","Scene"];
 kumite.scene.Scene.prototype.layers = null;
+kumite.scene.Scene.prototype.id = null;
 kumite.scene.Scene.prototype.name = null;
 kumite.scene.Scene.prototype.addLayer = function(layer) {
 	this.layers.push(layer);
