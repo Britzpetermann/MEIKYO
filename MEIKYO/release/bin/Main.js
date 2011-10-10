@@ -16,6 +16,7 @@ reflect.Field.__name__ = ["reflect","Field"];
 reflect.Field.prototype.owner = null;
 reflect.Field.prototype.name = null;
 reflect.Field.prototype.type = null;
+reflect.Field.prototype.clazz = null;
 reflect.Field.prototype.field = null;
 reflect.Field.prototype.definedInClass = null;
 reflect.Field.prototype.hasMetadata = function(name) {
@@ -28,7 +29,7 @@ reflect.Field.prototype.hasMetadata = function(name) {
 		while(_g < _g1.length) {
 			var fieldName = _g1[_g];
 			++_g;
-			if(fieldName == this.getName()) {
+			if(fieldName == this.field.name) {
 				var meta = Reflect.field(metadatas,fieldName);
 				if(Reflect.hasField(meta,name)) {
 					$s.pop();
@@ -66,29 +67,21 @@ reflect.Field.prototype.getName = function() {
 reflect.Field.prototype.getType = function() {
 	$s.push("reflect.Field::getType");
 	var $spos = $s.length;
-	var $e = this.field.type;
-	switch( $e[1] ) {
-	case 1:
-	var params = $e[3], name = $e[2];
 	{
-		null;
-	}break;
-	case 2:
-	var params = $e[3], name = $e[2];
-	{
-		{
-			var $tmp = reflect.ClassInfo.forName(name);
-			$s.pop();
-			return $tmp;
-		}
-	}break;
-	default:{
-		throw "Did not expect type: " + this.field.type;
-	}break;
-	}
-	{
+		var $tmp = reflect.ClassInfo.forCType(this.field.type);
 		$s.pop();
-		return null;
+		return $tmp;
+	}
+	$s.pop();
+}
+reflect.Field.prototype.getClass = function() {
+	$s.push("reflect.Field::getClass");
+	var $spos = $s.length;
+	var type = reflect.ClassInfo.forCType(this.field.type);
+	{
+		var $tmp = type == null?null:type.type;
+		$s.pop();
+		return $tmp;
 	}
 	$s.pop();
 }
@@ -107,7 +100,7 @@ reflect.Property.prototype.getValue = function(instance) {
 	$s.push("reflect.Property::getValue");
 	var $spos = $s.length;
 	{
-		var $tmp = Reflect.field(instance,this.getName());
+		var $tmp = Reflect.field(instance,this.field.name);
 		$s.pop();
 		return $tmp;
 	}
@@ -116,7 +109,7 @@ reflect.Property.prototype.getValue = function(instance) {
 reflect.Property.prototype.setValue = function(instance,value) {
 	$s.push("reflect.Property::setValue");
 	var $spos = $s.length;
-	instance[this.getName()] = value;
+	instance[this.field.name] = value;
 	$s.pop();
 }
 reflect.Property.prototype.__class__ = reflect.Property;
@@ -1129,8 +1122,8 @@ haxe.rtti.XmlParser.prototype.__class__ = haxe.rtti.XmlParser;
 Log = function() { }
 Log.__name__ = ["Log"];
 Log.posInfo = null;
-Log.debug = function() {
-	$s.push("Log::debug");
+Log["debugger"] = function() {
+	$s.push("Log::debugger");
 	var $spos = $s.length;
 	debugger;
 	$s.pop();
@@ -3937,7 +3930,7 @@ bpmjs.ContextBuilder.prototype.contextConfig = null;
 bpmjs.ContextBuilder.prototype.configureInternal = function(object) {
 	$s.push("bpmjs.ContextBuilder::configureInternal");
 	var $spos = $s.length;
-	var contextObject = this.context.addObject("configured",Type.getClass(object),object);
+	var contextObject = this.context.addObject("configured",reflect.ClassInfo.forInstance(object),object);
 	this.configureDynamicObjects([contextObject]);
 	$s.pop();
 }
@@ -3945,54 +3938,50 @@ bpmjs.ContextBuilder.prototype.buildInternal = function(configClasses) {
 	$s.push("bpmjs.ContextBuilder::buildInternal");
 	var $spos = $s.length;
 	this.context.contextConfig = this.contextConfig;
-	{
-		var _g = 0;
-		while(_g < configClasses.length) {
-			var configClass = configClasses[_g];
-			++_g;
-			var config = Type.createInstance(configClass,[]);
-			this.createObjects(config,configClass);
-		}
-	}
+	Lambda.iter(configClasses,$closure(this,"createObjects"));
 	this.configureDynamicObjects(this.context.objects);
 	$s.pop();
 }
-bpmjs.ContextBuilder.prototype.createObjects = function(config,configClass) {
+bpmjs.ContextBuilder.prototype.createObjects = function(configClass) {
 	$s.push("bpmjs.ContextBuilder::createObjects");
 	var $spos = $s.length;
-	if(configClass.__rtti == null) throw this.createError("Config class " + Type.getClassName(configClass) + " must have RTTI enabled!");
-	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(configClass.__rtti).firstElement());
-	var classDef = haxe.rtti.TypeApi.typeInfos(infos);
-	{ var $it0 = classDef.fields.iterator();
-	while( $it0.hasNext() ) { var field = $it0.next();
+	var config = Type.createInstance(configClass,[]);
+	var ci = reflect.ClassInfo.forClass(configClass);
+	if(!ci.hasRtti) {
+		var message = "Config class:" + ci.name + "has no rtti extension - use 'implement haxe.rtti.Infos'";
+		throw message;
+	}
 	{
-		var $e = field.type;
-		switch( $e[1] ) {
-		case 2:
-		var params = $e[3], name = $e[2];
-		{
-			var type = Type.resolveClass(name);
-			if(type == null) throw "Type of class " + name + " is null!";
-			var instance = Reflect.field(config,field.name);
-			this.context.addObject(field.name,type,instance);
-			if(type == Array) {
-				var list = instance;
+		var _g = 0, _g1 = ci.getProperties();
+		while(_g < _g1.length) {
+			var property = _g1[_g];
+			++_g;
+			var instance = Reflect.field(config,property.field.name);
+			if(instance == null) {
 				{
-					var _g = 0;
-					while(_g < list.length) {
-						var listInstance = list[_g];
-						++_g;
-						this.context.addObject("dynamic",Type.getClass(listInstance),listInstance);
+					Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 87, className : "bpmjs.ContextBuilder", methodName : "createObjects"};
+					if(Log.filter(LogLevel.WARN)) {
+						Log.fetchInput("Found property",property.field.name,"in config",ci.name,"but was null",null,null);
+						console.warn(Log.createMessage());
 					}
 				}
 			}
-		}break;
-		default:{
-			continue;
-		}break;
+			else {
+				this.context.addObject(property.field.name,reflect.ClassInfo.forCType(property.field.type),instance);
+				if(property.getClass() == Array) {
+					var list = instance;
+					{
+						var _g2 = 0;
+						while(_g2 < list.length) {
+							var listInstance = list[_g2];
+							++_g2;
+							this.context.addObject("dynamic",reflect.ClassInfo.forInstance(listInstance),listInstance);
+						}
+					}
+				}
+			}
 		}
 	}
-	}}
 	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.configureDynamicObjects = function(objects) {
@@ -4016,16 +4005,15 @@ bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
 		var property = _g1[_g];
 		++_g;
 		if(property.hasMetadata("Inject")) {
-			var type = property.getType().type;
-			var wiredObject = type == bpmjs.Context?this.context:this.context.getObjectByType(type);
+			var wiredObject = this.context.getObjectByType(property.getClass());
 			if(wiredObject == null) {
-				Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 126, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
+				Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 125, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
 				if(Log.filter(LogLevel.WARN)) {
-					Log.fetchInput("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + property.getName() + " but could not find object to inject.",null,null,null,null,null,null);
+					Log.fetchInput("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + property.field.name + " but could not find object to inject.",null,null,null,null,null,null);
 					console.warn(Log.createMessage());
 				}
 			}
-			else property.setValue(contextObject.object,wiredObject);
+			else contextObject.object[property.field.name] = wiredObject;
 		}
 	}
 	$s.pop();
@@ -4033,49 +4021,15 @@ bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
 bpmjs.ContextBuilder.prototype.findObservers = function(contextObject) {
 	$s.push("bpmjs.ContextBuilder::findObservers");
 	var $spos = $s.length;
-	if(contextObject.type.__rtti == null) {
-		$s.pop();
-		return;
-	}
-	var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
-	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(contextObject.type.__rtti).firstElement());
-	var classDef = haxe.rtti.TypeApi.typeInfos(infos);
-	{ var $it0 = classDef.fields.iterator();
-	while( $it0.hasNext() ) { var field = $it0.next();
-	{
-		var $e = field.type;
-		switch( $e[1] ) {
-		case 4:
-		var ret = $e[3], args = $e[2];
-		{
-			var meta = Reflect.field(metaDatas,field.name);
-			if(meta != null && Reflect.hasField(meta,"Observe")) {
-				{ var $it1 = args.iterator();
-				while( $it1.hasNext() ) { var argument = $it1.next();
-				{
-					var $e = argument.t;
-					switch( $e[1] ) {
-					case 2:
-					var params = $e[3], name = $e[2];
-					{
-						var type = Type.resolveClass(name);
-						this.context.addObserver(contextObject,field.name,type);
-					}break;
-					default:{
-						continue;
-					}break;
-					}
-					break;
-				}
-				}}
-			}
-		}break;
-		default:{
-			continue;
-		}break;
+	var _g = 0, _g1 = contextObject.classInfo.getMethods();
+	while(_g < _g1.length) {
+		var method = _g1[_g];
+		++_g;
+		if(method.hasMetadata("Observe")) {
+			if(method.getParameters().length == 1) this.context.addObserver(contextObject,method.field.name,reflect.ClassInfo.forCType(method.getParameters()[0].def.t));
+			else throw "Method to observe: " + contextObject.classInfo.name + "." + method.field.name + " needs exactly one parameter";
 		}
 	}
-	}}
 	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.registerMessengerByObjectType = function(contextObject) {
@@ -4089,18 +4043,14 @@ bpmjs.ContextBuilder.prototype.registerMessengerByObjectType = function(contextO
 bpmjs.ContextBuilder.prototype.registerMessengers = function(contextObject) {
 	$s.push("bpmjs.ContextBuilder::registerMessengers");
 	var $spos = $s.length;
-	var metadatas = haxe.rtti.Meta.getFields(contextObject.type);
-	{
-		var _g = 0, _g1 = Reflect.fields(metadatas);
-		while(_g < _g1.length) {
-			var fieldName = _g1[_g];
-			++_g;
-			var meta = Reflect.field(metadatas,fieldName);
-			if(Reflect.hasField(meta,"Messenger")) {
-				var messenger = new bpmjs.Messenger();
-				contextObject.object[fieldName] = messenger;
-				this.contextConfig.frontMessenger.addMessenger(messenger);
-			}
+	var _g = 0, _g1 = contextObject.classInfo.getProperties();
+	while(_g < _g1.length) {
+		var property = _g1[_g];
+		++_g;
+		if(property.hasMetadata("Messenger")) {
+			var messenger = new bpmjs.Messenger();
+			contextObject.object[property.field.name] = messenger;
+			this.contextConfig.frontMessenger.addMessenger(messenger);
 		}
 	}
 	$s.pop();
@@ -4108,49 +4058,15 @@ bpmjs.ContextBuilder.prototype.registerMessengers = function(contextObject) {
 bpmjs.ContextBuilder.prototype.registerReceivers = function(contextObject) {
 	$s.push("bpmjs.ContextBuilder::registerReceivers");
 	var $spos = $s.length;
-	if(contextObject.type.__rtti == null) {
-		$s.pop();
-		return;
-	}
-	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(contextObject.type.__rtti).firstElement());
-	var classDef = haxe.rtti.TypeApi.typeInfos(infos);
-	var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
-	{ var $it0 = classDef.fields.iterator();
-	while( $it0.hasNext() ) { var field = $it0.next();
-	{
-		var $e = field.type;
-		switch( $e[1] ) {
-		case 4:
-		var ret = $e[3], args = $e[2];
-		{
-			var meta = Reflect.field(metaDatas,field.name);
-			if(meta != null && Reflect.hasField(meta,"Message")) {
-				{ var $it1 = args.iterator();
-				while( $it1.hasNext() ) { var argument = $it1.next();
-				{
-					var $e = argument.t;
-					switch( $e[1] ) {
-					case 2:
-					var params = $e[3], name = $e[2];
-					{
-						var type = Type.resolveClass(name);
-						this.contextConfig.frontMessenger.addReceiver(contextObject.object,field.name,type);
-					}break;
-					default:{
-						continue;
-					}break;
-					}
-					break;
-				}
-				}}
-			}
-		}break;
-		default:{
-			continue;
-		}break;
+	var _g = 0, _g1 = contextObject.classInfo.getMethods();
+	while(_g < _g1.length) {
+		var method = _g1[_g];
+		++_g;
+		if(method.hasMetadata("Message")) {
+			if(method.getParameters().length == 1) this.contextConfig.frontMessenger.addReceiver(contextObject.object,method.field.name,reflect.ClassInfo.forCType(method.getParameters()[0].def.t).type);
+			else throw "Message: " + contextObject.classInfo.name + "." + method.field.name + " needs exactly one parameter";
 		}
 	}
-	}}
 	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.doObserve = function(contextObject) {
@@ -5341,15 +5257,63 @@ Reflect.makeVarArgs = function(f) {
 	$s.pop();
 }
 Reflect.prototype.__class__ = Reflect;
-reflect.Method = function(field,definedInClass,owner) { if( field === $_ ) return; {
+reflect.Parameter = function(def) { if( def === $_ ) return; {
+	$s.push("reflect.Parameter::new");
+	var $spos = $s.length;
+	this.def = def;
+	$s.pop();
+}}
+reflect.Parameter.__name__ = ["reflect","Parameter"];
+reflect.Parameter.prototype.type = null;
+reflect.Parameter.prototype.def = null;
+reflect.Parameter.prototype.getType = function() {
+	$s.push("reflect.Parameter::getType");
+	var $spos = $s.length;
+	{
+		var $tmp = reflect.ClassInfo.forCType(this.def.t);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+reflect.Parameter.prototype.__class__ = reflect.Parameter;
+reflect.Method = function(field,args,ret,definedInClass,owner) { if( field === $_ ) return; {
 	$s.push("reflect.Method::new");
 	var $spos = $s.length;
 	reflect.Field.call(this,field,definedInClass,owner);
+	this.args = args;
+	this.ret = ret;
 	$s.pop();
 }}
 reflect.Method.__name__ = ["reflect","Method"];
 reflect.Method.__super__ = reflect.Field;
 for(var k in reflect.Field.prototype ) reflect.Method.prototype[k] = reflect.Field.prototype[k];
+reflect.Method.prototype.parameters = null;
+reflect.Method.prototype.args = null;
+reflect.Method.prototype.ret = null;
+reflect.Method.prototype.getParameters = function() {
+	$s.push("reflect.Method::getParameters");
+	var $spos = $s.length;
+	if(this.parameters != null) {
+		var $tmp = this.parameters;
+		$s.pop();
+		return $tmp;
+	}
+	this.parameters = new Array();
+	{ var $it0 = this.args.iterator();
+	while( $it0.hasNext() ) { var arg = $it0.next();
+	{
+		var parameter = new reflect.Parameter(arg);
+		this.parameters.push(parameter);
+	}
+	}}
+	{
+		var $tmp = this.parameters;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
 reflect.Method.prototype.__class__ = reflect.Method;
 haxe.rtti.CType = { __ename__ : ["haxe","rtti","CType"], __constructs__ : ["CUnknown","CEnum","CClass","CTypedef","CFunction","CAnonymous","CDynamic"] }
 haxe.rtti.CType.CUnknown = ["CUnknown",0];
@@ -6322,6 +6286,7 @@ reflect.ClassInfo = function(name,type) { if( name === $_ ) return; {
 	var $spos = $s.length;
 	this.name = name;
 	this.type = type;
+	this.hasRtti = type.__rtti != null;
 	$s.pop();
 }}
 reflect.ClassInfo.__name__ = ["reflect","ClassInfo"];
@@ -6363,6 +6328,37 @@ reflect.ClassInfo.forName = function(name) {
 	}
 	$s.pop();
 }
+reflect.ClassInfo.forCType = function(t) {
+	$s.push("reflect.ClassInfo::forCType");
+	var $spos = $s.length;
+	if(t == null) throw "Missing CType";
+	var $e = t;
+	switch( $e[1] ) {
+	case 4:
+	var ret = $e[3], args = $e[2];
+	{
+		{
+			var $tmp = reflect.ClassInfo.forCType(ret);
+			$s.pop();
+			return $tmp;
+		}
+	}break;
+	case 2:
+	var params = $e[3], name = $e[2];
+	{
+		{
+			var $tmp = reflect.ClassInfo.forName(name);
+			$s.pop();
+			return $tmp;
+		}
+	}break;
+	default:{
+		null;
+	}break;
+	}
+	throw "Could not resolve CType: " + t;
+	$s.pop();
+}
 reflect.ClassInfo.getClassInfo = function(name,type) {
 	$s.push("reflect.ClassInfo::getClassInfo");
 	var $spos = $s.length;
@@ -6394,6 +6390,7 @@ reflect.ClassInfo.getHash = function(name,type) {
 }
 reflect.ClassInfo.prototype.type = null;
 reflect.ClassInfo.prototype.name = null;
+reflect.ClassInfo.prototype.hasRtti = null;
 reflect.ClassInfo.prototype.properties = null;
 reflect.ClassInfo.prototype.methods = null;
 reflect.ClassInfo.prototype.getProperty = function(name) {
@@ -6404,7 +6401,7 @@ reflect.ClassInfo.prototype.getProperty = function(name) {
 		while(_g < _g1.length) {
 			var property = _g1[_g];
 			++_g;
-			if(property.getName() == name) {
+			if(property.field.name == name) {
 				$s.pop();
 				return property;
 			}
@@ -6413,6 +6410,36 @@ reflect.ClassInfo.prototype.getProperty = function(name) {
 	{
 		$s.pop();
 		return null;
+	}
+	$s.pop();
+}
+reflect.ClassInfo.prototype.getMethod = function(name) {
+	$s.push("reflect.ClassInfo::getMethod");
+	var $spos = $s.length;
+	{
+		var _g = 0, _g1 = this.getMethods();
+		while(_g < _g1.length) {
+			var method = _g1[_g];
+			++_g;
+			if(method.field.name == name) {
+				$s.pop();
+				return method;
+			}
+		}
+	}
+	{
+		$s.pop();
+		return null;
+	}
+	$s.pop();
+}
+reflect.ClassInfo.prototype.toString = function() {
+	$s.push("reflect.ClassInfo::toString");
+	var $spos = $s.length;
+	{
+		var $tmp = "[ClassInfo for class: " + this.name + "]";
+		$s.pop();
+		return $tmp;
 	}
 	$s.pop();
 }
@@ -6493,7 +6520,7 @@ reflect.ClassInfo.prototype.scanFields = function(classDef) {
 		case 4:
 		var ret = $e[3], args = $e[2];
 		{
-			null;
+			this.getMethods().push(new reflect.Method(field,args,ret,classDef.path,this));
 		}break;
 		case 2:
 		var params = $e[3], name = $e[2];
@@ -6507,7 +6534,7 @@ reflect.ClassInfo.prototype.scanFields = function(classDef) {
 		}break;
 		default:{
 			{
-				Log.posInfo = { fileName : "ClassInfo.hx", lineNumber : 145, className : "reflect.ClassInfo", methodName : "scanFields"};
+				Log.posInfo = { fileName : "ClassInfo.hx", lineNumber : 179, className : "reflect.ClassInfo", methodName : "scanFields"};
 				if(Log.filter(LogLevel.WARN)) {
 					Log.fetchInput("Unknown type:",Reflect.field(field,"type"),"in type:",Reflect.field(classDef,"path"),"found in:" + this.name,null,null);
 					console.warn(Log.createMessage());
@@ -8282,10 +8309,10 @@ bpmjs.Context.__name__ = ["bpmjs","Context"];
 bpmjs.Context.prototype.contextConfig = null;
 bpmjs.Context.prototype.objects = null;
 bpmjs.Context.prototype.observers = null;
-bpmjs.Context.prototype.addObject = function(name,type,object) {
+bpmjs.Context.prototype.addObject = function(name,classInfo,object) {
 	$s.push("bpmjs.Context::addObject");
 	var $spos = $s.length;
-	var contextObject = new bpmjs.ContextObject(name,type,object);
+	var contextObject = new bpmjs.ContextObject(name,classInfo,object);
 	this.objects.push(contextObject);
 	{
 		$s.pop();
@@ -8317,6 +8344,10 @@ bpmjs.Context.prototype.getObjectByName = function(name) {
 bpmjs.Context.prototype.getObjectByType = function(type) {
 	$s.push("bpmjs.Context::getObjectByType");
 	var $spos = $s.length;
+	if(type == bpmjs.Context) {
+		$s.pop();
+		return this;
+	}
 	{
 		var _g = 0, _g1 = this.objects;
 		while(_g < _g1.length) {
@@ -8339,9 +8370,9 @@ bpmjs.Context.prototype.addObserver = function(object,methodName,type) {
 	$s.push("bpmjs.Context::addObserver");
 	var $spos = $s.length;
 	{
-		Log.posInfo = { fileName : "Context.hx", lineNumber : 47, className : "bpmjs.Context", methodName : "addObserver"};
+		Log.posInfo = { fileName : "Context.hx", lineNumber : 50, className : "bpmjs.Context", methodName : "addObserver"};
 		if(Log.filter(LogLevel.INFO)) {
-			Log.fetchInput(bpmjs.ReflectUtil.getClassName(object.object),methodName,Type.getClassName(type),null,null,null,null);
+			Log.fetchInput(object.classInfo.name,methodName,type.name,null,null,null,null);
 			console.info(Log.createMessage());
 		}
 	}
@@ -8353,13 +8384,13 @@ bpmjs.Context.prototype.addObserver = function(object,methodName,type) {
 	$s.pop();
 }
 bpmjs.Context.prototype.__class__ = bpmjs.Context;
-bpmjs.ContextObject = function(name,type,object) { if( name === $_ ) return; {
+bpmjs.ContextObject = function(name,classInfo,object) { if( name === $_ ) return; {
 	$s.push("bpmjs.ContextObject::new");
 	var $spos = $s.length;
 	this.name = name;
-	this.type = type;
+	this.classInfo = classInfo;
+	this.type = classInfo.type;
 	this.object = object;
-	this.classInfo = reflect.ClassInfo.forClass(type);
 	$s.pop();
 }}
 bpmjs.ContextObject.__name__ = ["bpmjs","ContextObject"];
@@ -8381,7 +8412,7 @@ bpmjs.Observer.prototype.type = null;
 bpmjs.Observer.prototype.observe = function(objectToObserve) {
 	$s.push("bpmjs.Observer::observe");
 	var $spos = $s.length;
-	if(Std["is"](objectToObserve.object,this.type)) {
+	if(Std["is"](objectToObserve.object,this.type.type)) {
 		Reflect.field(this.object.object,this.methodName).apply(this.object.object,[objectToObserve.object]);
 	}
 	$s.pop();

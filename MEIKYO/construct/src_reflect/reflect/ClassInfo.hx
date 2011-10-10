@@ -41,6 +41,23 @@ class ClassInfo
 		return getClassInfo(name, type);
 	}
 	
+	public static function forCType(t : CType) : ClassInfo
+	{
+		if (t == null)
+			throw "Missing CType";
+		
+		switch (t)
+		{
+			case CFunction(args, ret):
+				return ClassInfo.forCType(ret);
+			case CClass(name, params):
+				return ClassInfo.forName(name);
+			default:
+		}
+			
+		throw "Could not resolve CType: " + t;
+	}
+	
 	private static function getClassInfo(name : String, type : Class<Dynamic>) : ClassInfo
 	{
 		var hash = getHash(name, type);
@@ -64,6 +81,7 @@ class ClassInfo
 	
 	public var type(default, null) : Class<Dynamic>;
 	public var name(default, null) : String;
+	public var hasRtti(default, null) : Bool;
 	public var properties(getProperties, null) : Array<Property>;
 	public var methods(getMethods, null) : Array<Method>;
 	
@@ -71,6 +89,7 @@ class ClassInfo
 	{
 		this.name = name;
 		this.type = type;
+		hasRtti = untyped type.__rtti != null;
 	}
 	
 	public function getProperty(name : String) : Property
@@ -80,6 +99,20 @@ class ClassInfo
 				return property;
 		
 		return null;
+	}
+	
+	public function getMethod(name : String) : Method
+	{
+		for(method in methods)
+			if (method.name == name)
+				return method;
+		
+		return null;
+	}
+	
+	public function toString() : String
+	{
+		return "[ClassInfo for class: " + name + "]";
 	}
 	
 	function getProperties()
@@ -137,6 +170,7 @@ class ClassInfo
 			switch (field.type)
 			{
 				case CFunction(args, ret):
+					methods.push(new Method(field, args, ret, classDef.path, this));
 				case CClass(name, params):
 					properties.push(new Property(field, classDef.path, this));
 				case CEnum(name, params):

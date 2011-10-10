@@ -15,9 +15,9 @@ class Context
 		observers = new Array();
 	}
 
-	public function addObject(name, type, object)
+	public function addObject(name, classInfo, object)
 	{
-		var contextObject = new ContextObject(name, type, object);
+		var contextObject = new ContextObject(name, classInfo, object);
 		objects.push(contextObject);
 		return contextObject;
 	}
@@ -34,6 +34,9 @@ class Context
 
 	public function getObjectByType<T>(type : Class<T>) : Dynamic
 	{
+		if (type == Context)
+			return this;
+			
 		for(contextObject in objects)
 		{
 			if (contextObject.type == type)
@@ -42,9 +45,9 @@ class Context
 		return null;
 	}
 	
-	public function addObserver(object : ContextObject, methodName : String, type : Class<Dynamic>)
+	public function addObserver(object : ContextObject, methodName : String, type : ClassInfo)
 	{
-		Log.info(ReflectUtil.getClassName(object.object), methodName, Type.getClassName(type));
+		Log.info(object.classInfo.name, methodName, type.name);
 		var observer = new Observer();
 		observer.object = object;
 		observer.methodName = methodName;
@@ -61,12 +64,12 @@ class ContextObject
 	public var object : Dynamic;
 	public var classInfo : ClassInfo;
 
-	public function new(name, type, object)
+	public function new(name, classInfo, object)
 	{
 		this.name = name;
-		this.type = type;
+		this.classInfo = classInfo;
+		this.type = classInfo.type;
 		this.object = object;
-		classInfo = ClassInfo.forClass(type);
 	}
 }
 
@@ -74,13 +77,13 @@ class Observer
 {
 	public var object : ContextObject;
 	public var methodName : String;
-	public var type : Class<Dynamic>;
+	public var type : ClassInfo;
 	
 	public function new() {}
 	
 	public function observe(objectToObserve : ContextObject)
 	{
-		if (Std.is(objectToObserve.object, type))
+		if (Std.is(objectToObserve.object, type.type))
 		{
 			Reflect.callMethod(object.object, Reflect.field(object.object, methodName), [objectToObserve.object]);
 		}

@@ -135,7 +135,7 @@ for(var k in reflect.model.ClassB.prototype ) reflect.model.ClassA.prototype[k] 
 reflect.model.ClassA.prototype.a = null;
 reflect.model.ClassA.prototype.b = null;
 reflect.model.ClassA.prototype.f1 = function(a) {
-	null;
+	return 1;
 }
 reflect.model.ClassA.prototype.f2 = function() {
 	null;
@@ -197,8 +197,8 @@ bpmjs.Context.__name__ = ["bpmjs","Context"];
 bpmjs.Context.prototype.contextConfig = null;
 bpmjs.Context.prototype.objects = null;
 bpmjs.Context.prototype.observers = null;
-bpmjs.Context.prototype.addObject = function(name,type,object) {
-	var contextObject = new bpmjs.ContextObject(name,type,object);
+bpmjs.Context.prototype.addObject = function(name,classInfo,object) {
+	var contextObject = new bpmjs.ContextObject(name,classInfo,object);
 	this.objects.push(contextObject);
 	return contextObject;
 }
@@ -214,6 +214,7 @@ bpmjs.Context.prototype.getObjectByName = function(name) {
 	return null;
 }
 bpmjs.Context.prototype.getObjectByType = function(type) {
+	if(type == bpmjs.Context) return this;
 	{
 		var _g = 0, _g1 = this.objects;
 		while(_g < _g1.length) {
@@ -226,9 +227,9 @@ bpmjs.Context.prototype.getObjectByType = function(type) {
 }
 bpmjs.Context.prototype.addObserver = function(object,methodName,type) {
 	{
-		Log.posInfo = { fileName : "Context.hx", lineNumber : 47, className : "bpmjs.Context", methodName : "addObserver"};
+		Log.posInfo = { fileName : "Context.hx", lineNumber : 50, className : "bpmjs.Context", methodName : "addObserver"};
 		if(Log.filter(LogLevel.INFO)) {
-			Log.fetchInput(bpmjs.ReflectUtil.getClassName(object.object),methodName,Type.getClassName(type),null,null,null,null);
+			Log.fetchInput(object.classInfo.name,methodName,type.name,null,null,null,null);
 			console.info(Log.createMessage());
 		}
 	}
@@ -239,11 +240,11 @@ bpmjs.Context.prototype.addObserver = function(object,methodName,type) {
 	this.observers.push(observer);
 }
 bpmjs.Context.prototype.__class__ = bpmjs.Context;
-bpmjs.ContextObject = function(name,type,object) { if( name === $_ ) return; {
+bpmjs.ContextObject = function(name,classInfo,object) { if( name === $_ ) return; {
 	this.name = name;
-	this.type = type;
+	this.classInfo = classInfo;
+	this.type = classInfo.type;
 	this.object = object;
-	this.classInfo = reflect.ClassInfo.forClass(type);
 }}
 bpmjs.ContextObject.__name__ = ["bpmjs","ContextObject"];
 bpmjs.ContextObject.prototype.name = null;
@@ -259,7 +260,7 @@ bpmjs.Observer.prototype.object = null;
 bpmjs.Observer.prototype.methodName = null;
 bpmjs.Observer.prototype.type = null;
 bpmjs.Observer.prototype.observe = function(objectToObserve) {
-	if(Std["is"](objectToObserve.object,this.type)) {
+	if(Std["is"](objectToObserve.object,this.type.type)) {
 		Reflect.field(this.object.object,this.methodName).apply(this.object.object,[objectToObserve.object]);
 	}
 }
@@ -510,6 +511,7 @@ reflect.Field.__name__ = ["reflect","Field"];
 reflect.Field.prototype.owner = null;
 reflect.Field.prototype.name = null;
 reflect.Field.prototype.type = null;
+reflect.Field.prototype.clazz = null;
 reflect.Field.prototype.field = null;
 reflect.Field.prototype.definedInClass = null;
 reflect.Field.prototype.hasMetadata = function(name) {
@@ -520,7 +522,7 @@ reflect.Field.prototype.hasMetadata = function(name) {
 		while(_g < _g1.length) {
 			var fieldName = _g1[_g];
 			++_g;
-			if(fieldName == this.getName()) {
+			if(fieldName == this.field.name) {
 				var meta = Reflect.field(metadatas,fieldName);
 				if(Reflect.hasField(meta,name)) return true;
 			}
@@ -535,23 +537,11 @@ reflect.Field.prototype.getName = function() {
 	return this.field.name;
 }
 reflect.Field.prototype.getType = function() {
-	var $e = this.field.type;
-	switch( $e[1] ) {
-	case 1:
-	var params = $e[3], name = $e[2];
-	{
-		null;
-	}break;
-	case 2:
-	var params = $e[3], name = $e[2];
-	{
-		return reflect.ClassInfo.forName(name);
-	}break;
-	default:{
-		throw "Did not expect type: " + this.field.type;
-	}break;
-	}
-	return null;
+	return reflect.ClassInfo.forCType(this.field.type);
+}
+reflect.Field.prototype.getClass = function() {
+	var type = reflect.ClassInfo.forCType(this.field.type);
+	return type == null?null:type.type;
 }
 reflect.Field.prototype.__class__ = reflect.Field;
 reflect.Field.__interfaces__ = [reflect.MetadataAware];
@@ -2991,6 +2981,7 @@ Hash.prototype.__class__ = Hash;
 reflect.ClassInfo = function(name,type) { if( name === $_ ) return; {
 	this.name = name;
 	this.type = type;
+	this.hasRtti = type.__rtti != null;
 }}
 reflect.ClassInfo.__name__ = ["reflect","ClassInfo"];
 reflect.ClassInfo.forInstance = function(instance) {
@@ -3010,6 +3001,26 @@ reflect.ClassInfo.forName = function(name) {
 	if(type == null) throw "Cannot resolve type for name: " + name;
 	return reflect.ClassInfo.getClassInfo(name,type);
 }
+reflect.ClassInfo.forCType = function(t) {
+	if(t == null) throw "Missing CType";
+	var $e = t;
+	switch( $e[1] ) {
+	case 4:
+	var ret = $e[3], args = $e[2];
+	{
+		return reflect.ClassInfo.forCType(ret);
+	}break;
+	case 2:
+	var params = $e[3], name = $e[2];
+	{
+		return reflect.ClassInfo.forName(name);
+	}break;
+	default:{
+		null;
+	}break;
+	}
+	throw "Could not resolve CType: " + t;
+}
 reflect.ClassInfo.getClassInfo = function(name,type) {
 	var hash = reflect.ClassInfo.getHash(name,type);
 	if(reflect.ClassInfo.cache.exists(hash)) return reflect.ClassInfo.cache.get(hash);
@@ -3025,6 +3036,7 @@ reflect.ClassInfo.getHash = function(name,type) {
 }
 reflect.ClassInfo.prototype.type = null;
 reflect.ClassInfo.prototype.name = null;
+reflect.ClassInfo.prototype.hasRtti = null;
 reflect.ClassInfo.prototype.properties = null;
 reflect.ClassInfo.prototype.methods = null;
 reflect.ClassInfo.prototype.getProperty = function(name) {
@@ -3033,10 +3045,24 @@ reflect.ClassInfo.prototype.getProperty = function(name) {
 		while(_g < _g1.length) {
 			var property = _g1[_g];
 			++_g;
-			if(property.getName() == name) return property;
+			if(property.field.name == name) return property;
 		}
 	}
 	return null;
+}
+reflect.ClassInfo.prototype.getMethod = function(name) {
+	{
+		var _g = 0, _g1 = this.getMethods();
+		while(_g < _g1.length) {
+			var method = _g1[_g];
+			++_g;
+			if(method.field.name == name) return method;
+		}
+	}
+	return null;
+}
+reflect.ClassInfo.prototype.toString = function() {
+	return "[ClassInfo for class: " + this.name + "]";
 }
 reflect.ClassInfo.prototype.getProperties = function() {
 	if(this.properties != null) return this.properties;
@@ -3082,7 +3108,7 @@ reflect.ClassInfo.prototype.scanFields = function(classDef) {
 		case 4:
 		var ret = $e[3], args = $e[2];
 		{
-			null;
+			this.getMethods().push(new reflect.Method(field,args,ret,classDef.path,this));
 		}break;
 		case 2:
 		var params = $e[3], name = $e[2];
@@ -3096,7 +3122,7 @@ reflect.ClassInfo.prototype.scanFields = function(classDef) {
 		}break;
 		default:{
 			{
-				Log.posInfo = { fileName : "ClassInfo.hx", lineNumber : 145, className : "reflect.ClassInfo", methodName : "scanFields"};
+				Log.posInfo = { fileName : "ClassInfo.hx", lineNumber : 179, className : "reflect.ClassInfo", methodName : "scanFields"};
 				if(Log.filter(LogLevel.WARN)) {
 					Log.fetchInput("Unknown type:",Reflect.field(field,"type"),"in type:",Reflect.field(classDef,"path"),"found in:" + this.name,null,null);
 					console.warn(Log.createMessage());
@@ -3437,56 +3463,52 @@ bpmjs.ContextBuilder.createDefaultContextConfig = function() {
 bpmjs.ContextBuilder.prototype.context = null;
 bpmjs.ContextBuilder.prototype.contextConfig = null;
 bpmjs.ContextBuilder.prototype.configureInternal = function(object) {
-	var contextObject = this.context.addObject("configured",Type.getClass(object),object);
+	var contextObject = this.context.addObject("configured",reflect.ClassInfo.forInstance(object),object);
 	this.configureDynamicObjects([contextObject]);
 }
 bpmjs.ContextBuilder.prototype.buildInternal = function(configClasses) {
 	this.context.contextConfig = this.contextConfig;
-	{
-		var _g = 0;
-		while(_g < configClasses.length) {
-			var configClass = configClasses[_g];
-			++_g;
-			var config = Type.createInstance(configClass,[]);
-			this.createObjects(config,configClass);
-		}
-	}
+	Lambda.iter(configClasses,$closure(this,"createObjects"));
 	this.configureDynamicObjects(this.context.objects);
 }
-bpmjs.ContextBuilder.prototype.createObjects = function(config,configClass) {
-	if(configClass.__rtti == null) throw this.createError("Config class " + Type.getClassName(configClass) + " must have RTTI enabled!");
-	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(configClass.__rtti).firstElement());
-	var classDef = haxe.rtti.TypeApi.typeInfos(infos);
-	{ var $it0 = classDef.fields.iterator();
-	while( $it0.hasNext() ) { var field = $it0.next();
+bpmjs.ContextBuilder.prototype.createObjects = function(configClass) {
+	var config = Type.createInstance(configClass,[]);
+	var ci = reflect.ClassInfo.forClass(configClass);
+	if(!ci.hasRtti) {
+		var message = "Config class:" + ci.name + "has no rtti extension - use 'implement haxe.rtti.Infos'";
+		throw message;
+	}
 	{
-		var $e = field.type;
-		switch( $e[1] ) {
-		case 2:
-		var params = $e[3], name = $e[2];
-		{
-			var type = Type.resolveClass(name);
-			if(type == null) throw "Type of class " + name + " is null!";
-			var instance = Reflect.field(config,field.name);
-			this.context.addObject(field.name,type,instance);
-			if(type == Array) {
-				var list = instance;
+		var _g = 0, _g1 = ci.getProperties();
+		while(_g < _g1.length) {
+			var property = _g1[_g];
+			++_g;
+			var instance = Reflect.field(config,property.field.name);
+			if(instance == null) {
 				{
-					var _g = 0;
-					while(_g < list.length) {
-						var listInstance = list[_g];
-						++_g;
-						this.context.addObject("dynamic",Type.getClass(listInstance),listInstance);
+					Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 87, className : "bpmjs.ContextBuilder", methodName : "createObjects"};
+					if(Log.filter(LogLevel.WARN)) {
+						Log.fetchInput("Found property",property.field.name,"in config",ci.name,"but was null",null,null);
+						console.warn(Log.createMessage());
 					}
 				}
 			}
-		}break;
-		default:{
-			continue;
-		}break;
+			else {
+				this.context.addObject(property.field.name,reflect.ClassInfo.forCType(property.field.type),instance);
+				if(property.getClass() == Array) {
+					var list = instance;
+					{
+						var _g2 = 0;
+						while(_g2 < list.length) {
+							var listInstance = list[_g2];
+							++_g2;
+							this.context.addObject("dynamic",reflect.ClassInfo.forInstance(listInstance),listInstance);
+						}
+					}
+				}
+			}
 		}
 	}
-	}}
 }
 bpmjs.ContextBuilder.prototype.configureDynamicObjects = function(objects) {
 	Lambda.iter(objects,$closure(this,"wireContextObject"));
@@ -3504,60 +3526,28 @@ bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
 		var property = _g1[_g];
 		++_g;
 		if(property.hasMetadata("Inject")) {
-			var type = property.getType().type;
-			var wiredObject = type == bpmjs.Context?this.context:this.context.getObjectByType(type);
+			var wiredObject = this.context.getObjectByType(property.getClass());
 			if(wiredObject == null) {
-				Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 126, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
+				Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 125, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
 				if(Log.filter(LogLevel.WARN)) {
-					Log.fetchInput("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + property.getName() + " but could not find object to inject.",null,null,null,null,null,null);
+					Log.fetchInput("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + property.field.name + " but could not find object to inject.",null,null,null,null,null,null);
 					console.warn(Log.createMessage());
 				}
 			}
-			else property.setValue(contextObject.object,wiredObject);
+			else contextObject.object[property.field.name] = wiredObject;
 		}
 	}
 }
 bpmjs.ContextBuilder.prototype.findObservers = function(contextObject) {
-	if(contextObject.type.__rtti == null) return;
-	var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
-	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(contextObject.type.__rtti).firstElement());
-	var classDef = haxe.rtti.TypeApi.typeInfos(infos);
-	{ var $it0 = classDef.fields.iterator();
-	while( $it0.hasNext() ) { var field = $it0.next();
-	{
-		var $e = field.type;
-		switch( $e[1] ) {
-		case 4:
-		var ret = $e[3], args = $e[2];
-		{
-			var meta = Reflect.field(metaDatas,field.name);
-			if(meta != null && Reflect.hasField(meta,"Observe")) {
-				{ var $it1 = args.iterator();
-				while( $it1.hasNext() ) { var argument = $it1.next();
-				{
-					var $e = argument.t;
-					switch( $e[1] ) {
-					case 2:
-					var params = $e[3], name = $e[2];
-					{
-						var type = Type.resolveClass(name);
-						this.context.addObserver(contextObject,field.name,type);
-					}break;
-					default:{
-						continue;
-					}break;
-					}
-					break;
-				}
-				}}
-			}
-		}break;
-		default:{
-			continue;
-		}break;
+	var _g = 0, _g1 = contextObject.classInfo.getMethods();
+	while(_g < _g1.length) {
+		var method = _g1[_g];
+		++_g;
+		if(method.hasMetadata("Observe")) {
+			if(method.getParameters().length == 1) this.context.addObserver(contextObject,method.field.name,reflect.ClassInfo.forCType(method.getParameters()[0].def.t));
+			else throw "Method to observe: " + contextObject.classInfo.name + "." + method.field.name + " needs exactly one parameter";
 		}
 	}
-	}}
 }
 bpmjs.ContextBuilder.prototype.registerMessengerByObjectType = function(contextObject) {
 	if(Std["is"](contextObject.object,bpmjs.Messenger)) {
@@ -3565,62 +3555,27 @@ bpmjs.ContextBuilder.prototype.registerMessengerByObjectType = function(contextO
 	}
 }
 bpmjs.ContextBuilder.prototype.registerMessengers = function(contextObject) {
-	var metadatas = haxe.rtti.Meta.getFields(contextObject.type);
-	{
-		var _g = 0, _g1 = Reflect.fields(metadatas);
-		while(_g < _g1.length) {
-			var fieldName = _g1[_g];
-			++_g;
-			var meta = Reflect.field(metadatas,fieldName);
-			if(Reflect.hasField(meta,"Messenger")) {
-				var messenger = new bpmjs.Messenger();
-				contextObject.object[fieldName] = messenger;
-				this.contextConfig.frontMessenger.addMessenger(messenger);
-			}
+	var _g = 0, _g1 = contextObject.classInfo.getProperties();
+	while(_g < _g1.length) {
+		var property = _g1[_g];
+		++_g;
+		if(property.hasMetadata("Messenger")) {
+			var messenger = new bpmjs.Messenger();
+			contextObject.object[property.field.name] = messenger;
+			this.contextConfig.frontMessenger.addMessenger(messenger);
 		}
 	}
 }
 bpmjs.ContextBuilder.prototype.registerReceivers = function(contextObject) {
-	if(contextObject.type.__rtti == null) return;
-	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(contextObject.type.__rtti).firstElement());
-	var classDef = haxe.rtti.TypeApi.typeInfos(infos);
-	var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
-	{ var $it0 = classDef.fields.iterator();
-	while( $it0.hasNext() ) { var field = $it0.next();
-	{
-		var $e = field.type;
-		switch( $e[1] ) {
-		case 4:
-		var ret = $e[3], args = $e[2];
-		{
-			var meta = Reflect.field(metaDatas,field.name);
-			if(meta != null && Reflect.hasField(meta,"Message")) {
-				{ var $it1 = args.iterator();
-				while( $it1.hasNext() ) { var argument = $it1.next();
-				{
-					var $e = argument.t;
-					switch( $e[1] ) {
-					case 2:
-					var params = $e[3], name = $e[2];
-					{
-						var type = Type.resolveClass(name);
-						this.contextConfig.frontMessenger.addReceiver(contextObject.object,field.name,type);
-					}break;
-					default:{
-						continue;
-					}break;
-					}
-					break;
-				}
-				}}
-			}
-		}break;
-		default:{
-			continue;
-		}break;
+	var _g = 0, _g1 = contextObject.classInfo.getMethods();
+	while(_g < _g1.length) {
+		var method = _g1[_g];
+		++_g;
+		if(method.hasMetadata("Message")) {
+			if(method.getParameters().length == 1) this.contextConfig.frontMessenger.addReceiver(contextObject.object,method.field.name,reflect.ClassInfo.forCType(method.getParameters()[0].def.t).type);
+			else throw "Message: " + contextObject.classInfo.name + "." + method.field.name + " needs exactly one parameter";
 		}
 	}
-	}}
 }
 bpmjs.ContextBuilder.prototype.doObserve = function(contextObject) {
 	var _g = 0, _g1 = this.context.observers;
@@ -3655,11 +3610,18 @@ reflect.MetadataTest.prototype.testProperty = function() {
 	this.assertFalse(b.hasMetadata("Test"),{ fileName : "MetadataTest.hx", lineNumber : 12, className : "reflect.MetadataTest", methodName : "testProperty"});
 	this.assertTrue(c.hasMetadata("Test"),{ fileName : "MetadataTest.hx", lineNumber : 13, className : "reflect.MetadataTest", methodName : "testProperty"});
 }
+reflect.MetadataTest.prototype.testMethod = function() {
+	var ci = reflect.ClassInfo.forClass(reflect.model.ClassA);
+	var f1 = ci.getMethod("f1");
+	this.assertTrue(f1.hasMetadata("Test"),{ fileName : "MetadataTest.hx", lineNumber : 21, className : "reflect.MetadataTest", methodName : "testMethod"});
+	var f2 = ci.getMethod("f2");
+	this.assertFalse(f2.hasMetadata("Test"),{ fileName : "MetadataTest.hx", lineNumber : 24, className : "reflect.MetadataTest", methodName : "testMethod"});
+}
 reflect.MetadataTest.prototype.__class__ = reflect.MetadataTest;
 Log = function() { }
 Log.__name__ = ["Log"];
 Log.posInfo = null;
-Log.debug = function() {
+Log["debugger"] = function() {
 	debugger;
 }
 Log.init = function() {
@@ -3761,10 +3723,10 @@ reflect.Property.__name__ = ["reflect","Property"];
 reflect.Property.__super__ = reflect.Field;
 for(var k in reflect.Field.prototype ) reflect.Property.prototype[k] = reflect.Field.prototype[k];
 reflect.Property.prototype.getValue = function(instance) {
-	return Reflect.field(instance,this.getName());
+	return Reflect.field(instance,this.field.name);
 }
 reflect.Property.prototype.setValue = function(instance,value) {
-	instance[this.getName()] = value;
+	instance[this.field.name] = value;
 }
 reflect.Property.prototype.__class__ = reflect.Property;
 haxe.Log = function() { }
@@ -3801,12 +3763,29 @@ Std.random = function(x) {
 	return Math.floor(Math.random() * x);
 }
 Std.prototype.__class__ = Std;
-reflect.Method = function(field,definedInClass,owner) { if( field === $_ ) return; {
+reflect.Method = function(field,args,ret,definedInClass,owner) { if( field === $_ ) return; {
 	reflect.Field.call(this,field,definedInClass,owner);
+	this.args = args;
+	this.ret = ret;
 }}
 reflect.Method.__name__ = ["reflect","Method"];
 reflect.Method.__super__ = reflect.Field;
 for(var k in reflect.Field.prototype ) reflect.Method.prototype[k] = reflect.Field.prototype[k];
+reflect.Method.prototype.parameters = null;
+reflect.Method.prototype.args = null;
+reflect.Method.prototype.ret = null;
+reflect.Method.prototype.getParameters = function() {
+	if(this.parameters != null) return this.parameters;
+	this.parameters = new Array();
+	{ var $it0 = this.args.iterator();
+	while( $it0.hasNext() ) { var arg = $it0.next();
+	{
+		var parameter = new reflect.Parameter(arg);
+		this.parameters.push(parameter);
+	}
+	}}
+	return this.parameters;
+}
 reflect.Method.prototype.__class__ = reflect.Method;
 bpmjs.TestComplete = function(p) { if( p === $_ ) return; {
 	TestCase2.call(this);
@@ -3862,6 +3841,16 @@ kumite.scene.Layer.prototype.render = function() {
 }
 kumite.scene.Layer.prototype.__class__ = kumite.scene.Layer;
 kumite.scene.Layer.__interfaces__ = [kumite.scene.LayerLifecycle];
+reflect.Parameter = function(def) { if( def === $_ ) return; {
+	this.def = def;
+}}
+reflect.Parameter.__name__ = ["reflect","Parameter"];
+reflect.Parameter.prototype.type = null;
+reflect.Parameter.prototype.def = null;
+reflect.Parameter.prototype.getType = function() {
+	return reflect.ClassInfo.forCType(this.def.t);
+}
+reflect.Parameter.prototype.__class__ = reflect.Parameter;
 haxe.rtti.CType = { __ename__ : ["haxe","rtti","CType"], __constructs__ : ["CUnknown","CEnum","CClass","CTypedef","CFunction","CAnonymous","CDynamic"] }
 haxe.rtti.CType.CUnknown = ["CUnknown",0];
 haxe.rtti.CType.CUnknown.toString = $estr;
@@ -4112,17 +4101,17 @@ reflect.PropertyTest.prototype.testGetValue = function() {
 	var instanceA = new reflect.model.ClassA();
 	var ci = reflect.ClassInfo.forInstance(instanceA);
 	var a = ci.getProperty("a");
-	this.assertNull(a.getValue(instanceA),{ fileName : "PropertyTest.hx", lineNumber : 11, className : "reflect.PropertyTest", methodName : "testGetValue"});
+	this.assertNull(Reflect.field(instanceA,a.field.name),{ fileName : "PropertyTest.hx", lineNumber : 11, className : "reflect.PropertyTest", methodName : "testGetValue"});
 	var c = ci.getProperty("c");
-	this.assertEquals(1,c.getValue(instanceA),{ fileName : "PropertyTest.hx", lineNumber : 14, className : "reflect.PropertyTest", methodName : "testGetValue"});
+	this.assertEquals(1,Reflect.field(instanceA,c.field.name),{ fileName : "PropertyTest.hx", lineNumber : 14, className : "reflect.PropertyTest", methodName : "testGetValue"});
 }
 reflect.PropertyTest.prototype.testSetValue = function() {
 	var instanceA = new reflect.model.ClassA();
 	var ci = reflect.ClassInfo.forInstance(instanceA);
 	var newValue = 5;
 	var a = ci.getProperty("a");
-	a.setValue(instanceA,5);
-	this.assertEquals(newValue,a.getValue(instanceA),{ fileName : "PropertyTest.hx", lineNumber : 25, className : "reflect.PropertyTest", methodName : "testSetValue"});
+	instanceA[a.field.name] = 5;
+	this.assertEquals(newValue,Reflect.field(instanceA,a.field.name),{ fileName : "PropertyTest.hx", lineNumber : 25, className : "reflect.PropertyTest", methodName : "testSetValue"});
 }
 reflect.PropertyTest.prototype.__class__ = reflect.PropertyTest;
 TestRunner = function(p) { if( p === $_ ) return; {
@@ -4236,22 +4225,92 @@ reflect.ClassInfoTest = function(p) { if( p === $_ ) return; {
 reflect.ClassInfoTest.__name__ = ["reflect","ClassInfoTest"];
 reflect.ClassInfoTest.__super__ = TestCase2;
 for(var k in TestCase2.prototype ) reflect.ClassInfoTest.prototype[k] = TestCase2.prototype[k];
+reflect.ClassInfoTest.prototype.testForClass = function() {
+	var ci = reflect.ClassInfo.forClass(reflect.model.ClassA);
+	this.assertEquals(reflect.model.ClassA,ci.type,{ fileName : "ClassInfoTest.hx", lineNumber : 10, className : "reflect.ClassInfoTest", methodName : "testForClass"});
+}
+reflect.ClassInfoTest.prototype.testForInstance = function() {
+	var ci = reflect.ClassInfo.forInstance(new reflect.model.ClassA());
+	this.assertEquals(reflect.model.ClassA,ci.type,{ fileName : "ClassInfoTest.hx", lineNumber : 16, className : "reflect.ClassInfoTest", methodName : "testForInstance"});
+}
+reflect.ClassInfoTest.prototype.testForName = function() {
+	var ci = reflect.ClassInfo.forName("reflect.model.ClassA");
+	this.assertEquals(reflect.model.ClassA,ci.type,{ fileName : "ClassInfoTest.hx", lineNumber : 22, className : "reflect.ClassInfoTest", methodName : "testForName"});
+}
+reflect.ClassInfoTest.prototype.testForCClassInt = function() {
+	var type = this.getCClassInt();
+	var ci = reflect.ClassInfo.forCType(type);
+	this.assertEquals(reflect.ClassInfo.forClass(Int),ci,{ fileName : "ClassInfoTest.hx", lineNumber : 29, className : "reflect.ClassInfoTest", methodName : "testForCClassInt"});
+}
 reflect.ClassInfoTest.prototype.testNoRTTIModel = function() {
 	var ci = reflect.ClassInfo.forClass(reflect.model.NoRtti);
-	this.assertEquals(reflect.model.NoRtti,ci.type,{ fileName : "ClassInfoTest.hx", lineNumber : 9, className : "reflect.ClassInfoTest", methodName : "testNoRTTIModel"});
-	this.assertEquals("reflect.model.NoRtti",ci.name,{ fileName : "ClassInfoTest.hx", lineNumber : 10, className : "reflect.ClassInfoTest", methodName : "testNoRTTIModel"});
-	this.assertEquals(0,ci.getProperties().length,{ fileName : "ClassInfoTest.hx", lineNumber : 11, className : "reflect.ClassInfoTest", methodName : "testNoRTTIModel"});
+	this.assertEquals(reflect.model.NoRtti,ci.type,{ fileName : "ClassInfoTest.hx", lineNumber : 36, className : "reflect.ClassInfoTest", methodName : "testNoRTTIModel"});
+	this.assertEquals("reflect.model.NoRtti",ci.name,{ fileName : "ClassInfoTest.hx", lineNumber : 37, className : "reflect.ClassInfoTest", methodName : "testNoRTTIModel"});
+	this.assertEquals(0,ci.getProperties().length,{ fileName : "ClassInfoTest.hx", lineNumber : 38, className : "reflect.ClassInfoTest", methodName : "testNoRTTIModel"});
+	this.assertEquals(0,ci.getMethods().length,{ fileName : "ClassInfoTest.hx", lineNumber : 39, className : "reflect.ClassInfoTest", methodName : "testNoRTTIModel"});
+	this.assertFalse(ci.hasRtti,{ fileName : "ClassInfoTest.hx", lineNumber : 40, className : "reflect.ClassInfoTest", methodName : "testNoRTTIModel"});
 }
-reflect.ClassInfoTest.prototype.testBasicModel = function() {
+reflect.ClassInfoTest.prototype.testType = function() {
 	var ci = reflect.ClassInfo.forClass(reflect.model.ClassA);
-	this.assertEquals(reflect.model.ClassA,ci.type,{ fileName : "ClassInfoTest.hx", lineNumber : 18, className : "reflect.ClassInfoTest", methodName : "testBasicModel"});
-	this.assertEquals("reflect.model.ClassA",ci.name,{ fileName : "ClassInfoTest.hx", lineNumber : 19, className : "reflect.ClassInfoTest", methodName : "testBasicModel"});
-	this.assertEquals(3,ci.getProperties().length,{ fileName : "ClassInfoTest.hx", lineNumber : 20, className : "reflect.ClassInfoTest", methodName : "testBasicModel"});
-	this.assertEquals("a",ci.getProperty("a").getName(),{ fileName : "ClassInfoTest.hx", lineNumber : 21, className : "reflect.ClassInfoTest", methodName : "testBasicModel"});
-	this.assertEquals(ci,ci.getProperty("a").getOwner(),{ fileName : "ClassInfoTest.hx", lineNumber : 22, className : "reflect.ClassInfoTest", methodName : "testBasicModel"});
-	this.assertEquals(Int,ci.getProperty("a").getType().type,{ fileName : "ClassInfoTest.hx", lineNumber : 23, className : "reflect.ClassInfoTest", methodName : "testBasicModel"});
+	this.assertEquals(reflect.model.ClassA,ci.type,{ fileName : "ClassInfoTest.hx", lineNumber : 47, className : "reflect.ClassInfoTest", methodName : "testType"});
+	this.assertEquals("reflect.model.ClassA",ci.name,{ fileName : "ClassInfoTest.hx", lineNumber : 48, className : "reflect.ClassInfoTest", methodName : "testType"});
+	this.assertTrue(ci.hasRtti,{ fileName : "ClassInfoTest.hx", lineNumber : 49, className : "reflect.ClassInfoTest", methodName : "testType"});
+}
+reflect.ClassInfoTest.prototype.testProperties = function() {
+	var ci = reflect.ClassInfo.forClass(reflect.model.ClassA);
+	this.assertEquals(3,ci.getProperties().length,{ fileName : "ClassInfoTest.hx", lineNumber : 56, className : "reflect.ClassInfoTest", methodName : "testProperties"});
+	this.assertEquals("a",ci.getProperty("a").field.name,{ fileName : "ClassInfoTest.hx", lineNumber : 57, className : "reflect.ClassInfoTest", methodName : "testProperties"});
+	this.assertEquals(ci,ci.getProperty("a").owner,{ fileName : "ClassInfoTest.hx", lineNumber : 58, className : "reflect.ClassInfoTest", methodName : "testProperties"});
+	this.assertEquals(reflect.ClassInfo.forClass(Int),reflect.ClassInfo.forCType(ci.getProperty("a").field.type),{ fileName : "ClassInfoTest.hx", lineNumber : 59, className : "reflect.ClassInfoTest", methodName : "testProperties"});
+	this.assertEquals(Int,ci.getProperty("a").getClass(),{ fileName : "ClassInfoTest.hx", lineNumber : 60, className : "reflect.ClassInfoTest", methodName : "testProperties"});
+}
+reflect.ClassInfoTest.prototype.testMethods = function() {
+	var ci = reflect.ClassInfo.forClass(reflect.model.ClassA);
+	this.assertEquals(4,ci.getMethods().length,{ fileName : "ClassInfoTest.hx", lineNumber : 67, className : "reflect.ClassInfoTest", methodName : "testMethods"});
+	this.assertEquals("f1",ci.getMethod("f1").field.name,{ fileName : "ClassInfoTest.hx", lineNumber : 68, className : "reflect.ClassInfoTest", methodName : "testMethods"});
+	this.assertEquals(reflect.ClassInfo.forClass(Float),reflect.ClassInfo.forCType(ci.getMethod("f1").field.type),{ fileName : "ClassInfoTest.hx", lineNumber : 69, className : "reflect.ClassInfoTest", methodName : "testMethods"});
+	this.assertEquals(Float,ci.getMethod("f1").getClass(),{ fileName : "ClassInfoTest.hx", lineNumber : 70, className : "reflect.ClassInfoTest", methodName : "testMethods"});
+	this.assertEquals(1,ci.getMethod("f1").getParameters().length,{ fileName : "ClassInfoTest.hx", lineNumber : 71, className : "reflect.ClassInfoTest", methodName : "testMethods"});
+	this.assertEquals(reflect.ClassInfo.forClass(Int),reflect.ClassInfo.forCType(ci.getMethod("f1").getParameters()[0].def.t),{ fileName : "ClassInfoTest.hx", lineNumber : 72, className : "reflect.ClassInfoTest", methodName : "testMethods"});
+}
+reflect.ClassInfoTest.prototype.getCClassInt = function() {
+	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(reflect.CClassInt.__rtti).firstElement());
+	var classDef;
+	var $e = infos;
+	switch( $e[1] ) {
+	case 1:
+	var c = $e[2];
+	{
+		classDef = c;
+	}break;
+	default:{
+		throw "error";
+	}break;
+	}
+	{ var $it0 = classDef.fields.iterator();
+	while( $it0.hasNext() ) { var field = $it0.next();
+	{
+		var $e = field.type;
+		switch( $e[1] ) {
+		case 2:
+		var params = $e[3], name = $e[2];
+		{
+			return field.type;
+		}break;
+		default:{
+			throw "error";
+		}break;
+		}
+	}
+	}}
+	throw "error";
 }
 reflect.ClassInfoTest.prototype.__class__ = reflect.ClassInfoTest;
+reflect.CClassInt = function() { }
+reflect.CClassInt.__name__ = ["reflect","CClassInt"];
+reflect.CClassInt.prototype["int"] = null;
+reflect.CClassInt.prototype.__class__ = reflect.CClassInt;
+reflect.CClassInt.__interfaces__ = [haxe.rtti.Infos];
 kumite.scene.Scene = function(p) { if( p === $_ ) return; {
 	this.layers = new Array();
 }}
@@ -4579,10 +4638,10 @@ js.Boot.__init();
 	d.prototype.__class__ = d;
 	d.__name__ = ["Date"];
 }
-reflect.model.ClassB.__meta__ = { fields : { c : { Test : null}}};
-reflect.model.ClassB.__rtti = "<class path=\"reflect.model.ClassB\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<c public=\"1\"><c path=\"Int\"/></c>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-reflect.model.ClassA.__meta__ = { fields : { a : { Test : null}}};
-reflect.model.ClassA.__rtti = "<class path=\"reflect.model.ClassA\" params=\"\">\n\t<extends path=\"reflect.model.ClassB\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<a public=\"1\"><c path=\"Int\"/></a>\n\t<b public=\"1\"><e path=\"Bool\"/></b>\n\t<f1 public=\"1\" set=\"method\" line=\"11\"><f a=\"a\">\n\t<c path=\"Int\"/>\n\t<e path=\"Void\"/>\n</f></f1>\n\t<f2 set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></f2>\n\t<new public=\"1\" set=\"method\" line=\"4\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+reflect.model.ClassB.__meta__ = { obj : { Test : null}, fields : { c : { Test : null}}};
+reflect.model.ClassB.__rtti = "<class path=\"reflect.model.ClassB\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<c public=\"1\"><c path=\"Int\"/></c>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+reflect.model.ClassA.__meta__ = { fields : { a : { Test : null}, f1 : { Test : null}}};
+reflect.model.ClassA.__rtti = "<class path=\"reflect.model.ClassA\" params=\"\">\n\t<extends path=\"reflect.model.ClassB\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<a public=\"1\"><c path=\"Int\"/></a>\n\t<b public=\"1\"><e path=\"Bool\"/></b>\n\t<f1 public=\"1\" set=\"method\" line=\"12\"><f a=\"a\">\n\t<c path=\"Int\"/>\n\t<c path=\"Float\"/>\n</f></f1>\n\t<f2 set=\"method\" line=\"17\"><f a=\"\"><e path=\"Void\"/></f></f2>\n\t<new public=\"1\" set=\"method\" line=\"4\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs.Sequencer.__meta__ = { fields : { context : { Inject : null}}};
 bpmjs.Sequencer.__rtti = "<class path=\"bpmjs.Sequencer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context public=\"1\"><c path=\"bpmjs.Context\"/></context>\n\t<start public=\"1\" set=\"method\" line=\"14\"><f a=\"name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></start>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs._TestConfigure.TestConfigWithA.__rtti = "<class path=\"bpmjs._TestConfigure.TestConfigWithA\" params=\"\" private=\"1\" module=\"bpmjs.TestConfigure\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<a public=\"1\"><c path=\"bpmjs._TestConfigure.A\"/></a>\n\t<new public=\"1\" set=\"method\" line=\"30\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
@@ -4646,5 +4705,6 @@ Log.args = new Array();
 bpmjs._TestComplete.TestConfigWithA.__rtti = "<class path=\"bpmjs._TestComplete.TestConfigWithA\" params=\"\" private=\"1\" module=\"bpmjs.TestComplete\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<a public=\"1\"><c path=\"bpmjs._TestComplete.A\"/></a>\n\t<new public=\"1\" set=\"method\" line=\"31\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs._TestComplete.A.__meta__ = { fields : { handleContextComplete : { Complete : null}, handleContextPostComplete : { PostComplete : null}}};
 bpmjs._TestComplete.A.__rtti = "<class path=\"bpmjs._TestComplete.A\" params=\"\" private=\"1\" module=\"bpmjs.TestComplete\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<handleContextComplete public=\"1\" set=\"method\" line=\"44\"><f a=\"\"><e path=\"Void\"/></f></handleContextComplete>\n\t<handleContextPostComplete public=\"1\" set=\"method\" line=\"50\"><f a=\"\"><e path=\"Void\"/></f></handleContextPostComplete>\n\t<new public=\"1\" set=\"method\" line=\"39\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+reflect.CClassInt.__rtti = "<class path=\"reflect.CClassInt\" params=\"\" module=\"reflect.ClassInfoTest\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<int public=\"1\"><c path=\"Int\"/></int>\n</class>";
 js.Lib.onerror = null;
 TestRunner.main()

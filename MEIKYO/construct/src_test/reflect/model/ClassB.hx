@@ -1,6 +1,7 @@
 package reflect.model;
 import haxe.rtti.Infos;
 
+@Test
 class ClassB implements Infos
 {
 	@Test

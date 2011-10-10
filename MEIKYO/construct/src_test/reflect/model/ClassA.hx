@@ -8,8 +8,10 @@ class ClassA extends ClassB, implements Infos
 	
 	public var b(default, default) : Bool;
 	
-	public function f1(a : Int)
+	@Test
+	public function f1(a : Int) : Float
 	{
+		return 1;
 	}
 	
 	private function f2()

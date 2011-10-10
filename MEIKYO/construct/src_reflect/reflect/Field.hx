@@ -8,6 +8,7 @@ class Field implements MetadataAware
 	public var owner(getOwner, null) : ClassInfo;
 	public var name(getName, null) : String;
 	public var type(getType, null) : ClassInfo;
+	public var clazz(getClass, null) : Class<Dynamic>;
 	
 	private var field : ClassField;
 	private var definedInClass : String;
@@ -37,27 +38,24 @@ class Field implements MetadataAware
 		return false;
 	}
 	
-	function getOwner() : ClassInfo
+	inline function getOwner() : ClassInfo
 	{
 		return owner;
 	}
 	
-	function getName() : String
+	inline function getName() : String
 	{
 		return field.name;
 	}
 	
-	function getType() : ClassInfo
+	inline function getType() : ClassInfo
 	{
-		switch (field.type)
-		{
-			case CEnum(name, params):
-			case CClass(name, params):
-				return ClassInfo.forName(name);
-			default:
-				throw "Did not expect type: " + field.type;
-		}
-		
-		return null;
+		return ClassInfo.forCType(field.type);
+	}
+	
+	function getClass() : Class<Dynamic>
+	{
+		var type = getType();
+		return type == null ? null : type.type;
 	}
 }

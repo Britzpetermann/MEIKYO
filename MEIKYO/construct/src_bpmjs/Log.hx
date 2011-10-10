@@ -4,7 +4,7 @@ class Log
 	private static var posInfo : haxe.PosInfos;
 	private static var args : Array<Dynamic> = new Array();
 
-	public static inline function debug()
+	public static inline function debugger()
 	{
 		untyped __js__("debugger");
 	}
