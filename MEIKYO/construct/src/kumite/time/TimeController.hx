@@ -12,7 +12,7 @@ class TimeController implements Infos
 	@Messenger
 	public var messenger : Messenger;
 	
-	public function new() {}
+	public function new();
 	
 	@Sequence("boot", "startComplete")
 	public function startComplete()

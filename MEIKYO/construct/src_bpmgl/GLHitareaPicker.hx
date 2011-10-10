@@ -3,7 +3,7 @@ class GLHitareaPicker
 	var stageMousePosition : Vec2;
 	var result : GLInteractiveObject;
 
-	public function new() {}
+	public function new();
 
 	public function pick (stage : GLStage, mousePosition : Vec2) : GLInteractiveObject
 	{

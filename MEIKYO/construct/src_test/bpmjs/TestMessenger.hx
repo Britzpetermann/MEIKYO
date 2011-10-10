@@ -48,5 +48,5 @@ class TestMessenger extends TestCase
 
 private class Message
 {
-	public function new() {}
+	public function new();
 }

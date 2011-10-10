@@ -7,7 +7,7 @@ class Launcher implements Infos
 	@Inject
 	public var sequencer : bpmjs.Sequencer;
 	
-	public function new() {}
+	public function new();
 	
 	@PostComplete
 	public function handlePostComplete()

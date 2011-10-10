@@ -4,5 +4,5 @@ class GLFrame
 	public var timer : Float;
 	public var frameTime : Float;
 
-	public function new() {}
+	public function new();
 }

@@ -17,7 +17,7 @@ class ProjectionController implements Infos
 	public var near : Float;
 	public var far : Float;
 	
-	public function new() {}
+	public function new();
 	
 	@Sequence("boot", "init")
 	public function init()

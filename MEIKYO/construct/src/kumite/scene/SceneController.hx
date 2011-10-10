@@ -24,7 +24,7 @@ class SceneController implements Infos
 	private var currentScene : SceneAndLifecycle;
 	private var lastScene : SceneAndLifecycle;
 	
-	public function new() {}
+	public function new();
 	
 	@Complete
 	public function init()
@@ -215,7 +215,7 @@ class TransitionState extends State
 
 class NullSceneLifecycle implements SceneLifecycle
 {
-	public function new() {}
+	public function new();
 	
 	public function sceneInit(scene : Scene) : Void {}
 	

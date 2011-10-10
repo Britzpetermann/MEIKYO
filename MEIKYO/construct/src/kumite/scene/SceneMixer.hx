@@ -5,7 +5,7 @@ class SceneMixer
 	private var from : Scene;
 	private var to : Scene;
 	
-	public function new() {}
+	public function new();
 	
 	public function mix(from : Scene, to : Scene) : Scene
 	{

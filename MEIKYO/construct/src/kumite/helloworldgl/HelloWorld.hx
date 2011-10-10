@@ -30,7 +30,7 @@ class HelloWorld implements Infos
 	var worldViewMatrixUniform : GLUniformLocation;
 	var colorUniform : GLUniformLocation;
 		
-	public function new() {}
+	public function new();
 	
 	@Sequence("boot", "start")
 	public function start()

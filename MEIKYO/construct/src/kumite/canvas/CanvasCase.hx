@@ -4,5 +4,5 @@ class CanvasCase
 {
 	public var itself : Canvas;
 	
-	public function new() {}
+	public function new();
 }

@@ -10,7 +10,7 @@ class InitAction implements Infos
 	
 	public var antialias : Bool;
 	
-	public function new() {}
+	public function new();
 	
 	@Sequence("boot", "init")
 	public function init()
