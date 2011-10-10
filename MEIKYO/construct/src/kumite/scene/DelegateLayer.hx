@@ -37,4 +37,16 @@ class DelegateLayer extends Layer
 		}
 	}
 	
+	override public function renderTransition(transitionContext : TransitionContext)
+	{
+		try
+		{
+			lifecycle.renderTransition(transitionContext);
+		}
+		catch(e : Dynamic)
+		{
+			Log.error("Error rendering layer:", id, e);	
+		}
+	}
+	
 }

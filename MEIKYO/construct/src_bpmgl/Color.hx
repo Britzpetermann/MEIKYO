@@ -55,6 +55,11 @@ class Color
 		return "rgba(" + Std.int(r * 255) + "," + Std.int(g * 255) + "," + Std.int(b * 255) + "," + a + ")";
 	}
 
+	public function clone()
+	{
+		return new Color(r, g, b, a);
+	}
+
 	public function toString()
 	{
 		return "Color: " + r + "," + g + "," + b + "," + a;

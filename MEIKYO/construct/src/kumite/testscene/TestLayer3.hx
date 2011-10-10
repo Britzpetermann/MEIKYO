@@ -14,7 +14,7 @@ class TestLayer3 extends TestLayer
 	public function new()
 	{
 		super();
-		color = new Color(0, 0, 1, 0.6);
+		color = new Color(0, 0, 1, 0.4);
 		scale = 2;
 		position = new Vec3(-1, 0, 3);
 	}

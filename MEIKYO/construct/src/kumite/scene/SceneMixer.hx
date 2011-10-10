@@ -14,15 +14,22 @@ class SceneMixer
 		
 		var result = new Scene();
 		
-		for(layer in from.layers)
+		for(layer in to.layers)
 		{
+			if (from.containsLayer(layer))
+				layer.state = LayerState.KEEP;
+			else
+				layer.state = LayerState.IN;
 			result.addLayer(layer);
 		}
 		
-		for(layer in to.layers)
+		for(layer in from.layers)
 		{
 			if (!result.containsLayer(layer))
+			{
+				layer.state = LayerState.OUT;
 				result.addLayer(layer);
+			}
 		}
 		
 		result.layers.sort(sorter);

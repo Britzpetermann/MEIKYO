@@ -3,6 +3,7 @@ package kumite.displaylist;
 import kumite.stage.Stage;
 import kumite.time.Tick;
 import kumite.scene.LayerLifecycle;
+import kumite.scene.TransitionContext;
 
 import bpmjs.Stats;
 
@@ -22,7 +23,12 @@ class DisplayListLayer implements Infos, implements LayerLifecycle
 		renderer = new GLDisplayListRenderer();
 		renderer.init();
 	}
-	
+
+	public function renderTransition(transitionContext : TransitionContext)
+	{
+		render();
+	}
+		
 	public function render()
 	{
 		Stats.measureFPS();

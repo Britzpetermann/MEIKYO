@@ -9,6 +9,11 @@ class Scenes
 		all = new Array();
 	}
 	
+	public function getFirstScene() : SceneAndLifecycle
+	{
+		return all[0];
+	}
+	
 	public function getSceneById(id : String) : SceneAndLifecycle
 	{
 		for (result in all)

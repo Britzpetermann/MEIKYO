@@ -2,6 +2,7 @@ package kumite.testscene;
 
 import kumite.scene.LayerLifecycle;
 import kumite.scene.Layer;
+import kumite.scene.TransitionContext;
 import kumite.stage.Stage;
 import kumite.time.Time;
 import kumite.projection.Projection;
@@ -27,6 +28,8 @@ class TestLayer implements LayerLifecycle, implements Infos
 	public var scale : Float;
 	public var position : Vec3;
 	
+	var transitionAlpha : Float;
+	
 	var shaderProgram : WebGLProgram;
 	var vertexPositionAttribute : GLAttribLocation;
 	var vertexBuffer : WebGLBuffer;
@@ -40,6 +43,7 @@ class TestLayer implements LayerLifecycle, implements Infos
 		color = new Color(1, 1, 0, 0.5);
 		scale = 1;
 		position = new Vec3(0, 0, 0);
+		transitionAlpha = 1;
 	}
 	
 	public function init()
@@ -59,6 +63,12 @@ class TestLayer implements LayerLifecycle, implements Infos
 		colorUniform = GL.getUniformLocation("color");
 	}
 	
+	public function renderTransition(transitionContext : TransitionContext)
+	{
+		transitionAlpha = transitionContext.transition;
+		render();
+	}
+		
 	public function render()
 	{
 		GL.useProgram(shaderProgram);
@@ -72,11 +82,14 @@ class TestLayer implements LayerLifecycle, implements Infos
 		vertexPositionAttribute.vertexAttribPointer();
 
 		var worldViewMatrix = new Matrix4(camera.matrix);
+		worldViewMatrix.appendRotation(time.ms / 4000, new Vec3(1, 1, 1));
 		worldViewMatrix.appendTranslation(position.x, position.y, position.z);
 		worldViewMatrix.appendScale(scale, scale, scale);
 		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
 		
-		colorUniform.setRGBA(color);
+		var colorWithTransition = color.clone();
+		colorWithTransition.a *= transitionAlpha;
+		colorUniform.setRGBA(colorWithTransition);
 		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
 	}
 }

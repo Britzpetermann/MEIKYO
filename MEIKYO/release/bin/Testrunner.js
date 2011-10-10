@@ -188,6 +188,7 @@ kumite.scene.LayerLifecycle = function() { }
 kumite.scene.LayerLifecycle.__name__ = ["kumite","scene","LayerLifecycle"];
 kumite.scene.LayerLifecycle.prototype.init = null;
 kumite.scene.LayerLifecycle.prototype.render = null;
+kumite.scene.LayerLifecycle.prototype.renderTransition = null;
 kumite.scene.LayerLifecycle.prototype.__class__ = kumite.scene.LayerLifecycle;
 bpmjs.Context = function(p) { if( p === $_ ) return; {
 	this.objects = new Array();
@@ -3134,6 +3135,17 @@ reflect.ClassInfo.prototype.scanFields = function(classDef) {
 	}}
 }
 reflect.ClassInfo.prototype.__class__ = reflect.ClassInfo;
+kumite.scene.TransitionContext = function(p) { if( p === $_ ) return; {
+	null;
+}}
+kumite.scene.TransitionContext.__name__ = ["kumite","scene","TransitionContext"];
+kumite.scene.TransitionContext.prototype.transition = null;
+kumite.scene.TransitionContext.prototype.toOutTransition = function() {
+	var result = new kumite.scene.TransitionContext();
+	result.transition = 1 - this.transition;
+	return result;
+}
+kumite.scene.TransitionContext.prototype.__class__ = kumite.scene.TransitionContext;
 kumite.scene.TestLayerOrder = function(p) { if( p === $_ ) return; {
 	TestCase2.call(this);
 }}
@@ -3828,15 +3840,25 @@ bpmjs._TestComplete.A.prototype.handleContextPostComplete = function() {
 }
 bpmjs._TestComplete.A.prototype.__class__ = bpmjs._TestComplete.A;
 bpmjs._TestComplete.A.__interfaces__ = [haxe.rtti.Infos];
+kumite.scene.LayerState = function(name) { if( name === $_ ) return; {
+	this.name = name;
+}}
+kumite.scene.LayerState.__name__ = ["kumite","scene","LayerState"];
+kumite.scene.LayerState.prototype.name = null;
+kumite.scene.LayerState.prototype.__class__ = kumite.scene.LayerState;
 kumite.scene.Layer = function(p) { if( p === $_ ) return; {
 	null;
 }}
 kumite.scene.Layer.__name__ = ["kumite","scene","Layer"];
 kumite.scene.Layer.prototype.id = null;
+kumite.scene.Layer.prototype.state = null;
 kumite.scene.Layer.prototype.init = function() {
 	null;
 }
 kumite.scene.Layer.prototype.render = function() {
+	null;
+}
+kumite.scene.Layer.prototype.renderTransition = function(transitionContext) {
 	null;
 }
 kumite.scene.Layer.prototype.__class__ = kumite.scene.Layer;
@@ -4381,19 +4403,24 @@ kumite.scene.SceneMixer.prototype.mix = function(from,to) {
 	this.to = to;
 	var result = new kumite.scene.Scene();
 	{
-		var _g = 0, _g1 = from.layers;
-		while(_g < _g1.length) {
-			var layer = _g1[_g];
-			++_g;
-			result.addLayer(layer);
-		}
-	}
-	{
 		var _g = 0, _g1 = to.layers;
 		while(_g < _g1.length) {
 			var layer = _g1[_g];
 			++_g;
-			if(!result.containsLayer(layer)) result.addLayer(layer);
+			if(from.containsLayer(layer)) layer.state = kumite.scene.LayerState.KEEP;
+			else layer.state = kumite.scene.LayerState.IN;
+			result.addLayer(layer);
+		}
+	}
+	{
+		var _g = 0, _g1 = from.layers;
+		while(_g < _g1.length) {
+			var layer = _g1[_g];
+			++_g;
+			if(!result.containsLayer(layer)) {
+				layer.state = kumite.scene.LayerState.OUT;
+				result.addLayer(layer);
+			}
 		}
 	}
 	result.layers.sort($closure(this,"sorter"));
@@ -4411,13 +4438,13 @@ kumite.scene.SceneMixer.prototype.sorter = function(a,b) {
 	var bInTo = to.containsLayer(b);
 	if(aInTo && bInTo) {
 		var bOverA = to.getLayerIndex(b) > to.getLayerIndex(a);
-		if(bOverA) return result(-1,{ fileName : "SceneMixer.hx", lineNumber : 55, className : "kumite.scene.SceneMixer", methodName : "sorter"});
-		else return result(1,{ fileName : "SceneMixer.hx", lineNumber : 57, className : "kumite.scene.SceneMixer", methodName : "sorter"});
+		if(bOverA) return result(-1,{ fileName : "SceneMixer.hx", lineNumber : 62, className : "kumite.scene.SceneMixer", methodName : "sorter"});
+		else return result(1,{ fileName : "SceneMixer.hx", lineNumber : 64, className : "kumite.scene.SceneMixer", methodName : "sorter"});
 	}
 	if(aInFrom && bInFrom) {
 		var bOverA = from.getLayerIndex(b) > from.getLayerIndex(a);
-		if(bOverA) return result(-1,{ fileName : "SceneMixer.hx", lineNumber : 64, className : "kumite.scene.SceneMixer", methodName : "sorter"});
-		else return result(1,{ fileName : "SceneMixer.hx", lineNumber : 66, className : "kumite.scene.SceneMixer", methodName : "sorter"});
+		if(bOverA) return result(-1,{ fileName : "SceneMixer.hx", lineNumber : 71, className : "kumite.scene.SceneMixer", methodName : "sorter"});
+		else return result(1,{ fileName : "SceneMixer.hx", lineNumber : 73, className : "kumite.scene.SceneMixer", methodName : "sorter"});
 	}
 	if(aInFrom && !aInTo && !bInFrom && bInTo) {
 		var computeHasAPredecessorThatIsOverB = function() {
@@ -4433,11 +4460,11 @@ kumite.scene.SceneMixer.prototype.sorter = function(a,b) {
 			return false;
 		}
 		var hasAPredecessorThatIsOverB = computeHasAPredecessorThatIsOverB();
-		if(hasAPredecessorThatIsOverB) return result(1,{ fileName : "SceneMixer.hx", lineNumber : 91, className : "kumite.scene.SceneMixer", methodName : "sorter"});
-		else return result(-1,{ fileName : "SceneMixer.hx", lineNumber : 93, className : "kumite.scene.SceneMixer", methodName : "sorter"});
+		if(hasAPredecessorThatIsOverB) return result(1,{ fileName : "SceneMixer.hx", lineNumber : 98, className : "kumite.scene.SceneMixer", methodName : "sorter"});
+		else return result(-1,{ fileName : "SceneMixer.hx", lineNumber : 100, className : "kumite.scene.SceneMixer", methodName : "sorter"});
 	}
-	if(aInTo && !aInFrom && !bInTo && bInFrom) return result(1,{ fileName : "SceneMixer.hx", lineNumber : 97, className : "kumite.scene.SceneMixer", methodName : "sorter"});
-	return result(0,{ fileName : "SceneMixer.hx", lineNumber : 99, className : "kumite.scene.SceneMixer", methodName : "sorter"});
+	if(aInTo && !aInFrom && !bInTo && bInFrom) return result(1,{ fileName : "SceneMixer.hx", lineNumber : 104, className : "kumite.scene.SceneMixer", methodName : "sorter"});
+	return result(0,{ fileName : "SceneMixer.hx", lineNumber : 106, className : "kumite.scene.SceneMixer", methodName : "sorter"});
 }
 kumite.scene.SceneMixer.prototype.__class__ = kumite.scene.SceneMixer;
 StringTools = function() { }
@@ -4706,6 +4733,9 @@ Log.args = new Array();
 bpmjs._TestComplete.TestConfigWithA.__rtti = "<class path=\"bpmjs._TestComplete.TestConfigWithA\" params=\"\" private=\"1\" module=\"bpmjs.TestComplete\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<a public=\"1\"><c path=\"bpmjs._TestComplete.A\"/></a>\n\t<new public=\"1\" set=\"method\" line=\"31\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs._TestComplete.A.__meta__ = { fields : { handleContextComplete : { Complete : null}, handleContextPostComplete : { PostComplete : null}}};
 bpmjs._TestComplete.A.__rtti = "<class path=\"bpmjs._TestComplete.A\" params=\"\" private=\"1\" module=\"bpmjs.TestComplete\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<handleContextComplete public=\"1\" set=\"method\" line=\"44\"><f a=\"\"><e path=\"Void\"/></f></handleContextComplete>\n\t<handleContextPostComplete public=\"1\" set=\"method\" line=\"50\"><f a=\"\"><e path=\"Void\"/></f></handleContextPostComplete>\n\t<new public=\"1\" set=\"method\" line=\"39\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.scene.LayerState.OUT = new kumite.scene.LayerState("OUT");
+kumite.scene.LayerState.IN = new kumite.scene.LayerState("IN");
+kumite.scene.LayerState.KEEP = new kumite.scene.LayerState("KEEP");
 reflect.CClassInt.__rtti = "<class path=\"reflect.CClassInt\" params=\"\" module=\"reflect.ClassInfoTest\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<int public=\"1\"><c path=\"Int\"/></int>\n</class>";
 js.Lib.onerror = null;
 TestRunner.main()

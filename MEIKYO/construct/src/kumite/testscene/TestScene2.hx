@@ -1,6 +1,7 @@
 package kumite.testscene;
 
 import kumite.scene.SceneLifecycle;
+import kumite.scene.TransitionContext;
 import kumite.scene.Scene;
 import kumite.scene.DelegateLayer;
 import kumite.displaylist.DisplayListLayer;
@@ -22,10 +23,15 @@ class TestScene2 implements SceneLifecycle, implements Infos
 	
 	public function sceneInit(scene : Scene)
 	{
-		scene.id = scene.name = "TEST 2";
-		scene.addLayer(new DelegateLayer(testLayer2));
+		scene.id = scene.name = "RED-GREEN";
 		scene.addLayer(new DelegateLayer(testLayer1));
+		scene.addLayer(new DelegateLayer(testLayer2));
 		scene.addLayer(new DelegateLayer(displayList));
+	}
+
+	public function renderTransition(transitionContext : TransitionContext)
+	{
+		render();
 	}
 	
 	public function render()
