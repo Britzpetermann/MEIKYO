@@ -120,11 +120,37 @@ class ContextBuilder
 		{
 			if (property.hasMetadata("Inject"))
 			{
-				var wiredObject = context.getObjectByType(property.clazz);
-				if (wiredObject == null)
-					Log.warn("Found [Inject] at object " + Type.getClassName(contextObject.type)+ "#" + property.name + " but could not find object to inject.");
+				if (property.clazz == Context)
+				{
+					property.setValue(contextObject.object, context);
+				}
 				else
-					property.setValue(contextObject.object, wiredObject);				
+				{
+					var objects = context.getDynamicObjectsByType(property.clazz);
+					if (objects.length == 0)
+					{
+						Log.warn("Found [Inject] at object " + Type.getClassName(contextObject.type)+ "#" + property.name + " but could not find object to inject.");
+					}
+					else if (objects.length == 1)
+					{
+						property.setValue(contextObject.object, objects.first().object);				
+					}
+					else
+					{
+						var found = false;
+						for(object in objects)
+						{
+							if (object.name == property.name)
+							{
+								property.setValue(contextObject.object, object.object);
+								found = true;
+								break;				
+							}
+						}
+						if (!found)
+							throw "Multiple selection for type: " + property.type.name + " and no name match for: " + property.name;
+					}
+				}
 			}
 		}
 	}

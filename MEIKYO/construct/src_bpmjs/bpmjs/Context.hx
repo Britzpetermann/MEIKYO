@@ -34,15 +34,19 @@ class Context
 
 	public function getObjectByType<T>(type : Class<T>) : Dynamic
 	{
-		if (type == Context)
-			return this;
-			
-		for(contextObject in objects)
-		{
-			if (contextObject.type == type)
-				return contextObject.object;
-		}
-		return null;
+		var result = Lambda.filter(objects, getFilterByType(type));
+		
+		if (result.length == 1)
+			return result.first().object;
+		else if (result.length > 1)
+			throw "Multiple objects of type: " + result.first().classInfo.name + " found";
+		else
+			return null;
+	}
+	
+	public function getDynamicObjectsByType<T>(type : Class<T>) : List<ContextObject>
+	{
+		return Lambda.filter(objects, getFilterByType(type));
 	}
 	
 	public function addObserver(object : ContextObject, methodName : String, type : ClassInfo)
@@ -54,6 +58,14 @@ class Context
 		observer.type= type;
 		
 		observers.push(observer);
+	}
+	
+	function getFilterByType<T>(type : Class<T>)
+	{
+		return function(contextObject : ContextObject) : Bool
+		{
+			return contextObject.type == type;
+		}
 	}
 }
 

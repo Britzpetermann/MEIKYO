@@ -31,7 +31,7 @@ class SceneController implements Infos
 	{
 		currentScene = new SceneAndLifecycle();
 		currentScene.scene = new Scene();
-		currentScene.lifecycle = untyped {};
+		currentScene.lifecycle = new NullSceneLifecycle();
 		
 		transitionContext = new TransitionContext();
 		
@@ -211,4 +211,15 @@ class TransitionState extends State
 			
 		sceneController.renderTransition();
 	}
+}
+
+class NullSceneLifecycle implements SceneLifecycle
+{
+	public function new() {}
+	
+	public function sceneInit(scene : Scene) : Void {}
+	
+	public function render() : Void {}
+	
+	public function renderTransition(transitionContext : TransitionContext) : Void {}	
 }

@@ -142,6 +142,14 @@ reflect.model.ClassA.prototype.f2 = function() {
 }
 reflect.model.ClassA.prototype.__class__ = reflect.model.ClassA;
 reflect.model.ClassA.__interfaces__ = [haxe.rtti.Infos];
+if(typeof kumite=='undefined') kumite = {}
+if(!kumite.scene) kumite.scene = {}
+kumite.scene.LayerLifecycle = function() { }
+kumite.scene.LayerLifecycle.__name__ = ["kumite","scene","LayerLifecycle"];
+kumite.scene.LayerLifecycle.prototype.init = null;
+kumite.scene.LayerLifecycle.prototype.render = null;
+kumite.scene.LayerLifecycle.prototype.renderTransition = null;
+kumite.scene.LayerLifecycle.prototype.__class__ = kumite.scene.LayerLifecycle;
 bpmjs.TestMessenger = function(p) { if( p === $_ ) return; {
 	haxe.unit.TestCase.call(this);
 }}
@@ -182,14 +190,6 @@ bpmjs._TestMessenger.Message = function(p) { if( p === $_ ) return; {
 }}
 bpmjs._TestMessenger.Message.__name__ = ["bpmjs","_TestMessenger","Message"];
 bpmjs._TestMessenger.Message.prototype.__class__ = bpmjs._TestMessenger.Message;
-if(typeof kumite=='undefined') kumite = {}
-if(!kumite.scene) kumite.scene = {}
-kumite.scene.LayerLifecycle = function() { }
-kumite.scene.LayerLifecycle.__name__ = ["kumite","scene","LayerLifecycle"];
-kumite.scene.LayerLifecycle.prototype.init = null;
-kumite.scene.LayerLifecycle.prototype.render = null;
-kumite.scene.LayerLifecycle.prototype.renderTransition = null;
-kumite.scene.LayerLifecycle.prototype.__class__ = kumite.scene.LayerLifecycle;
 bpmjs.Context = function(p) { if( p === $_ ) return; {
 	this.objects = new Array();
 	this.observers = new Array();
@@ -215,20 +215,17 @@ bpmjs.Context.prototype.getObjectByName = function(name) {
 	return null;
 }
 bpmjs.Context.prototype.getObjectByType = function(type) {
-	if(type == bpmjs.Context) return this;
-	{
-		var _g = 0, _g1 = this.objects;
-		while(_g < _g1.length) {
-			var contextObject = _g1[_g];
-			++_g;
-			if(contextObject.type == type) return contextObject.object;
-		}
-	}
-	return null;
+	var result = Lambda.filter(this.objects,this.getFilterByType(type));
+	if(result.length == 1) return result.first().object;
+	else if(result.length > 1) throw "Multiple objects of type: " + result.first().classInfo.name + " found";
+	else return null;
+}
+bpmjs.Context.prototype.getDynamicObjectsByType = function(type) {
+	return Lambda.filter(this.objects,this.getFilterByType(type));
 }
 bpmjs.Context.prototype.addObserver = function(object,methodName,type) {
 	{
-		Log.posInfo = { fileName : "Context.hx", lineNumber : 50, className : "bpmjs.Context", methodName : "addObserver"};
+		Log.posInfo = { fileName : "Context.hx", lineNumber : 54, className : "bpmjs.Context", methodName : "addObserver"};
 		if(Log.filter(LogLevel.INFO)) {
 			Log.fetchInput(object.classInfo.name,methodName,type.name,null,null,null,null);
 			console.info(Log.createMessage());
@@ -239,6 +236,11 @@ bpmjs.Context.prototype.addObserver = function(object,methodName,type) {
 	observer.methodName = methodName;
 	observer.type = type;
 	this.observers.push(observer);
+}
+bpmjs.Context.prototype.getFilterByType = function(type) {
+	return function(contextObject) {
+		return contextObject.type == type;
+	}
 }
 bpmjs.Context.prototype.__class__ = bpmjs.Context;
 bpmjs.ContextObject = function(name,classInfo,object) { if( name === $_ ) return; {
@@ -462,6 +464,14 @@ bpmjs.ReflectUtil.getClassName = function(object) {
 	return Type.getClassName(Type.getClass(object));
 }
 bpmjs.ReflectUtil.prototype.__class__ = bpmjs.ReflectUtil;
+if(!bpmjs.integration) bpmjs.integration = {}
+bpmjs.integration.Tests = function() { }
+bpmjs.integration.Tests.__name__ = ["bpmjs","integration","Tests"];
+bpmjs.integration.Tests.addTo = function(runner) {
+	runner.add(new bpmjs.integration.TestMessaging());
+	runner.add(new bpmjs.integration.TestMultipleConfigs());
+}
+bpmjs.integration.Tests.prototype.__class__ = bpmjs.integration.Tests;
 bpmjs.TestConfigure = function(p) { if( p === $_ ) return; {
 	TestCase2.call(this);
 }}
@@ -1511,7 +1521,6 @@ bpmjs._FrontMessenger.Receiver.prototype.execute = function(message) {
 	this.method.apply(this.receiver,[message]);
 }
 bpmjs._FrontMessenger.Receiver.prototype.__class__ = bpmjs._FrontMessenger.Receiver;
-if(!bpmjs.integration) bpmjs.integration = {}
 bpmjs.integration.TestMultipleConfigs = function(p) { if( p === $_ ) return; {
 	TestCase2.call(this);
 }}
@@ -2780,6 +2789,17 @@ bpmjs._TestObserve.B.prototype.observe = function(a) {
 }
 bpmjs._TestObserve.B.prototype.__class__ = bpmjs._TestObserve.B;
 bpmjs._TestObserve.B.__interfaces__ = [haxe.rtti.Infos];
+kumite.scene.TransitionContext = function(p) { if( p === $_ ) return; {
+	null;
+}}
+kumite.scene.TransitionContext.__name__ = ["kumite","scene","TransitionContext"];
+kumite.scene.TransitionContext.prototype.transition = null;
+kumite.scene.TransitionContext.prototype.toOutTransition = function() {
+	var result = new kumite.scene.TransitionContext();
+	result.transition = 1 - this.transition;
+	return result;
+}
+kumite.scene.TransitionContext.prototype.__class__ = kumite.scene.TransitionContext;
 bpmjs.integration.TestMessaging = function(p) { if( p === $_ ) return; {
 	TestCase2.call(this);
 }}
@@ -3135,17 +3155,6 @@ reflect.ClassInfo.prototype.scanFields = function(classDef) {
 	}}
 }
 reflect.ClassInfo.prototype.__class__ = reflect.ClassInfo;
-kumite.scene.TransitionContext = function(p) { if( p === $_ ) return; {
-	null;
-}}
-kumite.scene.TransitionContext.__name__ = ["kumite","scene","TransitionContext"];
-kumite.scene.TransitionContext.prototype.transition = null;
-kumite.scene.TransitionContext.prototype.toOutTransition = function() {
-	var result = new kumite.scene.TransitionContext();
-	result.transition = 1 - this.transition;
-	return result;
-}
-kumite.scene.TransitionContext.prototype.__class__ = kumite.scene.TransitionContext;
 kumite.scene.TestLayerOrder = function(p) { if( p === $_ ) return; {
 	TestCase2.call(this);
 }}
@@ -3538,15 +3547,38 @@ bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
 		var property = _g1[_g];
 		++_g;
 		if(property.hasMetadata("Inject")) {
-			var wiredObject = this.context.getObjectByType(property.getClass());
-			if(wiredObject == null) {
-				Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 125, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
-				if(Log.filter(LogLevel.WARN)) {
-					Log.fetchInput("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + property.field.name + " but could not find object to inject.",null,null,null,null,null,null);
-					console.warn(Log.createMessage());
+			if(property.getClass() == bpmjs.Context) {
+				contextObject.object[property.field.name] = this.context;
+			}
+			else {
+				var objects = this.context.getDynamicObjectsByType(property.getClass());
+				if(objects.length == 0) {
+					{
+						Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 132, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
+						if(Log.filter(LogLevel.WARN)) {
+							Log.fetchInput("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + property.field.name + " but could not find object to inject.",null,null,null,null,null,null);
+							console.warn(Log.createMessage());
+						}
+					}
+				}
+				else if(objects.length == 1) {
+					contextObject.object[property.field.name] = objects.first().object;
+				}
+				else {
+					var found = false;
+					{ var $it0 = objects.iterator();
+					while( $it0.hasNext() ) { var object = $it0.next();
+					{
+						if(object.name == property.field.name) {
+							contextObject.object[property.field.name] = object.object;
+							found = true;
+							break;
+						}
+					}
+					}}
+					if(!found) throw "Multiple selection for type: " + reflect.ClassInfo.forCType(property.field.type).name + " and no name match for: " + property.field.name;
 				}
 			}
-			else contextObject.object[property.field.name] = wiredObject;
 		}
 	}
 }
@@ -3728,6 +3760,53 @@ Log.infoConsole = function(v,i) {
 	console.log("" + Log.createMessage() + " (trace)");
 }
 Log.prototype.__class__ = Log;
+bpmjs.TestInjectById = function(p) { if( p === $_ ) return; {
+	TestCase2.call(this);
+}}
+bpmjs.TestInjectById.__name__ = ["bpmjs","TestInjectById"];
+bpmjs.TestInjectById.__super__ = TestCase2;
+for(var k in TestCase2.prototype ) bpmjs.TestInjectById.prototype[k] = TestCase2.prototype[k];
+bpmjs.TestInjectById.prototype.testInject = function() {
+	var context = bpmjs.ContextBuilder.build(bpmjs._TestInjectById.TestConfig);
+	var a1 = context.getObjectByName("a1");
+	this.assertEquals(1,a1.a1.value,{ fileName : "TestInjectById.hx", lineNumber : 10, className : "bpmjs.TestInjectById", methodName : "testInject"});
+	this.assertEquals(2,a1.a2.value,{ fileName : "TestInjectById.hx", lineNumber : 11, className : "bpmjs.TestInjectById", methodName : "testInject"});
+	this.assertEquals(3,a1.a3.value,{ fileName : "TestInjectById.hx", lineNumber : 12, className : "bpmjs.TestInjectById", methodName : "testInject"});
+	var a2 = context.getObjectByName("a2");
+	this.assertEquals(1,a2.a1.value,{ fileName : "TestInjectById.hx", lineNumber : 15, className : "bpmjs.TestInjectById", methodName : "testInject"});
+	this.assertEquals(2,a2.a2.value,{ fileName : "TestInjectById.hx", lineNumber : 16, className : "bpmjs.TestInjectById", methodName : "testInject"});
+	this.assertEquals(3,a2.a3.value,{ fileName : "TestInjectById.hx", lineNumber : 17, className : "bpmjs.TestInjectById", methodName : "testInject"});
+	var a3 = context.getObjectByName("a3");
+	this.assertEquals(1,a3.a1.value,{ fileName : "TestInjectById.hx", lineNumber : 20, className : "bpmjs.TestInjectById", methodName : "testInject"});
+	this.assertEquals(2,a3.a2.value,{ fileName : "TestInjectById.hx", lineNumber : 21, className : "bpmjs.TestInjectById", methodName : "testInject"});
+	this.assertEquals(3,a3.a3.value,{ fileName : "TestInjectById.hx", lineNumber : 22, className : "bpmjs.TestInjectById", methodName : "testInject"});
+}
+bpmjs.TestInjectById.prototype.__class__ = bpmjs.TestInjectById;
+if(!bpmjs._TestInjectById) bpmjs._TestInjectById = {}
+bpmjs._TestInjectById.TestConfig = function(p) { if( p === $_ ) return; {
+	this.a1 = new bpmjs._TestInjectById.A();
+	this.a1.value = 1;
+	this.a2 = new bpmjs._TestInjectById.A();
+	this.a2.value = 2;
+	this.a3 = new bpmjs._TestInjectById.A();
+	this.a3.value = 3;
+}}
+bpmjs._TestInjectById.TestConfig.__name__ = ["bpmjs","_TestInjectById","TestConfig"];
+bpmjs._TestInjectById.TestConfig.prototype.a1 = null;
+bpmjs._TestInjectById.TestConfig.prototype.a2 = null;
+bpmjs._TestInjectById.TestConfig.prototype.a3 = null;
+bpmjs._TestInjectById.TestConfig.prototype.__class__ = bpmjs._TestInjectById.TestConfig;
+bpmjs._TestInjectById.TestConfig.__interfaces__ = [haxe.rtti.Infos];
+bpmjs._TestInjectById.A = function(p) { if( p === $_ ) return; {
+	null;
+}}
+bpmjs._TestInjectById.A.__name__ = ["bpmjs","_TestInjectById","A"];
+bpmjs._TestInjectById.A.prototype.a1 = null;
+bpmjs._TestInjectById.A.prototype.a3 = null;
+bpmjs._TestInjectById.A.prototype.a2 = null;
+bpmjs._TestInjectById.A.prototype.value = null;
+bpmjs._TestInjectById.A.prototype.__class__ = bpmjs._TestInjectById.A;
+bpmjs._TestInjectById.A.__interfaces__ = [haxe.rtti.Infos];
 reflect.Property = function(field,definedInClass,owner) { if( field === $_ ) return; {
 	reflect.Field.call(this,field,definedInClass,owner);
 }}
@@ -4137,17 +4216,11 @@ reflect.PropertyTest.prototype.testSetValue = function() {
 }
 reflect.PropertyTest.prototype.__class__ = reflect.PropertyTest;
 TestRunner = function(p) { if( p === $_ ) return; {
-	this.runner = new haxe.unit.TestRunner();
-	reflect.Tests.addTo(this.runner);
-	this.addBPMJSTests();
-	this.addContextBuilderTests();
-	this.addFrontMessengerTests();
-	this.addIntegrationTests();
-	this.addSequencerTests();
-	this.addSceneTests();
+	var runner = new haxe.unit.TestRunner();
+	this.addTests(runner);
 	var startTime = Date.now().getTime();
-	this.runner.run();
-	haxe.Log.trace("Time for testing... " + (Date.now().getTime() - startTime) + "ms",{ fileName : "TestRunner.hx", lineNumber : 47, className : "TestRunner", methodName : "new"});
+	runner.run();
+	haxe.Log.trace("Time for testing... " + (Date.now().getTime() - startTime) + "ms",{ fileName : "TestRunner.hx", lineNumber : 21, className : "TestRunner", methodName : "new"});
 }}
 TestRunner.__name__ = ["TestRunner"];
 TestRunner.main = function() {
@@ -4155,31 +4228,10 @@ TestRunner.main = function() {
 	Log.addFilter(new ERegFilter(LogLevel.INFO,new EReg(".*","")));
 	var runner = new TestRunner();
 }
-TestRunner.prototype.runner = null;
-TestRunner.prototype.addBPMJSTests = function() {
-	this.runner.add(new bpmjs.TestMessenger());
-}
-TestRunner.prototype.addContextBuilderTests = function() {
-	this.runner.add(new bpmjs.TestGetObject());
-	this.runner.add(new bpmjs.TestInject());
-	this.runner.add(new bpmjs.TestComplete());
-	this.runner.add(new bpmjs.TestError());
-	this.runner.add(new bpmjs.TestConfigure());
-	this.runner.add(new bpmjs.TestDynamic());
-	this.runner.add(new bpmjs.TestObserve());
-}
-TestRunner.prototype.addFrontMessengerTests = function() {
-	this.runner.add(new bpmjs.TestFrontMessenger());
-}
-TestRunner.prototype.addIntegrationTests = function() {
-	this.runner.add(new bpmjs.integration.TestMessaging());
-	this.runner.add(new bpmjs.integration.TestMultipleConfigs());
-}
-TestRunner.prototype.addSequencerTests = function() {
-	this.runner.add(new bpmjs.TestSequencer());
-}
-TestRunner.prototype.addSceneTests = function() {
-	this.runner.add(new kumite.scene.TestLayerOrder());
+TestRunner.prototype.addTests = function(runner) {
+	reflect.Tests.addTo(runner);
+	bpmjs.Tests.addTo(runner);
+	runner.add(new kumite.scene.TestLayerOrder());
 }
 TestRunner.prototype.__class__ = TestRunner;
 haxe.unit.TestResult = function(p) { if( p === $_ ) return; {
@@ -4333,6 +4385,23 @@ reflect.CClassInt.__name__ = ["reflect","CClassInt"];
 reflect.CClassInt.prototype["int"] = null;
 reflect.CClassInt.prototype.__class__ = reflect.CClassInt;
 reflect.CClassInt.__interfaces__ = [haxe.rtti.Infos];
+bpmjs.Tests = function() { }
+bpmjs.Tests.__name__ = ["bpmjs","Tests"];
+bpmjs.Tests.addTo = function(runner) {
+	runner.add(new bpmjs.TestMessenger());
+	runner.add(new bpmjs.TestGetObject());
+	runner.add(new bpmjs.TestInject());
+	runner.add(new bpmjs.TestInjectById());
+	runner.add(new bpmjs.TestComplete());
+	runner.add(new bpmjs.TestError());
+	runner.add(new bpmjs.TestConfigure());
+	runner.add(new bpmjs.TestDynamic());
+	runner.add(new bpmjs.TestObserve());
+	runner.add(new bpmjs.TestFrontMessenger());
+	runner.add(new bpmjs.TestSequencer());
+	bpmjs.integration.Tests.addTo(runner);
+}
+bpmjs.Tests.prototype.__class__ = bpmjs.Tests;
 kumite.scene.Scene = function(p) { if( p === $_ ) return; {
 	this.layers = new Array();
 }}
@@ -4730,6 +4799,9 @@ bpmjs._TestSequencer.S1.__meta__ = { fields : { initPrepare : { Sequence : ["boo
 bpmjs._TestSequencer.S1.__rtti = "<class path=\"bpmjs._TestSequencer.S1\" params=\"\" private=\"1\" module=\"bpmjs.TestSequencer\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<initPrepare public=\"1\" set=\"method\" line=\"65\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<init public=\"1\" set=\"method\" line=\"71\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<new public=\"1\" set=\"method\" line=\"60\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Log.filters = new Array();
 Log.args = new Array();
+bpmjs._TestInjectById.TestConfig.__rtti = "<class path=\"bpmjs._TestInjectById.TestConfig\" params=\"\" private=\"1\" module=\"bpmjs.TestInjectById\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<a1 public=\"1\"><c path=\"bpmjs._TestInjectById.A\"/></a1>\n\t<a2 public=\"1\"><c path=\"bpmjs._TestInjectById.A\"/></a2>\n\t<a3 public=\"1\"><c path=\"bpmjs._TestInjectById.A\"/></a3>\n\t<new public=\"1\" set=\"method\" line=\"32\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+bpmjs._TestInjectById.A.__meta__ = { fields : { a1 : { Inject : null}, a3 : { Inject : null}, a2 : { Inject : null}}};
+bpmjs._TestInjectById.A.__rtti = "<class path=\"bpmjs._TestInjectById.A\" params=\"\" private=\"1\" module=\"bpmjs.TestInjectById\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<a1 public=\"1\"><c path=\"bpmjs._TestInjectById.A\"/></a1>\n\t<a3 public=\"1\"><c path=\"bpmjs._TestInjectById.A\"/></a3>\n\t<a2 public=\"1\"><c path=\"bpmjs._TestInjectById.A\"/></a2>\n\t<value public=\"1\"><c path=\"Int\"/></value>\n\t<new public=\"1\" set=\"method\" line=\"58\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs._TestComplete.TestConfigWithA.__rtti = "<class path=\"bpmjs._TestComplete.TestConfigWithA\" params=\"\" private=\"1\" module=\"bpmjs.TestComplete\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<a public=\"1\"><c path=\"bpmjs._TestComplete.A\"/></a>\n\t<new public=\"1\" set=\"method\" line=\"31\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs._TestComplete.A.__meta__ = { fields : { handleContextComplete : { Complete : null}, handleContextPostComplete : { PostComplete : null}}};
 bpmjs._TestComplete.A.__rtti = "<class path=\"bpmjs._TestComplete.A\" params=\"\" private=\"1\" module=\"bpmjs.TestComplete\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<handleContextComplete public=\"1\" set=\"method\" line=\"44\"><f a=\"\"><e path=\"Void\"/></f></handleContextComplete>\n\t<handleContextPostComplete public=\"1\" set=\"method\" line=\"50\"><f a=\"\"><e path=\"Void\"/></f></handleContextPostComplete>\n\t<new public=\"1\" set=\"method\" line=\"39\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";

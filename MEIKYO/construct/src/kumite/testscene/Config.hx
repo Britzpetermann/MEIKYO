@@ -1,8 +1,13 @@
 package kumite.testscene;
+
+import kumite.scene.Scene;
+
 import haxe.rtti.Infos;
 
 class Config implements Infos
 {
+	public var testBackgroundLayer : TestBackgroundLayer;
+	
 	public var testLayer1 : TestLayer1;
 	public var testLayer2 : TestLayer2;
 	public var testLayer3 : TestLayer3;
@@ -14,6 +19,8 @@ class Config implements Infos
 	
 	public function new()
 	{
+		testBackgroundLayer = new TestBackgroundLayer();
+		
 		testLayer1 = new TestLayer1();
 		testLayer2 = new TestLayer2();
 		testLayer3 = new TestLayer3();
