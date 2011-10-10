@@ -22,6 +22,7 @@ class Main {
 
 	function new(canvas : Canvas)
 	{
+		Log.groupCollapsed("Build context");
 		try
 		{
 			var context = bpmjs.ContextBuilder.buildAll([
@@ -33,7 +34,7 @@ class Main {
 					kumite.projection.Config,
 					kumite.camera.Config,
 					kumite.mouse.Config,
-					//kumite.helloworldgl.Config,
+					kumite.helloworldgl.Config,
 					kumite.displaylist.Config,
 					kumite.vjinterface.Config,
 					kumite.scene.Config,
@@ -44,6 +45,7 @@ class Main {
 		{
 			Log.error("Error building application! \n" + e);
 		}
+		Log.groupEnd();
 	}
 
 }

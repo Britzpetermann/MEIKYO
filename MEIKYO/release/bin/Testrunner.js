@@ -225,7 +225,13 @@ bpmjs.Context.prototype.getObjectByType = function(type) {
 	return null;
 }
 bpmjs.Context.prototype.addObserver = function(object,methodName,type) {
-	Log.info(bpmjs.ReflectUtil.getClassName(object.object),methodName,Type.getClassName(type),null,null,null,null,{ fileName : "Context.hx", lineNumber : 47, className : "bpmjs.Context", methodName : "addObserver"});
+	{
+		Log.posInfo = { fileName : "Context.hx", lineNumber : 47, className : "bpmjs.Context", methodName : "addObserver"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput(bpmjs.ReflectUtil.getClassName(object.object),methodName,Type.getClassName(type),null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
 	var observer = new bpmjs.Observer();
 	observer.object = object;
 	observer.methodName = methodName;
@@ -379,7 +385,10 @@ bpmjs.Sequencer = function(p) { if( p === $_ ) return; {
 bpmjs.Sequencer.__name__ = ["bpmjs","Sequencer"];
 bpmjs.Sequencer.prototype.context = null;
 bpmjs.Sequencer.prototype.start = function(name) {
-	Log.groupCollapsed("Sequence: " + name,null,null,null,null,null,null,{ fileName : "Sequencer.hx", lineNumber : 16, className : "bpmjs.Sequencer", methodName : "start"});
+	if(Log.infoEnabled({ fileName : "Sequencer.hx", lineNumber : 16, className : "bpmjs.Sequencer", methodName : "start"})) {
+		Log.fetchInput("Sequence: " + name,null,null,null,null,null,null);
+		console.groupCollapsed(Log.createMessage());
+	}
 	var sequence = new bpmjs.Sequence(name);
 	sequence.objects = this.context.objects;
 	sequence.execute("initPrepare");
@@ -415,7 +424,13 @@ bpmjs.Sequence.prototype.execute = function(phase) {
 					var localName = meta.Sequence[0];
 					var localPhase = meta.Sequence[1];
 					if(localPhase == phase) {
-						Log.info("Phase '" + localPhase + "' " + Type.getClassName(contextObject.type) + "#" + fieldName,null,null,null,null,null,null,{ fileName : "Sequencer.hx", lineNumber : 59, className : "bpmjs.Sequence", methodName : "execute"});
+						{
+							Log.posInfo = { fileName : "Sequencer.hx", lineNumber : 59, className : "bpmjs.Sequence", methodName : "execute"};
+							if(Log.filter(LogLevel.INFO)) {
+								Log.fetchInput("Phase '" + localPhase + "' " + Type.getClassName(contextObject.type) + "#" + fieldName,null,null,null,null,null,null);
+								console.info(Log.createMessage());
+							}
+						}
 						Reflect.field(object,fieldName).apply(object,[]);
 					}
 				}
@@ -1425,15 +1440,33 @@ bpmjs.DefaultFrontMessenger = function(p) { if( p === $_ ) return; {
 bpmjs.DefaultFrontMessenger.__name__ = ["bpmjs","DefaultFrontMessenger"];
 bpmjs.DefaultFrontMessenger.prototype.receivers = null;
 bpmjs.DefaultFrontMessenger.prototype.addMessenger = function(messenger) {
-	Log.info(Type.getClassName(Type.getClass(messenger)),null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 21, className : "bpmjs.DefaultFrontMessenger", methodName : "addMessenger"});
+	{
+		Log.posInfo = { fileName : "FrontMessenger.hx", lineNumber : 21, className : "bpmjs.DefaultFrontMessenger", methodName : "addMessenger"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput(Type.getClassName(Type.getClass(messenger)),null,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
 	messenger.addReceiver(null,$closure(this,"handleMessage"));
 }
 bpmjs.DefaultFrontMessenger.prototype.addReceiver = function(receivingObject,methodName,type) {
-	Log.info(Type.getClassName(Type.getClass(receivingObject)) + "#" + methodName,Type.getClassName(type),null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 27, className : "bpmjs.DefaultFrontMessenger", methodName : "addReceiver"});
+	{
+		Log.posInfo = { fileName : "FrontMessenger.hx", lineNumber : 27, className : "bpmjs.DefaultFrontMessenger", methodName : "addReceiver"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput(Type.getClassName(Type.getClass(receivingObject)) + "#" + methodName,Type.getClassName(type),null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
 	this.receivers.push(new bpmjs._FrontMessenger.Receiver(receivingObject,methodName,type));
 }
 bpmjs.DefaultFrontMessenger.prototype.handleMessage = function(message) {
-	Log.info(Type.getClassName(Type.getClass(message)),null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 33, className : "bpmjs.DefaultFrontMessenger", methodName : "handleMessage"});
+	{
+		Log.posInfo = { fileName : "FrontMessenger.hx", lineNumber : 33, className : "bpmjs.DefaultFrontMessenger", methodName : "handleMessage"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput(Type.getClassName(Type.getClass(message)),null,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
 	{
 		var _g = 0, _g1 = this.receivers;
 		while(_g < _g1.length) {
@@ -1441,7 +1474,13 @@ bpmjs.DefaultFrontMessenger.prototype.handleMessage = function(message) {
 			++_g;
 			if(Type.getClass(message) == receiver.type) {
 				{
-					Log.info(Type.getClassName(Type.getClass(receiver.receiver)) + "#" + receiver.methodName,null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 66, className : "bpmjs._FrontMessenger.Receiver", methodName : "execute"});
+					{
+						Log.posInfo = { fileName : "FrontMessenger.hx", lineNumber : 66, className : "bpmjs._FrontMessenger.Receiver", methodName : "execute"};
+						if(Log.filter(LogLevel.INFO)) {
+							Log.fetchInput(Type.getClassName(Type.getClass(receiver.receiver)) + "#" + receiver.methodName,null,null,null,null,null,null);
+							console.info(Log.createMessage());
+						}
+					}
 					receiver.method.apply(receiver.receiver,[message]);
 				}
 			}
@@ -1466,7 +1505,13 @@ bpmjs._FrontMessenger.Receiver.prototype.matches = function(message) {
 	return Type.getClass(message) == this.type;
 }
 bpmjs._FrontMessenger.Receiver.prototype.execute = function(message) {
-	Log.info(Type.getClassName(Type.getClass(this.receiver)) + "#" + this.methodName,null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 66, className : "bpmjs._FrontMessenger.Receiver", methodName : "execute"});
+	{
+		Log.posInfo = { fileName : "FrontMessenger.hx", lineNumber : 66, className : "bpmjs._FrontMessenger.Receiver", methodName : "execute"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput(Type.getClassName(Type.getClass(this.receiver)) + "#" + this.methodName,null,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
 	this.method.apply(this.receiver,[message]);
 }
 bpmjs._FrontMessenger.Receiver.prototype.__class__ = bpmjs._FrontMessenger.Receiver;
@@ -1512,6 +1557,21 @@ bpmjs.integration._TestMultipleConfigs.B = function(p) { if( p === $_ ) return; 
 bpmjs.integration._TestMultipleConfigs.B.__name__ = ["bpmjs","integration","_TestMultipleConfigs","B"];
 bpmjs.integration._TestMultipleConfigs.B.prototype.__class__ = bpmjs.integration._TestMultipleConfigs.B;
 bpmjs.integration._TestMultipleConfigs.B.__interfaces__ = [haxe.rtti.Infos];
+ERegFilter = function(level,r) { if( level === $_ ) return; {
+	this.level = level;
+	this.r = r;
+}}
+ERegFilter.__name__ = ["ERegFilter"];
+ERegFilter.prototype.level = null;
+ERegFilter.prototype.r = null;
+ERegFilter.prototype.enabled = function(input,i,level) {
+	var sender = i.className + "." + i.methodName;
+	var matches = this.r.match(sender);
+	if(!matches) return input;
+	return matches && this.level.isSmallerOrEqual(level);
+}
+ERegFilter.prototype.__class__ = ERegFilter;
+ERegFilter.__interfaces__ = [LogFilter];
 haxe.StackItem = { __ename__ : ["haxe","StackItem"], __constructs__ : ["CFunction","Module","FilePos","Method","Lambda"] }
 haxe.StackItem.CFunction = ["CFunction",0];
 haxe.StackItem.CFunction.toString = $estr;
@@ -3025,7 +3085,13 @@ reflect.ClassInfo.prototype.scanFields = function(classDef) {
 			this.getProperties().push(new reflect.Property(field,classDef.path,this));
 		}break;
 		default:{
-			Log.warn("Unknown type:",field,"in class ",classDef," found in " + this.name,null,null,{ fileName : "ClassInfo.hx", lineNumber : 143, className : "reflect.ClassInfo", methodName : "scanFields"});
+			{
+				Log.posInfo = { fileName : "ClassInfo.hx", lineNumber : 143, className : "reflect.ClassInfo", methodName : "scanFields"};
+				if(Log.filter(LogLevel.WARN)) {
+					Log.fetchInput("Unknown type:",field,"in class ",classDef," found in " + this.name,null,null);
+					console.warn(Log.createMessage());
+				}
+			}
 		}break;
 		}
 	}
@@ -3142,7 +3208,13 @@ bpmjs._TestSequencer.Launcher = function(p) { if( p === $_ ) return; {
 bpmjs._TestSequencer.Launcher.__name__ = ["bpmjs","_TestSequencer","Launcher"];
 bpmjs._TestSequencer.Launcher.prototype.sequencer = null;
 bpmjs._TestSequencer.Launcher.prototype.handleContextPostComplete = function() {
-	Log.info(null,null,null,null,null,null,null,{ fileName : "TestSequencer.hx", lineNumber : 53, className : "bpmjs._TestSequencer.Launcher", methodName : "handleContextPostComplete"});
+	{
+		Log.posInfo = { fileName : "TestSequencer.hx", lineNumber : 53, className : "bpmjs._TestSequencer.Launcher", methodName : "handleContextPostComplete"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput(null,null,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
 	this.sequencer.start("boot");
 }
 bpmjs._TestSequencer.Launcher.prototype.__class__ = bpmjs._TestSequencer.Launcher;
@@ -3334,12 +3406,10 @@ bpmjs.ContextBuilder.build = function(configClass,contextConfig) {
 	return bpmjs.ContextBuilder.buildAll([configClass],contextConfig);
 }
 bpmjs.ContextBuilder.buildAll = function(configClasses,contextConfig) {
-	Log.groupCollapsed(null,null,null,null,null,null,null,{ fileName : "ContextBuilder.hx", lineNumber : 20, className : "bpmjs.ContextBuilder", methodName : "buildAll"});
 	var builder = new bpmjs.ContextBuilder();
 	bpmjs.ContextBuilder.defaultContext = builder.context;
 	builder.contextConfig = contextConfig == null?bpmjs.ContextBuilder.createDefaultContextConfig():contextConfig;
 	builder.buildInternal(configClasses);
-	Log.groupEnd({ fileName : "ContextBuilder.hx", lineNumber : 28, className : "bpmjs.ContextBuilder", methodName : "buildAll"});
 	return bpmjs.ContextBuilder.defaultContext;
 }
 bpmjs.ContextBuilder.configure = function(object) {
@@ -3426,7 +3496,13 @@ bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
 		if(property.hasMetadata("Inject")) {
 			var type = property.getType().type;
 			var wiredObject = type == bpmjs.Context?this.context:this.context.getObjectByType(type);
-			if(wiredObject == null) Log.warn("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + property.getName() + " but could not find object to inject.",null,null,null,null,null,null,{ fileName : "ContextBuilder.hx", lineNumber : 130, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"});
+			if(wiredObject == null) {
+				Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 126, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
+				if(Log.filter(LogLevel.WARN)) {
+					Log.fetchInput("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + property.getName() + " but could not find object to inject.",null,null,null,null,null,null);
+					console.warn(Log.createMessage());
+				}
+			}
 			else property.setValue(contextObject.object,wiredObject);
 		}
 	}
@@ -3572,10 +3648,14 @@ reflect.MetadataTest.prototype.testProperty = function() {
 reflect.MetadataTest.prototype.__class__ = reflect.MetadataTest;
 Log = function() { }
 Log.__name__ = ["Log"];
+Log.posInfo = null;
+Log.debug = function() {
+	debugger;
+}
 Log.init = function() {
 	{
 		if(!window.console) console = { };
-		console.log = console.log || function() {
+		console.info = console.info || function() {
 			null;
 		}
 		console.warn = console.warn || function() {
@@ -3584,75 +3664,84 @@ Log.init = function() {
 		console.error = console.error || function() {
 			null;
 		}
-		console.info = console.info || function() {
-			null;
-		}
 	}
 	haxe.Log.trace = $closure(Log,"infoConsole");
-}
-Log.debug = function() {
-	debugger;
 }
 Log.addFilter = function(filter) {
 	Log.filters.push(filter);
 }
 Log.info = function(m0,m1,m2,m3,m4,m5,m6,i) {
-	if(Log.infoEnabled(i)) console.log(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i));
+	Log.posInfo = i;
+	if(Log.filter(LogLevel.INFO)) {
+		Log.fetchInput(m0,m1,m2,m3,m4,m5,m6);
+		console.info(Log.createMessage());
+	}
 }
 Log.warn = function(m0,m1,m2,m3,m4,m5,m6,i) {
-	if(Log.warnEnabled(i)) console.warn(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i));
+	Log.posInfo = i;
+	if(Log.filter(LogLevel.WARN)) {
+		Log.fetchInput(m0,m1,m2,m3,m4,m5,m6);
+		console.warn(Log.createMessage());
+	}
 }
 Log.error = function(m0,m1,m2,m3,m4,m5,m6,i) {
-	if(Log.errorEnabled(i)) {
-		var exception = haxe.Stack.exceptionStack().join("\n");
-		console.error(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i) + "\nStack:\n" + exception);
+	Log.posInfo = i;
+	if(Log.filter(LogLevel.ERROR)) {
+		Log.fetchInput(m0,m1,m2,m3,m4,m5,m6);
+		console.error(Log.createMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
 	}
 }
 Log.infoEnabled = function(i) {
-	return Log.filter(i,LogLevel.INFO);
+	Log.posInfo = i;
+	return Log.filter(LogLevel.INFO);
 }
 Log.warnEnabled = function(i) {
-	return Log.filter(i,LogLevel.WARN);
+	Log.posInfo = i;
+	return Log.filter(LogLevel.WARN);
 }
 Log.errorEnabled = function(i) {
-	return Log.filter(i,LogLevel.ERROR);
+	Log.posInfo = i;
+	return Log.filter(LogLevel.ERROR);
 }
 Log.groupCollapsed = function(m0,m1,m2,m3,m4,m5,m6,i) {
-	if(Log.infoEnabled(i)) console.groupCollapsed(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i));
+	if(Log.infoEnabled(i)) {
+		Log.fetchInput(m0,m1,m2,m3,m4,m5,m6);
+		console.groupCollapsed(Log.createMessage());
+	}
 }
 Log.groupEnd = function(i) {
 	if(Log.infoEnabled(i)) console.groupEnd();
 }
-Log.filter = function(i,level) {
+Log.fetchInput = function(m0,m1,m2,m3,m4,m5,m6) {
+	Log.args = new Array();
+	if(m0 != null) Log.args.push(m0);
+	if(m1 != null) Log.args.push(m1);
+	if(m2 != null) Log.args.push(m2);
+	if(m3 != null) Log.args.push(m3);
+	if(m4 != null) Log.args.push(m4);
+	if(m5 != null) Log.args.push(m5);
+	if(m6 != null) Log.args.push(m6);
+}
+Log.createMessage = function() {
+	var from = Log.posInfo.className + "." + Log.posInfo.methodName;
+	return "[" + from + "] " + Log.args.join(" ");
+}
+Log.filter = function(level) {
 	var result = true;
 	{
 		var _g = 0, _g1 = Log.filters;
 		while(_g < _g1.length) {
 			var filter = _g1[_g];
 			++_g;
-			result = filter.enabled(result,i,level);
+			result = filter.enabled(result,Log.posInfo,level);
 		}
 	}
 	return result;
 }
-Log.createMessage = function(messages,i) {
-	var resultArray = [];
-	{
-		var _g = 0;
-		while(_g < messages.length) {
-			var message = messages[_g];
-			++_g;
-			resultArray.push(Std.string(message));
-		}
-	}
-	while(resultArray.length > 0 && resultArray[resultArray.length - 1] == "null") {
-		resultArray.pop();
-	}
-	var from = i.className + "." + i.methodName;
-	return "[" + from + "] " + resultArray.join(", ");
-}
 Log.infoConsole = function(v,i) {
-	console.log("" + Log.createMessage([v],i) + " (trace)");
+	Log.posInfo = i;
+	Log.fetchInput(v);
+	console.log("" + Log.createMessage() + " (trace)");
 }
 Log.prototype.__class__ = Log;
 reflect.Property = function(field,definedInClass,owner) { if( field === $_ ) return; {
@@ -4037,10 +4126,34 @@ TestRunner = function(p) { if( p === $_ ) return; {
 	this.addSceneTests();
 	var startTime = Date.now().getTime();
 	this.runner.run();
-	haxe.Log.trace("Time for testing... " + (Date.now().getTime() - startTime) + "ms",{ fileName : "TestRunner.hx", lineNumber : 43, className : "TestRunner", methodName : "new"});
+	haxe.Log.trace("Time for testing... " + (Date.now().getTime() - startTime) + "ms",{ fileName : "TestRunner.hx", lineNumber : 52, className : "TestRunner", methodName : "new"});
 }}
 TestRunner.__name__ = ["TestRunner"];
 TestRunner.main = function() {
+	Log.init();
+	Log.addFilter(new ERegFilter(LogLevel.INFO,new EReg(".*","")));
+	var x = Log;
+	{
+		Log.posInfo = { fileName : "TestRunner.hx", lineNumber : 28, className : "TestRunner", methodName : "main"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput(null,null,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
+	{
+		Log.posInfo = { fileName : "TestRunner.hx", lineNumber : 29, className : "TestRunner", methodName : "main"};
+		if(Log.filter(LogLevel.WARN)) {
+			Log.fetchInput(1,2,x,null,null,null,null);
+			console.warn(Log.createMessage());
+		}
+	}
+	{
+		Log.posInfo = { fileName : "TestRunner.hx", lineNumber : 30, className : "TestRunner", methodName : "main"};
+		if(Log.filter(LogLevel.ERROR)) {
+			Log.fetchInput(1,2,3,null,null,null,null);
+			console.error(Log.createMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
+		}
+	}
 	var runner = new TestRunner();
 }
 TestRunner.prototype.runner = null;
@@ -4541,6 +4654,7 @@ bpmjs._TestSequencer.Launcher.__rtti = "<class path=\"bpmjs._TestSequencer.Launc
 bpmjs._TestSequencer.S1.__meta__ = { fields : { initPrepare : { Sequence : ["boot","initPrepare"]}, init : { Sequence : ["boot","init"]}}};
 bpmjs._TestSequencer.S1.__rtti = "<class path=\"bpmjs._TestSequencer.S1\" params=\"\" private=\"1\" module=\"bpmjs.TestSequencer\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<initPrepare public=\"1\" set=\"method\" line=\"65\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<init public=\"1\" set=\"method\" line=\"71\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<new public=\"1\" set=\"method\" line=\"60\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Log.filters = new Array();
+Log.args = new Array();
 bpmjs._TestComplete.TestConfigWithA.__rtti = "<class path=\"bpmjs._TestComplete.TestConfigWithA\" params=\"\" private=\"1\" module=\"bpmjs.TestComplete\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<a public=\"1\"><c path=\"bpmjs._TestComplete.A\"/></a>\n\t<new public=\"1\" set=\"method\" line=\"31\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs._TestComplete.A.__meta__ = { fields : { handleContextComplete : { Complete : null}, handleContextPostComplete : { PostComplete : null}}};
 bpmjs._TestComplete.A.__rtti = "<class path=\"bpmjs._TestComplete.A\" params=\"\" private=\"1\" module=\"bpmjs.TestComplete\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<handleContextComplete public=\"1\" set=\"method\" line=\"44\"><f a=\"\"><e path=\"Void\"/></f></handleContextComplete>\n\t<handleContextPostComplete public=\"1\" set=\"method\" line=\"50\"><f a=\"\"><e path=\"Void\"/></f></handleContextPostComplete>\n\t<new public=\"1\" set=\"method\" line=\"39\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";

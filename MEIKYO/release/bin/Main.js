@@ -1123,43 +1123,38 @@ haxe.rtti.XmlParser.prototype.defplat = function() {
 haxe.rtti.XmlParser.prototype.__class__ = haxe.rtti.XmlParser;
 Log = function() { }
 Log.__name__ = ["Log"];
+Log.posInfo = null;
+Log.debug = function() {
+	$s.push("Log::debug");
+	var $spos = $s.length;
+	debugger;
+	$s.pop();
+}
 Log.init = function() {
 	$s.push("Log::init");
 	var $spos = $s.length;
 	{
 		if(!window.console) console = { };
-		console.log = console.log || function() {
-			$s.push("Log::init@10");
+		console.info = console.info || function() {
+			$s.push("Log::init@17");
 			var $spos = $s.length;
 			null;
 			$s.pop();
 		}
 		console.warn = console.warn || function() {
-			$s.push("Log::init@11");
+			$s.push("Log::init@18");
 			var $spos = $s.length;
 			null;
 			$s.pop();
 		}
 		console.error = console.error || function() {
-			$s.push("Log::init@12");
-			var $spos = $s.length;
-			null;
-			$s.pop();
-		}
-		console.info = console.info || function() {
-			$s.push("Log::init@13");
+			$s.push("Log::init@19");
 			var $spos = $s.length;
 			null;
 			$s.pop();
 		}
 	}
 	haxe.Log.trace = $closure(Log,"infoConsole");
-	$s.pop();
-}
-Log.debug = function() {
-	$s.push("Log::debug");
-	var $spos = $s.length;
-	debugger;
 	$s.pop();
 }
 Log.addFilter = function(filter) {
@@ -1171,29 +1166,39 @@ Log.addFilter = function(filter) {
 Log.info = function(m0,m1,m2,m3,m4,m5,m6,i) {
 	$s.push("Log::info");
 	var $spos = $s.length;
-	if(Log.infoEnabled(i)) console.log(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i));
+	Log.posInfo = i;
+	if(Log.filter(LogLevel.INFO)) {
+		Log.fetchInput(m0,m1,m2,m3,m4,m5,m6);
+		console.info(Log.createMessage());
+	}
 	$s.pop();
 }
 Log.warn = function(m0,m1,m2,m3,m4,m5,m6,i) {
 	$s.push("Log::warn");
 	var $spos = $s.length;
-	if(Log.warnEnabled(i)) console.warn(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i));
+	Log.posInfo = i;
+	if(Log.filter(LogLevel.WARN)) {
+		Log.fetchInput(m0,m1,m2,m3,m4,m5,m6);
+		console.warn(Log.createMessage());
+	}
 	$s.pop();
 }
 Log.error = function(m0,m1,m2,m3,m4,m5,m6,i) {
 	$s.push("Log::error");
 	var $spos = $s.length;
-	if(Log.errorEnabled(i)) {
-		var exception = haxe.Stack.exceptionStack().join("\n");
-		console.error(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i) + "\nStack:\n" + exception);
+	Log.posInfo = i;
+	if(Log.filter(LogLevel.ERROR)) {
+		Log.fetchInput(m0,m1,m2,m3,m4,m5,m6);
+		console.error(Log.createMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
 	}
 	$s.pop();
 }
 Log.infoEnabled = function(i) {
 	$s.push("Log::infoEnabled");
 	var $spos = $s.length;
+	Log.posInfo = i;
 	{
-		var $tmp = Log.filter(i,LogLevel.INFO);
+		var $tmp = Log.filter(LogLevel.INFO);
 		$s.pop();
 		return $tmp;
 	}
@@ -1202,8 +1207,9 @@ Log.infoEnabled = function(i) {
 Log.warnEnabled = function(i) {
 	$s.push("Log::warnEnabled");
 	var $spos = $s.length;
+	Log.posInfo = i;
 	{
-		var $tmp = Log.filter(i,LogLevel.WARN);
+		var $tmp = Log.filter(LogLevel.WARN);
 		$s.pop();
 		return $tmp;
 	}
@@ -1212,8 +1218,9 @@ Log.warnEnabled = function(i) {
 Log.errorEnabled = function(i) {
 	$s.push("Log::errorEnabled");
 	var $spos = $s.length;
+	Log.posInfo = i;
 	{
-		var $tmp = Log.filter(i,LogLevel.ERROR);
+		var $tmp = Log.filter(LogLevel.ERROR);
 		$s.pop();
 		return $tmp;
 	}
@@ -1222,7 +1229,10 @@ Log.errorEnabled = function(i) {
 Log.groupCollapsed = function(m0,m1,m2,m3,m4,m5,m6,i) {
 	$s.push("Log::groupCollapsed");
 	var $spos = $s.length;
-	if(Log.infoEnabled(i)) console.groupCollapsed(Log.createMessage([m0,m1,m2,m3,m4,m5,m6],i));
+	if(Log.infoEnabled(i)) {
+		Log.fetchInput(m0,m1,m2,m3,m4,m5,m6);
+		console.groupCollapsed(Log.createMessage());
+	}
 	$s.pop();
 }
 Log.groupEnd = function(i) {
@@ -1231,7 +1241,31 @@ Log.groupEnd = function(i) {
 	if(Log.infoEnabled(i)) console.groupEnd();
 	$s.pop();
 }
-Log.filter = function(i,level) {
+Log.fetchInput = function(m0,m1,m2,m3,m4,m5,m6) {
+	$s.push("Log::fetchInput");
+	var $spos = $s.length;
+	Log.args = new Array();
+	if(m0 != null) Log.args.push(m0);
+	if(m1 != null) Log.args.push(m1);
+	if(m2 != null) Log.args.push(m2);
+	if(m3 != null) Log.args.push(m3);
+	if(m4 != null) Log.args.push(m4);
+	if(m5 != null) Log.args.push(m5);
+	if(m6 != null) Log.args.push(m6);
+	$s.pop();
+}
+Log.createMessage = function() {
+	$s.push("Log::createMessage");
+	var $spos = $s.length;
+	var from = Log.posInfo.className + "." + Log.posInfo.methodName;
+	{
+		var $tmp = "[" + from + "] " + Log.args.join(" ");
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Log.filter = function(level) {
 	$s.push("Log::filter");
 	var $spos = $s.length;
 	var result = true;
@@ -1240,7 +1274,7 @@ Log.filter = function(i,level) {
 		while(_g < _g1.length) {
 			var filter = _g1[_g];
 			++_g;
-			result = filter.enabled(result,i,level);
+			result = filter.enabled(result,Log.posInfo,level);
 		}
 	}
 	{
@@ -1249,33 +1283,12 @@ Log.filter = function(i,level) {
 	}
 	$s.pop();
 }
-Log.createMessage = function(messages,i) {
-	$s.push("Log::createMessage");
-	var $spos = $s.length;
-	var resultArray = [];
-	{
-		var _g = 0;
-		while(_g < messages.length) {
-			var message = messages[_g];
-			++_g;
-			resultArray.push(Std.string(message));
-		}
-	}
-	while(resultArray.length > 0 && resultArray[resultArray.length - 1] == "null") {
-		resultArray.pop();
-	}
-	var from = i.className + "." + i.methodName;
-	{
-		var $tmp = "[" + from + "] " + resultArray.join(", ");
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
 Log.infoConsole = function(v,i) {
 	$s.push("Log::infoConsole");
 	var $spos = $s.length;
-	console.log("" + Log.createMessage([v],i) + " (trace)");
+	Log.posInfo = i;
+	Log.fetchInput(v);
+	console.log("" + Log.createMessage() + " (trace)");
 	$s.pop();
 }
 Log.prototype.__class__ = Log;
@@ -3125,6 +3138,16 @@ hsl.haxe._DirectSignaler.AdvancedBond.prototype.__class__ = hsl.haxe._DirectSign
 hsl.haxe._DirectSignaler.PropagationStatus = function() { }
 hsl.haxe._DirectSignaler.PropagationStatus.__name__ = ["hsl","haxe","_DirectSignaler","PropagationStatus"];
 hsl.haxe._DirectSignaler.PropagationStatus.prototype.__class__ = hsl.haxe._DirectSignaler.PropagationStatus;
+kumite.helloworldgl.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.helloworldgl.Config::new");
+	var $spos = $s.length;
+	this.helloWorld = new kumite.helloworldgl.HelloWorld();
+	$s.pop();
+}}
+kumite.helloworldgl.Config.__name__ = ["kumite","helloworldgl","Config"];
+kumite.helloworldgl.Config.prototype.helloWorld = null;
+kumite.helloworldgl.Config.prototype.__class__ = kumite.helloworldgl.Config;
+kumite.helloworldgl.Config.__interfaces__ = [haxe.rtti.Infos];
 hsl.haxe.Signal = function(data,currentBond,currentTarget,origin) { if( data === $_ ) return; {
 	$s.push("hsl.haxe.Signal::new");
 	var $spos = $s.length;
@@ -3189,7 +3212,10 @@ bpmjs.Sequencer.prototype.context = null;
 bpmjs.Sequencer.prototype.start = function(name) {
 	$s.push("bpmjs.Sequencer::start");
 	var $spos = $s.length;
-	Log.groupCollapsed("Sequence: " + name,null,null,null,null,null,null,{ fileName : "Sequencer.hx", lineNumber : 16, className : "bpmjs.Sequencer", methodName : "start"});
+	if(Log.infoEnabled({ fileName : "Sequencer.hx", lineNumber : 16, className : "bpmjs.Sequencer", methodName : "start"})) {
+		Log.fetchInput("Sequence: " + name,null,null,null,null,null,null);
+		console.groupCollapsed(Log.createMessage());
+	}
 	var sequence = new bpmjs.Sequence(name);
 	sequence.objects = this.context.objects;
 	sequence.execute("initPrepare");
@@ -3231,7 +3257,13 @@ bpmjs.Sequence.prototype.execute = function(phase) {
 					var localName = meta.Sequence[0];
 					var localPhase = meta.Sequence[1];
 					if(localPhase == phase) {
-						Log.info("Phase '" + localPhase + "' " + Type.getClassName(contextObject.type) + "#" + fieldName,null,null,null,null,null,null,{ fileName : "Sequencer.hx", lineNumber : 59, className : "bpmjs.Sequence", methodName : "execute"});
+						{
+							Log.posInfo = { fileName : "Sequencer.hx", lineNumber : 59, className : "bpmjs.Sequence", methodName : "execute"};
+							if(Log.filter(LogLevel.INFO)) {
+								Log.fetchInput("Phase '" + localPhase + "' " + Type.getClassName(contextObject.type) + "#" + fieldName,null,null,null,null,null,null);
+								console.info(Log.createMessage());
+							}
+						}
 						Reflect.field(object,fieldName).apply(object,[]);
 					}
 				}
@@ -3863,12 +3895,10 @@ bpmjs.ContextBuilder.build = function(configClass,contextConfig) {
 bpmjs.ContextBuilder.buildAll = function(configClasses,contextConfig) {
 	$s.push("bpmjs.ContextBuilder::buildAll");
 	var $spos = $s.length;
-	Log.groupCollapsed(null,null,null,null,null,null,null,{ fileName : "ContextBuilder.hx", lineNumber : 20, className : "bpmjs.ContextBuilder", methodName : "buildAll"});
 	var builder = new bpmjs.ContextBuilder();
 	bpmjs.ContextBuilder.defaultContext = builder.context;
 	builder.contextConfig = contextConfig == null?bpmjs.ContextBuilder.createDefaultContextConfig():contextConfig;
 	builder.buildInternal(configClasses);
-	Log.groupEnd({ fileName : "ContextBuilder.hx", lineNumber : 28, className : "bpmjs.ContextBuilder", methodName : "buildAll"});
 	{
 		var $tmp = bpmjs.ContextBuilder.defaultContext;
 		$s.pop();
@@ -3983,7 +4013,13 @@ bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
 		if(property.hasMetadata("Inject")) {
 			var type = property.getType().type;
 			var wiredObject = type == bpmjs.Context?this.context:this.context.getObjectByType(type);
-			if(wiredObject == null) Log.warn("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + property.getName() + " but could not find object to inject.",null,null,null,null,null,null,{ fileName : "ContextBuilder.hx", lineNumber : 130, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"});
+			if(wiredObject == null) {
+				Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 126, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
+				if(Log.filter(LogLevel.WARN)) {
+					Log.fetchInput("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + property.getName() + " but could not find object to inject.",null,null,null,null,null,null);
+					console.warn(Log.createMessage());
+				}
+			}
 			else property.setValue(contextObject.object,wiredObject);
 		}
 	}
@@ -4162,21 +4198,39 @@ bpmjs.DefaultFrontMessenger.prototype.receivers = null;
 bpmjs.DefaultFrontMessenger.prototype.addMessenger = function(messenger) {
 	$s.push("bpmjs.DefaultFrontMessenger::addMessenger");
 	var $spos = $s.length;
-	Log.info(Type.getClassName(Type.getClass(messenger)),null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 21, className : "bpmjs.DefaultFrontMessenger", methodName : "addMessenger"});
+	{
+		Log.posInfo = { fileName : "FrontMessenger.hx", lineNumber : 21, className : "bpmjs.DefaultFrontMessenger", methodName : "addMessenger"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput(Type.getClassName(Type.getClass(messenger)),null,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
 	messenger.addReceiver(null,$closure(this,"handleMessage"));
 	$s.pop();
 }
 bpmjs.DefaultFrontMessenger.prototype.addReceiver = function(receivingObject,methodName,type) {
 	$s.push("bpmjs.DefaultFrontMessenger::addReceiver");
 	var $spos = $s.length;
-	Log.info(Type.getClassName(Type.getClass(receivingObject)) + "#" + methodName,Type.getClassName(type),null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 27, className : "bpmjs.DefaultFrontMessenger", methodName : "addReceiver"});
+	{
+		Log.posInfo = { fileName : "FrontMessenger.hx", lineNumber : 27, className : "bpmjs.DefaultFrontMessenger", methodName : "addReceiver"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput(Type.getClassName(Type.getClass(receivingObject)) + "#" + methodName,Type.getClassName(type),null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
 	this.receivers.push(new bpmjs._FrontMessenger.Receiver(receivingObject,methodName,type));
 	$s.pop();
 }
 bpmjs.DefaultFrontMessenger.prototype.handleMessage = function(message) {
 	$s.push("bpmjs.DefaultFrontMessenger::handleMessage");
 	var $spos = $s.length;
-	Log.info(Type.getClassName(Type.getClass(message)),null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 33, className : "bpmjs.DefaultFrontMessenger", methodName : "handleMessage"});
+	{
+		Log.posInfo = { fileName : "FrontMessenger.hx", lineNumber : 33, className : "bpmjs.DefaultFrontMessenger", methodName : "handleMessage"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput(Type.getClassName(Type.getClass(message)),null,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
 	{
 		var _g = 0, _g1 = this.receivers;
 		while(_g < _g1.length) {
@@ -4184,7 +4238,13 @@ bpmjs.DefaultFrontMessenger.prototype.handleMessage = function(message) {
 			++_g;
 			if(Type.getClass(message) == receiver.type) {
 				{
-					Log.info(Type.getClassName(Type.getClass(receiver.receiver)) + "#" + receiver.methodName,null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 66, className : "bpmjs._FrontMessenger.Receiver", methodName : "execute"});
+					{
+						Log.posInfo = { fileName : "FrontMessenger.hx", lineNumber : 66, className : "bpmjs._FrontMessenger.Receiver", methodName : "execute"};
+						if(Log.filter(LogLevel.INFO)) {
+							Log.fetchInput(Type.getClassName(Type.getClass(receiver.receiver)) + "#" + receiver.methodName,null,null,null,null,null,null);
+							console.info(Log.createMessage());
+						}
+					}
 					receiver.method.apply(receiver.receiver,[message]);
 				}
 			}
@@ -4222,7 +4282,13 @@ bpmjs._FrontMessenger.Receiver.prototype.matches = function(message) {
 bpmjs._FrontMessenger.Receiver.prototype.execute = function(message) {
 	$s.push("bpmjs._FrontMessenger.Receiver::execute");
 	var $spos = $s.length;
-	Log.info(Type.getClassName(Type.getClass(this.receiver)) + "#" + this.methodName,null,null,null,null,null,null,{ fileName : "FrontMessenger.hx", lineNumber : 66, className : "bpmjs._FrontMessenger.Receiver", methodName : "execute"});
+	{
+		Log.posInfo = { fileName : "FrontMessenger.hx", lineNumber : 66, className : "bpmjs._FrontMessenger.Receiver", methodName : "execute"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput(Type.getClassName(Type.getClass(this.receiver)) + "#" + this.methodName,null,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
 	this.method.apply(this.receiver,[message]);
 	$s.pop();
 }
@@ -4331,7 +4397,13 @@ GLAnimationFrame.run = function(method,ms) {
 					$e = [];
 					while($s.length >= $spos) $e.unshift($s.pop());
 					$s.push($e[0]);
-					Log.error("Error executing GLAnimationFrame: " + e,null,null,null,null,null,null,{ fileName : "GLAnimationFrame.hx", lineNumber : 16, className : "GLAnimationFrame", methodName : "run"});
+					{
+						Log.posInfo = { fileName : "GLAnimationFrame.hx", lineNumber : 16, className : "GLAnimationFrame", methodName : "run"};
+						if(Log.filter(LogLevel.ERROR)) {
+							Log.fetchInput("Error executing GLAnimationFrame: " + e,null,null,null,null,null,null);
+							console.error(Log.createMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
+						}
+					}
 				}
 			}
 		}
@@ -5011,7 +5083,13 @@ kumite.launch.Launcher.prototype.sequencer = null;
 kumite.launch.Launcher.prototype.handlePostComplete = function() {
 	$s.push("kumite.launch.Launcher::handlePostComplete");
 	var $spos = $s.length;
-	Log.info(null,null,null,null,null,null,null,{ fileName : "Launcher.hx", lineNumber : 15, className : "kumite.launch.Launcher", methodName : "handlePostComplete"});
+	{
+		Log.posInfo = { fileName : "Launcher.hx", lineNumber : 15, className : "kumite.launch.Launcher", methodName : "handlePostComplete"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput(null,null,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
 	this.sequencer.start("boot");
 	$s.pop();
 }
@@ -6418,7 +6496,13 @@ reflect.ClassInfo.prototype.scanFields = function(classDef) {
 			this.getProperties().push(new reflect.Property(field,classDef.path,this));
 		}break;
 		default:{
-			Log.warn("Unknown type:",field,"in class ",classDef," found in " + this.name,null,null,{ fileName : "ClassInfo.hx", lineNumber : 143, className : "reflect.ClassInfo", methodName : "scanFields"});
+			{
+				Log.posInfo = { fileName : "ClassInfo.hx", lineNumber : 143, className : "reflect.ClassInfo", methodName : "scanFields"};
+				if(Log.filter(LogLevel.WARN)) {
+					Log.fetchInput("Unknown type:",field,"in class ",classDef," found in " + this.name,null,null);
+					console.warn(Log.createMessage());
+				}
+			}
 		}break;
 		}
 	}
@@ -6580,8 +6664,12 @@ kumite.stage.StageResizeMessage.prototype.__class__ = kumite.stage.StageResizeMe
 Main = function(canvas) { if( canvas === $_ ) return; {
 	$s.push("Main::new");
 	var $spos = $s.length;
+	if(Log.infoEnabled({ fileName : "Main.hx", lineNumber : 25, className : "Main", methodName : "new"})) {
+		Log.fetchInput("Build context",null,null,null,null,null,null);
+		console.groupCollapsed(Log.createMessage());
+	}
 	try {
-		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.time.Config,kumite.projection.Config,kumite.camera.Config,kumite.mouse.Config,kumite.displaylist.Config,kumite.vjinterface.Config,kumite.scene.Config,kumite.testscene.Config]);
+		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.time.Config,kumite.projection.Config,kumite.camera.Config,kumite.mouse.Config,kumite.helloworldgl.Config,kumite.displaylist.Config,kumite.vjinterface.Config,kumite.scene.Config,kumite.testscene.Config]);
 	}
 	catch( $e0 ) {
 		{
@@ -6590,10 +6678,17 @@ Main = function(canvas) { if( canvas === $_ ) return; {
 				$e = [];
 				while($s.length >= $spos) $e.unshift($s.pop());
 				$s.push($e[0]);
-				Log.error("Error building application! \n" + e,null,null,null,null,null,null,{ fileName : "Main.hx", lineNumber : 45, className : "Main", methodName : "new"});
+				{
+					Log.posInfo = { fileName : "Main.hx", lineNumber : 46, className : "Main", methodName : "new"};
+					if(Log.filter(LogLevel.ERROR)) {
+						Log.fetchInput("Error building application! \n" + e,null,null,null,null,null,null);
+						console.error(Log.createMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
+					}
+				}
 			}
 		}
 	}
+	Log.groupEnd({ fileName : "Main.hx", lineNumber : 48, className : "Main", methodName : "new"});
 	$s.pop();
 }}
 Main.__name__ = ["Main"];
@@ -8233,7 +8328,13 @@ bpmjs.Context.prototype.getObjectByType = function(type) {
 bpmjs.Context.prototype.addObserver = function(object,methodName,type) {
 	$s.push("bpmjs.Context::addObserver");
 	var $spos = $s.length;
-	Log.info(bpmjs.ReflectUtil.getClassName(object.object),methodName,Type.getClassName(type),null,null,null,null,{ fileName : "Context.hx", lineNumber : 47, className : "bpmjs.Context", methodName : "addObserver"});
+	{
+		Log.posInfo = { fileName : "Context.hx", lineNumber : 47, className : "bpmjs.Context", methodName : "addObserver"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput(bpmjs.ReflectUtil.getClassName(object.object),methodName,Type.getClassName(type),null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
 	var observer = new bpmjs.Observer();
 	observer.object = object;
 	observer.methodName = methodName;
@@ -8286,6 +8387,20 @@ kumite.mouse.Config.__name__ = ["kumite","mouse","Config"];
 kumite.mouse.Config.prototype.mouseController = null;
 kumite.mouse.Config.prototype.__class__ = kumite.mouse.Config;
 kumite.mouse.Config.__interfaces__ = [haxe.rtti.Infos];
+Map = function() { }
+Map.__name__ = ["Map"];
+Map.linear = function(value,min0,max0,min1,max1) {
+	$s.push("Map::linear");
+	var $spos = $s.length;
+	var p0 = 1 / (max0 - min0) * (value - min0);
+	{
+		var $tmp = min1 + (max1 - min1) * p0;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Map.prototype.__class__ = Map;
 kumite.scene.Scene = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.scene.Scene::new");
 	var $spos = $s.length;
@@ -8467,6 +8582,81 @@ ERegFilter.prototype.enabled = function(input,i,level) {
 }
 ERegFilter.prototype.__class__ = ERegFilter;
 ERegFilter.__interfaces__ = [LogFilter];
+kumite.helloworldgl.HelloWorld = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.helloworldgl.HelloWorld::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.helloworldgl.HelloWorld.__name__ = ["kumite","helloworldgl","HelloWorld"];
+kumite.helloworldgl.HelloWorld.prototype.stage = null;
+kumite.helloworldgl.HelloWorld.prototype.time = null;
+kumite.helloworldgl.HelloWorld.prototype.projection = null;
+kumite.helloworldgl.HelloWorld.prototype.camera = null;
+kumite.helloworldgl.HelloWorld.prototype.shaderProgram = null;
+kumite.helloworldgl.HelloWorld.prototype.vertexPositionAttribute = null;
+kumite.helloworldgl.HelloWorld.prototype.vertexBuffer = null;
+kumite.helloworldgl.HelloWorld.prototype.projectionMatrixUniform = null;
+kumite.helloworldgl.HelloWorld.prototype.worldViewMatrixUniform = null;
+kumite.helloworldgl.HelloWorld.prototype.colorUniform = null;
+kumite.helloworldgl.HelloWorld.prototype.start = function() {
+	$s.push("kumite.helloworldgl.HelloWorld::start");
+	var $spos = $s.length;
+	this.shaderProgram = GL.createProgram(kumite.helloworldgl.shader.Vertex,kumite.helloworldgl.shader.Fragment);
+	this.vertexPositionAttribute = GL.getAttribLocation2("vertexPosition",2,5120);
+	this.vertexPositionAttribute.updateBuffer(new Int8Array([-1,-1,1,-1,-1,1,1,1]));
+	this.projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
+	this.worldViewMatrixUniform = GL.getUniformLocation("worldViewMatrix");
+	this.colorUniform = GL.getUniformLocation("color");
+	$s.pop();
+}
+kumite.helloworldgl.HelloWorld.prototype.render = function(tick) {
+	$s.push("kumite.helloworldgl.HelloWorld::render");
+	var $spos = $s.length;
+	GL.useProgram(this.shaderProgram);
+	GL.gl.viewport(0,0,this.stage.width,this.stage.height);
+	GL.gl.enable(2929);
+	GL.gl.enable(3042);
+	GL.gl.blendFunc(770,771);
+	GL.gl.uniformMatrix4fv(this.projectionMatrixUniform.location,false,this.projection.matrix.buffer);
+	this.vertexPositionAttribute.vertexAttribPointer();
+	{
+		var _g = -10;
+		while(_g < 10) {
+			var y = _g++;
+			this.drawRect(0,Map.linear(y,-10,10,-3,3),0,new Color(0,Map.linear(y,-10,10,0,1),0,0.5));
+		}
+	}
+	{
+		var _g = -10;
+		while(_g < 10) {
+			var z = _g++;
+			this.drawRect(0,0,Map.linear(z,-10,10,-3,3),new Color(0,0,Map.linear(z,-10,10,0,1),0.5));
+		}
+	}
+	{
+		var _g = -10;
+		while(_g < 10) {
+			var x = _g++;
+			this.drawRect(Map.linear(x,-10,10,-3,3),0,0,new Color(Map.linear(x,-10,10,0,1),0,0,0.5));
+		}
+	}
+	$s.pop();
+}
+kumite.helloworldgl.HelloWorld.prototype.drawRect = function(x,y,z,color) {
+	$s.push("kumite.helloworldgl.HelloWorld::drawRect");
+	var $spos = $s.length;
+	var worldViewMatrix = new Matrix4(this.camera.matrix);
+	worldViewMatrix.appendRotation(this.time.ms / 50000,new Vec3(1,-1,-1));
+	worldViewMatrix.appendTranslation(x,y,z);
+	worldViewMatrix.appendScale(0.1,0.1,0.1);
+	GL.gl.uniformMatrix4fv(this.worldViewMatrixUniform.location,false,worldViewMatrix.buffer);
+	GL.gl.uniform4f(this.colorUniform.location,color.r,color.g,color.b,color.a);
+	this.vertexPositionAttribute.drawArrays(5);
+	$s.pop();
+}
+kumite.helloworldgl.HelloWorld.prototype.__class__ = kumite.helloworldgl.HelloWorld;
+kumite.helloworldgl.HelloWorld.__interfaces__ = [haxe.rtti.Infos];
 kumite.launch.Config = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.launch.Config::new");
 	var $spos = $s.length;
@@ -9469,6 +9659,7 @@ js.Boot.__init();
 	Xml.Document = "document";
 }
 Log.filters = new Array();
+Log.args = new Array();
 kumite.scene.Config.__rtti = "<class path=\"kumite.scene.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<scenes public=\"1\"><c path=\"kumite.scene.Scenes\"/></scenes>\n\t<sceneController public=\"1\"><c path=\"kumite.scene.SceneController\"/></sceneController>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.stage.Config.__rtti = "<class path=\"kumite.stage.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<stageResizeAction public=\"1\"><c path=\"kumite.stage.StageResizeAction\"/></stageResizeAction>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.mouse.MouseController.__meta__ = { fields : { canvas : { Inject : null}, start : { Sequence : ["boot","init"]}}};
@@ -9481,6 +9672,7 @@ kumite.testscene.TestScene1.__rtti = "<class path=\"kumite.testscene.TestScene1\
 hsl.haxe._DirectSignaler.PropagationStatus.IMMEDIATELY_STOPPED = 1;
 hsl.haxe._DirectSignaler.PropagationStatus.STOPPED = 2;
 hsl.haxe._DirectSignaler.PropagationStatus.UNDISTURBED = 3;
+kumite.helloworldgl.Config.__rtti = "<class path=\"kumite.helloworldgl.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<helloWorld public=\"1\"><c path=\"kumite.helloworldgl.HelloWorld\"/></helloWorld>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs.Sequencer.__meta__ = { fields : { context : { Inject : null}}};
 bpmjs.Sequencer.__rtti = "<class path=\"bpmjs.Sequencer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context public=\"1\"><c path=\"bpmjs.Context\"/></context>\n\t<start public=\"1\" set=\"method\" line=\"14\"><f a=\"name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></start>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 LogLevel.INFO = new LogLevel(1);
@@ -9823,6 +10015,8 @@ kumite.displaylist.DisplayListController.__meta__ = { fields : { stage : { Injec
 kumite.displaylist.DisplayListController.__rtti = "<class path=\"kumite.displaylist.DisplayListController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<renderer><c path=\"GLDisplayListRenderer\"/></renderer>\n\t<start public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<render public=\"1\" set=\"method\" line=\"27\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"17\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.mouse.Config.__rtti = "<class path=\"kumite.mouse.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<mouseController public=\"1\"><c path=\"kumite.mouse.MouseController\"/></mouseController>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs.Stats.fps = 0;
+kumite.helloworldgl.HelloWorld.__meta__ = { fields : { stage : { Inject : null}, time : { Inject : null}, projection : { Inject : null}, camera : { Inject : null}, start : { Sequence : ["boot","start"]}, render : { Message : null}}};
+kumite.helloworldgl.HelloWorld.__rtti = "<class path=\"kumite.helloworldgl.HelloWorld\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<worldViewMatrixUniform><c path=\"GLUniformLocation\"/></worldViewMatrixUniform>\n\t<colorUniform><c path=\"GLUniformLocation\"/></colorUniform>\n\t<start public=\"1\" set=\"method\" line=\"36\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<render public=\"1\" set=\"method\" line=\"54\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<drawRect set=\"method\" line=\"77\"><f a=\"x:y:z:color\">\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Color\"/>\n\t<e path=\"Void\"/>\n</f></drawRect>\n\t<new public=\"1\" set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.launch.Config.__rtti = "<class path=\"kumite.launch.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<launcher public=\"1\"><c path=\"kumite.launch.Launcher\"/></launcher>\n\t<new public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Xml.enode = new EReg("^<([a-zA-Z0-9:_-]+)","");
 Xml.ecdata = new EReg("^<!\\[CDATA\\[","i");
