@@ -1,8 +1,6 @@
 package bpmjs;
 
-import TestRunner;
-
-class TestComplete extends SummerTestCase
+class TestComplete extends TestCase2
 {
 	public static var completeCount;
 	public static var postCompleteCount;

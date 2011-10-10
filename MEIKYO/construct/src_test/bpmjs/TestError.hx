@@ -1,7 +1,6 @@
 package bpmjs;
-import TestRunner;
 
-class TestError extends SummerTestCase
+class TestError extends TestCase2
 {
 
 	public function testContextNotNull()

@@ -1,8 +1,6 @@
 package bpmjs;
 
-import TestRunner;
-
-class TestConfigure extends SummerTestCase
+class TestConfigure extends TestCase2
 {
 	public function testObject()
 	{

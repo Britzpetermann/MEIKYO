@@ -5,7 +5,10 @@
 -cp construct/src_extern
 -cp construct/src_bpmjs
 -cp construct/src_bpmgl
+-cp construct/src_reflect
 -lib hsl-1
+
+
 
 
 --next
@@ -15,5 +18,8 @@
 -cp construct/src_bpmjs
 -cp construct/src_test
 -cp construct/src
+-cp construct/src_reflect
+
+
 
 

@@ -1,8 +1,6 @@
 package bpmjs;
 
-import TestRunner;
-
-class TestDynamic extends SummerTestCase
+class TestDynamic extends TestCase2
 {
 	public static var bCount : Int = 0;
 

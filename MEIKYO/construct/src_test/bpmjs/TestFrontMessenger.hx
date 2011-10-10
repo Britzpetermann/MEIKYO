@@ -1,10 +1,8 @@
 package bpmjs;
 
-import TestRunner;
-
 import bpmjs.FrontMessenger;
 
-class TestFrontMessenger extends SummerTestCase
+class TestFrontMessenger extends TestCase2
 {
 	public static var receiveCount;
 

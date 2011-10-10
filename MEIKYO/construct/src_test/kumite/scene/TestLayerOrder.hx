@@ -1,8 +1,6 @@
 package kumite.scene;
 
-import TestRunner;
-
-class TestLayerOrder extends SummerTestCase
+class TestLayerOrder extends TestCase2
 {
 	public function testNoChange()
 	{

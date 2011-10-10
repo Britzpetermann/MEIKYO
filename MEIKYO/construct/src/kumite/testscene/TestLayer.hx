@@ -1,14 +1,15 @@
-package kumite.helloworldgl;
+package kumite.testscene;
 
+import kumite.scene.LayerLifecycle;
+import kumite.scene.Layer;
 import kumite.stage.Stage;
-import kumite.camera.Camera;
-import kumite.projection.Projection;
 import kumite.time.Time;
-import kumite.time.Tick;
+import kumite.projection.Projection;
+import kumite.camera.Camera;
 
 import haxe.rtti.Infos;
 
-class HelloWorld implements Infos
+class TestLayer implements LayerLifecycle, implements Infos
 {
 	@Inject
 	public var stage : Stage;
@@ -22,6 +23,8 @@ class HelloWorld implements Infos
 	@Inject
 	public var camera : Camera;
 	
+	public var color : Color;
+	
 	var shaderProgram : WebGLProgram;
 	var vertexPositionAttribute : GLAttribLocation;
 	var vertexBuffer : WebGLBuffer;
@@ -30,10 +33,12 @@ class HelloWorld implements Infos
 	var worldViewMatrixUniform : GLUniformLocation;
 	var colorUniform : GLUniformLocation;
 		
-	public function new() {}
+	public function new()
+	{
+		color = new Color(1, 1, 0, 0.5);
+	}
 	
-	@Sequence("boot", "start")
-	public function start()
+	public function init()
 	{
 		shaderProgram = GL.createProgram(kumite.helloworldgl.shader.Vertex, kumite.helloworldgl.shader.Fragment);
 
@@ -50,8 +55,7 @@ class HelloWorld implements Infos
 		colorUniform = GL.getUniformLocation("color");
 	}
 	
-	@Message
-	public function render(tick : Tick)
+	public function render()
 	{
 		GL.useProgram(shaderProgram);
 		GL.viewport(0, 0, stage.width, stage.height);
@@ -63,24 +67,11 @@ class HelloWorld implements Infos
 		projectionMatrixUniform.setMatrix4(projection.matrix);
 		vertexPositionAttribute.vertexAttribPointer();
 
-		for(y in -10...10)
-			drawRect(0, Map.linear(y, -10, 10, -3, 3), 0, new Color(0, Map.linear(y, -10, 10, 0, 1), 0, 0.5));
-			
-		for(z in -10...10)
-			drawRect(0, 0, Map.linear(z, -10, 10, -3, 3), new Color(0, 0, Map.linear(z, -10, 10, 0, 1), 0.5));
-			
-		for(x in -10...10)
-			drawRect(Map.linear(x, -10, 10, -3, 3), 0, 0, new Color(Map.linear(x, -10, 10, 0, 1), 0, 0, 0.5));
-			
-	}
-	
-	private function drawRect(x, y, z, color)
-	{
 		var worldViewMatrix = new Matrix4(camera.matrix);
-		worldViewMatrix.appendRotation(time.ms / 50000, new Vec3(1, -1, -1));
-		worldViewMatrix.appendTranslation(x, y, z);
-		worldViewMatrix.appendScale(0.1, 0.1, 0.1);
+		worldViewMatrix.appendTranslation(0, 0, 0);
+		worldViewMatrix.appendScale(0.4, 0.4, 0.4);
 		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
+		
 		colorUniform.setRGBA(color);
 		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
 	}

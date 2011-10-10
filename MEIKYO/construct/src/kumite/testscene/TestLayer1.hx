@@ -2,13 +2,13 @@ package kumite.testscene;
 
 import kumite.scene.LayerLifecycle;
 import kumite.scene.Layer;
+import kumite.stage.Stage;
+import kumite.time.Time;
+import kumite.projection.Projection;
+import kumite.camera.Camera;
 
-class TestLayer1 implements LayerLifecycle
+import haxe.rtti.Infos;
+
+class TestLayer1 extends TestLayer
 {
-	public function new() {}
-	
-	public function layerInit(layer : Layer) : Void
-	{
-		
-	}
 }

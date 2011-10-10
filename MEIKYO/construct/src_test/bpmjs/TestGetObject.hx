@@ -1,8 +1,6 @@
 package bpmjs;
 
-import TestRunner;
-
-class TestGetObject extends SummerTestCase
+class TestGetObject extends TestCase2
 {
 
 	public function testGetObjectByName()

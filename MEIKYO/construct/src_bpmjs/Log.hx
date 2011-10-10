@@ -16,6 +16,11 @@ class Log
 		haxe.Log.trace = infoConsole;
 	}
 	
+	public static inline function debug()
+	{
+		untyped __js__("debugger");
+	}
+	
 	public static function addFilter(filter : LogFilter)
 	{
 		filters.push(filter);

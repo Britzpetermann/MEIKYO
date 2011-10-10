@@ -60,11 +60,7 @@ class ContextBuilder
 	function configureInternal(object : Dynamic)
 	{
 		var contextObject = context.addObject("configured", Type.getClass(object), object);
-		wireContextObject(contextObject);
-		registerMessengerByObjectTypeForContextObject(contextObject);
-		registerMessengersForContextObject(contextObject);
-		registerReceiversForContextObject(contextObject);
-		doCompleteCallForContextObject(contextObject);
+		configureDynamicObjects(cast [contextObject]);
 	}
 
 	function buildInternal(configClasses : Array<Class<Dynamic>>)
@@ -77,12 +73,7 @@ class ContextBuilder
 			createObjects(config, configClass);
 		}
 
-		wireInjections();
-		registerMessengersByObjectType();
-		registerMessengers();
-		registerReceivers();
-		doCompleteCall();
-		doPostCompleteCall();
+		configureDynamicObjects(context.objects);
 	}
 	
 	function createObjects(config : Dynamic, configClass : Class<Dynamic>)
@@ -114,17 +105,34 @@ class ContextBuilder
 			}
 		}
 	}
-
-	function wireInjections()
+	
+	function configureDynamicObjects(objects : Array<ContextObject>)
 	{
-		for(contextObject in context.objects)
-		{
-			wireContextObject(contextObject);
-		}
+		Lambda.iter(objects, wireContextObject);
+		Lambda.iter(objects, findObservers);
+		Lambda.iter(objects, registerMessengerByObjectType);
+		Lambda.iter(objects, registerMessengers);
+		Lambda.iter(objects, registerReceivers);
+		Lambda.iter(objects, doObserve);
+		Lambda.iter(objects, doCompleteCall);
+		Lambda.iter(objects, doPostCompleteCall);
 	}
 
 	function wireContextObject(contextObject : ContextObject)
 	{
+		for (property in contextObject.classInfo.properties)
+		{
+			if (property.hasMetadata("Inject"))
+			{
+				var type = property.type.type;
+				var wiredObject = type == Context ? context :  context.getObjectByType(type);
+				if (wiredObject == null)
+					Log.warn("Found [Inject] at object " + Type.getClassName(contextObject.type)+ "#" + property.name + " but could not find object to inject.");
+				else
+					property.setValue(contextObject.object, wiredObject);				
+			}
+		}
+		/*
 		if (untyped contextObject.type.__rtti == null)
 			return;
 
@@ -150,17 +158,41 @@ class ContextBuilder
 					continue;
 			}
 		}
+		 */
 	}
-
-	function registerMessengersByObjectType()
+	
+	function findObservers(contextObject : ContextObject)
 	{
-		for(contextObject in context.objects)
-		{
-			registerMessengerByObjectTypeForContextObject(contextObject);
-		}
-	}
+		if (untyped contextObject.type.__rtti == null)
+			return;
 
-	function registerMessengerByObjectTypeForContextObject(contextObject : ContextObject)
+		var metaDatas = Meta.getFields(contextObject.type);
+		var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(untyped contextObject.type.__rtti).firstElement());
+		var classDef : Classdef = cast TypeApi.typeInfos(infos);
+
+		for(field in classDef.fields)
+		{
+			switch(field.type) {
+				case CFunction(args, ret):
+					var meta = Reflect.field(metaDatas, field.name);
+					if (meta != null && Reflect.hasField(meta, "Observe"))
+					{
+						for (argument in args)
+						{
+							switch(argument.t) {
+								case CClass(name, params):
+									var type = Type.resolveClass(name);
+									context.addObserver(contextObject, field.name, type);
+								default: continue;
+							}
+							break;
+						}
+					}
+				default: continue;
+			}
+		}	}
+
+	function registerMessengerByObjectType(contextObject : ContextObject)
 	{
 		if (Std.is(contextObject.object, Messenger))
 		{
@@ -168,49 +200,23 @@ class ContextBuilder
 		}
 	}
 
-	function registerMessengers()
+	function registerMessengers(contextObject : ContextObject)
 	{
-		for(contextObject in context.objects)
+		var metadatas = Meta.getFields(contextObject.type);
+
+		for(fieldName in Reflect.fields(metadatas))
 		{
-			registerMessengersForContextObject(contextObject);
-		}
-	}
-
-	function registerMessengersForContextObject(contextObject : ContextObject)
-	{
-		if (untyped contextObject.type.__rtti == null)
-			return;
-
-		var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(untyped contextObject.type.__rtti).firstElement());
-		var classDef : Classdef = cast TypeApi.typeInfos(infos);
-		var metaDatas = Meta.getFields(contextObject.type);
-
-		for(field in classDef.fields)
-		{
-			switch(field.type) {
-				case CClass(name, params):
-					var meta = Reflect.field(metaDatas, field.name);
-					if (meta != null && Reflect.hasField(meta, "Messenger"))
-					{
-						var messenger = new Messenger();
-						Reflect.setField(contextObject.object, field.name, messenger);
-						contextConfig.frontMessenger.addMessenger(messenger);
-					}
-				default:
-					continue;
+			var meta = Reflect.field(metadatas, fieldName);
+			if (Reflect.hasField(meta, "Messenger"))
+			{
+				var messenger = new Messenger();
+				Reflect.setField(contextObject.object, fieldName, messenger);
+				contextConfig.frontMessenger.addMessenger(messenger);
 			}
 		}
 	}
 
-	function registerReceivers()
-	{
-		for(contextObject in context.objects)
-		{
-			registerReceiversForContextObject(contextObject);
-		}
-	}
-
-	function registerReceiversForContextObject(contextObject : ContextObject)
+	function registerReceivers(contextObject : ContextObject)
 	{
 		if (untyped contextObject.type.__rtti == null)
 			return;
@@ -242,45 +248,20 @@ class ContextBuilder
 		}
 	}
 
-	function doCompleteCall()
+	function doObserve(contextObject : ContextObject)
 	{
-		for(contextObject in context.objects)
-		{
-			doCompleteCallForContextObject(contextObject);
-		}
+		for(observer in context.observers)
+			observer.observe(contextObject);
 	}
 
-	function doCompleteCallForContextObject(contextObject : ContextObject)
+	function doCompleteCall(contextObject : ContextObject)
 	{
-		var object = contextObject.object;
-		var metaDatas = Meta.getFields(contextObject.type);
-
-		for(fieldName in Reflect.fields(metaDatas))
-		{
-			var meta = Reflect.field(metaDatas, fieldName);
-			if (Reflect.hasField(meta, "Complete"))
-			{
-				Reflect.callMethod(object, Reflect.field(object, fieldName), []);
-			}
-		}
+		ReflectUtil.callMethodWithMetadata(contextObject.object, contextObject.type, "Complete", []);
 	}
 
-	function doPostCompleteCall()
+	function doPostCompleteCall(contextObject : ContextObject)
 	{
-		for(contextObject in context.objects)
-		{
-			var object = contextObject.object;
-			var metaDatas = Meta.getFields(contextObject.type);
-
-			for(fieldName in Reflect.fields(metaDatas))
-			{
-				var meta = Reflect.field(metaDatas, fieldName);
-				if (Reflect.hasField(meta, "PostComplete"))
-				{
-					Reflect.callMethod(object, Reflect.field(object, fieldName), []);
-				}
-			}
-		}
+		ReflectUtil.callMethodWithMetadata(contextObject.object, contextObject.type, "PostComplete", []);
 	}
 
 	function createError(message)

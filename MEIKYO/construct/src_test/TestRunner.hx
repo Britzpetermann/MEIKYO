@@ -9,6 +9,7 @@ import bpmjs.TestConfigure;
 import bpmjs.TestComplete;
 import bpmjs.TestDynamic;
 import bpmjs.TestError;
+import bpmjs.TestObserve;
 import bpmjs.TestFrontMessenger;
 import bpmjs.TestSequencer;
 import bpmjs.integration.TestMessaging;
@@ -27,6 +28,8 @@ class TestRunner {
 	public function new()
 	{
 		runner = new haxe.unit.TestRunner();
+		
+		reflect.Tests.addTo(runner);
 
 		addBPMJSTests();
 		addContextBuilderTests();
@@ -53,6 +56,7 @@ class TestRunner {
 		runner.add(new TestError());
 		runner.add(new TestConfigure());
 		runner.add(new TestDynamic());
+		runner.add(new TestObserve());
 	}
 
 	function addFrontMessengerTests()
@@ -74,35 +78,5 @@ class TestRunner {
 	function addSceneTests()
 	{
 		runner.add(new TestLayerOrder());
-	}
-}
-
-class SummerTestCase extends TestCase
-{
-	public function new()
-	{
-		super();
-	}
-
-	function assertNotNull( b:Dynamic, ?c : PosInfos ) : Void {
-		currentTest.done = true;
-		if (b == null){
-			currentTest.success = false;
-			currentTest.error   = "expected not null";
-			currentTest.posInfos = c;
-			throw currentTest;
-		}
-	}
-
-	function fail( message:String, ?c : PosInfos ) : Void {
-		currentTest.done = true;
-		currentTest.success = false;
-		currentTest.error   = message;
-		currentTest.posInfos = c;
-		throw currentTest;
-	}
-
-	function noFail() : Void {
-		currentTest.done = true;
 	}
 }

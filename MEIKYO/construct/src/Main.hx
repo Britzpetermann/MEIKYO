@@ -33,7 +33,7 @@ class Main {
 					kumite.projection.Config,
 					kumite.camera.Config,
 					kumite.mouse.Config,
-					kumite.helloworldgl.Config,
+					//kumite.helloworldgl.Config,
 					kumite.displaylist.Config,
 					kumite.vjinterface.Config,
 					kumite.scene.Config,

@@ -1,6 +1,127 @@
 $estr = function() { return js.Boot.__string_rec(this,''); }
+if(typeof reflect=='undefined') reflect = {}
+reflect.MetadataAware = function() { }
+reflect.MetadataAware.__name__ = ["reflect","MetadataAware"];
+reflect.MetadataAware.prototype.hasMetadata = null;
+reflect.MetadataAware.prototype.__class__ = reflect.MetadataAware;
+reflect.Field = function(field,definedInClass,owner) { if( field === $_ ) return; {
+	$s.push("reflect.Field::new");
+	var $spos = $s.length;
+	this.field = field;
+	this.definedInClass = definedInClass;
+	this.owner = owner;
+	$s.pop();
+}}
+reflect.Field.__name__ = ["reflect","Field"];
+reflect.Field.prototype.owner = null;
+reflect.Field.prototype.name = null;
+reflect.Field.prototype.type = null;
+reflect.Field.prototype.field = null;
+reflect.Field.prototype.definedInClass = null;
+reflect.Field.prototype.hasMetadata = function(name) {
+	$s.push("reflect.Field::hasMetadata");
+	var $spos = $s.length;
+	var declaredType = reflect.ClassInfo.forName(this.definedInClass);
+	var metadatas = haxe.rtti.Meta.getFields(declaredType.type);
+	{
+		var _g = 0, _g1 = Reflect.fields(metadatas);
+		while(_g < _g1.length) {
+			var fieldName = _g1[_g];
+			++_g;
+			if(fieldName == this.getName()) {
+				var meta = Reflect.field(metadatas,fieldName);
+				if(Reflect.hasField(meta,name)) {
+					$s.pop();
+					return true;
+				}
+			}
+		}
+	}
+	{
+		$s.pop();
+		return false;
+	}
+	$s.pop();
+}
+reflect.Field.prototype.getOwner = function() {
+	$s.push("reflect.Field::getOwner");
+	var $spos = $s.length;
+	{
+		var $tmp = this.owner;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+reflect.Field.prototype.getName = function() {
+	$s.push("reflect.Field::getName");
+	var $spos = $s.length;
+	{
+		var $tmp = this.field.name;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+reflect.Field.prototype.getType = function() {
+	$s.push("reflect.Field::getType");
+	var $spos = $s.length;
+	var $e = this.field.type;
+	switch( $e[1] ) {
+	case 2:
+	var params = $e[3], name = $e[2];
+	{
+		{
+			var $tmp = reflect.ClassInfo.forName(name);
+			$s.pop();
+			return $tmp;
+		}
+	}break;
+	default:{
+		throw "Did not expect othe type than Class!";
+	}break;
+	}
+	{
+		$s.pop();
+		return null;
+	}
+	$s.pop();
+}
+reflect.Field.prototype.__class__ = reflect.Field;
+reflect.Field.__interfaces__ = [reflect.MetadataAware];
+reflect.Property = function(field,definedInClass,owner) { if( field === $_ ) return; {
+	$s.push("reflect.Property::new");
+	var $spos = $s.length;
+	reflect.Field.call(this,field,definedInClass,owner);
+	$s.pop();
+}}
+reflect.Property.__name__ = ["reflect","Property"];
+reflect.Property.__super__ = reflect.Field;
+for(var k in reflect.Field.prototype ) reflect.Property.prototype[k] = reflect.Field.prototype[k];
+reflect.Property.prototype.getValue = function(instance) {
+	$s.push("reflect.Property::getValue");
+	var $spos = $s.length;
+	{
+		var $tmp = Reflect.field(instance,this.getName());
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+reflect.Property.prototype.setValue = function(instance,value) {
+	$s.push("reflect.Property::setValue");
+	var $spos = $s.length;
+	instance[this.getName()] = value;
+	$s.pop();
+}
+reflect.Property.prototype.__class__ = reflect.Property;
 if(typeof kumite=='undefined') kumite = {}
 if(!kumite.scene) kumite.scene = {}
+kumite.scene.LayerLifecycle = function() { }
+kumite.scene.LayerLifecycle.__name__ = ["kumite","scene","LayerLifecycle"];
+kumite.scene.LayerLifecycle.prototype.init = null;
+kumite.scene.LayerLifecycle.prototype.render = null;
+kumite.scene.LayerLifecycle.prototype.__class__ = kumite.scene.LayerLifecycle;
 kumite.scene.Layer = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.scene.Layer::new");
 	var $spos = $s.length;
@@ -9,19 +130,44 @@ kumite.scene.Layer = function(p) { if( p === $_ ) return; {
 }}
 kumite.scene.Layer.__name__ = ["kumite","scene","Layer"];
 kumite.scene.Layer.prototype.id = null;
+kumite.scene.Layer.prototype.init = function() {
+	$s.push("kumite.scene.Layer::init");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+kumite.scene.Layer.prototype.render = function() {
+	$s.push("kumite.scene.Layer::render");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
 kumite.scene.Layer.prototype.__class__ = kumite.scene.Layer;
-kumite.scene.DelegateLayer = function(layerLifecycle) { if( layerLifecycle === $_ ) return; {
+kumite.scene.Layer.__interfaces__ = [kumite.scene.LayerLifecycle];
+kumite.scene.DelegateLayer = function(lifecycle) { if( lifecycle === $_ ) return; {
 	$s.push("kumite.scene.DelegateLayer::new");
 	var $spos = $s.length;
 	kumite.scene.Layer.call(this);
-	this.id = Type.getClassName(Type.getClass(layerLifecycle));
-	this.layerLifecycle = layerLifecycle;
+	this.id = Type.getClassName(Type.getClass(lifecycle));
+	this.lifecycle = lifecycle;
 	$s.pop();
 }}
 kumite.scene.DelegateLayer.__name__ = ["kumite","scene","DelegateLayer"];
 kumite.scene.DelegateLayer.__super__ = kumite.scene.Layer;
 for(var k in kumite.scene.Layer.prototype ) kumite.scene.DelegateLayer.prototype[k] = kumite.scene.Layer.prototype[k];
-kumite.scene.DelegateLayer.prototype.layerLifecycle = null;
+kumite.scene.DelegateLayer.prototype.lifecycle = null;
+kumite.scene.DelegateLayer.prototype.init = function() {
+	$s.push("kumite.scene.DelegateLayer::init");
+	var $spos = $s.length;
+	this.lifecycle.init();
+	$s.pop();
+}
+kumite.scene.DelegateLayer.prototype.render = function() {
+	$s.push("kumite.scene.DelegateLayer::render");
+	var $spos = $s.length;
+	this.lifecycle.render();
+	$s.pop();
+}
 kumite.scene.DelegateLayer.prototype.__class__ = kumite.scene.DelegateLayer;
 GLDisplayObject = function(p) { if( p === $_ ) return; {
 	$s.push("GLDisplayObject::new");
@@ -1010,6 +1156,12 @@ Log.init = function() {
 	haxe.Log.trace = $closure(Log,"infoConsole");
 	$s.pop();
 }
+Log.debug = function() {
+	$s.push("Log::debug");
+	var $spos = $s.length;
+	debugger;
+	$s.pop();
+}
 Log.addFilter = function(filter) {
 	$s.push("Log::addFilter");
 	var $spos = $s.length;
@@ -1577,10 +1729,12 @@ haxe.rtti.Infos.prototype.__class__ = haxe.rtti.Infos;
 kumite.scene.Config = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.scene.Config::new");
 	var $spos = $s.length;
+	this.scenes = new kumite.scene.Scenes();
 	this.sceneController = new kumite.scene.SceneController();
 	$s.pop();
 }}
 kumite.scene.Config.__name__ = ["kumite","scene","Config"];
+kumite.scene.Config.prototype.scenes = null;
 kumite.scene.Config.prototype.sceneController = null;
 kumite.scene.Config.prototype.__class__ = kumite.scene.Config;
 kumite.scene.Config.__interfaces__ = [haxe.rtti.Infos];
@@ -2378,11 +2532,6 @@ GLFrame.prototype.time = null;
 GLFrame.prototype.timer = null;
 GLFrame.prototype.frameTime = null;
 GLFrame.prototype.__class__ = GLFrame;
-if(!kumite.helloworldgl) kumite.helloworldgl = {}
-if(!kumite.helloworldgl.shader) kumite.helloworldgl.shader = {}
-kumite.helloworldgl.shader.Fragment = function() { }
-kumite.helloworldgl.shader.Fragment.__name__ = ["kumite","helloworldgl","shader","Fragment"];
-kumite.helloworldgl.shader.Fragment.prototype.__class__ = kumite.helloworldgl.shader.Fragment;
 GLCursorClient = function(p) { if( p === $_ ) return; {
 	$s.push("GLCursorClient::new");
 	var $spos = $s.length;
@@ -2411,6 +2560,33 @@ GLCursorClient.prototype.handCursor = function(message) {
 	$s.pop();
 }
 GLCursorClient.prototype.__class__ = GLCursorClient;
+if(!kumite.helloworldgl) kumite.helloworldgl = {}
+if(!kumite.helloworldgl.shader) kumite.helloworldgl.shader = {}
+kumite.helloworldgl.shader.Fragment = function() { }
+kumite.helloworldgl.shader.Fragment.__name__ = ["kumite","helloworldgl","shader","Fragment"];
+kumite.helloworldgl.shader.Fragment.prototype.__class__ = kumite.helloworldgl.shader.Fragment;
+kumite.scene.SceneLifecycle = function() { }
+kumite.scene.SceneLifecycle.__name__ = ["kumite","scene","SceneLifecycle"];
+kumite.scene.SceneLifecycle.prototype.sceneInit = null;
+kumite.scene.SceneLifecycle.prototype.__class__ = kumite.scene.SceneLifecycle;
+if(!kumite.testscene) kumite.testscene = {}
+kumite.testscene.TestScene1 = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.testscene.TestScene1::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.testscene.TestScene1.__name__ = ["kumite","testscene","TestScene1"];
+kumite.testscene.TestScene1.prototype.testLayer1 = null;
+kumite.testscene.TestScene1.prototype.sceneInit = function(scene) {
+	$s.push("kumite.testscene.TestScene1::sceneInit");
+	var $spos = $s.length;
+	scene.name = "TEST 1";
+	scene.addLayer(new kumite.scene.DelegateLayer(this.testLayer1));
+	$s.pop();
+}
+kumite.testscene.TestScene1.prototype.__class__ = kumite.testscene.TestScene1;
+kumite.testscene.TestScene1.__interfaces__ = [haxe.rtti.Infos,kumite.scene.SceneLifecycle];
 if(typeof hsl=='undefined') hsl = {}
 if(!hsl.haxe) hsl.haxe = {}
 hsl.haxe.Signaler = function() { }
@@ -2949,37 +3125,6 @@ hsl.haxe._DirectSignaler.AdvancedBond.prototype.__class__ = hsl.haxe._DirectSign
 hsl.haxe._DirectSignaler.PropagationStatus = function() { }
 hsl.haxe._DirectSignaler.PropagationStatus.__name__ = ["hsl","haxe","_DirectSignaler","PropagationStatus"];
 hsl.haxe._DirectSignaler.PropagationStatus.prototype.__class__ = hsl.haxe._DirectSignaler.PropagationStatus;
-kumite.scene.SceneLifecycle = function() { }
-kumite.scene.SceneLifecycle.__name__ = ["kumite","scene","SceneLifecycle"];
-kumite.scene.SceneLifecycle.prototype.sceneInit = null;
-kumite.scene.SceneLifecycle.prototype.__class__ = kumite.scene.SceneLifecycle;
-if(!kumite.testscene) kumite.testscene = {}
-kumite.testscene.TestScene1 = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.testscene.TestScene1::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-kumite.testscene.TestScene1.__name__ = ["kumite","testscene","TestScene1"];
-kumite.testscene.TestScene1.prototype.testLayer1 = null;
-kumite.testscene.TestScene1.prototype.sceneInit = function(scene) {
-	$s.push("kumite.testscene.TestScene1::sceneInit");
-	var $spos = $s.length;
-	scene.addLayer(new kumite.scene.DelegateLayer(this.testLayer1));
-	$s.pop();
-}
-kumite.testscene.TestScene1.prototype.__class__ = kumite.testscene.TestScene1;
-kumite.testscene.TestScene1.__interfaces__ = [kumite.scene.SceneLifecycle];
-kumite.helloworldgl.Config = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.helloworldgl.Config::new");
-	var $spos = $s.length;
-	this.helloWorld = new kumite.helloworldgl.HelloWorld();
-	$s.pop();
-}}
-kumite.helloworldgl.Config.__name__ = ["kumite","helloworldgl","Config"];
-kumite.helloworldgl.Config.prototype.helloWorld = null;
-kumite.helloworldgl.Config.prototype.__class__ = kumite.helloworldgl.Config;
-kumite.helloworldgl.Config.__interfaces__ = [haxe.rtti.Infos];
 hsl.haxe.Signal = function(data,currentBond,currentTarget,origin) { if( data === $_ ) return; {
 	$s.push("hsl.haxe.Signal::new");
 	var $spos = $s.length;
@@ -3758,11 +3903,7 @@ bpmjs.ContextBuilder.prototype.configureInternal = function(object) {
 	$s.push("bpmjs.ContextBuilder::configureInternal");
 	var $spos = $s.length;
 	var contextObject = this.context.addObject("configured",Type.getClass(object),object);
-	this.wireContextObject(contextObject);
-	this.registerMessengerByObjectTypeForContextObject(contextObject);
-	this.registerMessengersForContextObject(contextObject);
-	this.registerReceiversForContextObject(contextObject);
-	this.doCompleteCallForContextObject(contextObject);
+	this.configureDynamicObjects([contextObject]);
 	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.buildInternal = function(configClasses) {
@@ -3778,12 +3919,7 @@ bpmjs.ContextBuilder.prototype.buildInternal = function(configClasses) {
 			this.createObjects(config,configClass);
 		}
 	}
-	this.wireInjections();
-	this.registerMessengersByObjectType();
-	this.registerMessengers();
-	this.registerReceivers();
-	this.doCompleteCall();
-	this.doPostCompleteCall();
+	this.configureDynamicObjects(this.context.objects);
 	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.createObjects = function(config,configClass) {
@@ -3824,41 +3960,73 @@ bpmjs.ContextBuilder.prototype.createObjects = function(config,configClass) {
 	}}
 	$s.pop();
 }
-bpmjs.ContextBuilder.prototype.wireInjections = function() {
-	$s.push("bpmjs.ContextBuilder::wireInjections");
+bpmjs.ContextBuilder.prototype.configureDynamicObjects = function(objects) {
+	$s.push("bpmjs.ContextBuilder::configureDynamicObjects");
 	var $spos = $s.length;
-	var _g = 0, _g1 = this.context.objects;
-	while(_g < _g1.length) {
-		var contextObject = _g1[_g];
-		++_g;
-		this.wireContextObject(contextObject);
-	}
+	Lambda.iter(objects,$closure(this,"wireContextObject"));
+	Lambda.iter(objects,$closure(this,"findObservers"));
+	Lambda.iter(objects,$closure(this,"registerMessengerByObjectType"));
+	Lambda.iter(objects,$closure(this,"registerMessengers"));
+	Lambda.iter(objects,$closure(this,"registerReceivers"));
+	Lambda.iter(objects,$closure(this,"doObserve"));
+	Lambda.iter(objects,$closure(this,"doCompleteCall"));
+	Lambda.iter(objects,$closure(this,"doPostCompleteCall"));
 	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
 	$s.push("bpmjs.ContextBuilder::wireContextObject");
 	var $spos = $s.length;
+	var _g = 0, _g1 = contextObject.classInfo.getProperties();
+	while(_g < _g1.length) {
+		var property = _g1[_g];
+		++_g;
+		if(property.hasMetadata("Inject")) {
+			var type = property.getType().type;
+			var wiredObject = type == bpmjs.Context?this.context:this.context.getObjectByType(type);
+			if(wiredObject == null) Log.warn("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + property.getName() + " but could not find object to inject.",null,null,null,null,null,null,{ fileName : "ContextBuilder.hx", lineNumber : 130, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"});
+			else property.setValue(contextObject.object,wiredObject);
+		}
+	}
+	$s.pop();
+}
+bpmjs.ContextBuilder.prototype.findObservers = function(contextObject) {
+	$s.push("bpmjs.ContextBuilder::findObservers");
+	var $spos = $s.length;
 	if(contextObject.type.__rtti == null) {
 		$s.pop();
 		return;
 	}
+	var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
 	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(contextObject.type.__rtti).firstElement());
 	var classDef = haxe.rtti.TypeApi.typeInfos(infos);
-	var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
 	{ var $it0 = classDef.fields.iterator();
 	while( $it0.hasNext() ) { var field = $it0.next();
 	{
 		var $e = field.type;
 		switch( $e[1] ) {
-		case 2:
-		var params = $e[3], name = $e[2];
+		case 4:
+		var ret = $e[3], args = $e[2];
 		{
 			var meta = Reflect.field(metaDatas,field.name);
-			if(meta != null && Reflect.hasField(meta,"Inject")) {
-				var type = Type.resolveClass(name);
-				var wiredObject = type == bpmjs.Context?this.context:this.context.getObjectByType(type);
-				if(wiredObject == null) Log.warn("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + field.name + " but could not find object to inject.",null,null,null,null,null,null,{ fileName : "ContextBuilder.hx", lineNumber : 145, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"});
-				else contextObject.object[field.name] = wiredObject;
+			if(meta != null && Reflect.hasField(meta,"Observe")) {
+				{ var $it1 = args.iterator();
+				while( $it1.hasNext() ) { var argument = $it1.next();
+				{
+					var $e = argument.t;
+					switch( $e[1] ) {
+					case 2:
+					var params = $e[3], name = $e[2];
+					{
+						var type = Type.resolveClass(name);
+						this.context.addObserver(contextObject,field.name,type);
+					}break;
+					default:{
+						continue;
+					}break;
+					}
+					break;
+				}
+				}}
 			}
 		}break;
 		default:{
@@ -3869,82 +4037,35 @@ bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
 	}}
 	$s.pop();
 }
-bpmjs.ContextBuilder.prototype.registerMessengersByObjectType = function() {
-	$s.push("bpmjs.ContextBuilder::registerMessengersByObjectType");
-	var $spos = $s.length;
-	var _g = 0, _g1 = this.context.objects;
-	while(_g < _g1.length) {
-		var contextObject = _g1[_g];
-		++_g;
-		this.registerMessengerByObjectTypeForContextObject(contextObject);
-	}
-	$s.pop();
-}
-bpmjs.ContextBuilder.prototype.registerMessengerByObjectTypeForContextObject = function(contextObject) {
-	$s.push("bpmjs.ContextBuilder::registerMessengerByObjectTypeForContextObject");
+bpmjs.ContextBuilder.prototype.registerMessengerByObjectType = function(contextObject) {
+	$s.push("bpmjs.ContextBuilder::registerMessengerByObjectType");
 	var $spos = $s.length;
 	if(Std["is"](contextObject.object,bpmjs.Messenger)) {
 		this.contextConfig.frontMessenger.addMessenger(contextObject.object);
 	}
 	$s.pop();
 }
-bpmjs.ContextBuilder.prototype.registerMessengers = function() {
+bpmjs.ContextBuilder.prototype.registerMessengers = function(contextObject) {
 	$s.push("bpmjs.ContextBuilder::registerMessengers");
 	var $spos = $s.length;
-	var _g = 0, _g1 = this.context.objects;
-	while(_g < _g1.length) {
-		var contextObject = _g1[_g];
-		++_g;
-		this.registerMessengersForContextObject(contextObject);
-	}
-	$s.pop();
-}
-bpmjs.ContextBuilder.prototype.registerMessengersForContextObject = function(contextObject) {
-	$s.push("bpmjs.ContextBuilder::registerMessengersForContextObject");
-	var $spos = $s.length;
-	if(contextObject.type.__rtti == null) {
-		$s.pop();
-		return;
-	}
-	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(contextObject.type.__rtti).firstElement());
-	var classDef = haxe.rtti.TypeApi.typeInfos(infos);
-	var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
-	{ var $it0 = classDef.fields.iterator();
-	while( $it0.hasNext() ) { var field = $it0.next();
+	var metadatas = haxe.rtti.Meta.getFields(contextObject.type);
 	{
-		var $e = field.type;
-		switch( $e[1] ) {
-		case 2:
-		var params = $e[3], name = $e[2];
-		{
-			var meta = Reflect.field(metaDatas,field.name);
-			if(meta != null && Reflect.hasField(meta,"Messenger")) {
+		var _g = 0, _g1 = Reflect.fields(metadatas);
+		while(_g < _g1.length) {
+			var fieldName = _g1[_g];
+			++_g;
+			var meta = Reflect.field(metadatas,fieldName);
+			if(Reflect.hasField(meta,"Messenger")) {
 				var messenger = new bpmjs.Messenger();
-				contextObject.object[field.name] = messenger;
+				contextObject.object[fieldName] = messenger;
 				this.contextConfig.frontMessenger.addMessenger(messenger);
 			}
-		}break;
-		default:{
-			continue;
-		}break;
 		}
 	}
-	}}
 	$s.pop();
 }
-bpmjs.ContextBuilder.prototype.registerReceivers = function() {
+bpmjs.ContextBuilder.prototype.registerReceivers = function(contextObject) {
 	$s.push("bpmjs.ContextBuilder::registerReceivers");
-	var $spos = $s.length;
-	var _g = 0, _g1 = this.context.objects;
-	while(_g < _g1.length) {
-		var contextObject = _g1[_g];
-		++_g;
-		this.registerReceiversForContextObject(contextObject);
-	}
-	$s.pop();
-}
-bpmjs.ContextBuilder.prototype.registerReceiversForContextObject = function(contextObject) {
-	$s.push("bpmjs.ContextBuilder::registerReceiversForContextObject");
 	var $spos = $s.length;
 	if(contextObject.type.__rtti == null) {
 		$s.pop();
@@ -3991,56 +4112,27 @@ bpmjs.ContextBuilder.prototype.registerReceiversForContextObject = function(cont
 	}}
 	$s.pop();
 }
-bpmjs.ContextBuilder.prototype.doCompleteCall = function() {
+bpmjs.ContextBuilder.prototype.doObserve = function(contextObject) {
+	$s.push("bpmjs.ContextBuilder::doObserve");
+	var $spos = $s.length;
+	var _g = 0, _g1 = this.context.observers;
+	while(_g < _g1.length) {
+		var observer = _g1[_g];
+		++_g;
+		observer.observe(contextObject);
+	}
+	$s.pop();
+}
+bpmjs.ContextBuilder.prototype.doCompleteCall = function(contextObject) {
 	$s.push("bpmjs.ContextBuilder::doCompleteCall");
 	var $spos = $s.length;
-	var _g = 0, _g1 = this.context.objects;
-	while(_g < _g1.length) {
-		var contextObject = _g1[_g];
-		++_g;
-		this.doCompleteCallForContextObject(contextObject);
-	}
+	bpmjs.ReflectUtil.callMethodWithMetadata(contextObject.object,contextObject.type,"Complete",[]);
 	$s.pop();
 }
-bpmjs.ContextBuilder.prototype.doCompleteCallForContextObject = function(contextObject) {
-	$s.push("bpmjs.ContextBuilder::doCompleteCallForContextObject");
-	var $spos = $s.length;
-	var object = contextObject.object;
-	var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
-	{
-		var _g = 0, _g1 = Reflect.fields(metaDatas);
-		while(_g < _g1.length) {
-			var fieldName = _g1[_g];
-			++_g;
-			var meta = Reflect.field(metaDatas,fieldName);
-			if(Reflect.hasField(meta,"Complete")) {
-				Reflect.field(object,fieldName).apply(object,[]);
-			}
-		}
-	}
-	$s.pop();
-}
-bpmjs.ContextBuilder.prototype.doPostCompleteCall = function() {
+bpmjs.ContextBuilder.prototype.doPostCompleteCall = function(contextObject) {
 	$s.push("bpmjs.ContextBuilder::doPostCompleteCall");
 	var $spos = $s.length;
-	var _g = 0, _g1 = this.context.objects;
-	while(_g < _g1.length) {
-		var contextObject = _g1[_g];
-		++_g;
-		var object = contextObject.object;
-		var metaDatas = haxe.rtti.Meta.getFields(contextObject.type);
-		{
-			var _g2 = 0, _g3 = Reflect.fields(metaDatas);
-			while(_g2 < _g3.length) {
-				var fieldName = _g3[_g2];
-				++_g2;
-				var meta = Reflect.field(metaDatas,fieldName);
-				if(Reflect.hasField(meta,"PostComplete")) {
-					Reflect.field(object,fieldName).apply(object,[]);
-				}
-			}
-		}
-	}
+	bpmjs.ReflectUtil.callMethodWithMetadata(contextObject.object,contextObject.type,"PostComplete",[]);
 	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.createError = function(message) {
@@ -4298,6 +4390,15 @@ kumite.projection.ProjectionController.prototype.updateProjectionSizeFromStage =
 }
 kumite.projection.ProjectionController.prototype.__class__ = kumite.projection.ProjectionController;
 kumite.projection.ProjectionController.__interfaces__ = [haxe.rtti.Infos];
+kumite.scene.Scenes = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.scene.Scenes::new");
+	var $spos = $s.length;
+	this.all = new Array();
+	$s.pop();
+}}
+kumite.scene.Scenes.__name__ = ["kumite","scene","Scenes"];
+kumite.scene.Scenes.prototype.all = null;
+kumite.scene.Scenes.prototype.__class__ = kumite.scene.Scenes;
 haxe.StackItem = { __ename__ : ["haxe","StackItem"], __constructs__ : ["CFunction","Module","FilePos","Method","Lambda"] }
 haxe.StackItem.CFunction = ["CFunction",0];
 haxe.StackItem.CFunction.toString = $estr;
@@ -5157,6 +5258,16 @@ Reflect.makeVarArgs = function(f) {
 	$s.pop();
 }
 Reflect.prototype.__class__ = Reflect;
+reflect.Method = function(field,definedInClass,owner) { if( field === $_ ) return; {
+	$s.push("reflect.Method::new");
+	var $spos = $s.length;
+	reflect.Field.call(this,field,definedInClass,owner);
+	$s.pop();
+}}
+reflect.Method.__name__ = ["reflect","Method"];
+reflect.Method.__super__ = reflect.Field;
+for(var k in reflect.Field.prototype ) reflect.Method.prototype[k] = reflect.Field.prototype[k];
+reflect.Method.prototype.__class__ = reflect.Method;
 haxe.rtti.CType = { __ename__ : ["haxe","rtti","CType"], __constructs__ : ["CUnknown","CEnum","CClass","CTypedef","CFunction","CAnonymous","CDynamic"] }
 haxe.rtti.CType.CUnknown = ["CUnknown",0];
 haxe.rtti.CType.CUnknown.toString = $estr;
@@ -5852,10 +5963,6 @@ Lambda.concat = function(a,b) {
 	$s.pop();
 }
 Lambda.prototype.__class__ = Lambda;
-kumite.scene.LayerLifecycle = function() { }
-kumite.scene.LayerLifecycle.__name__ = ["kumite","scene","LayerLifecycle"];
-kumite.scene.LayerLifecycle.prototype.layerInit = null;
-kumite.scene.LayerLifecycle.prototype.__class__ = kumite.scene.LayerLifecycle;
 Text = function(p) { if( p === $_ ) return; {
 	$s.push("Text::new");
 	var $spos = $s.length;
@@ -5996,17 +6103,46 @@ kumite.scene.SceneController = function(p) { if( p === $_ ) return; {
 	$s.pop();
 }}
 kumite.scene.SceneController.__name__ = ["kumite","scene","SceneController"];
-kumite.scene.SceneController.prototype.createScene = function() {
-	$s.push("kumite.scene.SceneController::createScene");
+kumite.scene.SceneController.prototype.scenes = null;
+kumite.scene.SceneController.prototype.currentScene = null;
+kumite.scene.SceneController.prototype.handleSceneLifecycleAdded = function(lifecycle) {
+	$s.push("kumite.scene.SceneController::handleSceneLifecycleAdded");
 	var $spos = $s.length;
+	var scene = new kumite.scene.Scene();
+	lifecycle.sceneInit(scene);
+	var sceneAndLifecycle = new kumite.scene.SceneAndLifecycle();
+	sceneAndLifecycle.scene = scene;
+	sceneAndLifecycle.lifecycle = lifecycle;
+	this.scenes.all.push(sceneAndLifecycle);
+	$s.pop();
+}
+kumite.scene.SceneController.prototype.start = function() {
+	$s.push("kumite.scene.SceneController::start");
+	var $spos = $s.length;
+	this.currentScene = this.scenes.all[0];
 	{
-		var $tmp = new kumite.scene.Scene();
-		$s.pop();
-		return $tmp;
+		var _g = 0, _g1 = this.currentScene.scene.layers;
+		while(_g < _g1.length) {
+			var layer = _g1[_g];
+			++_g;
+			layer.init();
+		}
+	}
+	$s.pop();
+}
+kumite.scene.SceneController.prototype.render = function(tick) {
+	$s.push("kumite.scene.SceneController::render");
+	var $spos = $s.length;
+	var _g = 0, _g1 = this.currentScene.scene.layers;
+	while(_g < _g1.length) {
+		var layer = _g1[_g];
+		++_g;
+		layer.render();
 	}
 	$s.pop();
 }
 kumite.scene.SceneController.prototype.__class__ = kumite.scene.SceneController;
+kumite.scene.SceneController.__interfaces__ = [haxe.rtti.Infos];
 if(!kumite.camera) kumite.camera = {}
 kumite.camera.CameraMouseMover = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.camera.CameraMouseMover::new");
@@ -6098,6 +6234,198 @@ haxe.TypeTools.getClassNames = function(value) {
 	$s.pop();
 }
 haxe.TypeTools.prototype.__class__ = haxe.TypeTools;
+reflect.ClassInfo = function(name,type) { if( name === $_ ) return; {
+	$s.push("reflect.ClassInfo::new");
+	var $spos = $s.length;
+	this.name = name;
+	this.type = type;
+	$s.pop();
+}}
+reflect.ClassInfo.__name__ = ["reflect","ClassInfo"];
+reflect.ClassInfo.forInstance = function(instance) {
+	$s.push("reflect.ClassInfo::forInstance");
+	var $spos = $s.length;
+	if(instance == null) throw "Missing instance";
+	var type = Type.getClass(instance);
+	if(type == null) throw "Cannot resolve type for instance: " + instance;
+	{
+		var $tmp = reflect.ClassInfo.forClass(type);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+reflect.ClassInfo.forClass = function(type) {
+	$s.push("reflect.ClassInfo::forClass");
+	var $spos = $s.length;
+	if(type == null) throw "Missing type";
+	var name = Type.getClassName(type);
+	{
+		var $tmp = reflect.ClassInfo.getClassInfo(name,type);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+reflect.ClassInfo.forName = function(name) {
+	$s.push("reflect.ClassInfo::forName");
+	var $spos = $s.length;
+	if(name == null) throw "Missing name";
+	var type = Type.resolveClass(name);
+	if(type == null) throw "Cannot resolve type for name: " + name;
+	{
+		var $tmp = reflect.ClassInfo.getClassInfo(name,type);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+reflect.ClassInfo.getClassInfo = function(name,type) {
+	$s.push("reflect.ClassInfo::getClassInfo");
+	var $spos = $s.length;
+	var hash = reflect.ClassInfo.getHash(name,type);
+	if(reflect.ClassInfo.cache.exists(hash)) {
+		var $tmp = reflect.ClassInfo.cache.get(hash);
+		$s.pop();
+		return $tmp;
+	}
+	var result = new reflect.ClassInfo(name,type);
+	reflect.ClassInfo.cache.set(hash,result);
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+reflect.ClassInfo.getHash = function(name,type) {
+	$s.push("reflect.ClassInfo::getHash");
+	var $spos = $s.length;
+	var hash = name;
+	var internalNames = type.__name__;
+	if(internalNames != null) hash = internalNames.join(".");
+	{
+		$s.pop();
+		return hash;
+	}
+	$s.pop();
+}
+reflect.ClassInfo.prototype.type = null;
+reflect.ClassInfo.prototype.name = null;
+reflect.ClassInfo.prototype.properties = null;
+reflect.ClassInfo.prototype.methods = null;
+reflect.ClassInfo.prototype.getProperty = function(name) {
+	$s.push("reflect.ClassInfo::getProperty");
+	var $spos = $s.length;
+	{
+		var _g = 0, _g1 = this.getProperties();
+		while(_g < _g1.length) {
+			var property = _g1[_g];
+			++_g;
+			if(property.getName() == name) {
+				$s.pop();
+				return property;
+			}
+		}
+	}
+	{
+		$s.pop();
+		return null;
+	}
+	$s.pop();
+}
+reflect.ClassInfo.prototype.getProperties = function() {
+	$s.push("reflect.ClassInfo::getProperties");
+	var $spos = $s.length;
+	if(this.properties != null) {
+		var $tmp = this.properties;
+		$s.pop();
+		return $tmp;
+	}
+	this.initFields();
+	{
+		var $tmp = this.properties;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+reflect.ClassInfo.prototype.getMethods = function() {
+	$s.push("reflect.ClassInfo::getMethods");
+	var $spos = $s.length;
+	if(this.methods != null) {
+		var $tmp = this.methods;
+		$s.pop();
+		return $tmp;
+	}
+	this.initFields();
+	{
+		var $tmp = this.methods;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+reflect.ClassInfo.prototype.initFields = function() {
+	$s.push("reflect.ClassInfo::initFields");
+	var $spos = $s.length;
+	this.properties = new Array();
+	this.methods = new Array();
+	this.scanClass(this.type);
+	$s.pop();
+}
+reflect.ClassInfo.prototype.scanClass = function(type) {
+	$s.push("reflect.ClassInfo::scanClass");
+	var $spos = $s.length;
+	if(type.__rtti == null) {
+		$s.pop();
+		return;
+	}
+	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(type.__rtti).firstElement());
+	var classDef;
+	var $e = infos;
+	switch( $e[1] ) {
+	case 1:
+	var c = $e[2];
+	{
+		classDef = c;
+	}break;
+	default:{
+		throw Type.getClassName(type) + " needs to be a class!";
+	}break;
+	}
+	this.scanFields(classDef);
+	if(classDef.superClass != null) {
+		this.scanClass(Type.resolveClass(classDef.superClass.path));
+	}
+	$s.pop();
+}
+reflect.ClassInfo.prototype.scanFields = function(classDef) {
+	$s.push("reflect.ClassInfo::scanFields");
+	var $spos = $s.length;
+	{ var $it0 = classDef.fields.iterator();
+	while( $it0.hasNext() ) { var field = $it0.next();
+	{
+		var $e = field.type;
+		switch( $e[1] ) {
+		case 4:
+		var ret = $e[3], args = $e[2];
+		{
+			null;
+		}break;
+		case 2:
+		var params = $e[3], args = $e[2];
+		{
+			this.getProperties().push(new reflect.Property(field,classDef.path,this));
+		}break;
+		default:{
+			Log.warn("Unknown type:",field,"in class ",classDef," found in " + this.name,null,null,{ fileName : "ClassInfo.hx", lineNumber : 143, className : "reflect.ClassInfo", methodName : "scanFields"});
+		}break;
+		}
+	}
+	}}
+	$s.pop();
+}
+reflect.ClassInfo.prototype.__class__ = reflect.ClassInfo;
 Matrix3 = function(cloneFrom) { if( cloneFrom === $_ ) return; {
 	$s.push("Matrix3::new");
 	var $spos = $s.length;
@@ -6253,7 +6581,7 @@ Main = function(canvas) { if( canvas === $_ ) return; {
 	$s.push("Main::new");
 	var $spos = $s.length;
 	try {
-		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.time.Config,kumite.projection.Config,kumite.camera.Config,kumite.mouse.Config,kumite.helloworldgl.Config,kumite.displaylist.Config,kumite.vjinterface.Config,kumite.scene.Config,kumite.testscene.Config]);
+		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.time.Config,kumite.projection.Config,kumite.camera.Config,kumite.mouse.Config,kumite.displaylist.Config,kumite.vjinterface.Config,kumite.scene.Config,kumite.testscene.Config]);
 	}
 	catch( $e0 ) {
 		{
@@ -6514,15 +6842,32 @@ kumite.vjinterface.VJInterface = function(p) { if( p === $_ ) return; {
 	$s.pop();
 }}
 kumite.vjinterface.VJInterface.__name__ = ["kumite","vjinterface","VJInterface"];
+kumite.vjinterface.VJInterface.prototype.scenes = null;
 kumite.vjinterface.VJInterface.prototype.stage = null;
 kumite.vjinterface.VJInterface.prototype.cutButton = null;
 kumite.vjinterface.VJInterface.prototype.shortButton = null;
 kumite.vjinterface.VJInterface.prototype.longButton = null;
+kumite.vjinterface.VJInterface.prototype.sceneContainer = null;
 kumite.vjinterface.VJInterface.prototype.start = function() {
 	$s.push("kumite.vjinterface.VJInterface::start");
 	var $spos = $s.length;
 	this.stage = GLDisplayList.getDefault().stage;
-	this.stage.addChild(new GLStats());
+	this.addTransitionButtons();
+	this.addSceneButtons();
+	$s.pop();
+}
+kumite.vjinterface.VJInterface.prototype.render = function(tick) {
+	$s.push("kumite.vjinterface.VJInterface::render");
+	var $spos = $s.length;
+	this.cutButton.setY(this.stage.stageHeight - 90);
+	this.shortButton.setY(this.stage.stageHeight - 60);
+	this.longButton.setY(this.stage.stageHeight - 30);
+	this.sceneContainer.setY(this.stage.stageHeight - 30);
+	$s.pop();
+}
+kumite.vjinterface.VJInterface.prototype.addTransitionButtons = function() {
+	$s.push("kumite.vjinterface.VJInterface::addTransitionButtons");
+	var $spos = $s.length;
 	this.cutButton = new GLLabel();
 	this.cutButton.setX(10);
 	this.cutButton.setText("CUT");
@@ -6543,12 +6888,27 @@ kumite.vjinterface.VJInterface.prototype.start = function() {
 	this.stage.addChild(this.longButton);
 	$s.pop();
 }
-kumite.vjinterface.VJInterface.prototype.render = function(tick) {
-	$s.push("kumite.vjinterface.VJInterface::render");
+kumite.vjinterface.VJInterface.prototype.addSceneButtons = function() {
+	$s.push("kumite.vjinterface.VJInterface::addSceneButtons");
 	var $spos = $s.length;
-	this.cutButton.setY(this.stage.stageHeight - 90);
-	this.shortButton.setY(this.stage.stageHeight - 60);
-	this.longButton.setY(this.stage.stageHeight - 30);
+	this.sceneContainer = new GLDisplayObjectContainer();
+	this.sceneContainer.setX(100);
+	this.stage.addChild(this.sceneContainer);
+	var currentX = 10;
+	{
+		var _g = 0, _g1 = this.scenes.all;
+		while(_g < _g1.length) {
+			var sceneAndLifecycle = _g1[_g];
+			++_g;
+			var sceneButton = new GLLabel();
+			sceneButton.setX(currentX);
+			sceneButton.setText(sceneAndLifecycle.scene.name);
+			sceneButton.setWidth(80);
+			sceneButton.setHeight(20);
+			this.sceneContainer.addChild(sceneButton);
+			currentX += sceneButton.width + 10;
+		}
+	}
 	$s.pop();
 }
 kumite.vjinterface.VJInterface.prototype.__class__ = kumite.vjinterface.VJInterface;
@@ -6684,6 +7044,16 @@ kumite.stage.Stage.prototype.getAspect = function() {
 	$s.pop();
 }
 kumite.stage.Stage.prototype.__class__ = kumite.stage.Stage;
+kumite.scene.SceneAndLifecycle = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.scene.SceneAndLifecycle::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.scene.SceneAndLifecycle.__name__ = ["kumite","scene","SceneAndLifecycle"];
+kumite.scene.SceneAndLifecycle.prototype.scene = null;
+kumite.scene.SceneAndLifecycle.prototype.lifecycle = null;
+kumite.scene.SceneAndLifecycle.prototype.__class__ = kumite.scene.SceneAndLifecycle;
 if(!haxe.exception) haxe.exception = {}
 haxe.exception.Exception = function(message,innerException,numberOfStackTraceShifts) { if( message === $_ ) return; {
 	$s.push("haxe.exception.Exception::new");
@@ -7115,13 +7485,13 @@ haxe.xml.Fast.prototype.getElements = function() {
 	$s.pop();
 }
 haxe.xml.Fast.prototype.__class__ = haxe.xml.Fast;
-kumite.helloworldgl.shader.Vertex = function() { }
-kumite.helloworldgl.shader.Vertex.__name__ = ["kumite","helloworldgl","shader","Vertex"];
-kumite.helloworldgl.shader.Vertex.prototype.__class__ = kumite.helloworldgl.shader.Vertex;
 if(typeof shader=='undefined') shader = {}
 shader.DisplayObjectVertex = function() { }
 shader.DisplayObjectVertex.__name__ = ["shader","DisplayObjectVertex"];
 shader.DisplayObjectVertex.prototype.__class__ = shader.DisplayObjectVertex;
+kumite.helloworldgl.shader.Vertex = function() { }
+kumite.helloworldgl.shader.Vertex.__name__ = ["kumite","helloworldgl","shader","Vertex"];
+kumite.helloworldgl.shader.Vertex.prototype.__class__ = kumite.helloworldgl.shader.Vertex;
 haxe.rtti.Meta = function() { }
 haxe.rtti.Meta.__name__ = ["haxe","rtti","Meta"];
 haxe.rtti.Meta.getType = function(t) {
@@ -7575,58 +7945,65 @@ GL.viewport = function(x,y,width,height) {
 	$s.pop();
 }
 GL.prototype.__class__ = GL;
+kumite.testscene.TestLayer = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.testscene.TestLayer::new");
+	var $spos = $s.length;
+	this.color = new Color(1,1,0,0.5);
+	$s.pop();
+}}
+kumite.testscene.TestLayer.__name__ = ["kumite","testscene","TestLayer"];
+kumite.testscene.TestLayer.prototype.stage = null;
+kumite.testscene.TestLayer.prototype.time = null;
+kumite.testscene.TestLayer.prototype.projection = null;
+kumite.testscene.TestLayer.prototype.camera = null;
+kumite.testscene.TestLayer.prototype.color = null;
+kumite.testscene.TestLayer.prototype.shaderProgram = null;
+kumite.testscene.TestLayer.prototype.vertexPositionAttribute = null;
+kumite.testscene.TestLayer.prototype.vertexBuffer = null;
+kumite.testscene.TestLayer.prototype.projectionMatrixUniform = null;
+kumite.testscene.TestLayer.prototype.worldViewMatrixUniform = null;
+kumite.testscene.TestLayer.prototype.colorUniform = null;
+kumite.testscene.TestLayer.prototype.init = function() {
+	$s.push("kumite.testscene.TestLayer::init");
+	var $spos = $s.length;
+	this.shaderProgram = GL.createProgram(kumite.helloworldgl.shader.Vertex,kumite.helloworldgl.shader.Fragment);
+	this.vertexPositionAttribute = GL.getAttribLocation2("vertexPosition",2,5120);
+	this.vertexPositionAttribute.updateBuffer(new Int8Array([-1,-1,1,-1,-1,1,1,1]));
+	this.projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
+	this.worldViewMatrixUniform = GL.getUniformLocation("worldViewMatrix");
+	this.colorUniform = GL.getUniformLocation("color");
+	$s.pop();
+}
+kumite.testscene.TestLayer.prototype.render = function() {
+	$s.push("kumite.testscene.TestLayer::render");
+	var $spos = $s.length;
+	GL.useProgram(this.shaderProgram);
+	GL.gl.viewport(0,0,this.stage.width,this.stage.height);
+	GL.gl.enable(2929);
+	GL.gl.enable(3042);
+	GL.gl.blendFunc(770,771);
+	GL.gl.uniformMatrix4fv(this.projectionMatrixUniform.location,false,this.projection.matrix.buffer);
+	this.vertexPositionAttribute.vertexAttribPointer();
+	var worldViewMatrix = new Matrix4(this.camera.matrix);
+	worldViewMatrix.appendTranslation(0,0,0);
+	worldViewMatrix.appendScale(0.4,0.4,0.4);
+	GL.gl.uniformMatrix4fv(this.worldViewMatrixUniform.location,false,worldViewMatrix.buffer);
+	this.colorUniform.setRGBA(this.color);
+	this.vertexPositionAttribute.drawArrays(5);
+	$s.pop();
+}
+kumite.testscene.TestLayer.prototype.__class__ = kumite.testscene.TestLayer;
+kumite.testscene.TestLayer.__interfaces__ = [haxe.rtti.Infos,kumite.scene.LayerLifecycle];
 kumite.testscene.TestLayer1 = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.testscene.TestLayer1::new");
 	var $spos = $s.length;
-	null;
+	kumite.testscene.TestLayer.call(this);
 	$s.pop();
 }}
 kumite.testscene.TestLayer1.__name__ = ["kumite","testscene","TestLayer1"];
-kumite.testscene.TestLayer1.prototype.layerInit = function(layer) {
-	$s.push("kumite.testscene.TestLayer1::layerInit");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}
+kumite.testscene.TestLayer1.__super__ = kumite.testscene.TestLayer;
+for(var k in kumite.testscene.TestLayer.prototype ) kumite.testscene.TestLayer1.prototype[k] = kumite.testscene.TestLayer.prototype[k];
 kumite.testscene.TestLayer1.prototype.__class__ = kumite.testscene.TestLayer1;
-kumite.testscene.TestLayer1.__interfaces__ = [kumite.scene.LayerLifecycle];
-GLStats = function(p) { if( p === $_ ) return; {
-	$s.push("GLStats::new");
-	var $spos = $s.length;
-	GLDisplayObject.call(this);
-	this.setWidth(64);
-	this.setHeight(32);
-	this.enterFrameSignaler.bind($closure(this,"handleEnterFrame"));
-	$s.pop();
-}}
-GLStats.__name__ = ["GLStats"];
-GLStats.__super__ = GLDisplayObject;
-for(var k in GLDisplayObject.prototype ) GLStats.prototype[k] = GLDisplayObject.prototype[k];
-GLStats.prototype.lastDraw = null;
-GLStats.prototype.handleEnterFrame = function(frame) {
-	$s.push("GLStats::handleEnterFrame");
-	var $spos = $s.length;
-	if(this.lastDraw < frame.time - 100) {
-		this.lastDraw = frame.time;
-		this.graphic.clear();
-		this.graphic.setFillStyle(new Color(0,1,0,0.3));
-		this.graphic.fillRect(0,0,this.width - 10,bpmjs.Stats.getContents().length * 12 + 4);
-		this.graphic.setFont("12px Arial");
-		this.graphic.setFillStyle(new Color(0,1,0,1));
-		var line = 0;
-		{
-			var _g = 0, _g1 = bpmjs.Stats.getContents();
-			while(_g < _g1.length) {
-				var message = _g1[_g];
-				++_g;
-				this.graphic.fillText(message,6,12 + line * 12);
-				line++;
-			}
-		}
-	}
-	$s.pop();
-}
-GLStats.prototype.__class__ = GLStats;
 GLHitareaPicker = function(p) { if( p === $_ ) return; {
 	$s.push("GLHitareaPicker::new");
 	var $spos = $s.length;
@@ -7741,6 +8118,44 @@ kumite.displaylist.DisplayListController.prototype.render = function(tick) {
 }
 kumite.displaylist.DisplayListController.prototype.__class__ = kumite.displaylist.DisplayListController;
 kumite.displaylist.DisplayListController.__interfaces__ = [haxe.rtti.Infos];
+bpmjs.ReflectUtil = function() { }
+bpmjs.ReflectUtil.__name__ = ["bpmjs","ReflectUtil"];
+bpmjs.ReflectUtil.callMethodWithMetadata = function(object,type,metadata,args) {
+	$s.push("bpmjs.ReflectUtil::callMethodWithMetadata");
+	var $spos = $s.length;
+	var metadatas = haxe.rtti.Meta.getFields(type);
+	{
+		var _g = 0, _g1 = Reflect.fields(metadatas);
+		while(_g < _g1.length) {
+			var fieldName = _g1[_g];
+			++_g;
+			var meta = Reflect.field(metadatas,fieldName);
+			if(Reflect.hasField(meta,metadata)) {
+				{
+					var $tmp = Reflect.field(object,fieldName).apply(object,[]);
+					$s.pop();
+					return $tmp;
+				}
+			}
+		}
+	}
+	{
+		$s.pop();
+		return null;
+	}
+	$s.pop();
+}
+bpmjs.ReflectUtil.getClassName = function(object) {
+	$s.push("bpmjs.ReflectUtil::getClassName");
+	var $spos = $s.length;
+	{
+		var $tmp = Type.getClassName(Type.getClass(object));
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+bpmjs.ReflectUtil.prototype.__class__ = bpmjs.ReflectUtil;
 haxe.exception.ArgumentNullException = function(argumentName,numberOfStackTraceShifts) { if( argumentName === $_ ) return; {
 	$s.push("haxe.exception.ArgumentNullException::new");
 	var $spos = $s.length;
@@ -7755,11 +8170,13 @@ bpmjs.Context = function(p) { if( p === $_ ) return; {
 	$s.push("bpmjs.Context::new");
 	var $spos = $s.length;
 	this.objects = new Array();
+	this.observers = new Array();
 	$s.pop();
 }}
 bpmjs.Context.__name__ = ["bpmjs","Context"];
 bpmjs.Context.prototype.contextConfig = null;
 bpmjs.Context.prototype.objects = null;
+bpmjs.Context.prototype.observers = null;
 bpmjs.Context.prototype.addObject = function(name,type,object) {
 	$s.push("bpmjs.Context::addObject");
 	var $spos = $s.length;
@@ -7813,6 +8230,17 @@ bpmjs.Context.prototype.getObjectByType = function(type) {
 	}
 	$s.pop();
 }
+bpmjs.Context.prototype.addObserver = function(object,methodName,type) {
+	$s.push("bpmjs.Context::addObserver");
+	var $spos = $s.length;
+	Log.info(bpmjs.ReflectUtil.getClassName(object.object),methodName,Type.getClassName(type),null,null,null,null,{ fileName : "Context.hx", lineNumber : 47, className : "bpmjs.Context", methodName : "addObserver"});
+	var observer = new bpmjs.Observer();
+	observer.object = object;
+	observer.methodName = methodName;
+	observer.type = type;
+	this.observers.push(observer);
+	$s.pop();
+}
 bpmjs.Context.prototype.__class__ = bpmjs.Context;
 bpmjs.ContextObject = function(name,type,object) { if( name === $_ ) return; {
 	$s.push("bpmjs.ContextObject::new");
@@ -7820,13 +8248,34 @@ bpmjs.ContextObject = function(name,type,object) { if( name === $_ ) return; {
 	this.name = name;
 	this.type = type;
 	this.object = object;
+	this.classInfo = reflect.ClassInfo.forClass(type);
 	$s.pop();
 }}
 bpmjs.ContextObject.__name__ = ["bpmjs","ContextObject"];
 bpmjs.ContextObject.prototype.name = null;
 bpmjs.ContextObject.prototype.type = null;
 bpmjs.ContextObject.prototype.object = null;
+bpmjs.ContextObject.prototype.classInfo = null;
 bpmjs.ContextObject.prototype.__class__ = bpmjs.ContextObject;
+bpmjs.Observer = function(p) { if( p === $_ ) return; {
+	$s.push("bpmjs.Observer::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+bpmjs.Observer.__name__ = ["bpmjs","Observer"];
+bpmjs.Observer.prototype.object = null;
+bpmjs.Observer.prototype.methodName = null;
+bpmjs.Observer.prototype.type = null;
+bpmjs.Observer.prototype.observe = function(objectToObserve) {
+	$s.push("bpmjs.Observer::observe");
+	var $spos = $s.length;
+	if(Std["is"](objectToObserve.object,this.type)) {
+		Reflect.field(this.object.object,this.methodName).apply(this.object.object,[objectToObserve.object]);
+	}
+	$s.pop();
+}
+bpmjs.Observer.prototype.__class__ = bpmjs.Observer;
 kumite.mouse.Config = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.mouse.Config::new");
 	var $spos = $s.length;
@@ -7837,20 +8286,6 @@ kumite.mouse.Config.__name__ = ["kumite","mouse","Config"];
 kumite.mouse.Config.prototype.mouseController = null;
 kumite.mouse.Config.prototype.__class__ = kumite.mouse.Config;
 kumite.mouse.Config.__interfaces__ = [haxe.rtti.Infos];
-Map = function() { }
-Map.__name__ = ["Map"];
-Map.linear = function(value,min0,max0,min1,max1) {
-	$s.push("Map::linear");
-	var $spos = $s.length;
-	var p0 = 1 / (max0 - min0) * (value - min0);
-	{
-		var $tmp = min1 + (max1 - min1) * p0;
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-Map.prototype.__class__ = Map;
 kumite.scene.Scene = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.scene.Scene::new");
 	var $spos = $s.length;
@@ -8032,79 +8467,6 @@ ERegFilter.prototype.enabled = function(input,i,level) {
 }
 ERegFilter.prototype.__class__ = ERegFilter;
 ERegFilter.__interfaces__ = [LogFilter];
-kumite.helloworldgl.HelloWorld = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.helloworldgl.HelloWorld::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-kumite.helloworldgl.HelloWorld.__name__ = ["kumite","helloworldgl","HelloWorld"];
-kumite.helloworldgl.HelloWorld.prototype.stage = null;
-kumite.helloworldgl.HelloWorld.prototype.time = null;
-kumite.helloworldgl.HelloWorld.prototype.projection = null;
-kumite.helloworldgl.HelloWorld.prototype.camera = null;
-kumite.helloworldgl.HelloWorld.prototype.shaderProgram = null;
-kumite.helloworldgl.HelloWorld.prototype.vertexPositionAttribute = null;
-kumite.helloworldgl.HelloWorld.prototype.vertexBuffer = null;
-kumite.helloworldgl.HelloWorld.prototype.projectionMatrixUniform = null;
-kumite.helloworldgl.HelloWorld.prototype.worldViewMatrixUniform = null;
-kumite.helloworldgl.HelloWorld.prototype.colorUniform = null;
-kumite.helloworldgl.HelloWorld.prototype.start = function() {
-	$s.push("kumite.helloworldgl.HelloWorld::start");
-	var $spos = $s.length;
-	this.shaderProgram = GL.createProgram(kumite.helloworldgl.shader.Vertex,kumite.helloworldgl.shader.Fragment);
-	this.vertexPositionAttribute = GL.getAttribLocation2("vertexPosition",2,5120);
-	this.vertexPositionAttribute.updateBuffer(new Int8Array([-1,-1,1,-1,-1,1,1,1]));
-	this.projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
-	this.worldViewMatrixUniform = GL.getUniformLocation("worldViewMatrix");
-	this.colorUniform = GL.getUniformLocation("color");
-	$s.pop();
-}
-kumite.helloworldgl.HelloWorld.prototype.render = function(tick) {
-	$s.push("kumite.helloworldgl.HelloWorld::render");
-	var $spos = $s.length;
-	GL.useProgram(this.shaderProgram);
-	GL.gl.viewport(0,0,this.stage.width,this.stage.height);
-	GL.gl.enable(2929);
-	GL.gl.uniformMatrix4fv(this.projectionMatrixUniform.location,false,this.projection.matrix.buffer);
-	this.vertexPositionAttribute.vertexAttribPointer();
-	{
-		var _g = -10;
-		while(_g < 10) {
-			var y = _g++;
-			this.drawRect(0,Map.linear(y,-10,10,-3,3),0,new Color(0,Map.linear(y,-10,10,0,1),0,1));
-		}
-	}
-	{
-		var _g = -10;
-		while(_g < 10) {
-			var z = _g++;
-			this.drawRect(0,0,Map.linear(z,-10,10,-3,3),new Color(0,0,Map.linear(z,-10,10,0,1),1));
-		}
-	}
-	{
-		var _g = -10;
-		while(_g < 10) {
-			var x = _g++;
-			this.drawRect(Map.linear(x,-10,10,-3,3),0,0,new Color(Map.linear(x,-10,10,0,1),0,0,1));
-		}
-	}
-	$s.pop();
-}
-kumite.helloworldgl.HelloWorld.prototype.drawRect = function(x,y,z,color) {
-	$s.push("kumite.helloworldgl.HelloWorld::drawRect");
-	var $spos = $s.length;
-	var worldViewMatrix = new Matrix4(this.camera.matrix);
-	worldViewMatrix.appendRotation(this.time.ms / 50000,new Vec3(1,-1,-1));
-	worldViewMatrix.appendTranslation(x,y,z);
-	worldViewMatrix.appendScale(0.1,0.1,0.1);
-	GL.gl.uniformMatrix4fv(this.worldViewMatrixUniform.location,false,worldViewMatrix.buffer);
-	GL.gl.uniform4f(this.colorUniform.location,color.r,color.g,color.b,color.a);
-	this.vertexPositionAttribute.drawArrays(5);
-	$s.pop();
-}
-kumite.helloworldgl.HelloWorld.prototype.__class__ = kumite.helloworldgl.HelloWorld;
-kumite.helloworldgl.HelloWorld.__interfaces__ = [haxe.rtti.Infos];
 kumite.launch.Config = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.launch.Config::new");
 	var $spos = $s.length;
@@ -9107,18 +9469,18 @@ js.Boot.__init();
 	Xml.Document = "document";
 }
 Log.filters = new Array();
-kumite.scene.Config.__rtti = "<class path=\"kumite.scene.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sceneController public=\"1\"><c path=\"kumite.scene.SceneController\"/></sceneController>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.scene.Config.__rtti = "<class path=\"kumite.scene.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<scenes public=\"1\"><c path=\"kumite.scene.Scenes\"/></scenes>\n\t<sceneController public=\"1\"><c path=\"kumite.scene.SceneController\"/></sceneController>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.stage.Config.__rtti = "<class path=\"kumite.stage.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<stageResizeAction public=\"1\"><c path=\"kumite.stage.StageResizeAction\"/></stageResizeAction>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.mouse.MouseController.__meta__ = { fields : { canvas : { Inject : null}, start : { Sequence : ["boot","init"]}}};
 kumite.mouse.MouseController.__rtti = "<class path=\"kumite.mouse.MouseController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<start public=\"1\" set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<new public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.helloworldgl.shader.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform vec4 color;\n\n\tvoid main(void)\n\t{\n\t\tgl_FragColor = color;\n\t}\n\n"]}};
 GLCursorClient.DEFAULT = "default";
 GLCursorClient.HAND = "pointer";
+kumite.helloworldgl.shader.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform vec4 color;\n\n\tvoid main(void)\n\t{\n\t\tgl_FragColor = color;\n\t}\n\n"]}};
+kumite.testscene.TestScene1.__meta__ = { fields : { testLayer1 : { Inject : null}}};
+kumite.testscene.TestScene1.__rtti = "<class path=\"kumite.testscene.TestScene1\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.SceneLifecycle\"/>\n\t<testLayer1 public=\"1\"><c path=\"kumite.testscene.TestLayer1\"/></testLayer1>\n\t<sceneInit public=\"1\" set=\"method\" line=\"15\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></sceneInit>\n\t<new public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 hsl.haxe._DirectSignaler.PropagationStatus.IMMEDIATELY_STOPPED = 1;
 hsl.haxe._DirectSignaler.PropagationStatus.STOPPED = 2;
 hsl.haxe._DirectSignaler.PropagationStatus.UNDISTURBED = 3;
-kumite.testscene.TestScene1.__meta__ = { fields : { testLayer1 : { Inject : null}}};
-kumite.helloworldgl.Config.__rtti = "<class path=\"kumite.helloworldgl.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<helloWorld public=\"1\"><c path=\"kumite.helloworldgl.HelloWorld\"/></helloWorld>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs.Sequencer.__meta__ = { fields : { context : { Inject : null}}};
 bpmjs.Sequencer.__rtti = "<class path=\"bpmjs.Sequencer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context public=\"1\"><c path=\"bpmjs.Context\"/></context>\n\t<start public=\"1\" set=\"method\" line=\"14\"><f a=\"name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></start>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 LogLevel.INFO = new LogLevel(1);
@@ -9135,20 +9497,23 @@ kumite.canvas.CanvasController.__rtti = "<class path=\"kumite.canvas.CanvasContr
 kumite.launch.Launcher.__meta__ = { fields : { sequencer : { Inject : null}, handlePostComplete : { PostComplete : null}, showError : { Sequence : ["boot","error"]}}};
 kumite.launch.Launcher.__rtti = "<class path=\"kumite.launch.Launcher\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<handlePostComplete public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></handlePostComplete>\n\t<showError public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></showError>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.testscene.Config.__rtti = "<class path=\"kumite.testscene.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<testLayer1 public=\"1\"><c path=\"kumite.testscene.TestLayer1\"/></testLayer1>\n\t<testScene1 public=\"1\"><c path=\"kumite.testscene.TestScene1\"/></testScene1>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.scene.SceneController.__meta__ = { fields : { scenes : { Inject : null}, handleSceneLifecycleAdded : { Observe : null}, start : { Sequence : ["boot","start"]}, render : { Message : null}}};
+kumite.scene.SceneController.__rtti = "<class path=\"kumite.scene.SceneController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<scenes public=\"1\"><c path=\"kumite.scene.Scenes\"/></scenes>\n\t<currentScene><c path=\"kumite.scene.SceneAndLifecycle\"/></currentScene>\n\t<handleSceneLifecycleAdded public=\"1\" set=\"method\" line=\"17\"><f a=\"lifecycle\">\n\t<c path=\"kumite.scene.SceneLifecycle\"/>\n\t<e path=\"Void\"/>\n</f></handleSceneLifecycleAdded>\n\t<start public=\"1\" set=\"method\" line=\"30\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<render public=\"1\" set=\"method\" line=\"40\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"14\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.camera.CameraMouseMover.__meta__ = { fields : { camera : { Inject : null}, init : { Sequence : ["boot","init"]}}};
 kumite.camera.CameraMouseMover.__rtti = "<class path=\"kumite.camera.CameraMouseMover\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<init public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateCamera set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></updateCamera>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.webgl.Config.__rtti = "<class path=\"kumite.webgl.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<initAction public=\"1\"><c path=\"kumite.webgl.InitAction\"/></initAction>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.time.TimeController.__meta__ = { fields : { time : { Inject : null}, messenger : { Messenger : null}, startComplete : { Sequence : ["boot","startComplete"]}}};
 kumite.time.TimeController.__rtti = "<class path=\"kumite.time.TimeController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<startComplete public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"24\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<new public=\"1\" set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+reflect.ClassInfo.cache = new Hash();
 kumite.webgl.InitAction.__meta__ = { fields : { canvas : { Inject : null}, antialias : { Inject : null}, init : { Sequence : ["boot","init"]}}};
 kumite.webgl.InitAction.__rtti = "<class path=\"kumite.webgl.InitAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<antialias public=\"1\"><e path=\"Bool\"/></antialias>\n\t<init public=\"1\" set=\"method\" line=\"17\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<new public=\"1\" set=\"method\" line=\"14\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.projection.Config.__rtti = "<class path=\"kumite.projection.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<projectionController public=\"1\"><c path=\"kumite.projection.ProjectionController\"/></projectionController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.vjinterface.VJInterface.__meta__ = { fields : { start : { Sequence : ["boot","start"]}, render : { Message : null}}};
-kumite.vjinterface.VJInterface.__rtti = "<class path=\"kumite.vjinterface.VJInterface\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage><c path=\"GLStage\"/></stage>\n\t<cutButton><c path=\"GLLabel\"/></cutButton>\n\t<shortButton><c path=\"GLLabel\"/></shortButton>\n\t<longButton><c path=\"GLLabel\"/></longButton>\n\t<start public=\"1\" set=\"method\" line=\"17\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<render public=\"1\" set=\"method\" line=\"45\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"14\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.vjinterface.VJInterface.__meta__ = { fields : { scenes : { Inject : null}, start : { Sequence : ["boot","start"]}, render : { Message : null}}};
+kumite.vjinterface.VJInterface.__rtti = "<class path=\"kumite.vjinterface.VJInterface\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<scenes public=\"1\"><c path=\"kumite.scene.Scenes\"/></scenes>\n\t<stage><c path=\"GLStage\"/></stage>\n\t<cutButton><c path=\"GLLabel\"/></cutButton>\n\t<shortButton><c path=\"GLLabel\"/></shortButton>\n\t<longButton><c path=\"GLLabel\"/></longButton>\n\t<sceneContainer><c path=\"GLDisplayObjectContainer\"/></sceneContainer>\n\t<start public=\"1\" set=\"method\" line=\"23\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<render public=\"1\" set=\"method\" line=\"33\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<addTransitionButtons set=\"method\" line=\"42\"><f a=\"\"><e path=\"Void\"/></f></addTransitionButtons>\n\t<addSceneButtons set=\"method\" line=\"66\"><f a=\"\"><e path=\"Void\"/></f></addSceneButtons>\n\t<new public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.displaylist.Config.__rtti = "<class path=\"kumite.displaylist.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<displayListController public=\"1\"><c path=\"kumite.displaylist.DisplayListController\"/></displayListController>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 haxe.Timer.arr = new Array();
-kumite.helloworldgl.shader.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 worldViewMatrix;\n\n\tvarying vec4 vertex;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);\n\t\tvertex = vec4(vertexPosition, 0.0, 1.0);\n\t}\n\n"]}};
 shader.DisplayObjectVertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 objectMatrix;\n\tuniform vec2 size;\n\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * objectMatrix * (vec4(size, 1.0, 1.0) * vec4(vertexPosition, 0.0, 1.0));\n\t\ttextureCoord = vertexPosition.xy;\n\t}\n\n"]}};
+kumite.helloworldgl.shader.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 worldViewMatrix;\n\n\tvarying vec4 vertex;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);\n\t\tvertex = vec4(vertexPosition, 0.0, 1.0);\n\t}\n\n"]}};
 kumite.stage.StageResizeAction.__meta__ = { fields : { messenger : { Messenger : null}, stage : { Inject : null}, initPrepare : { Sequence : ["boot","initPrepare"]}, startComplete : { Sequence : ["boot","startComplete"]}}};
 kumite.stage.StageResizeAction.__rtti = "<class path=\"kumite.stage.StageResizeAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<startComplete public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<onResize set=\"method\" line=\"39\"><f a=\"?event\">\n\t<t path=\"js.Event\"/>\n\t<e path=\"Void\"/>\n</f></onResize>\n\t<updateSize set=\"method\" line=\"45\"><f a=\"\"><e path=\"Void\"/></f></updateSize>\n\t<sendResizeMessage set=\"method\" line=\"51\"><f a=\"\"><e path=\"Void\"/></f></sendResizeMessage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 GL.DEPTH_BUFFER_BIT = 256;
@@ -9448,6 +9813,9 @@ GL.FRAMEBUFFER_BINDING = 36006;
 GL.RENDERBUFFER_BINDING = 36007;
 GL.MAX_RENDERBUFFER_SIZE = 34024;
 GL.INVALID_FRAMEBUFFER_OPERATION = 1286;
+kumite.testscene.TestLayer.__meta__ = { fields : { stage : { Inject : null}, time : { Inject : null}, projection : { Inject : null}, camera : { Inject : null}}};
+kumite.testscene.TestLayer.__rtti = "<class path=\"kumite.testscene.TestLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<color public=\"1\"><c path=\"Color\"/></color>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<worldViewMatrixUniform><c path=\"GLUniformLocation\"/></worldViewMatrixUniform>\n\t<colorUniform><c path=\"GLUniformLocation\"/></colorUniform>\n\t<init public=\"1\" set=\"method\" line=\"41\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<render public=\"1\" set=\"method\" line=\"58\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"36\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.testscene.TestLayer1.__rtti = "<class path=\"kumite.testscene.TestLayer1\" params=\"\">\n\t<extends path=\"kumite.testscene.TestLayer\"/>\n\t<new public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 shader.DisplayObjectFragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform sampler2D texture;\n\tuniform float alpha;\n\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tvec4 color = texture2D(texture, textureCoord);\n\t\tgl_FragColor = color * vec4(1.0, 1.0, 1.0, alpha);\n\t}\n\n"]}};
 kumite.camera.Config.__rtti = "<class path=\"kumite.camera.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<cameraMouseMover public=\"1\"><c path=\"kumite.camera.CameraMouseMover\"/></cameraMouseMover>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.vjinterface.Config.__rtti = "<class path=\"kumite.vjinterface.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<vjinterface public=\"1\"><c path=\"kumite.vjinterface.VJInterface\"/></vjinterface>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
@@ -9455,8 +9823,6 @@ kumite.displaylist.DisplayListController.__meta__ = { fields : { stage : { Injec
 kumite.displaylist.DisplayListController.__rtti = "<class path=\"kumite.displaylist.DisplayListController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<renderer><c path=\"GLDisplayListRenderer\"/></renderer>\n\t<start public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<render public=\"1\" set=\"method\" line=\"27\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"17\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.mouse.Config.__rtti = "<class path=\"kumite.mouse.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<mouseController public=\"1\"><c path=\"kumite.mouse.MouseController\"/></mouseController>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs.Stats.fps = 0;
-kumite.helloworldgl.HelloWorld.__meta__ = { fields : { stage : { Inject : null}, time : { Inject : null}, projection : { Inject : null}, camera : { Inject : null}, start : { Sequence : ["boot","start"]}, render : { Message : null}}};
-kumite.helloworldgl.HelloWorld.__rtti = "<class path=\"kumite.helloworldgl.HelloWorld\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<worldViewMatrixUniform><c path=\"GLUniformLocation\"/></worldViewMatrixUniform>\n\t<colorUniform><c path=\"GLUniformLocation\"/></colorUniform>\n\t<start public=\"1\" set=\"method\" line=\"36\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<render public=\"1\" set=\"method\" line=\"54\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<drawRect set=\"method\" line=\"75\"><f a=\"x:y:z:color\">\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Color\"/>\n\t<e path=\"Void\"/>\n</f></drawRect>\n\t<new public=\"1\" set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.launch.Config.__rtti = "<class path=\"kumite.launch.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<launcher public=\"1\"><c path=\"kumite.launch.Launcher\"/></launcher>\n\t<new public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Xml.enode = new EReg("^<([a-zA-Z0-9:_-]+)","");
 Xml.ecdata = new EReg("^<!\\[CDATA\\[","i");

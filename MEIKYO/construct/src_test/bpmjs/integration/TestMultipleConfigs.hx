@@ -1,8 +1,6 @@
 package bpmjs.integration;
 
-import TestRunner;
-
-class TestMultipleConfigs extends SummerTestCase
+class TestMultipleConfigs extends TestCase2
 {
 	public function testGetObject()
 	{

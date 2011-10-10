@@ -1,8 +1,6 @@
 package bpmjs;
 
-import TestRunner;
-
-class TestSequencer extends SummerTestCase
+class TestSequencer extends TestCase2
 {
 	public static var initPrepareCount : Int;
 	public static var initCount : Int;

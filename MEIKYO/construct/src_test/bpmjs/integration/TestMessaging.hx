@@ -1,12 +1,10 @@
 package bpmjs.integration;
 
-import TestRunner;
-
 import bpmjs.ContextBuilder;
 import bpmjs.FrontMessenger;
 import haxe.rtti.Infos;
 
-class TestMessaging extends SummerTestCase
+class TestMessaging extends TestCase2
 {
 	public static var messageReceivedCount;
 
