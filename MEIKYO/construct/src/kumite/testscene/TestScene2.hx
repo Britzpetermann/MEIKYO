@@ -11,13 +11,13 @@ import haxe.rtti.Infos;
 class TestScene2 implements SceneLifecycle, implements Infos
 {
 	@Inject
-	public var testLayer1 : TestLayer1;
+	public var testLayer1 : TestLayer;
 	
 	@Inject
-	public var testLayer2 : TestLayer2;
+	public var testLayer2 : TestLayer;
 	
 	@Inject
-	public var displayList : DisplayListLayer;
+	public var displayListLayer : DisplayListLayer;
 	
 	public function new() {}
 	
@@ -26,7 +26,7 @@ class TestScene2 implements SceneLifecycle, implements Infos
 		scene.id = scene.name = "RED-GREEN";
 		scene.addLayer(new DelegateLayer(testLayer1));
 		scene.addLayer(new DelegateLayer(testLayer2));
-		scene.addLayer(new DelegateLayer(displayList));
+		scene.addLayer(new DelegateLayer(displayListLayer));
 	}
 
 	public function renderTransition(transitionContext : TransitionContext)

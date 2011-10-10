@@ -14,12 +14,15 @@ class DisplayListLayer implements Infos, implements LayerLifecycle
 	@Inject
 	public var stage : Stage;
 	
+	public var layerId : String;
+	
 	private var renderer : GLDisplayListRenderer;
 	
 	public function new() {}
 
 	public function init()
 	{
+		layerId = "DisplayListLayer";
 		renderer = new GLDisplayListRenderer();
 		renderer.init();
 	}

@@ -83,7 +83,7 @@ class SceneMixer
 					var bIndex = to.getLayerIndex(b) + 1;
 					while(bIndex < to.layers.length)
 					{
-						if (to.layers[bIndex].id == from.layers[aIndex].id)
+						if (to.layers[bIndex].layerId == from.layers[aIndex].layerId)
 							return true;
 						bIndex++;
 					}

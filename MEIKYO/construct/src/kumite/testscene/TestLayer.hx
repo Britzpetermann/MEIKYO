@@ -24,6 +24,8 @@ class TestLayer implements LayerLifecycle, implements Infos
 	@Inject
 	public var camera : Camera;
 	
+	public var layerId : String;
+	
 	public var color : Color;
 	public var scale : Float;
 	public var position : Vec3;
@@ -40,6 +42,7 @@ class TestLayer implements LayerLifecycle, implements Infos
 		
 	public function new()
 	{
+		layerId = "TestLayer";
 		color = new Color(1, 1, 0, 0.5);
 		scale = 1;
 		position = new Vec3(0, 0, 0);

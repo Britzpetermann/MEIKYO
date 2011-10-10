@@ -146,6 +146,7 @@ if(typeof kumite=='undefined') kumite = {}
 if(!kumite.scene) kumite.scene = {}
 kumite.scene.LayerLifecycle = function() { }
 kumite.scene.LayerLifecycle.__name__ = ["kumite","scene","LayerLifecycle"];
+kumite.scene.LayerLifecycle.prototype.layerId = null;
 kumite.scene.LayerLifecycle.prototype.init = null;
 kumite.scene.LayerLifecycle.prototype.render = null;
 kumite.scene.LayerLifecycle.prototype.renderTransition = null;
@@ -3207,7 +3208,7 @@ kumite.scene.TestLayerOrder.prototype.createScene = function(ids) {
 			var id = idList[_g];
 			++_g;
 			var layer = new kumite.scene.Layer();
-			layer.id = id;
+			layer.layerId = id;
 			scene.addLayer(layer);
 		}
 	}
@@ -3220,7 +3221,7 @@ kumite.scene.TestLayerOrder.prototype.createIds = function(scene) {
 		while(_g < _g1.length) {
 			var layer = _g1[_g];
 			++_g;
-			result += layer.id;
+			result += layer.layerId;
 		}
 	}
 	return result;
@@ -3929,7 +3930,7 @@ kumite.scene.Layer = function(p) { if( p === $_ ) return; {
 	null;
 }}
 kumite.scene.Layer.__name__ = ["kumite","scene","Layer"];
-kumite.scene.Layer.prototype.id = null;
+kumite.scene.Layer.prototype.layerId = null;
 kumite.scene.Layer.prototype.state = null;
 kumite.scene.Layer.prototype.init = function() {
 	null;
@@ -4418,7 +4419,7 @@ kumite.scene.Scene.prototype.containsLayer = function(layer) {
 		while(_g < _g1.length) {
 			var sceneLayer = _g1[_g];
 			++_g;
-			if(sceneLayer.id == layer.id) return true;
+			if(sceneLayer.layerId == layer.layerId) return true;
 		}
 	}
 	return false;
@@ -4428,7 +4429,7 @@ kumite.scene.Scene.prototype.getLayerIndex = function(layer) {
 		var _g1 = 0, _g = this.layers.length;
 		while(_g1 < _g) {
 			var i = _g1++;
-			if(this.layers[i].id == layer.id) return i;
+			if(this.layers[i].layerId == layer.layerId) return i;
 		}
 	}
 	return -1;
@@ -4521,7 +4522,7 @@ kumite.scene.SceneMixer.prototype.sorter = function(a,b) {
 			while(aIndex >= 0) {
 				var bIndex = to.getLayerIndex(b) + 1;
 				while(bIndex < to.layers.length) {
-					if(to.layers[bIndex].id == from.layers[aIndex].id) return true;
+					if(to.layers[bIndex].layerId == from.layers[aIndex].layerId) return true;
 					bIndex++;
 				}
 				aIndex--;

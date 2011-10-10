@@ -22,7 +22,7 @@ class Scene
 	{
 		for (sceneLayer in layers)
 		{
-			if (sceneLayer.id == layer.id)
+			if (sceneLayer.layerId == layer.layerId)
 				return true;
 		}
 		
@@ -33,7 +33,7 @@ class Scene
 	{
 		for(i in 0...layers.length)
 		{
-			if (layers[i].id == layer.id)
+			if (layers[i].layerId == layer.layerId)
 				return i;
 		}
 		return -1;

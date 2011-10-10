@@ -73,7 +73,7 @@ class TestLayerOrder extends TestCase2
 		for (id in idList)
 		{
 			var layer = new Layer();
-			layer.id = id;
+			layer.layerId = id;
 			scene.addLayer(layer);
 		}
 		
@@ -85,7 +85,7 @@ class TestLayerOrder extends TestCase2
 		var result = "";
 		
 		for(layer in scene.layers)
-			result += layer.id;
+			result += layer.layerId;
 			
 		return result;
 	}

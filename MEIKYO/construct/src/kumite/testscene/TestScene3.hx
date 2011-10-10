@@ -11,10 +11,10 @@ import haxe.rtti.Infos;
 class TestScene3 implements SceneLifecycle, implements Infos
 {
 	@Inject
-	public var testLayer1 : TestLayer1;
+	public var testLayer1 : TestLayer;
 	
 	@Inject
-	public var testLayer3 : TestLayer3;
+	public var testLayer3 : TestLayer;
 	
 	@Inject
 	public var displayList : DisplayListLayer;

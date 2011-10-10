@@ -8,9 +8,8 @@ class DelegateLayer extends Layer
 	{
 		super();
 		
-		id = Type.getClassName(Type.getClass(lifecycle));
-		
 		this.lifecycle = lifecycle;
+		this.layerId = lifecycle.layerId;
 	}
 	
 	override public function init()
@@ -21,7 +20,7 @@ class DelegateLayer extends Layer
 		}
 		catch(e : Dynamic)
 		{
-			Log.error("Error initializing layer:", id, e);	
+			Log.error("Error initializing layer:", layerId, e);	
 		}
 	}
 	
@@ -33,7 +32,7 @@ class DelegateLayer extends Layer
 		}
 		catch(e : Dynamic)
 		{
-			Log.error("Error rendering layer:", id, e);	
+			Log.error("Error rendering layer:", layerId, e);	
 		}
 	}
 	
@@ -45,7 +44,7 @@ class DelegateLayer extends Layer
 		}
 		catch(e : Dynamic)
 		{
-			Log.error("Error rendering layer:", id, e);	
+			Log.error("Error rendering layer:", layerId, e);	
 		}
 	}
 	
