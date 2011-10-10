@@ -537,13 +537,18 @@ reflect.Field.prototype.getName = function() {
 reflect.Field.prototype.getType = function() {
 	var $e = this.field.type;
 	switch( $e[1] ) {
+	case 1:
+	var params = $e[3], name = $e[2];
+	{
+		null;
+	}break;
 	case 2:
 	var params = $e[3], name = $e[2];
 	{
 		return reflect.ClassInfo.forName(name);
 	}break;
 	default:{
-		throw "Did not expect othe type than Class!";
+		throw "Did not expect type: " + this.field.type;
 	}break;
 	}
 	return null;
@@ -3080,15 +3085,20 @@ reflect.ClassInfo.prototype.scanFields = function(classDef) {
 			null;
 		}break;
 		case 2:
-		var params = $e[3], args = $e[2];
+		var params = $e[3], name = $e[2];
+		{
+			this.getProperties().push(new reflect.Property(field,classDef.path,this));
+		}break;
+		case 1:
+		var params = $e[3], name = $e[2];
 		{
 			this.getProperties().push(new reflect.Property(field,classDef.path,this));
 		}break;
 		default:{
 			{
-				Log.posInfo = { fileName : "ClassInfo.hx", lineNumber : 143, className : "reflect.ClassInfo", methodName : "scanFields"};
+				Log.posInfo = { fileName : "ClassInfo.hx", lineNumber : 145, className : "reflect.ClassInfo", methodName : "scanFields"};
 				if(Log.filter(LogLevel.WARN)) {
-					Log.fetchInput("Unknown type:",field,"in class ",classDef," found in " + this.name,null,null);
+					Log.fetchInput("Unknown type:",Reflect.field(field,"type"),"in type:",Reflect.field(classDef,"path"),"found in:" + this.name,null,null);
 					console.warn(Log.createMessage());
 				}
 			}
@@ -4126,34 +4136,12 @@ TestRunner = function(p) { if( p === $_ ) return; {
 	this.addSceneTests();
 	var startTime = Date.now().getTime();
 	this.runner.run();
-	haxe.Log.trace("Time for testing... " + (Date.now().getTime() - startTime) + "ms",{ fileName : "TestRunner.hx", lineNumber : 52, className : "TestRunner", methodName : "new"});
+	haxe.Log.trace("Time for testing... " + (Date.now().getTime() - startTime) + "ms",{ fileName : "TestRunner.hx", lineNumber : 47, className : "TestRunner", methodName : "new"});
 }}
 TestRunner.__name__ = ["TestRunner"];
 TestRunner.main = function() {
 	Log.init();
 	Log.addFilter(new ERegFilter(LogLevel.INFO,new EReg(".*","")));
-	var x = Log;
-	{
-		Log.posInfo = { fileName : "TestRunner.hx", lineNumber : 28, className : "TestRunner", methodName : "main"};
-		if(Log.filter(LogLevel.INFO)) {
-			Log.fetchInput(null,null,null,null,null,null,null);
-			console.info(Log.createMessage());
-		}
-	}
-	{
-		Log.posInfo = { fileName : "TestRunner.hx", lineNumber : 29, className : "TestRunner", methodName : "main"};
-		if(Log.filter(LogLevel.WARN)) {
-			Log.fetchInput(1,2,x,null,null,null,null);
-			console.warn(Log.createMessage());
-		}
-	}
-	{
-		Log.posInfo = { fileName : "TestRunner.hx", lineNumber : 30, className : "TestRunner", methodName : "main"};
-		if(Log.filter(LogLevel.ERROR)) {
-			Log.fetchInput(1,2,3,null,null,null,null);
-			console.error(Log.createMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
-		}
-	}
 	var runner = new TestRunner();
 }
 TestRunner.prototype.runner = null;
@@ -4594,7 +4582,7 @@ js.Boot.__init();
 reflect.model.ClassB.__meta__ = { fields : { c : { Test : null}}};
 reflect.model.ClassB.__rtti = "<class path=\"reflect.model.ClassB\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<c public=\"1\"><c path=\"Int\"/></c>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 reflect.model.ClassA.__meta__ = { fields : { a : { Test : null}}};
-reflect.model.ClassA.__rtti = "<class path=\"reflect.model.ClassA\" params=\"\">\n\t<extends path=\"reflect.model.ClassB\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<a public=\"1\"><c path=\"Int\"/></a>\n\t<b public=\"1\"><c path=\"Int\"/></b>\n\t<f1 public=\"1\" set=\"method\" line=\"11\"><f a=\"a\">\n\t<c path=\"Int\"/>\n\t<e path=\"Void\"/>\n</f></f1>\n\t<f2 set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></f2>\n\t<new public=\"1\" set=\"method\" line=\"4\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+reflect.model.ClassA.__rtti = "<class path=\"reflect.model.ClassA\" params=\"\">\n\t<extends path=\"reflect.model.ClassB\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<a public=\"1\"><c path=\"Int\"/></a>\n\t<b public=\"1\"><e path=\"Bool\"/></b>\n\t<f1 public=\"1\" set=\"method\" line=\"11\"><f a=\"a\">\n\t<c path=\"Int\"/>\n\t<e path=\"Void\"/>\n</f></f1>\n\t<f2 set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></f2>\n\t<new public=\"1\" set=\"method\" line=\"4\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs.Sequencer.__meta__ = { fields : { context : { Inject : null}}};
 bpmjs.Sequencer.__rtti = "<class path=\"bpmjs.Sequencer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context public=\"1\"><c path=\"bpmjs.Context\"/></context>\n\t<start public=\"1\" set=\"method\" line=\"14\"><f a=\"name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></start>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs._TestConfigure.TestConfigWithA.__rtti = "<class path=\"bpmjs._TestConfigure.TestConfigWithA\" params=\"\" private=\"1\" module=\"bpmjs.TestConfigure\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<a public=\"1\"><c path=\"bpmjs._TestConfigure.A\"/></a>\n\t<new public=\"1\" set=\"method\" line=\"30\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";

@@ -8,7 +8,6 @@ class InitAction implements Infos
 	@Inject
 	public var canvas : CanvasCase;
 	
-	@Inject
 	public var antialias : Bool;
 	
 	public function new() {}

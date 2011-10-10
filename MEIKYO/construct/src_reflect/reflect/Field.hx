@@ -51,10 +51,11 @@ class Field implements MetadataAware
 	{
 		switch (field.type)
 		{
+			case CEnum(name, params):
 			case CClass(name, params):
 				return ClassInfo.forName(name);
 			default:
-				throw "Did not expect othe type than Class!";
+				throw "Did not expect type: " + field.type;
 		}
 		
 		return null;

@@ -137,10 +137,12 @@ class ClassInfo
 			switch (field.type)
 			{
 				case CFunction(args, ret):
-				case CClass(args, params):
+				case CClass(name, params):
+					properties.push(new Property(field, classDef.path, this));
+				case CEnum(name, params):
 					properties.push(new Property(field, classDef.path, this));
 				default:
-					Log.warn("Unknown type:", field, "in class ", classDef, " found in " + name);
+					Log.warn("Unknown type:", Reflect.field(field, "type"), "in type:", Reflect.field(classDef, "path"), "found in:" + name);
 			}
 			
 		}

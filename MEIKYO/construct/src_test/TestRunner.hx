@@ -23,12 +23,7 @@ class TestRunner
 	{
 		Log.init();
 		Log.addFilter(new ERegFilter(LogLevel.INFO, ~/.*/));
-		
-		var x = Log;
-		Log.info();
-		Log.warn(1, 2, x);
-		Log.error(1, 2, 3);
-		
+
 		var runner = new TestRunner();
 	}
 
