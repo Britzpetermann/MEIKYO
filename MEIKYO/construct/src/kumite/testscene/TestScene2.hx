@@ -17,7 +17,7 @@ class TestScene2 implements SceneLifecycle, implements Infos
 	public var testLayer2 : TestLayer;
 	
 	@Inject
-	public var colorLayer2 : ColorLayer;
+	public var colorLayer2 : layer.ColorLayer;
 	
 	@Inject
 	public var displayListLayer : DisplayListLayer;

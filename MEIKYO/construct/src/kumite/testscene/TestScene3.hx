@@ -17,6 +17,9 @@ class TestScene3 implements SceneLifecycle, implements Infos
 	public var testLayer3 : TestLayer;
 	
 	@Inject
+	public var textureLayer1 : layer.TextureLayer;
+	
+	@Inject
 	public var displayList : DisplayListLayer;
 	
 	public function new();
@@ -24,6 +27,7 @@ class TestScene3 implements SceneLifecycle, implements Infos
 	public function sceneInit(scene : Scene)
 	{
 		scene.id = scene.name = "RED-BLUE";
+		scene.addLayer(new DelegateLayer(textureLayer1));
 		scene.addLayer(new DelegateLayer(testLayer1));
 		scene.addLayer(new DelegateLayer(testLayer3));
 		scene.addLayer(new DelegateLayer(displayList));

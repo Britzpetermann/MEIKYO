@@ -1,4 +1,4 @@
-package kumite.testscene;
+package layer;
 
 import kumite.scene.LayerLifecycle;
 import kumite.scene.Layer;
@@ -43,7 +43,7 @@ class ColorLayer implements LayerLifecycle, implements Infos
 	
 	public function init()
 	{
-		shaderProgram = GL.createProgram(kumite.helloworldgl.shader.Vertex, kumite.helloworldgl.shader.Fragment);
+		shaderProgram = GL.createProgram(Vertex, Fragment);
 
 		vertexPositionAttribute = GL.getAttribLocation2("vertexPosition", 2, GL.BYTE);
 		vertexPositionAttribute.updateBuffer(new Int8Array([
@@ -85,8 +85,39 @@ class ColorLayer implements LayerLifecycle, implements Infos
 		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
 		
 		var colorWithTransition = color.clone();
-		//colorWithTransition.a *= transition;
 		colorUniform.setRGBA(colorWithTransition);
 		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
 	}
 }
+
+@GLSL("
+
+	attribute vec2 vertexPosition;
+
+	uniform mat4 projectionMatrix;
+	uniform mat4 worldViewMatrix;
+
+	varying vec4 vertex;
+
+	void main(void)
+	{
+		gl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);
+		vertex = vec4(vertexPosition, 0.0, 1.0);
+	}
+
+") private class Vertex {}
+
+@GLSL("
+
+	#ifdef GL_ES
+		precision highp float;
+	#endif
+
+	uniform vec4 color;
+
+	void main(void)
+	{
+		gl_FragColor = color;
+	}
+
+") private class Fragment {}

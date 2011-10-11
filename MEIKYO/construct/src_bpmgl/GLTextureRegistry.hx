@@ -2,25 +2,30 @@ import js.Lib;
 
 class GLTextureRegistry
 {
-	public var images : Array<GLTexture>;
+	public var images : Hash<GLTexture>;
 
 	public function new()
 	{
-		images = new Array();
+		images = new Hash();
 	}
 
-	public function register(name : Dynamic, texture : GLTexture)
+	public function register(key : {textureId : String}, texture : GLTexture)
 	{
-		images[name] = texture;
+		images.set(key.textureId, texture);
 	}
 
-	public function get(name : Dynamic)
+	public function get(key : {textureId : String})
 	{
-		return images[name];
+		return images.get(key.textureId);
 	}
 
 	public function createGLTextureFromImage(image : Image, ?filter : Int = null)
 	{
+		var testPowerOfTwoWidth = Std.int(Math2.nextPowerOf2(image.width));
+		var testPowerOfTwoHeight = Std.int(Math2.nextPowerOf2(image.height));
+		if (testPowerOfTwoWidth != image.width || testPowerOfTwoHeight != image.height)
+			throw "Image size must be a valid texture size!";
+					
 		var texture = GL.createTexture();
 		GL.bindTexture(GL.TEXTURE_2D, texture);
 		GL.texImage2DImage(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, image);
@@ -48,8 +53,8 @@ class GLTextureRegistry
 	public function createGLTextureFromCanvas(canvas : Canvas)
 	{
 		var testPowerOfTwoWidth = Std.int(Math2.nextPowerOf2(canvas.width));
-		var testPowerOfTwoHight = Std.int(Math2.nextPowerOf2(canvas.height));
-		if (testPowerOfTwoWidth != canvas.width || testPowerOfTwoHight != canvas.height)
+		var testPowerOfTwoHeight = Std.int(Math2.nextPowerOf2(canvas.height));
+		if (testPowerOfTwoWidth != canvas.width || testPowerOfTwoHeight != canvas.height)
 			throw "Canvas size must be a valid texture size!";
 
 		var texture = GL.createTexture();
@@ -69,8 +74,8 @@ class GLTextureRegistry
 	public function updateGLTextureFromCanvas(texture : GLTexture, canvas : Canvas)
 	{
 		var testPowerOfTwoWidth = Std.int(Math2.nextPowerOf2(canvas.width));
-		var testPowerOfTwoHight = Std.int(Math2.nextPowerOf2(canvas.height));
-		if (testPowerOfTwoWidth != canvas.width || testPowerOfTwoHight != canvas.height)
+		var testPowerOfTwoHeight = Std.int(Math2.nextPowerOf2(canvas.height));
+		if (testPowerOfTwoWidth != canvas.width || testPowerOfTwoHeight != canvas.height)
 			throw "Canvas size must be a valid texture size!";
 
 		GL.bindTexture(GL.TEXTURE_2D, texture.texture);

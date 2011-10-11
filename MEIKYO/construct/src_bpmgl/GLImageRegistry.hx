@@ -2,20 +2,20 @@ import js.Lib;
 
 class GLImageRegistry
 {
-	public var images : Array<Image>;
+	public var images : Hash<Image>;
 
 	public function new()
 	{
-		images = new Array();
+		images = new Hash();
 	}
 
-	public function register(name : Dynamic, image : Image)
+	public function register(key : {textureId : String}, image : Image)
 	{
-		images[name] = image;
+		images.set(key.textureId, image);
 	}
 
-	public function get(name : Dynamic)
+	public function get(key : {textureId : String})
 	{
-		return images[name];
+		return images.get(key.textureId);
 	}
 }

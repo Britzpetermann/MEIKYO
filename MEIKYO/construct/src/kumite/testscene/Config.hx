@@ -6,8 +6,10 @@ import haxe.rtti.Infos;
 
 class Config implements Infos
 {
-	public var colorLayer1 : ColorLayer;
-	public var colorLayer2 : ColorLayer;
+	public var colorLayer1 : layer.ColorLayer;
+	public var colorLayer2 : layer.ColorLayer;
+	public var textureLayer1 : layer.TextureLayer;
+	public var textureLayer2 : layer.TextureLayer;
 	
 	public var testLayer1 : TestLayer;
 	public var testLayer2 : TestLayer;
@@ -24,15 +26,23 @@ class Config implements Infos
 	{
 		testTextureLoader = new TestTextureLoader();
 		
-		colorLayer1 = new ColorLayer();
+		colorLayer1 = new layer.ColorLayer();
 		colorLayer1.color = new Color(1, 1, 1, 0.2);
 		colorLayer1.direction = -1;
 		colorLayer1.layerId = "colorLayer1";
 		
-		colorLayer2 = new ColorLayer();
+		colorLayer2 = new layer.ColorLayer();
 		colorLayer2.color = new Color(1, 0.5, 1, 0.2);
 		colorLayer2.direction = 1;
 		colorLayer2.layerId = "colorLayer2";
+		
+		textureLayer1 = new layer.TextureLayer();
+		textureLayer1.texture = TestTextures.TEST1;
+		textureLayer1.layerId = "textureLayer1";
+		
+		textureLayer2 = new layer.TextureLayer();
+		textureLayer2.texture = TestTextures.TEST2;
+		textureLayer2.layerId = "textureLayer2";
 		
 		testLayer1 = new TestLayer();
 		testLayer1.layerId = "testLayer1";

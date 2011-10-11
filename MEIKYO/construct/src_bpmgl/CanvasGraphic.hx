@@ -47,6 +47,11 @@ class CanvasGraphic
 		context.fillText(text, x, y, maxWidth);
 		isInvalid = true;
 	}
+	
+	public function drawImage(image : Image, dx, dy, dw, dh)
+	{
+		context.drawImage(image, dx, dy, dw, dh);
+	}
 
 	function setFont(value : String)
 	{
