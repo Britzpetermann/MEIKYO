@@ -175,6 +175,15 @@ haxe.exception.ArgumentNullException.__name__ = ["haxe","exception","ArgumentNul
 haxe.exception.ArgumentNullException.__super__ = haxe.exception.Exception;
 for(var k in haxe.exception.Exception.prototype ) haxe.exception.ArgumentNullException.prototype[k] = haxe.exception.Exception.prototype[k];
 haxe.exception.ArgumentNullException.prototype.__class__ = haxe.exception.ArgumentNullException;
+if(typeof kumite=='undefined') kumite = {}
+if(!kumite.scene) kumite.scene = {}
+kumite.scene.SceneAndLifecycle = function(p) { if( p === $_ ) return; {
+	null;
+}}
+kumite.scene.SceneAndLifecycle.__name__ = ["kumite","scene","SceneAndLifecycle"];
+kumite.scene.SceneAndLifecycle.prototype.scene = null;
+kumite.scene.SceneAndLifecycle.prototype.lifecycle = null;
+kumite.scene.SceneAndLifecycle.prototype.__class__ = kumite.scene.SceneAndLifecycle;
 if(!haxe.rtti) haxe.rtti = {}
 haxe.rtti.Infos = function() { }
 haxe.rtti.Infos.__name__ = ["haxe","rtti","Infos"];
@@ -203,8 +212,6 @@ reflect.model.ClassA.prototype.f2 = function() {
 }
 reflect.model.ClassA.prototype.__class__ = reflect.model.ClassA;
 reflect.model.ClassA.__interfaces__ = [haxe.rtti.Infos];
-if(typeof kumite=='undefined') kumite = {}
-if(!kumite.scene) kumite.scene = {}
 kumite.scene.LayerLifecycle = function() { }
 kumite.scene.LayerLifecycle.__name__ = ["kumite","scene","LayerLifecycle"];
 kumite.scene.LayerLifecycle.prototype.layerId = null;
@@ -1366,6 +1373,13 @@ haxe.rtti.XmlParser.prototype.defplat = function() {
 	return l;
 }
 haxe.rtti.XmlParser.prototype.__class__ = haxe.rtti.XmlParser;
+kumite.scene.SceneLifecycle = function() { }
+kumite.scene.SceneLifecycle.__name__ = ["kumite","scene","SceneLifecycle"];
+kumite.scene.SceneLifecycle.prototype.sceneInit = null;
+kumite.scene.SceneLifecycle.prototype.initTransition = null;
+kumite.scene.SceneLifecycle.prototype.renderTransition = null;
+kumite.scene.SceneLifecycle.prototype.render = null;
+kumite.scene.SceneLifecycle.prototype.__class__ = kumite.scene.SceneLifecycle;
 bpmjs.ContextConfig = function(p) { if( p === $_ ) return; {
 	null;
 }}
@@ -3018,10 +3032,35 @@ kumite.scene.TransitionContext = function(p) { if( p === $_ ) return; {
 }}
 kumite.scene.TransitionContext.__name__ = ["kumite","scene","TransitionContext"];
 kumite.scene.TransitionContext.prototype.transition = null;
-kumite.scene.TransitionContext.prototype.toOutTransition = function() {
-	var result = new kumite.scene.TransitionContext();
-	result.transition = 1 - this.transition;
-	return result;
+kumite.scene.TransitionContext.prototype.layerState = null;
+kumite.scene.TransitionContext.prototype.inScene = null;
+kumite.scene.TransitionContext.prototype.outScene = null;
+kumite.scene.TransitionContext.prototype.direction = null;
+kumite.scene.TransitionContext.prototype.toIn = function() {
+	this.direction = kumite.scene.TransitionDirection.IN;
+	return this;
+}
+kumite.scene.TransitionContext.prototype.toOut = function() {
+	this.direction = kumite.scene.TransitionDirection.OUT;
+	return this;
+}
+kumite.scene.TransitionContext.prototype.getTransition = function() {
+	var $e = this.direction;
+	switch( $e[1] ) {
+	case 0:
+	{
+		return this.transition;
+	}break;
+	case 1:
+	{
+		return 1 - this.transition;
+	}break;
+	}
+}
+kumite.scene.TransitionContext.prototype.setTransition = function(value) {
+	this.direction = kumite.scene.TransitionDirection.IN;
+	this.transition = value;
+	return value;
 }
 kumite.scene.TransitionContext.prototype.__class__ = kumite.scene.TransitionContext;
 bpmjs.integration.TestMessaging = function(p) { if( p === $_ ) return; {
@@ -3379,6 +3418,13 @@ reflect.ClassInfo.prototype.scanFields = function(classDef) {
 	}}
 }
 reflect.ClassInfo.prototype.__class__ = reflect.ClassInfo;
+kumite.scene.TransitionDirection = { __ename__ : ["kumite","scene","TransitionDirection"], __constructs__ : ["IN","OUT"] }
+kumite.scene.TransitionDirection.IN = ["IN",0];
+kumite.scene.TransitionDirection.IN.toString = $estr;
+kumite.scene.TransitionDirection.IN.__enum__ = kumite.scene.TransitionDirection;
+kumite.scene.TransitionDirection.OUT = ["OUT",1];
+kumite.scene.TransitionDirection.OUT.toString = $estr;
+kumite.scene.TransitionDirection.OUT.__enum__ = kumite.scene.TransitionDirection;
 kumite.scene.TestLayerOrder = function(p) { if( p === $_ ) return; {
 	TestCase2.call(this);
 }}

@@ -22,8 +22,8 @@ class GLLabel extends GLInteractiveObject
 		textMetrics.text = text;
 		textMetrics.font = "12px Arial";
 		
-		graphic.clear(new Color(0, 0.3, 0, 0.8));
-		graphic.fillStyle = new Color(0, 1, 0, 0.8);
+		graphic.clear(new Color(0.3, 0.3, 0.3, 0.8));
+		graphic.fillStyle = new Color(1, 1, 1, 0.8);
 		graphic.font = textMetrics.font;
 		graphic.fillText(textMetrics.text, (width - textMetrics.width) / 2, 14);
 	}

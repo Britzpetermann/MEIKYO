@@ -16,6 +16,10 @@ class GLTextureRegistry
 
 	public function get(key : {textureId : String})
 	{
+		if (!images.exists(key.textureId))
+		{
+			throw "Cannot find Texture with key: " + key.textureId;
+		}
 		return images.get(key.textureId);
 	}
 

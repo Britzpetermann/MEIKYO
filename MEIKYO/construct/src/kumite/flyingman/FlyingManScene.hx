@@ -1,4 +1,4 @@
-package kumite.testscene;
+package kumite.flyingman;
 
 import kumite.scene.SceneLifecycle;
 import kumite.scene.TransitionContext;
@@ -8,49 +8,60 @@ import kumite.displaylist.DisplayListLayer;
 
 import haxe.rtti.Infos;
 
-class TestScene1 implements SceneLifecycle, implements Infos
+class FlyingManScene implements SceneLifecycle, implements Infos
 {
-	public static var SCENE_ID : String = "EMPTY";
+	public static var SCENE_ID : String = "FLYING MAN";
+	
+	@Inject
+	public var paperBackground : kumite.layer.TextureLayer;
+	
+	@Inject
+	public var flyingManLayer : kumite.flyingman.FlyingManLayer;
 	
 	@Inject
 	public var displayList : DisplayListLayer;
 	
 	@Inject
-	public var colorLayer1 : kumite.layer.ColorLayer;
+	public var textureRegistry : GLTextureRegistry;
 	
 	public function new();
 	
+	@Sequence("boot", "startPrepare")
+	public function startPrepare()
+	{
+		var group = new bpmjs.SequencerTaskGroup();
+		
+		group.add(new GLTextureLoadingTask(textureRegistry, Config.PAPER));
+		
+		return group;
+	}
+		
 	public function sceneInit(scene : Scene)
 	{
 		scene.id = scene.name = SCENE_ID;
-		scene.addLayer(new DelegateLayer(colorLayer1));
+		scene.addLayer(new DelegateLayer(paperBackground));
+		scene.addLayer(new DelegateLayer(flyingManLayer));
 		scene.addLayer(new DelegateLayer(displayList));
 	}
-	
+
 	public function initTransition(transitionContext : TransitionContext) : Void
 	{
-		colorLayer1.moveTransition.ease = ease.Back.easeInOut;
-		colorLayer1.moveTransition.direction = -1;
-		colorLayer1.transitions.enableChild("move");
+		paperBackground.alphaTransition.ease = ease.Quad.easeInOut;
 		
 		switch (transitionContext.direction)
 		{
 			case TransitionDirection.IN:
+				paperBackground.transitions.enableChild("alpha");
 			case TransitionDirection.OUT:
-				switch(transitionContext.inScene.scene.id)
-				{
-					case TestScene1.SCENE_ID, TestScene2.SCENE_ID:
-					default:
-						colorLayer1.transitions.enableChild("cut");
-				}
-		}
+				paperBackground.transitions.enableChild("cut");
+		}		
 	}
-	
+
 	public function renderTransition(transitionContext : TransitionContext)
 	{
 		render();
 	}
-	
+		
 	public function render()
 	{
 		GL.clearColor(0, 0, 0, 1);

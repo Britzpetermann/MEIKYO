@@ -4,11 +4,11 @@ import haxe.rtti.Infos;
 class Config implements Infos
 {
 	public var scenes : Scenes;
-	public var sceneController : SceneController;
+	public var sceneNavigator : SceneNavigator;
 	
 	public function new()
 	{
 		scenes = new Scenes();
-		sceneController = new SceneController();
+		sceneNavigator = new SceneNavigator();
 	}
 }

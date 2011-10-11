@@ -5,7 +5,7 @@ import kumite.time.Tick;
 
 import haxe.rtti.Infos;
 
-class SceneController implements Infos
+class SceneNavigator implements Infos
 {
 	@Inject
 	public var scenes : Scenes;
@@ -19,10 +19,10 @@ class SceneController implements Infos
 	public var idleState : IdleState;
 	public var transitionState : TransitionState;
 	
-	private var state : State;
+	public var currentScene : SceneAndLifecycle;
+	public var lastScene : SceneAndLifecycle;
 	
-	private var currentScene : SceneAndLifecycle;
-	private var lastScene : SceneAndLifecycle;
+	private var state : State;
 	
 	public function new();
 	
@@ -31,6 +31,8 @@ class SceneController implements Infos
 	{
 		currentScene = new SceneAndLifecycle();
 		currentScene.scene = new Scene();
+		currentScene.scene.id = "";
+		currentScene.scene.name = "";
 		currentScene.lifecycle = new NullSceneLifecycle();
 		
 		transitionContext = new TransitionContext();
@@ -93,23 +95,28 @@ class SceneController implements Infos
 		var mixer = new SceneMixer();
 		var mixedScene = mixer.mix(lastScene.scene, currentScene.scene);
 		
-		var transitionContextOut = transitionContext.toOutTransition();
-		
-		lastScene.lifecycle.renderTransition(transitionContextOut);
-		currentScene.lifecycle.renderTransition(transitionContext);
+		lastScene.lifecycle.renderTransition(transitionContext.toIn());
+		currentScene.lifecycle.renderTransition(transitionContext.toOut());
 		
 		for (layer in mixedScene.layers)
 		{
+			transitionContext.layerState = layer.state; 
 			switch(layer.state)
 			{
 				case LayerState.IN:
-					layer.renderTransition(transitionContext);
+					layer.renderTransition(transitionContext.toIn());
 				case LayerState.OUT:
-					layer.renderTransition(transitionContextOut);
+					layer.renderTransition(transitionContext.toOut());
 				case LayerState.KEEP:
 					layer.render();
 			}
 		}
+	}
+	
+	public function initTransition()
+	{
+		lastScene.lifecycle.initTransition(transitionContext.toOut());
+		currentScene.lifecycle.initTransition(transitionContext.toIn());
 	}
 	
 	public function renderNormal()
@@ -123,7 +130,7 @@ class SceneController implements Infos
 	
 	function enterScene(newScene)
 	{
-		if (state.allowesScreenChange && newScene != currentScene)
+		if (state.allowsScreenChange && newScene != currentScene)
 		{
 			lastScene = currentScene;
 			currentScene = newScene;
@@ -140,15 +147,17 @@ class SceneController implements Infos
 
 class State
 {
-	public var allowesScreenChange : Bool;
+	public var allowsScreenChange : Bool;
 	
-	var sceneController : SceneController;
+	var transitionContext : TransitionContext;
+	var navigator : SceneNavigator;
 	var time : Time;
 	
-	public function new(sceneController : SceneController)
+	public function new(navigator : SceneNavigator)
 	{
-		this.sceneController = sceneController;
-		this.time = sceneController.time;
+		this.navigator = navigator;
+		this.time = navigator.time;
+		this.transitionContext = navigator.transitionContext;
 		configure();
 	}
 	
@@ -164,7 +173,7 @@ class State
 	
 	function configure()
 	{
-		allowesScreenChange = false;
+		allowsScreenChange = false;
 	}
 }
 
@@ -172,7 +181,7 @@ class InitState extends State
 {
 	override function configure()
 	{
-		allowesScreenChange = true;
+		allowsScreenChange = true;
 	}
 }
 
@@ -180,12 +189,12 @@ class IdleState extends State
 {
 	override function configure()
 	{
-		allowesScreenChange = true;
+		allowsScreenChange = true;
 	}
 	
 	override function render()
 	{
-		sceneController.renderNormal();
+		navigator.renderNormal();
 	}	
 }
 
@@ -198,18 +207,23 @@ class TransitionState extends State
 	{
 		enterTime = time.ms;
 		exitTime = time.ms + 700;
+		
+		transitionContext.transition = 0;
+		transitionContext.outScene = navigator.lastScene;
+		transitionContext.inScene = navigator.currentScene;
+		navigator.initTransition();		
 	}
 		
 	override function render()
 	{
-		sceneController.transitionContext.transition = Map.linear(time.ms, enterTime, exitTime, 0, 1);
-		if (sceneController.transitionContext.transition >= 1)
+		transitionContext.transition = Map.linear(time.ms, enterTime, exitTime, 0, 1);
+		if (transitionContext.transition >= 1)
 		{
-			sceneController.transitionContext.transition = 1;
-			sceneController.setState(sceneController.idleState);
+			transitionContext.transition = 1;
+			navigator.setState(navigator.idleState);
 		}
 			
-		sceneController.renderTransition();
+		navigator.renderTransition();
 	}
 }
 
@@ -219,7 +233,10 @@ class NullSceneLifecycle implements SceneLifecycle
 	
 	public function sceneInit(scene : Scene) : Void {}
 	
+	public function initTransition(transitionContext : TransitionContext) : Void {}
+	
+	public function renderTransition(transitionContext : TransitionContext) : Void {}
+		
 	public function render() : Void {}
 	
-	public function renderTransition(transitionContext : TransitionContext) : Void {}	
 }

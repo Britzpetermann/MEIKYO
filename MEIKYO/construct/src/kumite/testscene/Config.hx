@@ -1,19 +1,19 @@
 package kumite.testscene;
 
-import kumite.scene.Scene;
-
 import haxe.rtti.Infos;
 
 class Config implements Infos
 {
-	public var colorLayer1 : layer.ColorLayer;
-	public var colorLayer2 : layer.ColorLayer;
-	public var textureLayer1 : layer.TextureLayer;
-	public var textureLayer2 : layer.TextureLayer;
+	public var colorLayer1 : kumite.layer.ColorLayer;
+	public var colorLayer2 : kumite.layer.ColorLayer;
+	public var colorLayer3 : kumite.layer.ColorLayer;
 	
-	public var testLayer1 : TestLayer;
-	public var testLayer2 : TestLayer;
-	public var testLayer3 : TestLayer;
+	public var textureLayer1 : kumite.layer.TextureLayer;
+	public var textureLayer2 : kumite.layer.TextureLayer;
+	
+	public var testLayer1 : kumite.layer.TestLayer;
+	public var testLayer2 : kumite.layer.TestLayer;
+	public var testLayer3 : kumite.layer.TestLayer;
 	
 	public var testScene1 : TestScene1;
 	public var testScene2 : TestScene2;
@@ -26,37 +26,41 @@ class Config implements Infos
 	{
 		testTextureLoader = new TestTextureLoader();
 		
-		colorLayer1 = new layer.ColorLayer();
-		colorLayer1.color = new Color(1, 1, 1, 0.2);
-		colorLayer1.direction = -1;
+		colorLayer1 = new kumite.layer.ColorLayer();
+		colorLayer1.color = new Color(0.5, 0.5, 0.5, 1);
 		colorLayer1.layerId = "colorLayer1";
 		
-		colorLayer2 = new layer.ColorLayer();
-		colorLayer2.color = new Color(1, 0.5, 1, 0.2);
-		colorLayer2.direction = 1;
+		colorLayer2 = new kumite.layer.ColorLayer();
+		colorLayer2.color = new Color(0.7, 0.7, 0.7, 1);
 		colorLayer2.layerId = "colorLayer2";
 		
-		textureLayer1 = new layer.TextureLayer();
-		textureLayer1.texture = TestTextures.TEST1;
+		colorLayer3 = new kumite.layer.ColorLayer();
+		colorLayer3.color = new Color(0.0, 0.0, 0.0, 1);
+		colorLayer3.layerId = "colorLayer3";
+		
+		textureLayer1 = new kumite.layer.TextureLayer();
+		textureLayer1.textureConfig = TestTextures.TEST1;
 		textureLayer1.layerId = "textureLayer1";
+		textureLayer1.scale = 0.6;
 		
-		textureLayer2 = new layer.TextureLayer();
-		textureLayer2.texture = TestTextures.TEST2;
+		textureLayer2 = new kumite.layer.TextureLayer();
+		textureLayer2.textureConfig = TestTextures.TEST2;
 		textureLayer2.layerId = "textureLayer2";
+		textureLayer2.scale = 0.6;
 		
-		testLayer1 = new TestLayer();
+		testLayer1 = new kumite.layer.TestLayer();
 		testLayer1.layerId = "testLayer1";
 		testLayer1.color = new Color(1, 0, 0, 0.8);
 		testLayer1.scale = 2;
 		testLayer1.position = new Vec3(1, 0, 2);
 		
-		testLayer2 = new TestLayer();
+		testLayer2 = new kumite.layer.TestLayer();
 		testLayer2.layerId = "testLayer2";
 		testLayer2.color = new Color(0, 1, 0, 0.6);
 		testLayer2.scale = 2;
 		testLayer2.position = new Vec3(-1, 0, 1);
 		
-		testLayer3 = new TestLayer();
+		testLayer3 = new kumite.layer.TestLayer();
 		testLayer3.layerId = "testLayer3";
 		testLayer3.color = new Color(0, 0, 1, 0.4);
 		testLayer3.scale = 2;

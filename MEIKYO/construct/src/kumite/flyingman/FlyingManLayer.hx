@@ -1,4 +1,4 @@
-package kumite.testscene;
+package kumite.flyingman;
 
 import kumite.scene.LayerLifecycle;
 import kumite.scene.Layer;
@@ -10,7 +10,7 @@ import kumite.camera.Camera;
 
 import haxe.rtti.Infos;
 
-class TestLayer implements LayerLifecycle, implements Infos
+class FlyingManLayer implements LayerLifecycle, implements Infos
 {
 	@Inject
 	public var stage : Stage;
@@ -42,7 +42,7 @@ class TestLayer implements LayerLifecycle, implements Infos
 		
 	public function new()
 	{
-		layerId = "TestLayer";
+		layerId = "FlyingManLayer";
 		color = new Color(1, 1, 0, 0.5);
 		scale = 1;
 		position = new Vec3(0, 0, 0);

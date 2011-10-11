@@ -18,9 +18,6 @@ class VJInterface implements Infos
 	public var messenger : Messenger;
 	
 	var stage : GLStage;
-	var cutButton : GLLabel;
-	var shortButton : GLLabel;
-	var longButton : GLLabel;
 	
 	var sceneContainer : GLDisplayObjectContainer;
 	
@@ -32,51 +29,22 @@ class VJInterface implements Infos
 		stage = GLDisplayList.getDefault().stage;
 		//stage.addChild(new GLStats());
 
-		addTransitionButtons();
 		addSceneButtons();
 	}
 	
 	@Message
 	public function render(tick : Tick)
 	{
-		cutButton.y = stage.stageHeight - 90;
-		shortButton.y = stage.stageHeight - 60;
-		longButton.y = stage.stageHeight - 30;
-		
 		sceneContainer.y = stage.stageHeight - 30;
-	}
-	
-	function addTransitionButtons()
-	{
-		cutButton = new GLLabel();
-		cutButton.x = 10;
-		cutButton.text = "CUT";
-		cutButton.width = 80;
-		cutButton.height = 20;
-		stage.addChild(cutButton);
-		
-		shortButton = new GLLabel();
-		shortButton.x = 10;
-		shortButton.text = "SHORT";
-		shortButton.width = 80;
-		shortButton.height = 20;
-		stage.addChild(shortButton);
-		
-		longButton = new GLLabel();
-		longButton.x = 10;
-		longButton.text = "LONG";
-		longButton.width = 80;
-		longButton.height = 20;
-		stage.addChild(longButton);		
 	}
 	
 	function addSceneButtons()
 	{
 		sceneContainer = new GLDisplayObjectContainer();
-		sceneContainer.x = 100;
+		sceneContainer.x = 10;
 		stage.addChild(sceneContainer);
 		
-		var currentX = 10;
+		var currentX = 0;
 		for (sceneAndLifecycle in scenes.all)
 		{
 			var sceneButton = new GLLabel();

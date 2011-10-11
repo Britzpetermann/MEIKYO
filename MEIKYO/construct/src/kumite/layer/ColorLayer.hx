@@ -1,4 +1,4 @@
-package layer;
+package kumite.layer;
 
 import kumite.scene.LayerLifecycle;
 import kumite.scene.Layer;
@@ -10,7 +10,7 @@ import kumite.camera.Camera;
 
 import haxe.rtti.Infos;
 
-class TextureLayer implements LayerLifecycle, implements Infos
+class ColorLayer implements LayerLifecycle, implements Infos
 {
 	@Inject
 	public var stage : Stage;
@@ -18,14 +18,14 @@ class TextureLayer implements LayerLifecycle, implements Infos
 	@Inject
 	public var time : Time;
 	
-	@Inject
-	public var textureRegistry : GLTextureRegistry;
-	
 	public var layerId : String;
 	
-	public var texture : GLTextureConfig;
+	public var transitions : LayerTransitions;
+	public var cutTransition : LayerTransition;
+	public var moveTransition : LayerTransition;
+	public var alphaTransition : LayerTransition;
 	
-	var transition : Float;
+	public var color : Color;
 	
 	var shaderProgram : WebGLProgram;
 	var vertexPositionAttribute : GLAttribLocation;
@@ -33,13 +33,17 @@ class TextureLayer implements LayerLifecycle, implements Infos
 
 	var projectionMatrixUniform : GLUniformLocation;
 	var worldViewMatrixUniform : GLUniformLocation;
-	var textureUniform : GLUniformLocation;
-	var transitionUniform : GLUniformLocation;
+	var colorUniform : GLUniformLocation;
 		
 	public function new()
 	{
-		layerId = "TextureLayer";
-		transition = 1;
+		layerId = "TestBackgroundLayer";
+		color = new Color(1, 1, 1, 0.2);
+		transitions = new LayerTransitions();
+		transitions.add(cutTransition = new LayerTransition("cut"));
+		transitions.add(moveTransition = new LayerTransition("move"));
+		transitions.add(alphaTransition = new LayerTransition("alpha"));
+		transitions.enableChild("move");
 	}
 	
 	public function init()
@@ -56,13 +60,12 @@ class TextureLayer implements LayerLifecycle, implements Infos
 
 		projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
 		worldViewMatrixUniform = GL.getUniformLocation("worldViewMatrix");
-		textureUniform = GL.getUniformLocation("texture");
-		transitionUniform = GL.getUniformLocation("transition");
+		colorUniform = GL.getUniformLocation("color");
 	}
 	
 	public function renderTransition(transitionContext : TransitionContext)
 	{
-		transition = Map.ease(transitionContext.transition, 0, 1, 0, 1, ease.Quad.easeInOut);
+		transitions.transition = transitionContext.transition;
 		render();
 	}
 		
@@ -83,11 +86,12 @@ class TextureLayer implements LayerLifecycle, implements Infos
 
 		var worldViewMatrix = new Matrix4();
 		worldViewMatrix.appendScale(stage.width, stage.height, 1);
+		worldViewMatrix.appendTranslation(moveTransition.direction * (1 - moveTransition.transition), 0, 0);
 		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
 		
-		textureUniform.setTexture(textureRegistry.get(texture));
-		transitionUniform.uniform1f(transition);
-		
+		var colorWithTransition = color.clone();
+		colorWithTransition.a *= alphaTransition.transition;
+		colorUniform.setRGBA(colorWithTransition);
 		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
 	}
 }
@@ -100,13 +104,11 @@ class TextureLayer implements LayerLifecycle, implements Infos
 	uniform mat4 worldViewMatrix;
 
 	varying vec4 vertex;
-	varying vec2 textureCoord;
 
 	void main(void)
 	{
 		gl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);
 		vertex = vec4(vertexPosition, 0.0, 1.0);
-		textureCoord = vertexPosition.xy;
 	}
 
 ") private class Vertex {}
@@ -117,15 +119,11 @@ class TextureLayer implements LayerLifecycle, implements Infos
 		precision highp float;
 	#endif
 
-	uniform sampler2D texture;
-	uniform float transition;
-
-	varying vec2 textureCoord;
+	uniform vec4 color;
 
 	void main(void)
 	{
-		vec4 color = texture2D(texture, textureCoord);
-		gl_FragColor = color * vec4(1.0, 1.0, 1.0, transition);
+		gl_FragColor = color;
 	}
 
 ") private class Fragment {}

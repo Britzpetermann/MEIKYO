@@ -1,8 +1,9 @@
-package layer;
+package kumite.layer;
 
 import kumite.scene.LayerLifecycle;
 import kumite.scene.Layer;
 import kumite.scene.TransitionContext;
+import kumite.scene.LayerState;
 import kumite.stage.Stage;
 import kumite.time.Time;
 import kumite.projection.Projection;
@@ -10,7 +11,7 @@ import kumite.camera.Camera;
 
 import haxe.rtti.Infos;
 
-class ColorLayer implements LayerLifecycle, implements Infos
+class TextureLayer implements LayerLifecycle, implements Infos
 {
 	@Inject
 	public var stage : Stage;
@@ -18,12 +19,19 @@ class ColorLayer implements LayerLifecycle, implements Infos
 	@Inject
 	public var time : Time;
 	
+	@Inject
+	public var textureRegistry : GLTextureRegistry;
+	
+	public var transitions : LayerTransitions;
+	public var cutTransition : LayerTransition;
+	public var moveTransition : LayerTransition;
+	public var alphaTransition : LayerTransition;
+	
 	public var layerId : String;
 	
-	public var color : Color;
-	public var direction : Int;
+	public var scale : Float;
 	
-	var transition : Float;
+	public var textureConfig : GLTextureConfig;
 	
 	var shaderProgram : WebGLProgram;
 	var vertexPositionAttribute : GLAttribLocation;
@@ -31,14 +39,18 @@ class ColorLayer implements LayerLifecycle, implements Infos
 
 	var projectionMatrixUniform : GLUniformLocation;
 	var worldViewMatrixUniform : GLUniformLocation;
-	var colorUniform : GLUniformLocation;
+	var textureUniform : GLUniformLocation;
+	var alphaUniform : GLUniformLocation;
 		
 	public function new()
 	{
-		layerId = "TestBackgroundLayer";
-		color = new Color(1, 1, 1, 0.2);
-		transition = 1;
-		direction = 1;
+		layerId = "TextureLayer";
+		scale = 1;
+		transitions = new LayerTransitions();
+		transitions.add(cutTransition = new LayerTransition("cut"));
+		transitions.add(moveTransition = new LayerTransition("move"));
+		transitions.add(alphaTransition = new LayerTransition("alpha"));
+		transitions.enableChild("alpha");
 	}
 	
 	public function init()
@@ -55,12 +67,13 @@ class ColorLayer implements LayerLifecycle, implements Infos
 
 		projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
 		worldViewMatrixUniform = GL.getUniformLocation("worldViewMatrix");
-		colorUniform = GL.getUniformLocation("color");
+		textureUniform = GL.getUniformLocation("texture");
+		alphaUniform = GL.getUniformLocation("alpha");
 	}
 	
 	public function renderTransition(transitionContext : TransitionContext)
 	{
-		transition = Map.ease(transitionContext.transition, 0, 1, 0, 1, ease.Back.easeInOut);
+		transitions.transition = transitionContext.transition;
 		render();
 	}
 		
@@ -79,13 +92,16 @@ class ColorLayer implements LayerLifecycle, implements Infos
 		
 		vertexPositionAttribute.vertexAttribPointer();
 
+		var texture = textureRegistry.get(textureConfig);
+
 		var worldViewMatrix = new Matrix4();
-		worldViewMatrix.appendScale(stage.width, stage.height, 1);
-		worldViewMatrix.appendTranslation(direction * (1 - transition), 0, 0);
+		worldViewMatrix.appendTranslation((stage.width - texture.width * scale) / 2, (stage.height - texture.height * scale) / 2, 0);
+		worldViewMatrix.appendScale(texture.width * scale, texture.height * scale, 1);
 		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
 		
-		var colorWithTransition = color.clone();
-		colorUniform.setRGBA(colorWithTransition);
+		textureUniform.setTexture(texture);
+		alphaUniform.uniform1f(alphaTransition.transition);
+		
 		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
 	}
 }
@@ -98,11 +114,13 @@ class ColorLayer implements LayerLifecycle, implements Infos
 	uniform mat4 worldViewMatrix;
 
 	varying vec4 vertex;
+	varying vec2 textureCoord;
 
 	void main(void)
 	{
 		gl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);
 		vertex = vec4(vertexPosition, 0.0, 1.0);
+		textureCoord = vertexPosition.xy;
 	}
 
 ") private class Vertex {}
@@ -113,11 +131,15 @@ class ColorLayer implements LayerLifecycle, implements Infos
 		precision highp float;
 	#endif
 
-	uniform vec4 color;
+	uniform sampler2D texture;
+	uniform float alpha;
+
+	varying vec2 textureCoord;
 
 	void main(void)
 	{
-		gl_FragColor = color;
+		vec4 color = texture2D(texture, textureCoord);
+		gl_FragColor = color * vec4(1.0, 1.0, 1.0, alpha);
 	}
 
 ") private class Fragment {}

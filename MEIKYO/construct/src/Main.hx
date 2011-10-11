@@ -38,6 +38,7 @@ class Main {
 					kumite.displaylist.ConfigAsLayer,
 					kumite.vjinterface.Config,
 					kumite.scene.Config,
+					kumite.flyingman.Config,
 					kumite.testscene.Config,
 				]);
 		}
