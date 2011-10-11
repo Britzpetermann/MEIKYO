@@ -7573,12 +7573,10 @@ kumite.textureregistry.Config = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.textureregistry.Config::new");
 	var $spos = $s.length;
 	this.textureRegistry = new GLTextureRegistry();
-	this.imageRegistry = new GLImageRegistry();
 	$s.pop();
 }}
 kumite.textureregistry.Config.__name__ = ["kumite","textureregistry","Config"];
 kumite.textureregistry.Config.prototype.textureRegistry = null;
-kumite.textureregistry.Config.prototype.imageRegistry = null;
 kumite.textureregistry.Config.prototype.__class__ = kumite.textureregistry.Config;
 kumite.textureregistry.Config.__interfaces__ = [haxe.rtti.Infos];
 if(!kumite.camera) kumite.camera = {}
@@ -10453,31 +10451,6 @@ kumite.launch.Config.prototype.sequencer = null;
 kumite.launch.Config.prototype.launcher = null;
 kumite.launch.Config.prototype.__class__ = kumite.launch.Config;
 kumite.launch.Config.__interfaces__ = [haxe.rtti.Infos];
-GLImageRegistry = function(p) { if( p === $_ ) return; {
-	$s.push("GLImageRegistry::new");
-	var $spos = $s.length;
-	this.images = new Hash();
-	$s.pop();
-}}
-GLImageRegistry.__name__ = ["GLImageRegistry"];
-GLImageRegistry.prototype.images = null;
-GLImageRegistry.prototype.register = function(key,image) {
-	$s.push("GLImageRegistry::register");
-	var $spos = $s.length;
-	this.images.set(key.textureId,image);
-	$s.pop();
-}
-GLImageRegistry.prototype.get = function(key) {
-	$s.push("GLImageRegistry::get");
-	var $spos = $s.length;
-	{
-		var $tmp = this.images.get(key.textureId);
-		$s.pop();
-		return $tmp;
-	}
-	$s.pop();
-}
-GLImageRegistry.prototype.__class__ = GLImageRegistry;
 EReg = function(r,opt) { if( r === $_ ) return; {
 	$s.push("EReg::new");
 	var $spos = $s.length;
@@ -11519,7 +11492,7 @@ kumite.canvas.CanvasController.__rtti = "<class path=\"kumite.canvas.CanvasContr
 kumite.launch.Launcher.__meta__ = { fields : { sequencer : { Inject : null}, handlePostComplete : { PostComplete : null}, showError : { Sequence : ["boot","error"]}}};
 kumite.launch.Launcher.__rtti = "<class path=\"kumite.launch.Launcher\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<handlePostComplete public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></handlePostComplete>\n\t<showError public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></showError>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.testscene.Config.__rtti = "<class path=\"kumite.testscene.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<colorLayer1 public=\"1\"><c path=\"kumite.layer.ColorLayer\"/></colorLayer1>\n\t<colorLayer2 public=\"1\"><c path=\"kumite.layer.ColorLayer\"/></colorLayer2>\n\t<colorLayer3 public=\"1\"><c path=\"kumite.layer.ColorLayer\"/></colorLayer3>\n\t<textureLayer1 public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></textureLayer1>\n\t<textureLayer2 public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></textureLayer2>\n\t<testLayer1 public=\"1\"><c path=\"kumite.layer.TestLayer\"/></testLayer1>\n\t<testLayer2 public=\"1\"><c path=\"kumite.layer.TestLayer\"/></testLayer2>\n\t<testLayer3 public=\"1\"><c path=\"kumite.layer.TestLayer\"/></testLayer3>\n\t<testScene1 public=\"1\"><c path=\"kumite.testscene.TestScene1\"/></testScene1>\n\t<testScene2 public=\"1\"><c path=\"kumite.testscene.TestScene2\"/></testScene2>\n\t<testScene3 public=\"1\"><c path=\"kumite.testscene.TestScene3\"/></testScene3>\n\t<testScene4 public=\"1\"><c path=\"kumite.testscene.TestScene4\"/></testScene4>\n\t<testTextureLoader public=\"1\"><c path=\"kumite.testscene.TestTextureLoader\"/></testTextureLoader>\n\t<new public=\"1\" set=\"method\" line=\"25\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.textureregistry.Config.__rtti = "<class path=\"kumite.textureregistry.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<imageRegistry public=\"1\"><c path=\"GLImageRegistry\"/></imageRegistry>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.textureregistry.Config.__rtti = "<class path=\"kumite.textureregistry.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.camera.CameraMouseMover.__meta__ = { fields : { camera : { Inject : null}, init : { Sequence : ["boot","init"]}}};
 kumite.camera.CameraMouseMover.__rtti = "<class path=\"kumite.camera.CameraMouseMover\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<init public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateCamera set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></updateCamera>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.testscene.TestTextures.TEST1 = GLTextureConfig.create("data/image/along-the-line.png");
