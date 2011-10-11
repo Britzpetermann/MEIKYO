@@ -8,7 +8,7 @@ class ImageLoaderTask extends Task<ImageLoaderTask>
 
 	override function doStart()
 	{
-		Log.info("Loading3: ", location);
+		Log.info("Loading: ", location);
 		image = new Image();
 		image.onload = handleImageLoaded;
 		image.src = location;
@@ -16,7 +16,7 @@ class ImageLoaderTask extends Task<ImageLoaderTask>
 
 	function handleImageLoaded()
 	{
-		Log.info("Complete3: ", location);
+		Log.info("Complete: ", location);
 		complete();
 	}
 }
