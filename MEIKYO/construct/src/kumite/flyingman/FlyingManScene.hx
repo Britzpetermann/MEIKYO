@@ -16,7 +16,7 @@ class FlyingManScene implements SceneLifecycle, implements Infos
 	public var paperBackground : kumite.layer.TextureLayer;
 	
 	@Inject
-	public var flyingManLayer : kumite.flyingman.FlyingManLayer;
+	public var flyingManLayer : FlyingManLayer;
 	
 	@Inject
 	public var displayList : DisplayListLayer;

@@ -79,8 +79,8 @@ class Config implements Infos
 	{
 		var group = new bpmjs.SequencerTaskGroup();
 		
-		group.add(new GLTextureLoadingTask(textureRegistry, Config.TEST1));
-		group.add(new GLTextureLoadingTask(textureRegistry, Config.TEST2));
+		group.add(new GLTextureLoadingTask(textureRegistry, TEST1));
+		group.add(new GLTextureLoadingTask(textureRegistry, TEST2));
 		
 		return group;
 	}	
