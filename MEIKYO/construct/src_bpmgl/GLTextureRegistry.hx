@@ -4,8 +4,6 @@ class GLTextureRegistry
 {
 	public var images : Array<GLTexture>;
 
-	public var gl : WebGLRenderingContext;
-
 	public function new()
 	{
 		images = new Array();
@@ -23,20 +21,20 @@ class GLTextureRegistry
 
 	public function createGLTextureFromImage(image : Image, ?filter : Int = null)
 	{
-		var texture = gl.createTexture();
-		gl.bindTexture(gl.TEXTURE_2D, texture);
-		gl.texImage2DImage(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter != null ? filter : gl.NEAREST);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter != null ? filter : gl.NEAREST);
+		var texture = GL.createTexture();
+		GL.bindTexture(GL.TEXTURE_2D, texture);
+		GL.texImage2DImage(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, image);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, filter != null ? filter : GL.NEAREST);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, filter != null ? filter : GL.NEAREST);
 
 		if (
-			filter == gl.NEAREST_MIPMAP_NEAREST ||
-			filter == gl.NEAREST_MIPMAP_LINEAR ||
-			filter == gl.LINEAR_MIPMAP_NEAREST ||
-			filter == gl.LINEAR_MIPMAP_LINEAR
+			filter == GL.NEAREST_MIPMAP_NEAREST ||
+			filter == GL.NEAREST_MIPMAP_LINEAR ||
+			filter == GL.LINEAR_MIPMAP_NEAREST ||
+			filter == GL.LINEAR_MIPMAP_LINEAR
 			)
 		{
-			gl.generateMipmap(gl.TEXTURE_2D);
+			GL.generateMipmap(GL.TEXTURE_2D);
 		}
 
 		var result = new GLTexture();
@@ -49,16 +47,16 @@ class GLTextureRegistry
 
 	public function createGLTextureFromCanvas(canvas : Canvas)
 	{
-		var testPowerOfTwoWidth = Std.int(Math2.getNextPowerOfTwo(canvas.width));
-		var testPowerOfTwoHight = Std.int(Math2.getNextPowerOfTwo(canvas.height));
+		var testPowerOfTwoWidth = Std.int(Math2.nextPowerOf2(canvas.width));
+		var testPowerOfTwoHight = Std.int(Math2.nextPowerOf2(canvas.height));
 		if (testPowerOfTwoWidth != canvas.width || testPowerOfTwoHight != canvas.height)
 			throw "Canvas size must be a valid texture size!";
 
-		var texture = gl.createTexture();
-		gl.bindTexture(gl.TEXTURE_2D, texture);
-		gl.texImage2DCanvas(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+		var texture = GL.createTexture();
+		GL.bindTexture(GL.TEXTURE_2D, texture);
+		GL.texImage2DCanvas(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, canvas);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
 
 		var result = new GLTexture();
 		result.width = canvas.width;
@@ -70,13 +68,13 @@ class GLTextureRegistry
 
 	public function updateGLTextureFromCanvas(texture : GLTexture, canvas : Canvas)
 	{
-		var testPowerOfTwoWidth = Std.int(Math2.getNextPowerOfTwo(canvas.width));
-		var testPowerOfTwoHight = Std.int(Math2.getNextPowerOfTwo(canvas.height));
+		var testPowerOfTwoWidth = Std.int(Math2.nextPowerOf2(canvas.width));
+		var testPowerOfTwoHight = Std.int(Math2.nextPowerOf2(canvas.height));
 		if (testPowerOfTwoWidth != canvas.width || testPowerOfTwoHight != canvas.height)
 			throw "Canvas size must be a valid texture size!";
 
-		gl.bindTexture(gl.TEXTURE_2D, texture.texture);
-		gl.texImage2DCanvas(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+		GL.bindTexture(GL.TEXTURE_2D, texture.texture);
+		GL.texImage2DCanvas(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, canvas);
 
 		texture.width = canvas.width;
 		texture.height = canvas.height;

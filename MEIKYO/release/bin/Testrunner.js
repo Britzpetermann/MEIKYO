@@ -4,6 +4,28 @@ reflect.MetadataAware = function() { }
 reflect.MetadataAware.__name__ = ["reflect","MetadataAware"];
 reflect.MetadataAware.prototype.hasMetadata = null;
 reflect.MetadataAware.prototype.__class__ = reflect.MetadataAware;
+if(typeof hsl=='undefined') hsl = {}
+if(!hsl.haxe) hsl.haxe = {}
+hsl.haxe.Bond = function(p) { if( p === $_ ) return; {
+	this.halted = false;
+}}
+hsl.haxe.Bond.__name__ = ["hsl","haxe","Bond"];
+hsl.haxe.Bond.prototype.halted = null;
+hsl.haxe.Bond.prototype.willDestroyOnUse = null;
+hsl.haxe.Bond.prototype.destroy = function() {
+	null;
+}
+hsl.haxe.Bond.prototype.destroyOnUse = function() {
+	this.willDestroyOnUse = true;
+	return this;
+}
+hsl.haxe.Bond.prototype.halt = function() {
+	this.halted = true;
+}
+hsl.haxe.Bond.prototype.resume = function() {
+	this.halted = false;
+}
+hsl.haxe.Bond.prototype.__class__ = hsl.haxe.Bond;
 if(typeof haxe=='undefined') haxe = {}
 haxe.Public = function() { }
 haxe.Public.__name__ = ["haxe","Public"];
@@ -114,6 +136,45 @@ if(!bpmjs._TestError) bpmjs._TestError = {}
 bpmjs._TestError.TestConfigWithoutRTTI = function() { }
 bpmjs._TestError.TestConfigWithoutRTTI.__name__ = ["bpmjs","_TestError","TestConfigWithoutRTTI"];
 bpmjs._TestError.TestConfigWithoutRTTI.prototype.__class__ = bpmjs._TestError.TestConfigWithoutRTTI;
+if(!haxe.exception) haxe.exception = {}
+haxe.exception.Exception = function(message,innerException,numberOfStackTraceShifts) { if( message === $_ ) return; {
+	this.message = null == message?"Unknown exception":message;
+	this.innerException = innerException;
+	this.generateStackTrace(numberOfStackTraceShifts);
+	this.stackTrace = this.stackTraceArray;
+}}
+haxe.exception.Exception.__name__ = ["haxe","exception","Exception"];
+haxe.exception.Exception.prototype.baseException = null;
+haxe.exception.Exception.prototype.innerException = null;
+haxe.exception.Exception.prototype.message = null;
+haxe.exception.Exception.prototype.stackTrace = null;
+haxe.exception.Exception.prototype.stackTraceArray = null;
+haxe.exception.Exception.prototype.generateStackTrace = function(numberOfStackTraceShifts) {
+	this.stackTraceArray = haxe.Stack.callStack().slice(numberOfStackTraceShifts + 1);
+	var exceptionClass = Type.getClass(this);
+	while(haxe.exception.Exception != exceptionClass) {
+		this.stackTraceArray.shift();
+		exceptionClass = Type.getSuperClass(exceptionClass);
+	}
+}
+haxe.exception.Exception.prototype.getBaseException = function() {
+	var result = this;
+	while(null != result.innerException) {
+		result = result.innerException;
+	}
+	return result;
+}
+haxe.exception.Exception.prototype.toString = function() {
+	return this.message + haxe.Stack.toString(this.stackTraceArray);
+}
+haxe.exception.Exception.prototype.__class__ = haxe.exception.Exception;
+haxe.exception.ArgumentNullException = function(argumentName,numberOfStackTraceShifts) { if( argumentName === $_ ) return; {
+	haxe.exception.Exception.call(this,"Argument " + argumentName + " must be non-null",null,numberOfStackTraceShifts);
+}}
+haxe.exception.ArgumentNullException.__name__ = ["haxe","exception","ArgumentNullException"];
+haxe.exception.ArgumentNullException.__super__ = haxe.exception.Exception;
+for(var k in haxe.exception.Exception.prototype ) haxe.exception.ArgumentNullException.prototype[k] = haxe.exception.Exception.prototype[k];
+haxe.exception.ArgumentNullException.prototype.__class__ = haxe.exception.ArgumentNullException;
 if(!haxe.rtti) haxe.rtti = {}
 haxe.rtti.Infos = function() { }
 haxe.rtti.Infos.__name__ = ["haxe","rtti","Infos"];
@@ -390,28 +451,108 @@ bpmjs.Sequencer = function(p) { if( p === $_ ) return; {
 bpmjs.Sequencer.__name__ = ["bpmjs","Sequencer"];
 bpmjs.Sequencer.prototype.context = null;
 bpmjs.Sequencer.prototype.start = function(name) {
-	if(Log.infoEnabled({ fileName : "Sequencer.hx", lineNumber : 16, className : "bpmjs.Sequencer", methodName : "start"})) {
-		Log.fetchInput("Sequence: " + name,null,null,null,null,null,null);
-		console.groupCollapsed(Log.createMessage());
-	}
 	var sequence = new bpmjs.Sequence(name);
 	sequence.objects = this.context.objects;
-	sequence.execute("initPrepare");
-	sequence.execute("init");
-	sequence.execute("initComplete");
-	sequence.execute("startPrepare");
-	sequence.execute("start");
-	sequence.execute("startComplete");
-	Log.groupEnd({ fileName : "Sequencer.hx", lineNumber : 28, className : "bpmjs.Sequencer", methodName : "start"});
+	sequence.addExecuteTask("initPrepare");
+	sequence.addExecuteTask("init");
+	sequence.addExecuteTask("initComplete");
+	sequence.addExecuteTask("startPrepare");
+	sequence.addLoadingTask();
+	sequence.addExecuteTask("start");
+	sequence.addExecuteTask("startComplete");
+	sequence.start({ fileName : "Sequencer.hx", lineNumber : 27, className : "bpmjs.Sequencer", methodName : "start"});
 }
 bpmjs.Sequencer.prototype.__class__ = bpmjs.Sequencer;
 bpmjs.Sequencer.__interfaces__ = [haxe.rtti.Infos];
+bpmjs.Task = function(p) { if( p === $_ ) return; {
+	this.startSignaler = new hsl.haxe.DirectSignaler(this);
+	this.completeSignaler = new hsl.haxe.DirectSignaler(this);
+	this.errorSignaler = new hsl.haxe.DirectSignaler(this);
+}}
+bpmjs.Task.__name__ = ["bpmjs","Task"];
+bpmjs.Task.prototype.startSignaler = null;
+bpmjs.Task.prototype.completeSignaler = null;
+bpmjs.Task.prototype.errorSignaler = null;
+bpmjs.Task.prototype.start = function(positionInformation) {
+	try {
+		var t = this;
+		this.startSignaler.dispatch(t,null,{ fileName : "Task.hx", lineNumber : 25, className : "bpmjs.Task", methodName : "start"});
+		this.doStart();
+	}
+	catch( $e0 ) {
+		{
+			var e = $e0;
+			{
+				{
+					Log.posInfo = { fileName : "Task.hx", lineNumber : 30, className : "bpmjs.Task", methodName : "start"};
+					if(Log.filter(LogLevel.ERROR)) {
+						Log.fetchInput("Error starting Task: ",e,null,null,null,null,null);
+						console.error(Log.createMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
+					}
+				}
+			}
+		}
+	}
+}
+bpmjs.Task.prototype.doStart = function() {
+	null;
+}
+bpmjs.Task.prototype.complete = function() {
+	var t = this;
+	this.completeSignaler.dispatch(t,null,{ fileName : "Task.hx", lineNumber : 41, className : "bpmjs.Task", methodName : "complete"});
+}
+bpmjs.Task.prototype.error = function(result,error) {
+	var taskError = new bpmjs.TaskError();
+	taskError.task = result;
+	taskError.error = error;
+	this.errorSignaler.dispatch(taskError,null,{ fileName : "Task.hx", lineNumber : 49, className : "bpmjs.Task", methodName : "error"});
+}
+bpmjs.Task.prototype.__class__ = bpmjs.Task;
+bpmjs.TaskGroup = function(p) { if( p === $_ ) return; {
+	bpmjs.Task.call(this);
+	this.tasks = new Array();
+}}
+bpmjs.TaskGroup.__name__ = ["bpmjs","TaskGroup"];
+bpmjs.TaskGroup.__super__ = bpmjs.Task;
+for(var k in bpmjs.Task.prototype ) bpmjs.TaskGroup.prototype[k] = bpmjs.Task.prototype[k];
+bpmjs.TaskGroup.prototype.tasks = null;
+bpmjs.TaskGroup.prototype.add = function(task) {
+	this.tasks.push(task);
+}
+bpmjs.TaskGroup.prototype.doStart = function() {
+	this.nextTask();
+}
+bpmjs.TaskGroup.prototype.nextTask = function() {
+	if(this.tasks.length > 0) {
+		var task = this.tasks.shift();
+		task.completeSignaler.bind($closure(this,"handleTaskComplete"));
+		task.start({ fileName : "TaskGroup.hx", lineNumber : 29, className : "bpmjs.TaskGroup", methodName : "nextTask"});
+	}
+	else {
+		this.complete();
+	}
+}
+bpmjs.TaskGroup.prototype.handleTaskComplete = function(task) {
+	this.nextTask();
+}
+bpmjs.TaskGroup.prototype.__class__ = bpmjs.TaskGroup;
 bpmjs.Sequence = function(name) { if( name === $_ ) return; {
+	bpmjs.TaskGroup.call(this);
 	this.name = name;
 }}
 bpmjs.Sequence.__name__ = ["bpmjs","Sequence"];
+bpmjs.Sequence.__super__ = bpmjs.TaskGroup;
+for(var k in bpmjs.TaskGroup.prototype ) bpmjs.Sequence.prototype[k] = bpmjs.TaskGroup.prototype[k];
 bpmjs.Sequence.prototype.name = null;
 bpmjs.Sequence.prototype.objects = null;
+bpmjs.Sequence.prototype.loadingTaskGroup = null;
+bpmjs.Sequence.prototype.addExecuteTask = function(phase) {
+	this.add(new bpmjs.ExecutePhaseTask(this,phase));
+}
+bpmjs.Sequence.prototype.addLoadingTask = function() {
+	this.loadingTaskGroup = new bpmjs.LoadingTaskGroup(this);
+	this.add(this.loadingTaskGroup);
+}
 bpmjs.Sequence.prototype.execute = function(phase) {
 	var _g = 0, _g1 = this.objects;
 	while(_g < _g1.length) {
@@ -430,13 +571,23 @@ bpmjs.Sequence.prototype.execute = function(phase) {
 					var localPhase = meta.Sequence[1];
 					if(localPhase == phase) {
 						{
-							Log.posInfo = { fileName : "Sequencer.hx", lineNumber : 59, className : "bpmjs.Sequence", methodName : "execute"};
+							Log.posInfo = { fileName : "Sequencer.hx", lineNumber : 72, className : "bpmjs.Sequence", methodName : "execute"};
 							if(Log.filter(LogLevel.INFO)) {
 								Log.fetchInput("Phase '" + localPhase + "' " + Type.getClassName(contextObject.type) + "#" + fieldName,null,null,null,null,null,null);
 								console.info(Log.createMessage());
 							}
 						}
-						Reflect.field(object,fieldName).apply(object,[]);
+						var result = Reflect.field(object,fieldName).apply(object,[]);
+						if(Std["is"](result,bpmjs.SequencerTaskGroup)) {
+							{
+								Log.posInfo = { fileName : "Sequencer.hx", lineNumber : 76, className : "bpmjs.Sequence", methodName : "execute"};
+								if(Log.filter(LogLevel.INFO)) {
+									Log.fetchInput("Adding task '",reflect.ClassInfo.forInstance(result).name,null,null,null,null,null);
+									console.info(Log.createMessage());
+								}
+							}
+							this.loadingTaskGroup.add(result);
+						}
 					}
 				}
 			}
@@ -444,6 +595,28 @@ bpmjs.Sequence.prototype.execute = function(phase) {
 	}
 }
 bpmjs.Sequence.prototype.__class__ = bpmjs.Sequence;
+bpmjs.ExecutePhaseTask = function(sequence,phase) { if( sequence === $_ ) return; {
+	bpmjs.Task.call(this);
+	this.sequence = sequence;
+	this.phase = phase;
+}}
+bpmjs.ExecutePhaseTask.__name__ = ["bpmjs","ExecutePhaseTask"];
+bpmjs.ExecutePhaseTask.__super__ = bpmjs.Task;
+for(var k in bpmjs.Task.prototype ) bpmjs.ExecutePhaseTask.prototype[k] = bpmjs.Task.prototype[k];
+bpmjs.ExecutePhaseTask.prototype.sequence = null;
+bpmjs.ExecutePhaseTask.prototype.phase = null;
+bpmjs.ExecutePhaseTask.prototype.doStart = function() {
+	this.sequence.execute(this.phase);
+	this.complete();
+}
+bpmjs.ExecutePhaseTask.prototype.__class__ = bpmjs.ExecutePhaseTask;
+bpmjs.LoadingTaskGroup = function(sequence) { if( sequence === $_ ) return; {
+	bpmjs.TaskGroup.call(this);
+}}
+bpmjs.LoadingTaskGroup.__name__ = ["bpmjs","LoadingTaskGroup"];
+bpmjs.LoadingTaskGroup.__super__ = bpmjs.TaskGroup;
+for(var k in bpmjs.TaskGroup.prototype ) bpmjs.LoadingTaskGroup.prototype[k] = bpmjs.TaskGroup.prototype[k];
+bpmjs.LoadingTaskGroup.prototype.__class__ = bpmjs.LoadingTaskGroup;
 bpmjs.ReflectUtil = function() { }
 bpmjs.ReflectUtil.__name__ = ["bpmjs","ReflectUtil"];
 bpmjs.ReflectUtil.callMethodWithMetadata = function(object,type,metadata,args) {
@@ -1199,6 +1372,23 @@ bpmjs.ContextConfig = function(p) { if( p === $_ ) return; {
 bpmjs.ContextConfig.__name__ = ["bpmjs","ContextConfig"];
 bpmjs.ContextConfig.prototype.frontMessenger = null;
 bpmjs.ContextConfig.prototype.__class__ = bpmjs.ContextConfig;
+hsl.haxe.Signaler = function() { }
+hsl.haxe.Signaler.__name__ = ["hsl","haxe","Signaler"];
+hsl.haxe.Signaler.prototype.isListenedTo = null;
+hsl.haxe.Signaler.prototype.subject = null;
+hsl.haxe.Signaler.prototype.addBubblingTarget = null;
+hsl.haxe.Signaler.prototype.addNotificationTarget = null;
+hsl.haxe.Signaler.prototype.bind = null;
+hsl.haxe.Signaler.prototype.bindAdvanced = null;
+hsl.haxe.Signaler.prototype.bindVoid = null;
+hsl.haxe.Signaler.prototype.dispatch = null;
+hsl.haxe.Signaler.prototype.getIsListenedTo = null;
+hsl.haxe.Signaler.prototype.removeBubblingTarget = null;
+hsl.haxe.Signaler.prototype.removeNotificationTarget = null;
+hsl.haxe.Signaler.prototype.unbind = null;
+hsl.haxe.Signaler.prototype.unbindAdvanced = null;
+hsl.haxe.Signaler.prototype.unbindVoid = null;
+hsl.haxe.Signaler.prototype.__class__ = hsl.haxe.Signaler;
 bpmjs.TestDynamic = function(p) { if( p === $_ ) return; {
 	TestCase2.call(this);
 }}
@@ -1960,6 +2150,13 @@ haxe.xml.Fast.prototype.getElements = function() {
 	}};
 }
 haxe.xml.Fast.prototype.__class__ = haxe.xml.Fast;
+bpmjs.TaskError = function(p) { if( p === $_ ) return; {
+	null;
+}}
+bpmjs.TaskError.__name__ = ["bpmjs","TaskError"];
+bpmjs.TaskError.prototype.task = null;
+bpmjs.TaskError.prototype.error = null;
+bpmjs.TaskError.prototype.__class__ = bpmjs.TaskError;
 ValueType = { __ename__ : ["ValueType"], __constructs__ : ["TNull","TInt","TFloat","TBool","TObject","TFunction","TClass","TEnum","TUnknown"] }
 ValueType.TNull = ["TNull",0];
 ValueType.TNull.toString = $estr;
@@ -2143,6 +2340,32 @@ Type.enumIndex = function(e) {
 	return e[1];
 }
 Type.prototype.__class__ = Type;
+hsl.haxe.Signal = function(data,currentBond,currentTarget,origin) { if( data === $_ ) return; {
+	this.data = data;
+	this.currentBond = currentBond;
+	this.currentTarget = currentTarget;
+	this.origin = origin;
+	this.immediatePropagationStopped = false;
+	this.propagationStopped = false;
+}}
+hsl.haxe.Signal.__name__ = ["hsl","haxe","Signal"];
+hsl.haxe.Signal.prototype.currentBond = null;
+hsl.haxe.Signal.prototype.currentTarget = null;
+hsl.haxe.Signal.prototype.data = null;
+hsl.haxe.Signal.prototype.data1 = null;
+hsl.haxe.Signal.prototype.immediatePropagationStopped = null;
+hsl.haxe.Signal.prototype.origin = null;
+hsl.haxe.Signal.prototype.propagationStopped = null;
+hsl.haxe.Signal.prototype.getData = function() {
+	return this.data;
+}
+hsl.haxe.Signal.prototype.stopImmediatePropagation = function() {
+	this.immediatePropagationStopped = true;
+}
+hsl.haxe.Signal.prototype.stopPropagation = function() {
+	this.propagationStopped = true;
+}
+hsl.haxe.Signal.prototype.__class__ = hsl.haxe.Signal;
 EReg = function(r,opt) { if( r === $_ ) return; {
 	opt = opt.split("u").join("");
 	this.r = new RegExp(r,opt);
@@ -3227,6 +3450,303 @@ kumite.scene.TestLayerOrder.prototype.createIds = function(scene) {
 	return result;
 }
 kumite.scene.TestLayerOrder.prototype.__class__ = kumite.scene.TestLayerOrder;
+hsl.haxe.DirectSignaler = function(subject,rejectNullData) { if( subject === $_ ) return; {
+	if(null == subject) {
+		throw new haxe.exception.ArgumentNullException("subject",1);
+	}
+	this.subject = subject;
+	this.rejectNullData = rejectNullData;
+	this.sentinel = new hsl.haxe._DirectSignaler.SentinelBond();
+}}
+hsl.haxe.DirectSignaler.__name__ = ["hsl","haxe","DirectSignaler"];
+hsl.haxe.DirectSignaler.prototype.bubblingTargets = null;
+hsl.haxe.DirectSignaler.prototype.isListenedTo = null;
+hsl.haxe.DirectSignaler.prototype.notificationTargets = null;
+hsl.haxe.DirectSignaler.prototype.rejectNullData = null;
+hsl.haxe.DirectSignaler.prototype.sentinel = null;
+hsl.haxe.DirectSignaler.prototype.subject = null;
+hsl.haxe.DirectSignaler.prototype.subjectClassNames = null;
+hsl.haxe.DirectSignaler.prototype.addBubblingTarget = function(value) {
+	if(null == this.bubblingTargets) {
+		this.bubblingTargets = new List();
+	}
+	this.bubblingTargets.add(value);
+}
+hsl.haxe.DirectSignaler.prototype.addNotificationTarget = function(value) {
+	if(null == this.notificationTargets) {
+		this.notificationTargets = new List();
+	}
+	this.notificationTargets.add(value);
+}
+hsl.haxe.DirectSignaler.prototype.bind = function(listener) {
+	if(null == listener) {
+		throw new haxe.exception.ArgumentNullException("listener",1);
+	}
+	return this.sentinel.add(new hsl.haxe._DirectSignaler.RegularBond(listener));
+}
+hsl.haxe.DirectSignaler.prototype.bindAdvanced = function(listener) {
+	if(null == listener) {
+		throw new haxe.exception.ArgumentNullException("listener",1);
+	}
+	return this.sentinel.add(new hsl.haxe._DirectSignaler.AdvancedBond(listener));
+}
+hsl.haxe.DirectSignaler.prototype.bindVoid = function(listener) {
+	if(null == listener) {
+		throw new haxe.exception.ArgumentNullException("listener",1);
+	}
+	return this.sentinel.add(new hsl.haxe._DirectSignaler.NiladicBond(listener));
+}
+hsl.haxe.DirectSignaler.prototype.bubble = function(data,origin) {
+	if(null != this.bubblingTargets) {
+		{ var $it0 = this.bubblingTargets.iterator();
+		while( $it0.hasNext() ) { var bubblingTarget = $it0.next();
+		{
+			bubblingTarget.dispatch(data,origin,{ fileName : "DirectSignaler.hx", lineNumber : 109, className : "hsl.haxe.DirectSignaler", methodName : "bubble"});
+		}
+		}}
+	}
+	if(null != this.notificationTargets) {
+		{ var $it1 = this.notificationTargets.iterator();
+		while( $it1.hasNext() ) { var notificationTarget = $it1.next();
+		{
+			notificationTarget.dispatch(null,origin,{ fileName : "DirectSignaler.hx", lineNumber : 114, className : "hsl.haxe.DirectSignaler", methodName : "bubble"});
+		}
+		}}
+	}
+}
+hsl.haxe.DirectSignaler.prototype.dispatch = function(data,origin,positionInformation) {
+	if("dispatchNative" != positionInformation.methodName && "bubble" != positionInformation.methodName) {
+		this.verifyCaller(positionInformation);
+	}
+	if(this.rejectNullData && null == data) {
+		throw new haxe.exception.Exception("Some data that was passed is null, but this signaler has been set to reject null data.",null,1);
+	}
+	origin = null == origin?this.subject:origin;
+	if(3 == this.sentinel.callListener(data,this.subject,origin,3)) {
+		{
+			if(null != this.bubblingTargets) {
+				{ var $it0 = this.bubblingTargets.iterator();
+				while( $it0.hasNext() ) { var bubblingTarget = $it0.next();
+				{
+					bubblingTarget.dispatch(data,origin,{ fileName : "DirectSignaler.hx", lineNumber : 109, className : "hsl.haxe.DirectSignaler", methodName : "bubble"});
+				}
+				}}
+			}
+			if(null != this.notificationTargets) {
+				{ var $it1 = this.notificationTargets.iterator();
+				while( $it1.hasNext() ) { var notificationTarget = $it1.next();
+				{
+					notificationTarget.dispatch(null,origin,{ fileName : "DirectSignaler.hx", lineNumber : 114, className : "hsl.haxe.DirectSignaler", methodName : "bubble"});
+				}
+				}}
+			}
+		}
+	}
+}
+hsl.haxe.DirectSignaler.prototype.getIsListenedTo = function() {
+	return this.sentinel.getIsConnected();
+}
+hsl.haxe.DirectSignaler.prototype.getOrigin = function(origin) {
+	return null == origin?this.subject:origin;
+}
+hsl.haxe.DirectSignaler.prototype.verifyCaller = function(positionInformation) {
+	if(null == this.subjectClassNames) {
+		this.subjectClassNames = haxe.TypeTools.getClassNames(this.subject);
+	}
+	{ var $it0 = this.subjectClassNames.iterator();
+	while( $it0.hasNext() ) { var subjectClassName = $it0.next();
+	{
+		if(subjectClassName == positionInformation.className) {
+			return;
+		}
+	}
+	}}
+	throw new haxe.exception.Exception("This method may only be called by the subject of the signaler.",null,2);
+}
+hsl.haxe.DirectSignaler.prototype.removeBubblingTarget = function(value) {
+	if(null != this.bubblingTargets) {
+		this.bubblingTargets.remove(value);
+	}
+}
+hsl.haxe.DirectSignaler.prototype.removeNotificationTarget = function(value) {
+	if(null != this.notificationTargets) {
+		this.notificationTargets.remove(value);
+	}
+}
+hsl.haxe.DirectSignaler.prototype.unbind = function(listener) {
+	this.sentinel.remove(new hsl.haxe._DirectSignaler.RegularBond(listener));
+}
+hsl.haxe.DirectSignaler.prototype.unbindAdvanced = function(listener) {
+	this.sentinel.remove(new hsl.haxe._DirectSignaler.AdvancedBond(listener));
+}
+hsl.haxe.DirectSignaler.prototype.unbindVoid = function(listener) {
+	this.sentinel.remove(new hsl.haxe._DirectSignaler.NiladicBond(listener));
+}
+hsl.haxe.DirectSignaler.prototype.__class__ = hsl.haxe.DirectSignaler;
+hsl.haxe.DirectSignaler.__interfaces__ = [hsl.haxe.Signaler];
+if(!hsl.haxe._DirectSignaler) hsl.haxe._DirectSignaler = {}
+hsl.haxe._DirectSignaler.LinkedBond = function(p) { if( p === $_ ) return; {
+	hsl.haxe.Bond.call(this);
+	this.destroyed = false;
+}}
+hsl.haxe._DirectSignaler.LinkedBond.__name__ = ["hsl","haxe","_DirectSignaler","LinkedBond"];
+hsl.haxe._DirectSignaler.LinkedBond.__super__ = hsl.haxe.Bond;
+for(var k in hsl.haxe.Bond.prototype ) hsl.haxe._DirectSignaler.LinkedBond.prototype[k] = hsl.haxe.Bond.prototype[k];
+hsl.haxe._DirectSignaler.LinkedBond.prototype.destroyed = null;
+hsl.haxe._DirectSignaler.LinkedBond.prototype.next = null;
+hsl.haxe._DirectSignaler.LinkedBond.prototype.previous = null;
+hsl.haxe._DirectSignaler.LinkedBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
+	return 0;
+}
+hsl.haxe._DirectSignaler.LinkedBond.prototype.determineEquals = function(value) {
+	return false;
+}
+hsl.haxe._DirectSignaler.LinkedBond.prototype.destroy = function() {
+	if(false == this.destroyed) {
+		this.previous.next = this.next;
+		this.next.previous = this.previous;
+		this.destroyed = true;
+	}
+}
+hsl.haxe._DirectSignaler.LinkedBond.prototype.unlink = function() {
+	if(false == this.destroyed) {
+		this.previous.next = this.next;
+		this.next.previous = this.previous;
+		this.destroyed = true;
+	}
+}
+hsl.haxe._DirectSignaler.LinkedBond.prototype.__class__ = hsl.haxe._DirectSignaler.LinkedBond;
+hsl.haxe._DirectSignaler.SentinelBond = function(p) { if( p === $_ ) return; {
+	hsl.haxe._DirectSignaler.LinkedBond.call(this);
+	this.next = this.previous = this;
+}}
+hsl.haxe._DirectSignaler.SentinelBond.__name__ = ["hsl","haxe","_DirectSignaler","SentinelBond"];
+hsl.haxe._DirectSignaler.SentinelBond.__super__ = hsl.haxe._DirectSignaler.LinkedBond;
+for(var k in hsl.haxe._DirectSignaler.LinkedBond.prototype ) hsl.haxe._DirectSignaler.SentinelBond.prototype[k] = hsl.haxe._DirectSignaler.LinkedBond.prototype[k];
+hsl.haxe._DirectSignaler.SentinelBond.prototype.isConnected = null;
+hsl.haxe._DirectSignaler.SentinelBond.prototype.add = function(value) {
+	value.next = this;
+	value.previous = this.previous;
+	return this.previous = this.previous.next = value;
+}
+hsl.haxe._DirectSignaler.SentinelBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
+	var node = this.next;
+	while(node != this && 1 != propagationStatus) {
+		propagationStatus = node.callListener(data,currentTarget,origin,propagationStatus);
+		node = node.next;
+	}
+	return propagationStatus;
+}
+hsl.haxe._DirectSignaler.SentinelBond.prototype.getIsConnected = function() {
+	return this.next != this;
+}
+hsl.haxe._DirectSignaler.SentinelBond.prototype.remove = function(value) {
+	var node = this.next;
+	while(node != this) {
+		if(node.determineEquals(value)) {
+			if(false == node.destroyed) {
+				node.previous.next = node.next;
+				node.next.previous = node.previous;
+				node.destroyed = true;
+			}
+			break;
+		}
+		node = node.next;
+	}
+}
+hsl.haxe._DirectSignaler.SentinelBond.prototype.__class__ = hsl.haxe._DirectSignaler.SentinelBond;
+hsl.haxe._DirectSignaler.RegularBond = function(listener) { if( listener === $_ ) return; {
+	hsl.haxe._DirectSignaler.LinkedBond.call(this);
+	this.listener = listener;
+}}
+hsl.haxe._DirectSignaler.RegularBond.__name__ = ["hsl","haxe","_DirectSignaler","RegularBond"];
+hsl.haxe._DirectSignaler.RegularBond.__super__ = hsl.haxe._DirectSignaler.LinkedBond;
+for(var k in hsl.haxe._DirectSignaler.LinkedBond.prototype ) hsl.haxe._DirectSignaler.RegularBond.prototype[k] = hsl.haxe._DirectSignaler.LinkedBond.prototype[k];
+hsl.haxe._DirectSignaler.RegularBond.prototype.listener = null;
+hsl.haxe._DirectSignaler.RegularBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
+	if(false == this.halted) {
+		this.listener(data);
+		if(this.willDestroyOnUse) {
+			if(false == this.destroyed) {
+				this.previous.next = this.next;
+				this.next.previous = this.previous;
+				this.destroyed = true;
+			}
+		}
+	}
+	return propagationStatus;
+}
+hsl.haxe._DirectSignaler.RegularBond.prototype.determineEquals = function(value) {
+	return Std["is"](value,hsl.haxe._DirectSignaler.RegularBond) && Reflect.compareMethods(value.listener,this.listener);
+}
+hsl.haxe._DirectSignaler.RegularBond.prototype.__class__ = hsl.haxe._DirectSignaler.RegularBond;
+hsl.haxe._DirectSignaler.NiladicBond = function(listener) { if( listener === $_ ) return; {
+	hsl.haxe._DirectSignaler.LinkedBond.call(this);
+	this.listener = listener;
+}}
+hsl.haxe._DirectSignaler.NiladicBond.__name__ = ["hsl","haxe","_DirectSignaler","NiladicBond"];
+hsl.haxe._DirectSignaler.NiladicBond.__super__ = hsl.haxe._DirectSignaler.LinkedBond;
+for(var k in hsl.haxe._DirectSignaler.LinkedBond.prototype ) hsl.haxe._DirectSignaler.NiladicBond.prototype[k] = hsl.haxe._DirectSignaler.LinkedBond.prototype[k];
+hsl.haxe._DirectSignaler.NiladicBond.prototype.listener = null;
+hsl.haxe._DirectSignaler.NiladicBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
+	if(false == this.halted) {
+		this.listener();
+		if(this.willDestroyOnUse) {
+			if(false == this.destroyed) {
+				this.previous.next = this.next;
+				this.next.previous = this.previous;
+				this.destroyed = true;
+			}
+		}
+	}
+	return propagationStatus;
+}
+hsl.haxe._DirectSignaler.NiladicBond.prototype.determineEquals = function(value) {
+	return Std["is"](value,hsl.haxe._DirectSignaler.NiladicBond) && Reflect.compareMethods(value.listener,this.listener);
+}
+hsl.haxe._DirectSignaler.NiladicBond.prototype.__class__ = hsl.haxe._DirectSignaler.NiladicBond;
+hsl.haxe._DirectSignaler.AdvancedBond = function(listener) { if( listener === $_ ) return; {
+	hsl.haxe._DirectSignaler.LinkedBond.call(this);
+	this.listener = listener;
+}}
+hsl.haxe._DirectSignaler.AdvancedBond.__name__ = ["hsl","haxe","_DirectSignaler","AdvancedBond"];
+hsl.haxe._DirectSignaler.AdvancedBond.__super__ = hsl.haxe._DirectSignaler.LinkedBond;
+for(var k in hsl.haxe._DirectSignaler.LinkedBond.prototype ) hsl.haxe._DirectSignaler.AdvancedBond.prototype[k] = hsl.haxe._DirectSignaler.LinkedBond.prototype[k];
+hsl.haxe._DirectSignaler.AdvancedBond.prototype.listener = null;
+hsl.haxe._DirectSignaler.AdvancedBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
+	if(this.halted == false) {
+		var signal = new hsl.haxe.Signal(data,this,currentTarget,origin);
+		this.listener(signal);
+		if(this.willDestroyOnUse) {
+			if(false == this.destroyed) {
+				this.previous.next = this.next;
+				this.next.previous = this.previous;
+				this.destroyed = true;
+			}
+		}
+		if(signal.immediatePropagationStopped) {
+			return 1;
+		}
+		else if(signal.propagationStopped) {
+			return 2;
+		}
+	}
+	return propagationStatus;
+}
+hsl.haxe._DirectSignaler.AdvancedBond.prototype.determineEquals = function(value) {
+	return Std["is"](value,hsl.haxe._DirectSignaler.AdvancedBond) && Reflect.compareMethods(value.listener,this.listener);
+}
+hsl.haxe._DirectSignaler.AdvancedBond.prototype.__class__ = hsl.haxe._DirectSignaler.AdvancedBond;
+hsl.haxe._DirectSignaler.PropagationStatus = function() { }
+hsl.haxe._DirectSignaler.PropagationStatus.__name__ = ["hsl","haxe","_DirectSignaler","PropagationStatus"];
+hsl.haxe._DirectSignaler.PropagationStatus.prototype.__class__ = hsl.haxe._DirectSignaler.PropagationStatus;
+bpmjs.SequencerTaskGroup = function(p) { if( p === $_ ) return; {
+	bpmjs.TaskGroup.call(this);
+}}
+bpmjs.SequencerTaskGroup.__name__ = ["bpmjs","SequencerTaskGroup"];
+bpmjs.SequencerTaskGroup.__super__ = bpmjs.TaskGroup;
+for(var k in bpmjs.TaskGroup.prototype ) bpmjs.SequencerTaskGroup.prototype[k] = bpmjs.TaskGroup.prototype[k];
+bpmjs.SequencerTaskGroup.prototype.__class__ = bpmjs.SequencerTaskGroup;
 bpmjs.TestSequencer = function(p) { if( p === $_ ) return; {
 	TestCase2.call(this);
 }}
@@ -3446,15 +3966,6 @@ haxe.rtti.Meta.getFields = function(t) {
 	return meta == null?meta:meta.fields;
 }
 haxe.rtti.Meta.prototype.__class__ = haxe.rtti.Meta;
-if(!bpmjs._Messenger) bpmjs._Messenger = {}
-bpmjs._Messenger.ReceiverForType = function(type,method) { if( type === $_ ) return; {
-	this.type = type;
-	this.method = method;
-}}
-bpmjs._Messenger.ReceiverForType.__name__ = ["bpmjs","_Messenger","ReceiverForType"];
-bpmjs._Messenger.ReceiverForType.prototype.type = null;
-bpmjs._Messenger.ReceiverForType.prototype.method = null;
-bpmjs._Messenger.ReceiverForType.prototype.__class__ = bpmjs._Messenger.ReceiverForType;
 bpmjs.ContextBuilder = function(p) { if( p === $_ ) return; {
 	this.context = new bpmjs.Context();
 }}
@@ -3640,6 +4151,15 @@ bpmjs.ContextBuilder.prototype.createError = function(message) {
 	return "ContextBuilder ERROR: " + message;
 }
 bpmjs.ContextBuilder.prototype.__class__ = bpmjs.ContextBuilder;
+if(!bpmjs._Messenger) bpmjs._Messenger = {}
+bpmjs._Messenger.ReceiverForType = function(type,method) { if( type === $_ ) return; {
+	this.type = type;
+	this.method = method;
+}}
+bpmjs._Messenger.ReceiverForType.__name__ = ["bpmjs","_Messenger","ReceiverForType"];
+bpmjs._Messenger.ReceiverForType.prototype.type = null;
+bpmjs._Messenger.ReceiverForType.prototype.method = null;
+bpmjs._Messenger.ReceiverForType.prototype.__class__ = bpmjs._Messenger.ReceiverForType;
 reflect.MetadataTest = function(p) { if( p === $_ ) return; {
 	TestCase2.call(this);
 }}
@@ -3920,6 +4440,18 @@ bpmjs._TestComplete.A.prototype.handleContextPostComplete = function() {
 }
 bpmjs._TestComplete.A.prototype.__class__ = bpmjs._TestComplete.A;
 bpmjs._TestComplete.A.__interfaces__ = [haxe.rtti.Infos];
+haxe.TypeTools = function() { }
+haxe.TypeTools.__name__ = ["haxe","TypeTools"];
+haxe.TypeTools.getClassNames = function(value) {
+	var result = new List();
+	var valueClass = Std["is"](value,Class)?value:Type.getClass(value);
+	while(null != valueClass) {
+		result.add(Type.getClassName(valueClass));
+		valueClass = Type.getSuperClass(valueClass);
+	}
+	return result;
+}
+haxe.TypeTools.prototype.__class__ = haxe.TypeTools;
 kumite.scene.LayerState = function(name) { if( name === $_ ) return; {
 	this.name = name;
 }}
@@ -4386,23 +4918,6 @@ reflect.CClassInt.__name__ = ["reflect","CClassInt"];
 reflect.CClassInt.prototype["int"] = null;
 reflect.CClassInt.prototype.__class__ = reflect.CClassInt;
 reflect.CClassInt.__interfaces__ = [haxe.rtti.Infos];
-bpmjs.Tests = function() { }
-bpmjs.Tests.__name__ = ["bpmjs","Tests"];
-bpmjs.Tests.addTo = function(runner) {
-	runner.add(new bpmjs.TestMessenger());
-	runner.add(new bpmjs.TestGetObject());
-	runner.add(new bpmjs.TestInject());
-	runner.add(new bpmjs.TestInjectById());
-	runner.add(new bpmjs.TestComplete());
-	runner.add(new bpmjs.TestError());
-	runner.add(new bpmjs.TestConfigure());
-	runner.add(new bpmjs.TestDynamic());
-	runner.add(new bpmjs.TestObserve());
-	runner.add(new bpmjs.TestFrontMessenger());
-	runner.add(new bpmjs.TestSequencer());
-	bpmjs.integration.Tests.addTo(runner);
-}
-bpmjs.Tests.prototype.__class__ = bpmjs.Tests;
 kumite.scene.Scene = function(p) { if( p === $_ ) return; {
 	this.layers = new Array();
 }}
@@ -4435,6 +4950,23 @@ kumite.scene.Scene.prototype.getLayerIndex = function(layer) {
 	return -1;
 }
 kumite.scene.Scene.prototype.__class__ = kumite.scene.Scene;
+bpmjs.Tests = function() { }
+bpmjs.Tests.__name__ = ["bpmjs","Tests"];
+bpmjs.Tests.addTo = function(runner) {
+	runner.add(new bpmjs.TestMessenger());
+	runner.add(new bpmjs.TestGetObject());
+	runner.add(new bpmjs.TestInject());
+	runner.add(new bpmjs.TestInjectById());
+	runner.add(new bpmjs.TestComplete());
+	runner.add(new bpmjs.TestError());
+	runner.add(new bpmjs.TestConfigure());
+	runner.add(new bpmjs.TestDynamic());
+	runner.add(new bpmjs.TestObserve());
+	runner.add(new bpmjs.TestFrontMessenger());
+	runner.add(new bpmjs.TestSequencer());
+	bpmjs.integration.Tests.addTo(runner);
+}
+bpmjs.Tests.prototype.__class__ = bpmjs.Tests;
 js.Lib = function() { }
 js.Lib.__name__ = ["js","Lib"];
 js.Lib.isIE = null;
@@ -4793,6 +5325,9 @@ bpmjs.integration._TestMessaging.AWithMessenger.__rtti = "<class path=\"bpmjs.in
 bpmjs.integration._TestMessaging.B.__meta__ = { fields : { handleStart : { Message : null}}};
 bpmjs.integration._TestMessaging.B.__rtti = "<class path=\"bpmjs.integration._TestMessaging.B\" params=\"\" private=\"1\" module=\"bpmjs.integration.TestMessaging\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<handleStart public=\"1\" set=\"method\" line=\"167\"><f a=\"message\">\n\t<c path=\"bpmjs.integration.Message\"/>\n\t<e path=\"Void\"/>\n</f></handleStart>\n\t<new public=\"1\" set=\"method\" line=\"161\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 reflect.ClassInfo.cache = new Hash();
+hsl.haxe._DirectSignaler.PropagationStatus.IMMEDIATELY_STOPPED = 1;
+hsl.haxe._DirectSignaler.PropagationStatus.STOPPED = 2;
+hsl.haxe._DirectSignaler.PropagationStatus.UNDISTURBED = 3;
 bpmjs._TestSequencer.TestConfig.__rtti = "<class path=\"bpmjs._TestSequencer.TestConfig\" params=\"\" private=\"1\" module=\"bpmjs.TestSequencer\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<launcher public=\"1\"><c path=\"bpmjs._TestSequencer.Launcher\"/></launcher>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<s1 public=\"1\"><c path=\"bpmjs._TestSequencer.S1\"/></s1>\n\t<new public=\"1\" set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs._TestSequencer.Launcher.__meta__ = { fields : { sequencer : { Inject : null}, handleContextPostComplete : { PostComplete : null}}};
 bpmjs._TestSequencer.Launcher.__rtti = "<class path=\"bpmjs._TestSequencer.Launcher\" params=\"\" private=\"1\" module=\"bpmjs.TestSequencer\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<handleContextPostComplete public=\"1\" set=\"method\" line=\"51\"><f a=\"\"><e path=\"Void\"/></f></handleContextPostComplete>\n\t<new public=\"1\" set=\"method\" line=\"46\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";

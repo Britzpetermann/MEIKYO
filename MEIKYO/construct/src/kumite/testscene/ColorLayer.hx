@@ -10,7 +10,7 @@ import kumite.camera.Camera;
 
 import haxe.rtti.Infos;
 
-class TestBackgroundLayer implements LayerLifecycle, implements Infos
+class ColorLayer implements LayerLifecycle, implements Infos
 {
 	@Inject
 	public var stage : Stage;

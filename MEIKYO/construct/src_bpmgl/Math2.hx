@@ -1,7 +1,8 @@
 class Math2
 {
-	public static function nextPowerOf2(val : Int) : Int
+	public static function nextPowerOf2(value : Float) : Int
 	{
+		var val = Std.int(value); 
 		val--;
 		val = (val >> 1) | val;
 		val = (val >> 2) | val;

@@ -13,31 +13,44 @@ class Sequencer implements haxe.rtti.Infos
 	
 	public function start(name : String)
 	{
-		Log.groupCollapsed("Sequence: " + name);
-		
 		var sequence = new Sequence(name);
 		sequence.objects = context.objects;
 		
-		sequence.execute("initPrepare");
-		sequence.execute("init");
-		sequence.execute("initComplete");
-		sequence.execute("startPrepare");
-		sequence.execute("start");
-		sequence.execute("startComplete");
+		sequence.addExecuteTask("initPrepare");
+		sequence.addExecuteTask("init");
+		sequence.addExecuteTask("initComplete");
+		sequence.addExecuteTask("startPrepare");
+		sequence.addLoadingTask();
+		sequence.addExecuteTask("start");
+		sequence.addExecuteTask("startComplete");
 		
-		Log.groupEnd();
+		sequence.start();
 	}
 }
 
-class Sequence
+class Sequence extends bpmjs.TaskGroup
 {
 	public var name : String;
 	
 	public var objects : Array<ContextObject>;
 	
+	var loadingTaskGroup : LoadingTaskGroup;
+	
 	public function new(name : String)
 	{
+		super();
 		this.name = name;
+	}
+	
+	public function addExecuteTask(phase : String)
+	{
+		add(new ExecutePhaseTask(this, phase));
+	}
+	
+	public function addLoadingTask()
+	{
+		loadingTaskGroup = new LoadingTaskGroup(this);
+		add(loadingTaskGroup);
 	}
 	
 	public function execute(phase : String)
@@ -57,11 +70,42 @@ class Sequence
 					if (localPhase == phase)
 					{
 						Log.info("Phase '" + localPhase + "' " + Type.getClassName(contextObject.type) +"#"+fieldName);
-						Reflect.callMethod(object, Reflect.field(object, fieldName), []);
+						var result = Reflect.callMethod(object, Reflect.field(object, fieldName), []);
+						if (Std.is(result, SequencerTaskGroup))
+						{
+							Log.info("Adding task '", reflect.ClassInfo.forInstance(result).name);
+							loadingTaskGroup.add(result);
+						}
 					}
 				}
 			}			
 		}		
 	}
 	
+}
+
+class ExecutePhaseTask extends bpmjs.Task<ExecutePhaseTask>
+{
+	var sequence : Sequence;
+	var phase : String;
+	public function new(sequence : Sequence, phase : String)
+	{
+		super();
+		this.sequence = sequence;
+		this.phase = phase;
+	}
+	
+	override public function doStart()
+	{
+		sequence.execute(phase);
+		complete();
+	}	
+}
+
+class LoadingTaskGroup extends bpmjs.TaskGroup
+{
+	public function new(sequence : Sequence)
+	{
+		super();
+	}
 }

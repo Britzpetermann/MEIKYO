@@ -6,8 +6,8 @@ import haxe.rtti.Infos;
 
 class Config implements Infos
 {
-	public var testBackgroundLayer1 : TestBackgroundLayer;
-	public var testBackgroundLayer2 : TestBackgroundLayer;
+	public var colorLayer1 : ColorLayer;
+	public var colorLayer2 : ColorLayer;
 	
 	public var testLayer1 : TestLayer;
 	public var testLayer2 : TestLayer;
@@ -18,17 +18,21 @@ class Config implements Infos
 	public var testScene3 : TestScene3;
 	public var testScene4 : TestScene4;
 	
+	public var testTextureLoader : TestTextureLoader;
+	
 	public function new()
 	{
-		testBackgroundLayer1 = new TestBackgroundLayer();
-		testBackgroundLayer1.color = new Color(1, 1, 1, 0.2);
-		testBackgroundLayer1.direction = -1;
-		testBackgroundLayer1.layerId = "testBackgroundLayer1";
+		testTextureLoader = new TestTextureLoader();
 		
-		testBackgroundLayer2 = new TestBackgroundLayer();
-		testBackgroundLayer2.color = new Color(1, 0.5, 1, 0.2);
-		testBackgroundLayer2.direction = 1;
-		testBackgroundLayer2.layerId = "testBackgroundLayer2";
+		colorLayer1 = new ColorLayer();
+		colorLayer1.color = new Color(1, 1, 1, 0.2);
+		colorLayer1.direction = -1;
+		colorLayer1.layerId = "colorLayer1";
+		
+		colorLayer2 = new ColorLayer();
+		colorLayer2.color = new Color(1, 0.5, 1, 0.2);
+		colorLayer2.direction = 1;
+		colorLayer2.layerId = "colorLayer2";
 		
 		testLayer1 = new TestLayer();
 		testLayer1.layerId = "testLayer1";

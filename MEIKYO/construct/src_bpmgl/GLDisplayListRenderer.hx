@@ -69,23 +69,24 @@ class GLDisplayListRenderer
 		gl.activeTexture(gl.TEXTURE0);
 		gl.uniform1i(textureUniform.location, 0);
 
-		renderRecursive(stage, new Matrix4());
+		renderRecursive(stage, new Matrix4(), stage.alpha);
 		gl.disable(gl.BLEND);
 	}
 
-	function renderRecursive(displayObjectContainer :  GLDisplayObjectContainer, parentMatrix : Matrix4)
+	function renderRecursive(displayObjectContainer :  GLDisplayObjectContainer, parentMatrix : Matrix4, alpha : Float)
 	{
 		for (displayObject in displayObjectContainer.children)
 		{
-			var matrix = renderDisplayObject(displayObject, parentMatrix);
+			var matrix = renderDisplayObject(displayObject, parentMatrix, alpha);
 			if (Std.is(displayObject, GLDisplayObjectContainer))
 			{
-				renderRecursive(cast displayObject, matrix);
+				alpha *= displayObject.alpha;
+				renderRecursive(cast displayObject, matrix, alpha);
 			}
 		}
 	}
 
-	function renderDisplayObject(displayObject : GLDisplayObject, parentMatrix : Matrix4)
+	function renderDisplayObject(displayObject : GLDisplayObject, parentMatrix : Matrix4, alpha : Float)
 	{
 		var gl = GL.gl;
 
@@ -121,7 +122,7 @@ class GLDisplayListRenderer
 
 		gl.uniformMatrix4fv(objectMatrixUniform.location, false, result.buffer);
 		gl.uniform2f(sizeUniform.location, displayObject.graphic.canvas.width, displayObject.graphic.canvas.height);
-		gl.uniform1f(alphaUniform.location, displayObject.alpha);
+		gl.uniform1f(alphaUniform.location, displayObject.alpha * alpha);
 
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 

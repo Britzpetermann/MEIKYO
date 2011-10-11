@@ -485,8 +485,16 @@ class GL
 		gl.bindBuffer(target, buffer);
 	}
 
-	public static inline function bindFramebuffer(target : GLenum, framebuffer : WebGLFramebuffer) : Void;
-	public static inline function bindRenderbuffer(target : GLenum, renderbuffer : WebGLRenderbuffer) : Void;
+	public static inline function bindFramebuffer(target : GLenum, framebuffer : WebGLFramebuffer) : Void
+	{
+		gl.bindFramebuffer(target, framebuffer);
+	}
+	
+	public static inline function bindRenderbuffer(target : GLenum, renderbuffer : WebGLRenderbuffer) : Void
+	{
+		gl.bindRenderbuffer(target, renderbuffer);
+	}
+	
 	public static inline function bindTexture(target:GLenum, texture:WebGLTexture) : Void
 	{
 		gl.bindTexture(target, texture);
@@ -512,8 +520,15 @@ class GL
 		gl.clearColor(red, green, blue, alpha);
 	}
 	
-	public static inline function clearDepth(depth : GLclampf) : Void;
-	public static inline function compileShader(shader : WebGLShader) : Void;
+	public static inline function clearDepth(depth : GLclampf) : Void
+	{
+		gl.clearDepth(depth);
+	}
+	
+	public static inline function compileShader(shader : WebGLShader) : Void
+	{
+		gl.compileShader(shader);
+	}
 
 	public static inline function createBuffer() : WebGLBuffer
 	{
@@ -565,9 +580,20 @@ class GL
 		gl.enableVertexAttribArray(index);
 	}
 
-	public static inline function framebufferRenderbuffer(target : GLenum, attachment : GLenum, renderbuffertarget : GLenum, renderbuffer : WebGLRenderbuffer) : Void;
-	public static inline function framebufferTexture2D(target : GLenum, attachment : GLenum, textarget : GLenum, texture : WebGLTexture, level : GLint) : Void;
-	public static inline function generateMipmap(target : GLenum) : Void;
+	public static inline function framebufferRenderbuffer(target : GLenum, attachment : GLenum, renderbuffertarget : GLenum, renderbuffer : WebGLRenderbuffer) : Void
+	{
+		gl.framebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer);
+	}
+	
+	public static inline function framebufferTexture2D(target : GLenum, attachment : GLenum, textarget : GLenum, texture : WebGLTexture, level : GLint) : Void
+	{
+		gl.framebufferTexture2D(target, attachment, textarget, texture, level);
+	}
+	
+	public static inline function generateMipmap(target : GLenum) : Void
+	{
+		gl.generateMipmap(target);
+	}
 
 	public static inline function getAttribLocation(program : WebGLProgram, name : DOMString) : GLint
 	{
@@ -579,12 +605,30 @@ class GL
 		return gl.getShaderInfoLog(shader);
 	}
 
-	public static inline function getShaderParameter(shader : WebGLShader, pname : GLenum) : Dynamic;
-	public static inline function getProgramParameter(program : WebGLProgram, pname : GLenum) : Dynamic;
-	public static inline function linkProgram(program : WebGLProgram) : Void;
+	public static inline function getShaderParameter(shader : WebGLShader, pname : GLenum) : Dynamic
+	{
+		gl.getShaderParameter(shader, pname);
+	}
+	
+	public static inline function getProgramParameter(program : WebGLProgram, pname : GLenum) : Dynamic
+	{
+		gl.getProgramParameter(program, pname);
+	}
+	
+	public static inline function linkProgram(program : WebGLProgram) : Void
+	{
+		gl.linkProgram(program);
+	}
 
-	public static inline function renderbufferStorage(target : GLenum, internalformat : GLenum, width : GLsizei, height : GLsizei) : Void;
-	public static inline function shaderSource(shader : WebGLShader, source : DOMString) : Void;
+	public static inline function renderbufferStorage(target : GLenum, internalformat : GLenum, width : GLsizei, height : GLsizei) : Void
+	{
+		gl.renderbufferStorage(target, internalformat, width, height);
+	}
+	
+	public static inline function shaderSource(shader : WebGLShader, source : DOMString) : Void
+	{
+		gl.shaderSource(shader, source);
+	}
 
 	public static inline function texImage2DArrayBufferView(target : GLenum, level : GLint, internalformat : GLenum, width : GLsizei, height : GLsizei, border : GLint, format : GLenum, type : GLenum, pixels : ArrayBufferView) : Void
 	{
@@ -611,7 +655,10 @@ class GL
 		untyped gl.texImage2D(target, level, internalformat, format, type, video);
 	}
 
-	public static inline function texParameteri(target : GLenum, pname : GLenum, param : GLint) : Void;
+	public static inline function texParameteri(target : GLenum, pname : GLenum, param : GLint) : Void
+	{
+		gl.texParameteri(target, pname, param);
+	}
 
 	public static inline function vertexAttribPointer(indx : GLuint, size : GLint, type:GLenum, normalized : GLboolean, stride : GLsizei, offset : GLsizeiptr) : Void
 	{

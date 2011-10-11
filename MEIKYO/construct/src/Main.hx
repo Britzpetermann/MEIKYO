@@ -22,11 +22,11 @@ class Main {
 
 	function new(canvas : Canvas)
 	{
-		Log.groupCollapsed("Build context");
 		try
 		{
 			var context = bpmjs.ContextBuilder.buildAll([
 					kumite.launch.Config,
+					kumite.textureregistry.Config,
 					kumite.stage.Config,
 					kumite.canvas.Config,
 					kumite.webgl.Config,
@@ -45,7 +45,6 @@ class Main {
 		{
 			Log.error("Error building application! \n" + e);
 		}
-		Log.groupEnd();
 	}
 
 }

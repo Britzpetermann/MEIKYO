@@ -24,7 +24,7 @@ class TaskGroup extends Task<TaskGroup>
 	{
 		if (tasks.length > 0)
 		{
-			var task = tasks.pop();
+			var task = tasks.shift();
 			task.completeSignaler.bind(handleTaskComplete);
 			task.start();
 		}

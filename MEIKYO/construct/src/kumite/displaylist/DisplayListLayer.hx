@@ -16,6 +16,8 @@ class DisplayListLayer implements Infos, implements LayerLifecycle
 	
 	public var layerId : String;
 	
+	public var transition : Float;
+	
 	private var renderer : GLDisplayListRenderer;
 	
 	public function new();
@@ -29,6 +31,7 @@ class DisplayListLayer implements Infos, implements LayerLifecycle
 
 	public function renderTransition(transitionContext : TransitionContext)
 	{
+		transition = transitionContext.transition;
 		render();
 	}
 		
@@ -36,6 +39,7 @@ class DisplayListLayer implements Infos, implements LayerLifecycle
 	{
 		Stats.measureFPS();
 		
+		GLDisplayList.getDefault().stage.alpha = transition;
 		GLDisplayList.getDefault().setStageSize(stage.width, stage.height);
 		GLDisplayList.getDefault().dispatchEnterFrame();
 		renderer.render(stage.width, stage.height);		

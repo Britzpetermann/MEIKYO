@@ -27,7 +27,7 @@ class Task<T>
 		}
 		catch(e : Dynamic)
 		{
-			trace("Error starting Task: " + e);
+			Log.error("Error starting Task: ", e);
 		}
 	}
 
