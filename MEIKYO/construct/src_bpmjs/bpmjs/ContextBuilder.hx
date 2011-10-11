@@ -79,8 +79,13 @@ class ContextBuilder
 			throw message;
 		}
 		
+		context.addObject("config", ci, config);
+		
 		for (property in ci.properties)
 		{
+			if (property.hasMetadata("Inject"))
+				continue;
+				
 			var instance = property.getValue(config);
 			if (instance == null)
 			{

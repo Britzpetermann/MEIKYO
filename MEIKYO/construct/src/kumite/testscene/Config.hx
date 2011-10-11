@@ -6,6 +6,9 @@ class Config implements Infos
 {
 	public static var TEST1 : GLTextureConfig = GLTextureConfig.create("data/image/along-the-line.png"); 
 	public static var TEST2 : GLTextureConfig = GLTextureConfig.create("data/image/beware-of-the-dog.jpg"); 
+
+	@Inject
+	public var textureRegistry : GLTextureRegistry;
 	
 	public var colorLayer1 : kumite.layer.ColorLayer;
 	public var colorLayer2 : kumite.layer.ColorLayer;
@@ -23,12 +26,8 @@ class Config implements Infos
 	public var testScene3 : TestScene3;
 	public var testScene4 : TestScene4;
 	
-	public var testTextureLoader : TestTextureLoader;
-	
 	public function new()
 	{
-		testTextureLoader = new TestTextureLoader();
-		
 		colorLayer1 = new kumite.layer.ColorLayer();
 		colorLayer1.color = new Color(0.5, 0.5, 0.5, 1);
 		colorLayer1.layerId = "colorLayer1";
@@ -74,4 +73,15 @@ class Config implements Infos
 		testScene3 = new TestScene3();
 		testScene4 = new TestScene4();
 	}
+	
+	@Sequence("boot", "startPrepare")
+	public function startPrepare()
+	{
+		var group = new bpmjs.SequencerTaskGroup();
+		
+		group.add(new GLTextureLoadingTask(textureRegistry, Config.TEST1));
+		group.add(new GLTextureLoadingTask(textureRegistry, Config.TEST2));
+		
+		return group;
+	}	
 }

@@ -52,16 +52,6 @@ class FlyingManLayer implements LayerLifecycle, implements Infos
 		transitionAlpha = 1;
 	}
 	
-	@Sequence("boot", "startPrepare")
-	public function startPrepare()
-	{
-		var group = new bpmjs.SequencerTaskGroup();
-		
-		group.add(new GLTextureLoadingTask(textureRegistry, Config.PAPER));
-		
-		return group;
-	}
-	
 	public function init()
 	{
 		shaderProgram = GL.createProgram(kumite.helloworldgl.shader.Vertex, kumite.helloworldgl.shader.Fragment);

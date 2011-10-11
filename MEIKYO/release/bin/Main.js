@@ -3638,28 +3638,6 @@ hsl.haxe._DirectSignaler.AdvancedBond.prototype.__class__ = hsl.haxe._DirectSign
 hsl.haxe._DirectSignaler.PropagationStatus = function() { }
 hsl.haxe._DirectSignaler.PropagationStatus.__name__ = ["hsl","haxe","_DirectSignaler","PropagationStatus"];
 hsl.haxe._DirectSignaler.PropagationStatus.prototype.__class__ = hsl.haxe._DirectSignaler.PropagationStatus;
-kumite.testscene.TestTextureLoader = function(p) { if( p === $_ ) return; {
-	$s.push("kumite.testscene.TestTextureLoader::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-kumite.testscene.TestTextureLoader.__name__ = ["kumite","testscene","TestTextureLoader"];
-kumite.testscene.TestTextureLoader.prototype.textureRegistry = null;
-kumite.testscene.TestTextureLoader.prototype.startPrepare = function() {
-	$s.push("kumite.testscene.TestTextureLoader::startPrepare");
-	var $spos = $s.length;
-	var group = new bpmjs.SequencerTaskGroup();
-	group.add(new GLTextureLoadingTask(this.textureRegistry,kumite.testscene.Config.TEST1));
-	group.add(new GLTextureLoadingTask(this.textureRegistry,kumite.testscene.Config.TEST2));
-	{
-		$s.pop();
-		return group;
-	}
-	$s.pop();
-}
-kumite.testscene.TestTextureLoader.prototype.__class__ = kumite.testscene.TestTextureLoader;
-kumite.testscene.TestTextureLoader.__interfaces__ = [haxe.rtti.Infos];
 hsl.haxe.Signal = function(data,currentBond,currentTarget,origin) { if( data === $_ ) return; {
 	$s.push("hsl.haxe.Signal::new");
 	var $spos = $s.length;
@@ -3996,17 +3974,6 @@ kumite.flyingman.FlyingManLayer.prototype.vertexBuffer = null;
 kumite.flyingman.FlyingManLayer.prototype.projectionMatrixUniform = null;
 kumite.flyingman.FlyingManLayer.prototype.worldViewMatrixUniform = null;
 kumite.flyingman.FlyingManLayer.prototype.colorUniform = null;
-kumite.flyingman.FlyingManLayer.prototype.startPrepare = function() {
-	$s.push("kumite.flyingman.FlyingManLayer::startPrepare");
-	var $spos = $s.length;
-	var group = new bpmjs.SequencerTaskGroup();
-	group.add(new GLTextureLoadingTask(this.textureRegistry,kumite.flyingman.Config.PAPER));
-	{
-		$s.pop();
-		return group;
-	}
-	$s.pop();
-}
 kumite.flyingman.FlyingManLayer.prototype.init = function() {
 	$s.push("kumite.flyingman.FlyingManLayer::init");
 	var $spos = $s.length;
@@ -4807,15 +4774,17 @@ bpmjs.ContextBuilder.prototype.createObjects = function(configClass) {
 		var message = "Config class:" + ci.name + "has no rtti extension - use 'implement haxe.rtti.Infos'";
 		throw message;
 	}
+	this.context.addObject("config",ci,config);
 	{
 		var _g = 0, _g1 = ci.getProperties();
 		while(_g < _g1.length) {
 			var property = _g1[_g];
 			++_g;
+			if(property.hasMetadata("Inject")) continue;
 			var instance = Reflect.field(config,property.field.name);
 			if(instance == null) {
 				{
-					Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 87, className : "bpmjs.ContextBuilder", methodName : "createObjects"};
+					Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 92, className : "bpmjs.ContextBuilder", methodName : "createObjects"};
 					if(Log.filter(LogLevel.WARN)) {
 						Log.fetchInput("Found property",property.field.name,"in config",ci.name,"but was null",null,null);
 						console.warn(Log.createMessage());
@@ -4868,7 +4837,7 @@ bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
 				var objects = this.context.getDynamicObjectsByType(property.getClass());
 				if(objects.length == 0) {
 					{
-						Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 132, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
+						Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 137, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
 						if(Log.filter(LogLevel.WARN)) {
 							Log.fetchInput("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + property.field.name + " but could not find object to inject.",null,null,null,null,null,null);
 							console.warn(Log.createMessage());
@@ -6388,7 +6357,6 @@ GLTextureConfig.prototype.__class__ = GLTextureConfig;
 kumite.testscene.Config = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.testscene.Config::new");
 	var $spos = $s.length;
-	this.testTextureLoader = new kumite.testscene.TestTextureLoader();
 	this.colorLayer1 = new kumite.layer.ColorLayer();
 	this.colorLayer1.color = new Color(0.5,0.5,0.5,1);
 	this.colorLayer1.layerId = "colorLayer1";
@@ -6428,6 +6396,7 @@ kumite.testscene.Config = function(p) { if( p === $_ ) return; {
 	$s.pop();
 }}
 kumite.testscene.Config.__name__ = ["kumite","testscene","Config"];
+kumite.testscene.Config.prototype.textureRegistry = null;
 kumite.testscene.Config.prototype.colorLayer1 = null;
 kumite.testscene.Config.prototype.colorLayer2 = null;
 kumite.testscene.Config.prototype.colorLayer3 = null;
@@ -6440,7 +6409,18 @@ kumite.testscene.Config.prototype.testScene1 = null;
 kumite.testscene.Config.prototype.testScene2 = null;
 kumite.testscene.Config.prototype.testScene3 = null;
 kumite.testscene.Config.prototype.testScene4 = null;
-kumite.testscene.Config.prototype.testTextureLoader = null;
+kumite.testscene.Config.prototype.startPrepare = function() {
+	$s.push("kumite.testscene.Config::startPrepare");
+	var $spos = $s.length;
+	var group = new bpmjs.SequencerTaskGroup();
+	group.add(new GLTextureLoadingTask(this.textureRegistry,kumite.testscene.Config.TEST1));
+	group.add(new GLTextureLoadingTask(this.textureRegistry,kumite.testscene.Config.TEST2));
+	{
+		$s.pop();
+		return group;
+	}
+	$s.pop();
+}
 kumite.testscene.Config.prototype.__class__ = kumite.testscene.Config;
 kumite.testscene.Config.__interfaces__ = [haxe.rtti.Infos];
 kumite.layer.LayerTransition = function(name) { if( name === $_ ) return; {
@@ -9007,9 +8987,21 @@ kumite.flyingman.Config = function(p) { if( p === $_ ) return; {
 	$s.pop();
 }}
 kumite.flyingman.Config.__name__ = ["kumite","flyingman","Config"];
+kumite.flyingman.Config.prototype.textureRegistry = null;
 kumite.flyingman.Config.prototype.paperBackground = null;
 kumite.flyingman.Config.prototype.flyingManLayer = null;
 kumite.flyingman.Config.prototype.flyingManScene = null;
+kumite.flyingman.Config.prototype.startPrepare = function() {
+	$s.push("kumite.flyingman.Config::startPrepare");
+	var $spos = $s.length;
+	var group = new bpmjs.SequencerTaskGroup();
+	group.add(new GLTextureLoadingTask(this.textureRegistry,kumite.flyingman.Config.PAPER));
+	{
+		$s.pop();
+		return group;
+	}
+	$s.pop();
+}
 kumite.flyingman.Config.prototype.__class__ = kumite.flyingman.Config;
 kumite.flyingman.Config.__interfaces__ = [haxe.rtti.Infos];
 Vec3 = function(x,y,z) { if( x === $_ ) return; {
@@ -11481,12 +11473,10 @@ kumite.testscene.TestScene1.SCENE_ID = "EMPTY";
 hsl.haxe._DirectSignaler.PropagationStatus.IMMEDIATELY_STOPPED = 1;
 hsl.haxe._DirectSignaler.PropagationStatus.STOPPED = 2;
 hsl.haxe._DirectSignaler.PropagationStatus.UNDISTURBED = 3;
-kumite.testscene.TestTextureLoader.__meta__ = { fields : { textureRegistry : { Inject : null}, startPrepare : { Sequence : ["boot","startPrepare"]}}};
-kumite.testscene.TestTextureLoader.__rtti = "<class path=\"kumite.testscene.TestTextureLoader\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<startPrepare public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></startPrepare>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs.Sequencer.__meta__ = { fields : { context : { Inject : null}}};
 bpmjs.Sequencer.__rtti = "<class path=\"bpmjs.Sequencer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context public=\"1\"><c path=\"bpmjs.Context\"/></context>\n\t<start public=\"1\" set=\"method\" line=\"14\"><f a=\"name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></start>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.flyingman.FlyingManLayer.__meta__ = { fields : { stage : { Inject : null}, textureRegistry : { Inject : null}, time : { Inject : null}, projection : { Inject : null}, camera : { Inject : null}, startPrepare : { Sequence : ["boot","startPrepare"]}}};
-kumite.flyingman.FlyingManLayer.__rtti = "<class path=\"kumite.flyingman.FlyingManLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<layerId public=\"1\"><c path=\"String\"/></layerId>\n\t<color public=\"1\"><c path=\"Color\"/></color>\n\t<scale public=\"1\"><c path=\"Float\"/></scale>\n\t<position public=\"1\"><c path=\"Vec3\"/></position>\n\t<transitionAlpha><c path=\"Float\"/></transitionAlpha>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<worldViewMatrixUniform><c path=\"GLUniformLocation\"/></worldViewMatrixUniform>\n\t<colorUniform><c path=\"GLUniformLocation\"/></colorUniform>\n\t<startPrepare public=\"1\" set=\"method\" line=\"56\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></startPrepare>\n\t<init public=\"1\" set=\"method\" line=\"65\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"82\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"88\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"46\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.flyingman.FlyingManLayer.__meta__ = { fields : { stage : { Inject : null}, textureRegistry : { Inject : null}, time : { Inject : null}, projection : { Inject : null}, camera : { Inject : null}}};
+kumite.flyingman.FlyingManLayer.__rtti = "<class path=\"kumite.flyingman.FlyingManLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<layerId public=\"1\"><c path=\"String\"/></layerId>\n\t<color public=\"1\"><c path=\"Color\"/></color>\n\t<scale public=\"1\"><c path=\"Float\"/></scale>\n\t<position public=\"1\"><c path=\"Vec3\"/></position>\n\t<transitionAlpha><c path=\"Float\"/></transitionAlpha>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<worldViewMatrixUniform><c path=\"GLUniformLocation\"/></worldViewMatrixUniform>\n\t<colorUniform><c path=\"GLUniformLocation\"/></colorUniform>\n\t<init public=\"1\" set=\"method\" line=\"55\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"72\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"78\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"46\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 LogLevel.INFO = new LogLevel(1);
 LogLevel.WARN = new LogLevel(2);
 LogLevel.ERROR = new LogLevel(3);
@@ -11503,7 +11493,8 @@ kumite.canvas.CanvasController.__meta__ = { fields : { canvas : { Inject : null}
 kumite.canvas.CanvasController.__rtti = "<class path=\"kumite.canvas.CanvasController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<init public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateCanvasSizeFromStage public=\"1\" set=\"method\" line=\"33\"><f a=\"?message\">\n\t<c path=\"kumite.stage.StageResizeMessage\"/>\n\t<e path=\"Void\"/>\n</f></updateCanvasSizeFromStage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.launch.Launcher.__meta__ = { fields : { sequencer : { Inject : null}, handlePostComplete : { PostComplete : null}, showError : { Sequence : ["boot","error"]}}};
 kumite.launch.Launcher.__rtti = "<class path=\"kumite.launch.Launcher\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<handlePostComplete public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></handlePostComplete>\n\t<showError public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></showError>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.testscene.Config.__rtti = "<class path=\"kumite.testscene.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<TEST1 public=\"1\" line=\"7\" static=\"1\"><c path=\"GLTextureConfig\"/></TEST1>\n\t<TEST2 public=\"1\" line=\"8\" static=\"1\"><c path=\"GLTextureConfig\"/></TEST2>\n\t<colorLayer1 public=\"1\"><c path=\"kumite.layer.ColorLayer\"/></colorLayer1>\n\t<colorLayer2 public=\"1\"><c path=\"kumite.layer.ColorLayer\"/></colorLayer2>\n\t<colorLayer3 public=\"1\"><c path=\"kumite.layer.ColorLayer\"/></colorLayer3>\n\t<textureLayer1 public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></textureLayer1>\n\t<textureLayer2 public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></textureLayer2>\n\t<testLayer1 public=\"1\"><c path=\"kumite.layer.TestLayer\"/></testLayer1>\n\t<testLayer2 public=\"1\"><c path=\"kumite.layer.TestLayer\"/></testLayer2>\n\t<testLayer3 public=\"1\"><c path=\"kumite.layer.TestLayer\"/></testLayer3>\n\t<testScene1 public=\"1\"><c path=\"kumite.testscene.TestScene1\"/></testScene1>\n\t<testScene2 public=\"1\"><c path=\"kumite.testscene.TestScene2\"/></testScene2>\n\t<testScene3 public=\"1\"><c path=\"kumite.testscene.TestScene3\"/></testScene3>\n\t<testScene4 public=\"1\"><c path=\"kumite.testscene.TestScene4\"/></testScene4>\n\t<testTextureLoader public=\"1\"><c path=\"kumite.testscene.TestTextureLoader\"/></testTextureLoader>\n\t<new public=\"1\" set=\"method\" line=\"28\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.testscene.Config.__meta__ = { fields : { textureRegistry : { Inject : null}, startPrepare : { Sequence : ["boot","startPrepare"]}}};
+kumite.testscene.Config.__rtti = "<class path=\"kumite.testscene.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<TEST1 public=\"1\" line=\"7\" static=\"1\"><c path=\"GLTextureConfig\"/></TEST1>\n\t<TEST2 public=\"1\" line=\"8\" static=\"1\"><c path=\"GLTextureConfig\"/></TEST2>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<colorLayer1 public=\"1\"><c path=\"kumite.layer.ColorLayer\"/></colorLayer1>\n\t<colorLayer2 public=\"1\"><c path=\"kumite.layer.ColorLayer\"/></colorLayer2>\n\t<colorLayer3 public=\"1\"><c path=\"kumite.layer.ColorLayer\"/></colorLayer3>\n\t<textureLayer1 public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></textureLayer1>\n\t<textureLayer2 public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></textureLayer2>\n\t<testLayer1 public=\"1\"><c path=\"kumite.layer.TestLayer\"/></testLayer1>\n\t<testLayer2 public=\"1\"><c path=\"kumite.layer.TestLayer\"/></testLayer2>\n\t<testLayer3 public=\"1\"><c path=\"kumite.layer.TestLayer\"/></testLayer3>\n\t<testScene1 public=\"1\"><c path=\"kumite.testscene.TestScene1\"/></testScene1>\n\t<testScene2 public=\"1\"><c path=\"kumite.testscene.TestScene2\"/></testScene2>\n\t<testScene3 public=\"1\"><c path=\"kumite.testscene.TestScene3\"/></testScene3>\n\t<testScene4 public=\"1\"><c path=\"kumite.testscene.TestScene4\"/></testScene4>\n\t<startPrepare public=\"1\" set=\"method\" line=\"78\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></startPrepare>\n\t<new public=\"1\" set=\"method\" line=\"29\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.testscene.Config.TEST1 = GLTextureConfig.create("data/image/along-the-line.png");
 kumite.testscene.Config.TEST2 = GLTextureConfig.create("data/image/beware-of-the-dog.jpg");
 kumite.textureregistry.Config.__rtti = "<class path=\"kumite.textureregistry.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
@@ -11525,7 +11516,8 @@ kumite.vjinterface.VJInterface.__rtti = "<class path=\"kumite.vjinterface.VJInte
 kumite.displaylist.DisplayListLayer.__meta__ = { fields : { stage : { Inject : null}}};
 kumite.displaylist.DisplayListLayer.__rtti = "<class path=\"kumite.displaylist.DisplayListLayer\" params=\"\">\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<layerId public=\"1\"><c path=\"String\"/></layerId>\n\t<transition public=\"1\"><c path=\"Float\"/></transition>\n\t<renderer><c path=\"GLDisplayListRenderer\"/></renderer>\n\t<init public=\"1\" set=\"method\" line=\"25\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"32\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"38\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"23\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 haxe.Timer.arr = new Array();
-kumite.flyingman.Config.__rtti = "<class path=\"kumite.flyingman.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<PAPER public=\"1\" line=\"7\" static=\"1\"><c path=\"GLTextureConfig\"/></PAPER>\n\t<paperBackground public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></paperBackground>\n\t<flyingManLayer public=\"1\"><c path=\"kumite.flyingman.FlyingManLayer\"/></flyingManLayer>\n\t<flyingManScene public=\"1\"><c path=\"kumite.flyingman.FlyingManScene\"/></flyingManScene>\n\t<new public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.flyingman.Config.__meta__ = { fields : { textureRegistry : { Inject : null}, startPrepare : { Sequence : ["boot","startPrepare"]}}};
+kumite.flyingman.Config.__rtti = "<class path=\"kumite.flyingman.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<PAPER public=\"1\" line=\"7\" static=\"1\"><c path=\"GLTextureConfig\"/></PAPER>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<paperBackground public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></paperBackground>\n\t<flyingManLayer public=\"1\"><c path=\"kumite.flyingman.FlyingManLayer\"/></flyingManLayer>\n\t<flyingManScene public=\"1\"><c path=\"kumite.flyingman.FlyingManScene\"/></flyingManScene>\n\t<startPrepare public=\"1\" set=\"method\" line=\"28\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></startPrepare>\n\t<new public=\"1\" set=\"method\" line=\"16\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.flyingman.Config.PAPER = GLTextureConfig.create("data/image/flyingman/paper.jpg");
 shader.DisplayObjectVertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 objectMatrix;\n\tuniform vec2 size;\n\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * objectMatrix * (vec4(size, 1.0, 1.0) * vec4(vertexPosition, 0.0, 1.0));\n\t\ttextureCoord = vertexPosition.xy;\n\t}\n\n"]}};
 kumite.helloworldgl.shader.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 worldViewMatrix;\n\n\tvarying vec4 vertex;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);\n\t\tvertex = vec4(vertexPosition, 0.0, 1.0);\n\t}\n\n"]}};

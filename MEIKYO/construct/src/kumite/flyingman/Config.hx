@@ -6,6 +6,9 @@ class Config implements Infos
 {
 	public static var PAPER : GLTextureConfig = GLTextureConfig.create("data/image/flyingman/paper.jpg");
 	
+	@Inject
+	public var textureRegistry : GLTextureRegistry;
+	
 	public var paperBackground : kumite.layer.TextureLayer;
 	public var flyingManLayer : kumite.flyingman.FlyingManLayer;
 	public var flyingManScene : FlyingManScene;
@@ -20,4 +23,14 @@ class Config implements Infos
 		
 		flyingManScene = new FlyingManScene();
 	}
+	
+	@Sequence("boot", "startPrepare")
+	public function startPrepare()
+	{
+		var group = new bpmjs.SequencerTaskGroup();
+		
+		group.add(new GLTextureLoadingTask(textureRegistry, Config.PAPER));
+		
+		return group;
+	}	
 }
