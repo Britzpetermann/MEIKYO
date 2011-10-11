@@ -8630,6 +8630,13 @@ GLTextureLoadingTask.prototype.handleImageLoaded = function() {
 	else {
 		this.textureRegistry.register(this.textureConfig,this.textureRegistry.createGLTextureFromImage(this.image,9728));
 	}
+	{
+		Log.posInfo = { fileName : "GLTextureLoadingTask.hx", lineNumber : 39, className : "GLTextureLoadingTask", methodName : "handleImageLoaded"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput("Complete: ",this.textureConfig.path,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
 	this.complete();
 	$s.pop();
 }

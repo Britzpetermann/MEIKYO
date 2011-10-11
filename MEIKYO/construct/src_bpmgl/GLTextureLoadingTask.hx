@@ -36,6 +36,7 @@ class GLTextureLoadingTask extends bpmjs.ImageLoaderTask
 		{
 			textureRegistry.register(textureConfig, textureRegistry.createGLTextureFromImage(image, GL.NEAREST));
 		}
+		Log.info("Complete: ", textureConfig.path);
 		complete();
 	}
 }
