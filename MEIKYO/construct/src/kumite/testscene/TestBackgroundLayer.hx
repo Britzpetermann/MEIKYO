@@ -60,7 +60,7 @@ class TestBackgroundLayer implements LayerLifecycle, implements Infos
 	
 	public function renderTransition(transitionContext : TransitionContext)
 	{
-		transition = transitionContext.transition;
+		transition = Map.ease(transitionContext.transition, 0, 1, 0, 1, ease.Back.easeInOut);
 		render();
 	}
 		

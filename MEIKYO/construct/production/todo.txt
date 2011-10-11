@@ -1,0 +1,4 @@
+* ease function for mapping (>transition)
+- navigation dependent transitions (e.g. background left or right in/out)
+- fix layer proposal (e.g. background always in back)
+- scene change while in transition vs append next scene vs ignore

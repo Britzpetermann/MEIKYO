@@ -164,7 +164,7 @@ kumite.testscene.TestBackgroundLayer.prototype.init = function() {
 kumite.testscene.TestBackgroundLayer.prototype.renderTransition = function(transitionContext) {
 	$s.push("kumite.testscene.TestBackgroundLayer::renderTransition");
 	var $spos = $s.length;
-	this.transition = transitionContext.transition;
+	this.transition = Map.ease(transitionContext.transition,0,1,0,1,$closure(ease.Back,"easeInOut"));
 	this.render();
 	$s.pop();
 }
@@ -8423,6 +8423,48 @@ if(typeof shader=='undefined') shader = {}
 shader.DisplayObjectVertex = function() { }
 shader.DisplayObjectVertex.__name__ = ["shader","DisplayObjectVertex"];
 shader.DisplayObjectVertex.prototype.__class__ = shader.DisplayObjectVertex;
+if(typeof ease=='undefined') ease = {}
+ease.Back = function() { }
+ease.Back.__name__ = ["ease","Back"];
+ease.Back.easeIn = function(t,b,c,d) {
+	$s.push("ease.Back::easeIn");
+	var $spos = $s.length;
+	var s = 1.70158;
+	{
+		var $tmp = c * (t /= d) * t * ((s + 1) * t - s) + b;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+ease.Back.easeOut = function(t,b,c,d) {
+	$s.push("ease.Back::easeOut");
+	var $spos = $s.length;
+	var s = 1.70158;
+	{
+		var $tmp = c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+ease.Back.easeInOut = function(t,b,c,d) {
+	$s.push("ease.Back::easeInOut");
+	var $spos = $s.length;
+	var s = 1.70158;
+	if((t /= d / 2) < 1) {
+		var $tmp = c / 2 * (t * t * (((s *= 1.525) + 1) * t - s)) + b;
+		$s.pop();
+		return $tmp;
+	}
+	{
+		var $tmp = c / 2 * ((t -= 2) * t * (((s *= 1.525) + 1) * t + s) + 2) + b;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+ease.Back.prototype.__class__ = ease.Back;
 kumite.helloworldgl.shader.Vertex = function() { }
 kumite.helloworldgl.shader.Vertex.__name__ = ["kumite","helloworldgl","shader","Vertex"];
 kumite.helloworldgl.shader.Vertex.prototype.__class__ = kumite.helloworldgl.shader.Vertex;
@@ -9172,6 +9214,21 @@ Map.linear = function(value,min0,max0,min1,max1) {
 	var p0 = 1 / (max0 - min0) * (value - min0);
 	{
 		var $tmp = min1 + (max1 - min1) * p0;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Map.ease = function(value,min0,max0,min1,max1,easeFunction) {
+	$s.push("Map::ease");
+	var $spos = $s.length;
+	var p0 = 1 / (max0 - min0) * (value - min0);
+	var t = p0;
+	var b = min1;
+	var c = max1;
+	var d = 1;
+	{
+		var $tmp = easeFunction(t,b,c,d);
 		$s.pop();
 		return $tmp;
 	}
