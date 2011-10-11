@@ -12,7 +12,6 @@ class GLTextureLoadingTask extends bpmjs.ImageLoaderTask
 	
 	override function doStart()
 	{
-		Log.info("Loading: ", textureConfig.path);
 		location = textureConfig.path;
 		super.doStart();
 	}

@@ -3016,6 +3016,13 @@ bpmjs.ImageLoaderTask.prototype.image = null;
 bpmjs.ImageLoaderTask.prototype.doStart = function() {
 	$s.push("bpmjs.ImageLoaderTask::doStart");
 	var $spos = $s.length;
+	{
+		Log.posInfo = { fileName : "ImageLoaderTask.hx", lineNumber : 11, className : "bpmjs.ImageLoaderTask", methodName : "doStart"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput("Loading: ",this.location,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
 	this.image = new Image();
 	this.image.onload = $closure(this,"handleImageLoaded");
 	this.image.src = this.location;
@@ -3024,6 +3031,13 @@ bpmjs.ImageLoaderTask.prototype.doStart = function() {
 bpmjs.ImageLoaderTask.prototype.handleImageLoaded = function() {
 	$s.push("bpmjs.ImageLoaderTask::handleImageLoaded");
 	var $spos = $s.length;
+	{
+		Log.posInfo = { fileName : "ImageLoaderTask.hx", lineNumber : 19, className : "bpmjs.ImageLoaderTask", methodName : "handleImageLoaded"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput("Complete: ",this.location,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
 	this.complete();
 	$s.pop();
 }
@@ -8597,13 +8611,6 @@ GLTextureLoadingTask.prototype.textureConfig = null;
 GLTextureLoadingTask.prototype.doStart = function() {
 	$s.push("GLTextureLoadingTask::doStart");
 	var $spos = $s.length;
-	{
-		Log.posInfo = { fileName : "GLTextureLoadingTask.hx", lineNumber : 15, className : "GLTextureLoadingTask", methodName : "doStart"};
-		if(Log.filter(LogLevel.INFO)) {
-			Log.fetchInput("Loading: ",this.textureConfig.path,null,null,null,null,null);
-			console.info(Log.createMessage());
-		}
-	}
 	this.location = this.textureConfig.path;
 	bpmjs.ImageLoaderTask.prototype.doStart.call(this);
 	$s.pop();
@@ -8615,7 +8622,7 @@ GLTextureLoadingTask.prototype.handleImageLoaded = function() {
 	var testPowerOfTwoHeight = Std["int"](Math2.nextPowerOf2(this.image.height));
 	if(testPowerOfTwoWidth != this.image.width || testPowerOfTwoHeight != this.image.height) {
 		{
-			Log.posInfo = { fileName : "GLTextureLoadingTask.hx", lineNumber : 26, className : "GLTextureLoadingTask", methodName : "handleImageLoaded"};
+			Log.posInfo = { fileName : "GLTextureLoadingTask.hx", lineNumber : 25, className : "GLTextureLoadingTask", methodName : "handleImageLoaded"};
 			if(Log.filter(LogLevel.WARN)) {
 				Log.fetchInput("Image",this.textureConfig.path,"size must be a valid texture size! Resizing...",null,null,null,null);
 				console.warn(Log.createMessage());
