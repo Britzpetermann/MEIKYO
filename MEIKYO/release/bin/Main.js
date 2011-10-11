@@ -3019,7 +3019,7 @@ bpmjs.ImageLoaderTask.prototype.doStart = function() {
 	{
 		Log.posInfo = { fileName : "ImageLoaderTask.hx", lineNumber : 11, className : "bpmjs.ImageLoaderTask", methodName : "doStart"};
 		if(Log.filter(LogLevel.INFO)) {
-			Log.fetchInput("Loading2: ",this.location,null,null,null,null,null);
+			Log.fetchInput("Loading3: ",this.location,null,null,null,null,null);
 			console.info(Log.createMessage());
 		}
 	}
@@ -3034,7 +3034,7 @@ bpmjs.ImageLoaderTask.prototype.handleImageLoaded = function() {
 	{
 		Log.posInfo = { fileName : "ImageLoaderTask.hx", lineNumber : 19, className : "bpmjs.ImageLoaderTask", methodName : "handleImageLoaded"};
 		if(Log.filter(LogLevel.INFO)) {
-			Log.fetchInput("Complete2: ",this.location,null,null,null,null,null);
+			Log.fetchInput("Complete3: ",this.location,null,null,null,null,null);
 			console.info(Log.createMessage());
 		}
 	}
