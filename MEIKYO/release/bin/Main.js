@@ -1429,6 +1429,17 @@ Log.infoConsole = function(v,i) {
 	$s.pop();
 }
 Log.prototype.__class__ = Log;
+if(typeof bpmjs=='undefined') bpmjs = {}
+bpmjs.TaskError = function(p) { if( p === $_ ) return; {
+	$s.push("bpmjs.TaskError::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+bpmjs.TaskError.__name__ = ["bpmjs","TaskError"];
+bpmjs.TaskError.prototype.task = null;
+bpmjs.TaskError.prototype.error = null;
+bpmjs.TaskError.prototype.__class__ = bpmjs.TaskError;
 GLDisplayListRenderer = function(p) { if( p === $_ ) return; {
 	$s.push("GLDisplayListRenderer::new");
 	var $spos = $s.length;
@@ -3411,6 +3422,28 @@ hsl.haxe._DirectSignaler.AdvancedBond.prototype.__class__ = hsl.haxe._DirectSign
 hsl.haxe._DirectSignaler.PropagationStatus = function() { }
 hsl.haxe._DirectSignaler.PropagationStatus.__name__ = ["hsl","haxe","_DirectSignaler","PropagationStatus"];
 hsl.haxe._DirectSignaler.PropagationStatus.prototype.__class__ = hsl.haxe._DirectSignaler.PropagationStatus;
+kumite.testscene.TestTextureLoader = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.testscene.TestTextureLoader::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+kumite.testscene.TestTextureLoader.__name__ = ["kumite","testscene","TestTextureLoader"];
+kumite.testscene.TestTextureLoader.prototype.textureRegistry = null;
+kumite.testscene.TestTextureLoader.prototype.init = function() {
+	$s.push("kumite.testscene.TestTextureLoader::init");
+	var $spos = $s.length;
+	var group = new bpmjs.SequencerTaskGroup();
+	group.add(new GLTextureLoadingTask(this.textureRegistry,kumite.testscene.TestTextures.TEST1));
+	group.add(new GLTextureLoadingTask(this.textureRegistry,kumite.testscene.TestTextures.TEST2));
+	{
+		$s.pop();
+		return group;
+	}
+	$s.pop();
+}
+kumite.testscene.TestTextureLoader.prototype.__class__ = kumite.testscene.TestTextureLoader;
+kumite.testscene.TestTextureLoader.__interfaces__ = [haxe.rtti.Infos];
 hsl.haxe.Signal = function(data,currentBond,currentTarget,origin) { if( data === $_ ) return; {
 	$s.push("hsl.haxe.Signal::new");
 	var $spos = $s.length;
@@ -3463,7 +3496,6 @@ hsl.haxe.Signal.prototype.toString = function() {
 	$s.pop();
 }
 hsl.haxe.Signal.prototype.__class__ = hsl.haxe.Signal;
-if(typeof bpmjs=='undefined') bpmjs = {}
 bpmjs.Sequencer = function(p) { if( p === $_ ) return; {
 	$s.push("bpmjs.Sequencer::new");
 	var $spos = $s.length;
@@ -3604,9 +3636,10 @@ Vec2.prototype.clone = function() {
 Vec2.prototype.__class__ = Vec2;
 Math2 = function() { }
 Math2.__name__ = ["Math2"];
-Math2.nextPowerOf2 = function(val) {
+Math2.nextPowerOf2 = function(value) {
 	$s.push("Math2::nextPowerOf2");
 	var $spos = $s.length;
+	var val = Std["int"](value);
 	val--;
 	val = val >> 1 | val;
 	val = val >> 2 | val;
@@ -4168,6 +4201,86 @@ js.Boot.__init = function() {
 	$s.pop();
 }
 js.Boot.prototype.__class__ = js.Boot;
+GLTextureRegistry = function(p) { if( p === $_ ) return; {
+	$s.push("GLTextureRegistry::new");
+	var $spos = $s.length;
+	this.images = new Array();
+	$s.pop();
+}}
+GLTextureRegistry.__name__ = ["GLTextureRegistry"];
+GLTextureRegistry.prototype.images = null;
+GLTextureRegistry.prototype.gl = null;
+GLTextureRegistry.prototype.register = function(name,texture) {
+	$s.push("GLTextureRegistry::register");
+	var $spos = $s.length;
+	this.images[name] = texture;
+	$s.pop();
+}
+GLTextureRegistry.prototype.get = function(name) {
+	$s.push("GLTextureRegistry::get");
+	var $spos = $s.length;
+	{
+		var $tmp = this.images[name];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+GLTextureRegistry.prototype.createGLTextureFromImage = function(image,filter) {
+	$s.push("GLTextureRegistry::createGLTextureFromImage");
+	var $spos = $s.length;
+	var texture = this.gl.createTexture();
+	this.gl.bindTexture(this.gl.TEXTURE_2D,texture);
+	this.gl.texImage2D(this.gl.TEXTURE_2D,0,this.gl.RGBA,this.gl.RGBA,this.gl.UNSIGNED_BYTE,image);
+	this.gl.texParameteri(this.gl.TEXTURE_2D,this.gl.TEXTURE_MAG_FILTER,filter != null?filter:this.gl.NEAREST);
+	this.gl.texParameteri(this.gl.TEXTURE_2D,this.gl.TEXTURE_MIN_FILTER,filter != null?filter:this.gl.NEAREST);
+	if(filter == this.gl.NEAREST_MIPMAP_NEAREST || filter == this.gl.NEAREST_MIPMAP_LINEAR || filter == this.gl.LINEAR_MIPMAP_NEAREST || filter == this.gl.LINEAR_MIPMAP_LINEAR) {
+		this.gl.generateMipmap(this.gl.TEXTURE_2D);
+	}
+	var result = new GLTexture();
+	result.width = image.width;
+	result.height = image.height;
+	result.texture = texture;
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+GLTextureRegistry.prototype.createGLTextureFromCanvas = function(canvas) {
+	$s.push("GLTextureRegistry::createGLTextureFromCanvas");
+	var $spos = $s.length;
+	var testPowerOfTwoWidth = Std["int"](Math2.nextPowerOf2(canvas.width));
+	var testPowerOfTwoHight = Std["int"](Math2.nextPowerOf2(canvas.height));
+	if(testPowerOfTwoWidth != canvas.width || testPowerOfTwoHight != canvas.height) throw "Canvas size must be a valid texture size!";
+	var texture = this.gl.createTexture();
+	this.gl.bindTexture(this.gl.TEXTURE_2D,texture);
+	this.gl.texImage2D(this.gl.TEXTURE_2D,0,this.gl.RGBA,this.gl.RGBA,this.gl.UNSIGNED_BYTE,canvas);
+	this.gl.texParameteri(this.gl.TEXTURE_2D,this.gl.TEXTURE_MAG_FILTER,this.gl.NEAREST);
+	this.gl.texParameteri(this.gl.TEXTURE_2D,this.gl.TEXTURE_MIN_FILTER,this.gl.NEAREST);
+	var result = new GLTexture();
+	result.width = canvas.width;
+	result.height = canvas.height;
+	result.texture = texture;
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+GLTextureRegistry.prototype.updateGLTextureFromCanvas = function(texture,canvas) {
+	$s.push("GLTextureRegistry::updateGLTextureFromCanvas");
+	var $spos = $s.length;
+	var testPowerOfTwoWidth = Std["int"](Math2.nextPowerOf2(canvas.width));
+	var testPowerOfTwoHight = Std["int"](Math2.nextPowerOf2(canvas.height));
+	if(testPowerOfTwoWidth != canvas.width || testPowerOfTwoHight != canvas.height) throw "Canvas size must be a valid texture size!";
+	this.gl.bindTexture(this.gl.TEXTURE_2D,texture.texture);
+	this.gl.texImage2D(this.gl.TEXTURE_2D,0,this.gl.RGBA,this.gl.RGBA,this.gl.UNSIGNED_BYTE,canvas);
+	texture.width = canvas.width;
+	texture.height = canvas.height;
+	$s.pop();
+}
+GLTextureRegistry.prototype.__class__ = GLTextureRegistry;
 bpmjs.ContextBuilder = function(p) { if( p === $_ ) return; {
 	$s.push("bpmjs.ContextBuilder::new");
 	var $spos = $s.length;
@@ -5012,6 +5125,62 @@ kumite.time.Tick = function(p) { if( p === $_ ) return; {
 }}
 kumite.time.Tick.__name__ = ["kumite","time","Tick"];
 kumite.time.Tick.prototype.__class__ = kumite.time.Tick;
+bpmjs.Task = function(p) { if( p === $_ ) return; {
+	$s.push("bpmjs.Task::new");
+	var $spos = $s.length;
+	this.startSignaler = new hsl.haxe.DirectSignaler(this);
+	this.completeSignaler = new hsl.haxe.DirectSignaler(this);
+	this.errorSignaler = new hsl.haxe.DirectSignaler(this);
+	$s.pop();
+}}
+bpmjs.Task.__name__ = ["bpmjs","Task"];
+bpmjs.Task.prototype.startSignaler = null;
+bpmjs.Task.prototype.completeSignaler = null;
+bpmjs.Task.prototype.errorSignaler = null;
+bpmjs.Task.prototype.start = function(positionInformation) {
+	$s.push("bpmjs.Task::start");
+	var $spos = $s.length;
+	try {
+		var t = this;
+		this.startSignaler.dispatch(t,null,{ fileName : "Task.hx", lineNumber : 25, className : "bpmjs.Task", methodName : "start"});
+		this.doStart();
+	}
+	catch( $e0 ) {
+		{
+			var e = $e0;
+			{
+				$e = [];
+				while($s.length >= $spos) $e.unshift($s.pop());
+				$s.push($e[0]);
+				haxe.Log.trace("Error starting Task: " + e,{ fileName : "Task.hx", lineNumber : 30, className : "bpmjs.Task", methodName : "start"});
+			}
+		}
+	}
+	$s.pop();
+}
+bpmjs.Task.prototype.doStart = function() {
+	$s.push("bpmjs.Task::doStart");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}
+bpmjs.Task.prototype.complete = function() {
+	$s.push("bpmjs.Task::complete");
+	var $spos = $s.length;
+	var t = this;
+	this.completeSignaler.dispatch(t,null,{ fileName : "Task.hx", lineNumber : 41, className : "bpmjs.Task", methodName : "complete"});
+	$s.pop();
+}
+bpmjs.Task.prototype.error = function(result,error) {
+	$s.push("bpmjs.Task::error");
+	var $spos = $s.length;
+	var taskError = new bpmjs.TaskError();
+	taskError.task = result;
+	taskError.error = error;
+	this.errorSignaler.dispatch(taskError,null,{ fileName : "Task.hx", lineNumber : 49, className : "bpmjs.Task", methodName : "error"});
+	$s.pop();
+}
+bpmjs.Task.prototype.__class__ = bpmjs.Task;
 js.Lib = function() { }
 js.Lib.__name__ = ["js","Lib"];
 js.Lib.isIE = null;
@@ -5442,6 +5611,49 @@ Type.enumIndex = function(e) {
 	$s.pop();
 }
 Type.prototype.__class__ = Type;
+bpmjs.TaskGroup = function(p) { if( p === $_ ) return; {
+	$s.push("bpmjs.TaskGroup::new");
+	var $spos = $s.length;
+	bpmjs.Task.call(this);
+	this.tasks = new Array();
+	$s.pop();
+}}
+bpmjs.TaskGroup.__name__ = ["bpmjs","TaskGroup"];
+bpmjs.TaskGroup.__super__ = bpmjs.Task;
+for(var k in bpmjs.Task.prototype ) bpmjs.TaskGroup.prototype[k] = bpmjs.Task.prototype[k];
+bpmjs.TaskGroup.prototype.tasks = null;
+bpmjs.TaskGroup.prototype.add = function(task) {
+	$s.push("bpmjs.TaskGroup::add");
+	var $spos = $s.length;
+	this.tasks.push(task);
+	$s.pop();
+}
+bpmjs.TaskGroup.prototype.doStart = function() {
+	$s.push("bpmjs.TaskGroup::doStart");
+	var $spos = $s.length;
+	this.nextTask();
+	$s.pop();
+}
+bpmjs.TaskGroup.prototype.nextTask = function() {
+	$s.push("bpmjs.TaskGroup::nextTask");
+	var $spos = $s.length;
+	if(this.tasks.length > 0) {
+		var task = this.tasks.pop();
+		task.completeSignaler.bind($closure(this,"handleTaskComplete"));
+		task.start({ fileName : "TaskGroup.hx", lineNumber : 29, className : "bpmjs.TaskGroup", methodName : "nextTask"});
+	}
+	else {
+		this.complete();
+	}
+	$s.pop();
+}
+bpmjs.TaskGroup.prototype.handleTaskComplete = function(task) {
+	$s.push("bpmjs.TaskGroup::handleTaskComplete");
+	var $spos = $s.length;
+	this.nextTask();
+	$s.pop();
+}
+bpmjs.TaskGroup.prototype.__class__ = bpmjs.TaskGroup;
 kumite.canvas.CanvasController = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.canvas.CanvasController::new");
 	var $spos = $s.length;
@@ -5505,6 +5717,7 @@ kumite.launch.Launcher.__interfaces__ = [haxe.rtti.Infos];
 kumite.testscene.Config = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.testscene.Config::new");
 	var $spos = $s.length;
+	this.testTextureLoader = new kumite.testscene.TestTextureLoader();
 	this.testBackgroundLayer1 = new kumite.testscene.TestBackgroundLayer();
 	this.testBackgroundLayer1.color = new Color(1,1,1,0.2);
 	this.testBackgroundLayer1.direction = -1;
@@ -5544,6 +5757,7 @@ kumite.testscene.Config.prototype.testScene1 = null;
 kumite.testscene.Config.prototype.testScene2 = null;
 kumite.testscene.Config.prototype.testScene3 = null;
 kumite.testscene.Config.prototype.testScene4 = null;
+kumite.testscene.Config.prototype.testTextureLoader = null;
 kumite.testscene.Config.prototype.__class__ = kumite.testscene.Config;
 kumite.testscene.Config.__interfaces__ = [haxe.rtti.Infos];
 Reflect = function() { }
@@ -6944,6 +7158,17 @@ kumite.scene.NullSceneLifecycle.prototype.renderTransition = function(transition
 }
 kumite.scene.NullSceneLifecycle.prototype.__class__ = kumite.scene.NullSceneLifecycle;
 kumite.scene.NullSceneLifecycle.__interfaces__ = [kumite.scene.SceneLifecycle];
+if(!kumite.textureregistry) kumite.textureregistry = {}
+kumite.textureregistry.Config = function(p) { if( p === $_ ) return; {
+	$s.push("kumite.textureregistry.Config::new");
+	var $spos = $s.length;
+	this.textureRegistry = new GLTextureRegistry();
+	$s.pop();
+}}
+kumite.textureregistry.Config.__name__ = ["kumite","textureregistry","Config"];
+kumite.textureregistry.Config.prototype.textureRegistry = null;
+kumite.textureregistry.Config.prototype.__class__ = kumite.textureregistry.Config;
+kumite.textureregistry.Config.__interfaces__ = [haxe.rtti.Infos];
 if(!kumite.camera) kumite.camera = {}
 kumite.camera.CameraMouseMover = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.camera.CameraMouseMover::new");
@@ -6969,6 +7194,29 @@ kumite.camera.CameraMouseMover.prototype.updateCamera = function() {
 }
 kumite.camera.CameraMouseMover.prototype.__class__ = kumite.camera.CameraMouseMover;
 kumite.camera.CameraMouseMover.__interfaces__ = [haxe.rtti.Infos];
+GLTextureConfig = function(p) { if( p === $_ ) return; {
+	$s.push("GLTextureConfig::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+GLTextureConfig.__name__ = ["GLTextureConfig"];
+GLTextureConfig.create = function(path) {
+	$s.push("GLTextureConfig::create");
+	var $spos = $s.length;
+	var result = new GLTextureConfig();
+	result.path = path;
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+GLTextureConfig.prototype.path = null;
+GLTextureConfig.prototype.__class__ = GLTextureConfig;
+kumite.testscene.TestTextures = function() { }
+kumite.testscene.TestTextures.__name__ = ["kumite","testscene","TestTextures"];
+kumite.testscene.TestTextures.prototype.__class__ = kumite.testscene.TestTextures;
 if(!kumite.webgl) kumite.webgl = {}
 kumite.webgl.Config = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.webgl.Config::new");
@@ -7452,6 +7700,16 @@ kumite.stage.StageResizeMessage = function(p) { if( p === $_ ) return; {
 }}
 kumite.stage.StageResizeMessage.__name__ = ["kumite","stage","StageResizeMessage"];
 kumite.stage.StageResizeMessage.prototype.__class__ = kumite.stage.StageResizeMessage;
+bpmjs.SequencerTaskGroup = function(p) { if( p === $_ ) return; {
+	$s.push("bpmjs.SequencerTaskGroup::new");
+	var $spos = $s.length;
+	bpmjs.TaskGroup.call(this);
+	$s.pop();
+}}
+bpmjs.SequencerTaskGroup.__name__ = ["bpmjs","SequencerTaskGroup"];
+bpmjs.SequencerTaskGroup.__super__ = bpmjs.TaskGroup;
+for(var k in bpmjs.TaskGroup.prototype ) bpmjs.SequencerTaskGroup.prototype[k] = bpmjs.TaskGroup.prototype[k];
+bpmjs.SequencerTaskGroup.prototype.__class__ = bpmjs.SequencerTaskGroup;
 Main = function(canvas) { if( canvas === $_ ) return; {
 	$s.push("Main::new");
 	var $spos = $s.length;
@@ -7460,7 +7718,7 @@ Main = function(canvas) { if( canvas === $_ ) return; {
 		console.groupCollapsed(Log.createMessage());
 	}
 	try {
-		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.time.Config,kumite.projection.Config,kumite.camera.Config,kumite.mouse.Config,kumite.displaylist.ConfigAsLayer,kumite.vjinterface.Config,kumite.scene.Config,kumite.testscene.Config]);
+		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.textureregistry.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.time.Config,kumite.projection.Config,kumite.camera.Config,kumite.mouse.Config,kumite.displaylist.ConfigAsLayer,kumite.vjinterface.Config,kumite.scene.Config,kumite.testscene.Config]);
 	}
 	catch( $e0 ) {
 		{
@@ -7470,7 +7728,7 @@ Main = function(canvas) { if( canvas === $_ ) return; {
 				while($s.length >= $spos) $e.unshift($s.pop());
 				$s.push($e[0]);
 				{
-					Log.posInfo = { fileName : "Main.hx", lineNumber : 46, className : "Main", methodName : "new"};
+					Log.posInfo = { fileName : "Main.hx", lineNumber : 47, className : "Main", methodName : "new"};
 					if(Log.filter(LogLevel.ERROR)) {
 						Log.fetchInput("Error building application! \n" + e,null,null,null,null,null,null);
 						console.error(Log.createMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
@@ -7479,7 +7737,7 @@ Main = function(canvas) { if( canvas === $_ ) return; {
 			}
 		}
 	}
-	Log.groupEnd({ fileName : "Main.hx", lineNumber : 48, className : "Main", methodName : "new"});
+	Log.groupEnd({ fileName : "Main.hx", lineNumber : 49, className : "Main", methodName : "new"});
 	$s.pop();
 }}
 Main.__name__ = ["Main"];
@@ -7823,6 +8081,16 @@ kumite.vjinterface.VJInterface.prototype.handleButtonClick = function(scene) {
 }
 kumite.vjinterface.VJInterface.prototype.__class__ = kumite.vjinterface.VJInterface;
 kumite.vjinterface.VJInterface.__interfaces__ = [haxe.rtti.Infos];
+GLTextureLoadingTask = function(textureRegistry,textureConfig) { if( textureRegistry === $_ ) return; {
+	$s.push("GLTextureLoadingTask::new");
+	var $spos = $s.length;
+	bpmjs.Task.call(this);
+	$s.pop();
+}}
+GLTextureLoadingTask.__name__ = ["GLTextureLoadingTask"];
+GLTextureLoadingTask.__super__ = bpmjs.Task;
+for(var k in bpmjs.Task.prototype ) GLTextureLoadingTask.prototype[k] = bpmjs.Task.prototype[k];
+GLTextureLoadingTask.prototype.__class__ = GLTextureLoadingTask;
 GLHitarea = function(p) { if( p === $_ ) return; {
 	$s.push("GLHitarea::new");
 	var $spos = $s.length;
@@ -10510,6 +10778,8 @@ kumite.testscene.TestScene1.__rtti = "<class path=\"kumite.testscene.TestScene1\
 hsl.haxe._DirectSignaler.PropagationStatus.IMMEDIATELY_STOPPED = 1;
 hsl.haxe._DirectSignaler.PropagationStatus.STOPPED = 2;
 hsl.haxe._DirectSignaler.PropagationStatus.UNDISTURBED = 3;
+kumite.testscene.TestTextureLoader.__meta__ = { fields : { textureRegistry : { Inject : null}, init : { Sequence : ["boot","init"]}}};
+kumite.testscene.TestTextureLoader.__rtti = "<class path=\"kumite.testscene.TestTextureLoader\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<init public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></init>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs.Sequencer.__meta__ = { fields : { context : { Inject : null}}};
 bpmjs.Sequencer.__rtti = "<class path=\"bpmjs.Sequencer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context public=\"1\"><c path=\"bpmjs.Context\"/></context>\n\t<start public=\"1\" set=\"method\" line=\"14\"><f a=\"name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></start>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 LogLevel.INFO = new LogLevel(1);
@@ -10526,11 +10796,14 @@ kumite.canvas.CanvasController.__meta__ = { fields : { canvas : { Inject : null}
 kumite.canvas.CanvasController.__rtti = "<class path=\"kumite.canvas.CanvasController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<init public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateCanvasSizeFromStage public=\"1\" set=\"method\" line=\"33\"><f a=\"?message\">\n\t<c path=\"kumite.stage.StageResizeMessage\"/>\n\t<e path=\"Void\"/>\n</f></updateCanvasSizeFromStage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.launch.Launcher.__meta__ = { fields : { sequencer : { Inject : null}, handlePostComplete : { PostComplete : null}, showError : { Sequence : ["boot","error"]}}};
 kumite.launch.Launcher.__rtti = "<class path=\"kumite.launch.Launcher\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<handlePostComplete public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></handlePostComplete>\n\t<showError public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></showError>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.testscene.Config.__rtti = "<class path=\"kumite.testscene.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<testBackgroundLayer1 public=\"1\"><c path=\"kumite.testscene.TestBackgroundLayer\"/></testBackgroundLayer1>\n\t<testBackgroundLayer2 public=\"1\"><c path=\"kumite.testscene.TestBackgroundLayer\"/></testBackgroundLayer2>\n\t<testLayer1 public=\"1\"><c path=\"kumite.testscene.TestLayer\"/></testLayer1>\n\t<testLayer2 public=\"1\"><c path=\"kumite.testscene.TestLayer\"/></testLayer2>\n\t<testLayer3 public=\"1\"><c path=\"kumite.testscene.TestLayer\"/></testLayer3>\n\t<testScene1 public=\"1\"><c path=\"kumite.testscene.TestScene1\"/></testScene1>\n\t<testScene2 public=\"1\"><c path=\"kumite.testscene.TestScene2\"/></testScene2>\n\t<testScene3 public=\"1\"><c path=\"kumite.testscene.TestScene3\"/></testScene3>\n\t<testScene4 public=\"1\"><c path=\"kumite.testscene.TestScene4\"/></testScene4>\n\t<new public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.testscene.Config.__rtti = "<class path=\"kumite.testscene.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<testBackgroundLayer1 public=\"1\"><c path=\"kumite.testscene.TestBackgroundLayer\"/></testBackgroundLayer1>\n\t<testBackgroundLayer2 public=\"1\"><c path=\"kumite.testscene.TestBackgroundLayer\"/></testBackgroundLayer2>\n\t<testLayer1 public=\"1\"><c path=\"kumite.testscene.TestLayer\"/></testLayer1>\n\t<testLayer2 public=\"1\"><c path=\"kumite.testscene.TestLayer\"/></testLayer2>\n\t<testLayer3 public=\"1\"><c path=\"kumite.testscene.TestLayer\"/></testLayer3>\n\t<testScene1 public=\"1\"><c path=\"kumite.testscene.TestScene1\"/></testScene1>\n\t<testScene2 public=\"1\"><c path=\"kumite.testscene.TestScene2\"/></testScene2>\n\t<testScene3 public=\"1\"><c path=\"kumite.testscene.TestScene3\"/></testScene3>\n\t<testScene4 public=\"1\"><c path=\"kumite.testscene.TestScene4\"/></testScene4>\n\t<testTextureLoader public=\"1\"><c path=\"kumite.testscene.TestTextureLoader\"/></testTextureLoader>\n\t<new public=\"1\" set=\"method\" line=\"23\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.scene.SceneController.__meta__ = { fields : { scenes : { Inject : null}, time : { Inject : null}, init : { Complete : null}, handleSceneLifecycleAdded : { Observe : null}, start : { Sequence : ["boot","start"]}, handleSceneChangeRequest : { Message : null}, render : { Message : null}}};
 kumite.scene.SceneController.__rtti = "<class path=\"kumite.scene.SceneController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<scenes public=\"1\"><c path=\"kumite.scene.Scenes\"/></scenes>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<transitionContext public=\"1\"><c path=\"kumite.scene.TransitionContext\"/></transitionContext>\n\t<initState public=\"1\"><c path=\"kumite.scene.InitState\"/></initState>\n\t<idleState public=\"1\"><c path=\"kumite.scene.IdleState\"/></idleState>\n\t<transitionState public=\"1\"><c path=\"kumite.scene.TransitionState\"/></transitionState>\n\t<state><c path=\"kumite.scene.State\"/></state>\n\t<currentScene><c path=\"kumite.scene.SceneAndLifecycle\"/></currentScene>\n\t<lastScene><c path=\"kumite.scene.SceneAndLifecycle\"/></lastScene>\n\t<init public=\"1\" set=\"method\" line=\"30\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<handleSceneLifecycleAdded public=\"1\" set=\"method\" line=\"46\"><f a=\"lifecycle\">\n\t<c path=\"kumite.scene.SceneLifecycle\"/>\n\t<e path=\"Void\"/>\n</f></handleSceneLifecycleAdded>\n\t<start public=\"1\" set=\"method\" line=\"59\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<handleSceneChangeRequest public=\"1\" set=\"method\" line=\"80\"><f a=\"message\">\n\t<c path=\"kumite.scene.SceneChangeRequest\"/>\n\t<e path=\"Void\"/>\n</f></handleSceneChangeRequest>\n\t<render public=\"1\" set=\"method\" line=\"86\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<renderTransition public=\"1\" set=\"method\" line=\"91\"><f a=\"\"><e path=\"Void\"/></f></renderTransition>\n\t<renderNormal public=\"1\" set=\"method\" line=\"115\"><f a=\"\"><e path=\"Void\"/></f></renderNormal>\n\t<enterScene set=\"method\" line=\"124\"><f a=\"newScene\">\n\t<c path=\"kumite.scene.SceneAndLifecycle\"/>\n\t<e path=\"Void\"/>\n</f></enterScene>\n\t<setState public=\"1\" set=\"method\" line=\"134\"><f a=\"state\">\n\t<c path=\"kumite.scene.State\"/>\n\t<e path=\"Void\"/>\n</f></setState>\n\t<new public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.textureregistry.Config.__rtti = "<class path=\"kumite.textureregistry.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.camera.CameraMouseMover.__meta__ = { fields : { camera : { Inject : null}, init : { Sequence : ["boot","init"]}}};
 kumite.camera.CameraMouseMover.__rtti = "<class path=\"kumite.camera.CameraMouseMover\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<init public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateCamera set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></updateCamera>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.testscene.TestTextures.TEST1 = GLTextureConfig.create("data/image/along-the-line.png");
+kumite.testscene.TestTextures.TEST2 = GLTextureConfig.create("data/image/beware-of-the-dog.jpg");
 kumite.webgl.Config.__rtti = "<class path=\"kumite.webgl.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<initAction public=\"1\"><c path=\"kumite.webgl.InitAction\"/></initAction>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.time.TimeController.__meta__ = { fields : { time : { Inject : null}, messenger : { Messenger : null}, startComplete : { Sequence : ["boot","startComplete"]}}};
 kumite.time.TimeController.__rtti = "<class path=\"kumite.time.TimeController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<startComplete public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"24\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<new public=\"1\" set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";

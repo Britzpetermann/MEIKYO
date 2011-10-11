@@ -27,6 +27,7 @@ class Main {
 		{
 			var context = bpmjs.ContextBuilder.buildAll([
 					kumite.launch.Config,
+					kumite.textureregistry.Config,
 					kumite.stage.Config,
 					kumite.canvas.Config,
 					kumite.webgl.Config,

@@ -18,8 +18,12 @@ class Config implements Infos
 	public var testScene3 : TestScene3;
 	public var testScene4 : TestScene4;
 	
+	public var testTextureLoader : TestTextureLoader;
+	
 	public function new()
 	{
+		testTextureLoader = new TestTextureLoader();
+		
 		testBackgroundLayer1 = new TestBackgroundLayer();
 		testBackgroundLayer1.color = new Color(1, 1, 1, 0.2);
 		testBackgroundLayer1.direction = -1;
