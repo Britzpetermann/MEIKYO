@@ -4,6 +4,9 @@ import haxe.rtti.Infos;
 
 class Config implements Infos
 {
+	public static var TEST1 : GLTextureConfig = GLTextureConfig.create("data/image/along-the-line.png"); 
+	public static var TEST2 : GLTextureConfig = GLTextureConfig.create("data/image/beware-of-the-dog.jpg"); 
+	
 	public var colorLayer1 : kumite.layer.ColorLayer;
 	public var colorLayer2 : kumite.layer.ColorLayer;
 	public var colorLayer3 : kumite.layer.ColorLayer;
@@ -39,12 +42,12 @@ class Config implements Infos
 		colorLayer3.layerId = "colorLayer3";
 		
 		textureLayer1 = new kumite.layer.TextureLayer();
-		textureLayer1.textureConfig = TestTextures.TEST1;
+		textureLayer1.textureConfig = TEST1;
 		textureLayer1.layerId = "textureLayer1";
 		textureLayer1.scale = 0.6;
 		
 		textureLayer2 = new kumite.layer.TextureLayer();
-		textureLayer2.textureConfig = TestTextures.TEST2;
+		textureLayer2.textureConfig = TEST2;
 		textureLayer2.layerId = "textureLayer2";
 		textureLayer2.scale = 0.6;
 		

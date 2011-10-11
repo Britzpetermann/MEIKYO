@@ -16,6 +16,9 @@ class FlyingManLayer implements LayerLifecycle, implements Infos
 	public var stage : Stage;
 	
 	@Inject
+	public var textureRegistry : GLTextureRegistry;
+	
+	@Inject
 	public var time : Time;
 	
 	@Inject
@@ -47,6 +50,16 @@ class FlyingManLayer implements LayerLifecycle, implements Infos
 		scale = 1;
 		position = new Vec3(0, 0, 0);
 		transitionAlpha = 1;
+	}
+	
+	@Sequence("boot", "startPrepare")
+	public function startPrepare()
+	{
+		var group = new bpmjs.SequencerTaskGroup();
+		
+		group.add(new GLTextureLoadingTask(textureRegistry, Config.PAPER));
+		
+		return group;
 	}
 	
 	public function init()

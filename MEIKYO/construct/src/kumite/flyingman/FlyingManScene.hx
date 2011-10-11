@@ -26,16 +26,6 @@ class FlyingManScene implements SceneLifecycle, implements Infos
 	
 	public function new();
 	
-	@Sequence("boot", "startPrepare")
-	public function startPrepare()
-	{
-		var group = new bpmjs.SequencerTaskGroup();
-		
-		group.add(new GLTextureLoadingTask(textureRegistry, Config.PAPER));
-		
-		return group;
-	}
-		
 	public function sceneInit(scene : Scene)
 	{
 		scene.id = scene.name = SCENE_ID;

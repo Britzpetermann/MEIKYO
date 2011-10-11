@@ -14,8 +14,8 @@ class TestTextureLoader implements Infos
 	{
 		var group = new bpmjs.SequencerTaskGroup();
 		
-		group.add(new GLTextureLoadingTask(textureRegistry, TestTextures.TEST1));
-		group.add(new GLTextureLoadingTask(textureRegistry, TestTextures.TEST2));
+		group.add(new GLTextureLoadingTask(textureRegistry, Config.TEST1));
+		group.add(new GLTextureLoadingTask(textureRegistry, Config.TEST2));
 		
 		return group;
 	}
