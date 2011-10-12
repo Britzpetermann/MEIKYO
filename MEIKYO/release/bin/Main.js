@@ -2731,8 +2731,8 @@ kumite.layer.TestLayer.prototype.render = function() {
 	GL.gl.uniformMatrix4fv(this.projectionMatrixUniform.location,false,this.projection.matrix.buffer);
 	this.vertexPositionAttribute.vertexAttribPointer();
 	var worldViewMatrix = new Matrix4(this.camera.matrix);
+	worldViewMatrix.appendTranslation(this.position.x,this.position.y,this.position.z + 10);
 	worldViewMatrix.appendRotation(this.time.ms / 4000,new Vec3(1,1,1));
-	worldViewMatrix.appendTranslation(this.position.x,this.position.y,this.position.z);
 	worldViewMatrix.appendScale(this.scale,this.scale,this.scale);
 	GL.gl.uniformMatrix4fv(this.worldViewMatrixUniform.location,false,worldViewMatrix.buffer);
 	var colorWithTransition = this.color.clone();
@@ -3948,15 +3948,37 @@ Math2.nextPowerOf2 = function(value) {
 	$s.pop();
 }
 Math2.prototype.__class__ = Math2;
+GLTextureConfig = function(p) { if( p === $_ ) return; {
+	$s.push("GLTextureConfig::new");
+	var $spos = $s.length;
+	null;
+	$s.pop();
+}}
+GLTextureConfig.__name__ = ["GLTextureConfig"];
+GLTextureConfig.create = function(path) {
+	$s.push("GLTextureConfig::create");
+	var $spos = $s.length;
+	var result = new GLTextureConfig();
+	result.path = path;
+	result.textureId = path;
+	{
+		$s.pop();
+		return result;
+	}
+	$s.pop();
+}
+GLTextureConfig.prototype.path = null;
+GLTextureConfig.prototype.textureId = null;
+GLTextureConfig.prototype.__class__ = GLTextureConfig;
 if(!kumite.flyingman) kumite.flyingman = {}
 kumite.flyingman.FlyingManLayer = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.flyingman.FlyingManLayer::new");
 	var $spos = $s.length;
 	this.layerId = "FlyingManLayer";
-	this.color = new Color(1,1,0,0.5);
-	this.scale = 1;
-	this.position = new Vec3(0,0,0);
-	this.transitionAlpha = 1;
+	this.transitions = new kumite.layer.LayerTransitions();
+	this.transitions.add(this.alphaTransition = new kumite.layer.LayerTransition("alpha"));
+	this.transitions.enableChild("alpha");
+	this.alphaTransition.ease = $closure(ease.Quad,"easeInOut");
 	$s.pop();
 }}
 kumite.flyingman.FlyingManLayer.__name__ = ["kumite","flyingman","FlyingManLayer"];
@@ -3966,16 +3988,30 @@ kumite.flyingman.FlyingManLayer.prototype.time = null;
 kumite.flyingman.FlyingManLayer.prototype.projection = null;
 kumite.flyingman.FlyingManLayer.prototype.camera = null;
 kumite.flyingman.FlyingManLayer.prototype.layerId = null;
-kumite.flyingman.FlyingManLayer.prototype.color = null;
-kumite.flyingman.FlyingManLayer.prototype.scale = null;
-kumite.flyingman.FlyingManLayer.prototype.position = null;
-kumite.flyingman.FlyingManLayer.prototype.transitionAlpha = null;
+kumite.flyingman.FlyingManLayer.prototype.transitions = null;
+kumite.flyingman.FlyingManLayer.prototype.alphaTransition = null;
 kumite.flyingman.FlyingManLayer.prototype.shaderProgram = null;
 kumite.flyingman.FlyingManLayer.prototype.vertexPositionAttribute = null;
 kumite.flyingman.FlyingManLayer.prototype.vertexBuffer = null;
 kumite.flyingman.FlyingManLayer.prototype.projectionMatrixUniform = null;
 kumite.flyingman.FlyingManLayer.prototype.worldViewMatrixUniform = null;
-kumite.flyingman.FlyingManLayer.prototype.colorUniform = null;
+kumite.flyingman.FlyingManLayer.prototype.textureUniform = null;
+kumite.flyingman.FlyingManLayer.prototype.alphaUniform = null;
+kumite.flyingman.FlyingManLayer.prototype.startPrepare = function() {
+	$s.push("kumite.flyingman.FlyingManLayer::startPrepare");
+	var $spos = $s.length;
+	var group = new bpmjs.SequencerTaskGroup();
+	group.add(new GLTextureLoadingTask(this.textureRegistry,kumite.flyingman.FlyingManLayer.MAN1));
+	group.add(new GLTextureLoadingTask(this.textureRegistry,kumite.flyingman.FlyingManLayer.MAN2));
+	group.add(new GLTextureLoadingTask(this.textureRegistry,kumite.flyingman.FlyingManLayer.MAN3));
+	group.add(new GLTextureLoadingTask(this.textureRegistry,kumite.flyingman.FlyingManLayer.FLOWER1));
+	group.add(new GLTextureLoadingTask(this.textureRegistry,kumite.flyingman.FlyingManLayer.FLOWER2));
+	{
+		$s.pop();
+		return group;
+	}
+	$s.pop();
+}
 kumite.flyingman.FlyingManLayer.prototype.init = function() {
 	$s.push("kumite.flyingman.FlyingManLayer::init");
 	var $spos = $s.length;
@@ -3984,13 +4020,14 @@ kumite.flyingman.FlyingManLayer.prototype.init = function() {
 	this.vertexPositionAttribute.updateBuffer(new Int8Array([-1,-1,1,-1,-1,1,1,1]));
 	this.projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
 	this.worldViewMatrixUniform = GL.getUniformLocation("worldViewMatrix");
-	this.colorUniform = GL.getUniformLocation("color");
+	this.textureUniform = GL.getUniformLocation("texture");
+	this.alphaUniform = GL.getUniformLocation("alpha");
 	$s.pop();
 }
 kumite.flyingman.FlyingManLayer.prototype.renderTransition = function(transitionContext) {
 	$s.push("kumite.flyingman.FlyingManLayer::renderTransition");
 	var $spos = $s.length;
-	this.transitionAlpha = transitionContext.getTransition();
+	this.transitions.setTransition(transitionContext.getTransition());
 	this.render();
 	$s.pop();
 }
@@ -4004,15 +4041,93 @@ kumite.flyingman.FlyingManLayer.prototype.render = function() {
 	GL.gl.blendFunc(770,771);
 	GL.gl.uniformMatrix4fv(this.projectionMatrixUniform.location,false,this.projection.matrix.buffer);
 	this.vertexPositionAttribute.vertexAttribPointer();
-	var worldViewMatrix = new Matrix4(this.camera.matrix);
-	worldViewMatrix.appendRotation(this.time.ms / 4000,new Vec3(1,1,1));
-	worldViewMatrix.appendTranslation(this.position.x,this.position.y,this.position.z);
-	worldViewMatrix.appendScale(this.scale,this.scale,this.scale);
-	GL.gl.uniformMatrix4fv(this.worldViewMatrixUniform.location,false,worldViewMatrix.buffer);
-	var colorWithTransition = this.color.clone();
-	colorWithTransition.a *= this.transitionAlpha;
-	GL.gl.uniform4f(this.colorUniform.location,colorWithTransition.r,colorWithTransition.g,colorWithTransition.b,colorWithTransition.a);
-	this.vertexPositionAttribute.drawArrays(5);
+	{
+		var _g = 0;
+		while(_g < 3) {
+			var k = _g++;
+			var radius = Map.linear(k,0,3,2 + Math.sin(this.time.ms / 500) * 0.5,4 + Math.sin(this.time.ms / 1000) * 0.5);
+			var n = 10;
+			var speed = 2000;
+			switch(k) {
+			case 2:{
+				n = 30;
+				speed = 2000;
+				{
+					GL.gl.activeTexture(33984);
+					GL.gl.bindTexture(3553,this.textureRegistry.get(kumite.flyingman.FlyingManLayer.MAN1).texture);
+					GL.gl.uniform1i(this.textureUniform.location,0);
+				}
+			}break;
+			case 1:{
+				n = 25;
+				speed = 1500;
+				{
+					GL.gl.activeTexture(33984);
+					GL.gl.bindTexture(3553,this.textureRegistry.get(kumite.flyingman.FlyingManLayer.MAN2).texture);
+					GL.gl.uniform1i(this.textureUniform.location,0);
+				}
+			}break;
+			case 0:{
+				n = 20;
+				speed = 1000;
+				{
+					GL.gl.activeTexture(33984);
+					GL.gl.bindTexture(3553,this.textureRegistry.get(kumite.flyingman.FlyingManLayer.MAN3).texture);
+					GL.gl.uniform1i(this.textureUniform.location,0);
+				}
+			}break;
+			}
+			{
+				var _g1 = 0;
+				while(_g1 < n) {
+					var r = _g1++;
+					var rad = r * Math.PI / (n / 2);
+					var worldViewMatrix = new Matrix4();
+					worldViewMatrix.multiply(this.camera.matrix);
+					worldViewMatrix.appendTranslation(0,-1,10);
+					worldViewMatrix.appendEulerRotation(Math.sin(this.time.ms / 2000) * 0.2,Math.sin(this.time.ms / speed) * 0.1,0);
+					worldViewMatrix.appendEulerRotation(0,0,0.2);
+					worldViewMatrix.appendEulerRotation(-this.time.ms / speed,0,0);
+					worldViewMatrix.appendTranslation(Math.sin(rad) * radius,0,Math.cos(rad) * radius);
+					worldViewMatrix.appendEulerRotation(-rad,0,0);
+					worldViewMatrix.appendEulerRotation(0,Math.PI,0);
+					worldViewMatrix.appendScale(0.5,0.5,0.5);
+					GL.gl.uniformMatrix4fv(this.worldViewMatrixUniform.location,false,worldViewMatrix.buffer);
+					GL.gl.uniform1f(this.alphaUniform.location,this.alphaTransition.getTransition() * Map.linear(Math.cos(rad + this.time.ms / speed),1,-1,0.4,1));
+					this.vertexPositionAttribute.drawArrays(5);
+				}
+			}
+		}
+	}
+	{
+		var _g = 0;
+		while(_g < 100) {
+			var i = _g++;
+			var rad = i * 2;
+			if(i % 2 == 0) {
+				GL.gl.activeTexture(33984);
+				GL.gl.bindTexture(3553,this.textureRegistry.get(kumite.flyingman.FlyingManLayer.FLOWER1).texture);
+				GL.gl.uniform1i(this.textureUniform.location,0);
+			}
+			else {
+				GL.gl.activeTexture(33984);
+				GL.gl.bindTexture(3553,this.textureRegistry.get(kumite.flyingman.FlyingManLayer.FLOWER2).texture);
+				GL.gl.uniform1i(this.textureUniform.location,0);
+			}
+			var worldViewMatrix = new Matrix4();
+			worldViewMatrix.multiply(this.camera.matrix);
+			worldViewMatrix.appendTranslation(0,-1,10);
+			worldViewMatrix.appendEulerRotation(Math.sin(this.time.ms / 2000) * 0.2,Math.sin(this.time.ms / 1000) * 0.1,0);
+			worldViewMatrix.appendEulerRotation(0,0,0.2);
+			worldViewMatrix.appendTranslation(Math.sin(rad * 0.8) * 20,0,Math.cos(rad) * 20 - 7);
+			worldViewMatrix.appendEulerRotation(0,0,0);
+			worldViewMatrix.appendEulerRotation(0,Math.PI,0);
+			worldViewMatrix.appendScale(0.9,0.9,0.9);
+			GL.gl.uniformMatrix4fv(this.worldViewMatrixUniform.location,false,worldViewMatrix.buffer);
+			GL.gl.uniform1f(this.alphaUniform.location,this.alphaTransition.getTransition() * Map.linear(Math.cos(rad),1,-1,0.2,2));
+			this.vertexPositionAttribute.drawArrays(5);
+		}
+	}
 	$s.pop();
 }
 kumite.flyingman.FlyingManLayer.prototype.__class__ = kumite.flyingman.FlyingManLayer;
@@ -6341,28 +6456,6 @@ kumite.launch.Launcher.prototype.showError = function() {
 }
 kumite.launch.Launcher.prototype.__class__ = kumite.launch.Launcher;
 kumite.launch.Launcher.__interfaces__ = [haxe.rtti.Infos];
-GLTextureConfig = function(p) { if( p === $_ ) return; {
-	$s.push("GLTextureConfig::new");
-	var $spos = $s.length;
-	null;
-	$s.pop();
-}}
-GLTextureConfig.__name__ = ["GLTextureConfig"];
-GLTextureConfig.create = function(path) {
-	$s.push("GLTextureConfig::create");
-	var $spos = $s.length;
-	var result = new GLTextureConfig();
-	result.path = path;
-	result.textureId = path;
-	{
-		$s.pop();
-		return result;
-	}
-	$s.pop();
-}
-GLTextureConfig.prototype.path = null;
-GLTextureConfig.prototype.textureId = null;
-GLTextureConfig.prototype.__class__ = GLTextureConfig;
 kumite.testscene.Config = function(p) { if( p === $_ ) return; {
 	$s.push("kumite.testscene.Config::new");
 	var $spos = $s.length;
@@ -7636,7 +7729,7 @@ kumite.camera.CameraMouseMover.prototype.updateCamera = function() {
 	$s.push("kumite.camera.CameraMouseMover::updateCamera");
 	var $spos = $s.length;
 	this.camera.matrix.identity();
-	this.camera.matrix.lookAt(new Vec3(0,0,10),new Vec3(0,0,0),new Vec3(0,1,0));
+	this.camera.matrix.lookAt(new Vec3(0,0,0),new Vec3(0,0,10),new Vec3(0,1,0));
 	$s.pop();
 }
 kumite.camera.CameraMouseMover.prototype.__class__ = kumite.camera.CameraMouseMover;
@@ -8452,6 +8545,12 @@ GLUniformLocation.prototype.uniformMatrix4fv = function(transpose,value) {
 	GL.gl.uniformMatrix4fv(this.location,transpose,value);
 	$s.pop();
 }
+GLUniformLocation.prototype.setFloat = function(v) {
+	$s.push("GLUniformLocation::setFloat");
+	var $spos = $s.length;
+	GL.gl.uniform1f(this.location,v);
+	$s.pop();
+}
 GLUniformLocation.prototype.setMatrix3 = function(matrix) {
 	$s.push("GLUniformLocation::setMatrix3");
 	var $spos = $s.length;
@@ -9005,7 +9104,6 @@ kumite.flyingman.Config.prototype.startPrepare = function() {
 	var $spos = $s.length;
 	var group = new bpmjs.SequencerTaskGroup();
 	group.add(new GLTextureLoadingTask(this.textureRegistry,kumite.flyingman.Config.PAPER));
-	group.add(new GLTextureLoadingTask(this.textureRegistry,kumite.flyingman.Config.MAN1));
 	{
 		$s.pop();
 		return group;
@@ -11483,10 +11581,15 @@ hsl.haxe._DirectSignaler.PropagationStatus.STOPPED = 2;
 hsl.haxe._DirectSignaler.PropagationStatus.UNDISTURBED = 3;
 bpmjs.Sequencer.__meta__ = { fields : { context : { Inject : null}}};
 bpmjs.Sequencer.__rtti = "<class path=\"bpmjs.Sequencer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context public=\"1\"><c path=\"bpmjs.Context\"/></context>\n\t<start public=\"1\" set=\"method\" line=\"14\"><f a=\"name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></start>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.flyingman.FlyingManLayer.__meta__ = { fields : { stage : { Inject : null}, textureRegistry : { Inject : null}, time : { Inject : null}, projection : { Inject : null}, camera : { Inject : null}}};
-kumite.flyingman.FlyingManLayer.__rtti = "<class path=\"kumite.flyingman.FlyingManLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<layerId public=\"1\"><c path=\"String\"/></layerId>\n\t<color public=\"1\"><c path=\"Color\"/></color>\n\t<scale public=\"1\"><c path=\"Float\"/></scale>\n\t<position public=\"1\"><c path=\"Vec3\"/></position>\n\t<transitionAlpha><c path=\"Float\"/></transitionAlpha>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<worldViewMatrixUniform><c path=\"GLUniformLocation\"/></worldViewMatrixUniform>\n\t<colorUniform><c path=\"GLUniformLocation\"/></colorUniform>\n\t<init public=\"1\" set=\"method\" line=\"55\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"72\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"78\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"46\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.flyingman._FlyingManLayer.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 worldViewMatrix;\n\n\tvarying vec4 vertex;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);\n\t\tvertex = vec4(vertexPosition, 0.0, 1.0);\n\t}\n\n"]}};
-kumite.flyingman._FlyingManLayer.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform vec4 color;\n\n\tvoid main(void)\n\t{\n\t\tgl_FragColor = color;\n\t}\n\n"]}};
+kumite.flyingman.FlyingManLayer.__meta__ = { fields : { stage : { Inject : null}, textureRegistry : { Inject : null}, time : { Inject : null}, projection : { Inject : null}, camera : { Inject : null}, startPrepare : { Sequence : ["boot","startPrepare"]}}};
+kumite.flyingman.FlyingManLayer.__rtti = "<class path=\"kumite.flyingman.FlyingManLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<MAN1 public=\"1\" line=\"17\" static=\"1\"><c path=\"GLTextureConfig\"/></MAN1>\n\t<MAN2 public=\"1\" line=\"18\" static=\"1\"><c path=\"GLTextureConfig\"/></MAN2>\n\t<MAN3 public=\"1\" line=\"19\" static=\"1\"><c path=\"GLTextureConfig\"/></MAN3>\n\t<FLOWER1 public=\"1\" line=\"20\" static=\"1\"><c path=\"GLTextureConfig\"/></FLOWER1>\n\t<FLOWER2 public=\"1\" line=\"21\" static=\"1\"><c path=\"GLTextureConfig\"/></FLOWER2>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<layerId public=\"1\"><c path=\"String\"/></layerId>\n\t<transitions public=\"1\"><c path=\"kumite.layer.LayerTransitions\"/></transitions>\n\t<alphaTransition public=\"1\"><c path=\"kumite.layer.LayerTransition\"/></alphaTransition>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<worldViewMatrixUniform><c path=\"GLUniformLocation\"/></worldViewMatrixUniform>\n\t<textureUniform><c path=\"GLUniformLocation\"/></textureUniform>\n\t<alphaUniform><c path=\"GLUniformLocation\"/></alphaUniform>\n\t<startPrepare public=\"1\" set=\"method\" line=\"64\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></startPrepare>\n\t<init public=\"1\" set=\"method\" line=\"77\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"95\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"101\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"52\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.flyingman.FlyingManLayer.MAN1 = GLTextureConfig.create("data/image/flyingman/man1.png");
+kumite.flyingman.FlyingManLayer.MAN2 = GLTextureConfig.create("data/image/flyingman/man2.png");
+kumite.flyingman.FlyingManLayer.MAN3 = GLTextureConfig.create("data/image/flyingman/man3.png");
+kumite.flyingman.FlyingManLayer.FLOWER1 = GLTextureConfig.create("data/image/flyingman/flower1.png");
+kumite.flyingman.FlyingManLayer.FLOWER2 = GLTextureConfig.create("data/image/flyingman/flower2.png");
+kumite.flyingman._FlyingManLayer.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 worldViewMatrix;\n\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);\n\t\ttextureCoord = (vertexPosition.xy + 1.0) * 0.5;\n\t}\n\n"]}};
+kumite.flyingman._FlyingManLayer.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform sampler2D texture;\n\tuniform float alpha;\n\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tvec4 color = texture2D(texture, textureCoord);\n\t\tgl_FragColor = color * vec4(1.0, 1.0, 1.0, alpha);\n\t}\n\n\n"]}};
 LogLevel.INFO = new LogLevel(1);
 LogLevel.WARN = new LogLevel(2);
 LogLevel.ERROR = new LogLevel(3);
@@ -11527,9 +11630,8 @@ kumite.displaylist.DisplayListLayer.__meta__ = { fields : { stage : { Inject : n
 kumite.displaylist.DisplayListLayer.__rtti = "<class path=\"kumite.displaylist.DisplayListLayer\" params=\"\">\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<layerId public=\"1\"><c path=\"String\"/></layerId>\n\t<transition public=\"1\"><c path=\"Float\"/></transition>\n\t<renderer><c path=\"GLDisplayListRenderer\"/></renderer>\n\t<init public=\"1\" set=\"method\" line=\"25\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"32\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"38\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"23\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 haxe.Timer.arr = new Array();
 kumite.flyingman.Config.__meta__ = { fields : { textureRegistry : { Inject : null}, startPrepare : { Sequence : ["boot","startPrepare"]}}};
-kumite.flyingman.Config.__rtti = "<class path=\"kumite.flyingman.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<PAPER public=\"1\" line=\"7\" static=\"1\"><c path=\"GLTextureConfig\"/></PAPER>\n\t<MAN1 public=\"1\" line=\"8\" static=\"1\"><c path=\"GLTextureConfig\"/></MAN1>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<paperBackground public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></paperBackground>\n\t<flyingManLayer public=\"1\"><c path=\"kumite.flyingman.FlyingManLayer\"/></flyingManLayer>\n\t<flyingManScene public=\"1\"><c path=\"kumite.flyingman.FlyingManScene\"/></flyingManScene>\n\t<startPrepare public=\"1\" set=\"method\" line=\"28\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></startPrepare>\n\t<new public=\"1\" set=\"method\" line=\"17\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.flyingman.Config.__rtti = "<class path=\"kumite.flyingman.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<PAPER public=\"1\" line=\"7\" static=\"1\"><c path=\"GLTextureConfig\"/></PAPER>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<paperBackground public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></paperBackground>\n\t<flyingManLayer public=\"1\"><c path=\"kumite.flyingman.FlyingManLayer\"/></flyingManLayer>\n\t<flyingManScene public=\"1\"><c path=\"kumite.flyingman.FlyingManScene\"/></flyingManScene>\n\t<startPrepare public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></startPrepare>\n\t<new public=\"1\" set=\"method\" line=\"16\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.flyingman.Config.PAPER = GLTextureConfig.create("data/image/flyingman/paper.jpg");
-kumite.flyingman.Config.MAN1 = GLTextureConfig.create("data/image/flyingman/man1.png");
 shader.DisplayObjectVertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 objectMatrix;\n\tuniform vec2 size;\n\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * objectMatrix * (vec4(size, 1.0, 1.0) * vec4(vertexPosition, 0.0, 1.0));\n\t\ttextureCoord = vertexPosition.xy;\n\t}\n\n"]}};
 kumite.stage.StageResizeAction.__meta__ = { fields : { messenger : { Messenger : null}, stage : { Inject : null}, initPrepare : { Sequence : ["boot","initPrepare"]}, startComplete : { Sequence : ["boot","startComplete"]}}};
 kumite.stage.StageResizeAction.__rtti = "<class path=\"kumite.stage.StageResizeAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<startComplete public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<onResize set=\"method\" line=\"39\"><f a=\"?event\">\n\t<t path=\"js.Event\"/>\n\t<e path=\"Void\"/>\n</f></onResize>\n\t<updateSize set=\"method\" line=\"45\"><f a=\"\"><e path=\"Void\"/></f></updateSize>\n\t<sendResizeMessage set=\"method\" line=\"51\"><f a=\"\"><e path=\"Void\"/></f></sendResizeMessage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";

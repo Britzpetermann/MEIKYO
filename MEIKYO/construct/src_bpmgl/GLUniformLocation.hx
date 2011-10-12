@@ -101,6 +101,11 @@ class GLUniformLocation
 		GL.gl.uniformMatrix4fv(location, transpose, value);
 	}
 
+	public inline function setFloat(v : GLfloat) : Void
+	{
+		GL.gl.uniform1f(location, v);
+	}
+
 	public inline function setMatrix3(matrix : Matrix3) : Void
 	{
 		GL.gl.uniformMatrix3fv(location, false, matrix.buffer);

@@ -85,8 +85,8 @@ class TestLayer implements LayerLifecycle, implements Infos
 		vertexPositionAttribute.vertexAttribPointer();
 
 		var worldViewMatrix = new Matrix4(camera.matrix);
+		worldViewMatrix.appendTranslation(position.x, position.y, position.z + 10);
 		worldViewMatrix.appendRotation(time.ms / 4000, new Vec3(1, 1, 1));
-		worldViewMatrix.appendTranslation(position.x, position.y, position.z);
 		worldViewMatrix.appendScale(scale, scale, scale);
 		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
 		

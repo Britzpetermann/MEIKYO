@@ -5,7 +5,6 @@ import haxe.rtti.Infos;
 class Config implements Infos
 {
 	public static var PAPER : GLTextureConfig = GLTextureConfig.create("data/image/flyingman/paper.jpg");
-	public static var MAN1 : GLTextureConfig = GLTextureConfig.create("data/image/flyingman/man1.png");
 	
 	@Inject
 	public var textureRegistry : GLTextureRegistry;
@@ -30,7 +29,6 @@ class Config implements Infos
 		var group = new bpmjs.SequencerTaskGroup();
 		
 		group.add(new GLTextureLoadingTask(textureRegistry, PAPER));
-		group.add(new GLTextureLoadingTask(textureRegistry, MAN1));
 		
 		return group;
 	}	
