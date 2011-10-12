@@ -84,10 +84,11 @@ class TestLayer implements LayerLifecycle, implements Infos
 		projectionMatrixUniform.setMatrix4(projection.matrix);
 		vertexPositionAttribute.vertexAttribPointer();
 
-		var worldViewMatrix = new Matrix4(camera.matrix);
-		worldViewMatrix.appendTranslation(position.x, position.y, position.z + 10);
-		worldViewMatrix.appendRotation(time.ms / 4000, new Vec3(1, 1, 1));
+		var worldViewMatrix = new Matrix4();
 		worldViewMatrix.appendScale(scale, scale, scale);
+		worldViewMatrix.appendTranslation(position.x, position.y, position.z);
+		worldViewMatrix.appendRotation(time.ms / 4000, new Vec3(1, 1, 1).normalize());
+		worldViewMatrix.append(camera.matrix);
 		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
 		
 		var colorWithTransition = color.clone();

@@ -79,14 +79,14 @@ class ColorLayer implements LayerLifecycle, implements Infos
 		GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 
 		var projectionMatrix = new Matrix4();
-		projectionMatrix.ortho(0, stage.width, stage.height, 0, 0, 1);
+		projectionMatrix.setOrtho(0, stage.width, stage.height, 0, 0, 1);
 		projectionMatrixUniform.setMatrix4(projectionMatrix);
 		
 		vertexPositionAttribute.vertexAttribPointer();
 
 		var worldViewMatrix = new Matrix4();
-		worldViewMatrix.appendScale(stage.width, stage.height, 1);
 		worldViewMatrix.appendTranslation(moveTransition.direction * (1 - moveTransition.transition), 0, 0);
+		worldViewMatrix.appendScale(stage.width, stage.height, 1);
 		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
 		
 		var colorWithTransition = color.clone();

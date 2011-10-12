@@ -87,7 +87,7 @@ class TextureLayer implements LayerLifecycle, implements Infos
 		GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 
 		var projectionMatrix = new Matrix4();
-		projectionMatrix.ortho(0, stage.width, stage.height, 0, 0, 1);
+		projectionMatrix.setOrtho(0, stage.width, stage.height, 0, 0, 1);
 		projectionMatrixUniform.setMatrix4(projectionMatrix);
 		
 		vertexPositionAttribute.vertexAttribPointer();
@@ -95,8 +95,8 @@ class TextureLayer implements LayerLifecycle, implements Infos
 		var texture = textureRegistry.get(textureConfig);
 
 		var worldViewMatrix = new Matrix4();
-		worldViewMatrix.appendTranslation((stage.width - texture.width * scale) / 2, (stage.height - texture.height * scale) / 2, 0);
 		worldViewMatrix.appendScale(texture.width * scale, texture.height * scale, 1);
+		worldViewMatrix.appendTranslation((stage.width - texture.width * scale) / 2, (stage.height - texture.height * scale) / 2, 0);
 		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
 		
 		textureUniform.setTexture(texture);

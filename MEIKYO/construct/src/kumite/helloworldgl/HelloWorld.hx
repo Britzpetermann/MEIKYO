@@ -26,8 +26,10 @@ class HelloWorld implements Infos
 	var vertexPositionAttribute : GLAttribLocation;
 	var vertexBuffer : WebGLBuffer;
 
+	var viewMatrixUniform : GLUniformLocation;
+	var worldMatrixUniform : GLUniformLocation;
 	var projectionMatrixUniform : GLUniformLocation;
-	var worldViewMatrixUniform : GLUniformLocation;
+	
 	var colorUniform : GLUniformLocation;
 		
 	public function new();
@@ -37,16 +39,17 @@ class HelloWorld implements Infos
 	{
 		shaderProgram = GL.createProgram(Vertex, Fragment);
 
-		vertexPositionAttribute = GL.getAttribLocation2("vertexPosition", 2, GL.BYTE);
-		vertexPositionAttribute.updateBuffer(new Int8Array([
+		vertexPositionAttribute = GL.getAttribLocation2("vertexPosition", 2, GL.FLOAT);
+		vertexPositionAttribute.updateBuffer(new Float32Array([
 			-1, -1,
 			1, -1,
 			-1, 1,
 			1, 1,
 		]));
 
+		viewMatrixUniform = GL.getUniformLocation("viewMatrix");
+		worldMatrixUniform = GL.getUniformLocation("worldMatrix");
 		projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
-		worldViewMatrixUniform = GL.getUniformLocation("worldViewMatrix");
 		colorUniform = GL.getUniformLocation("color");
 	}
 	
@@ -56,31 +59,36 @@ class HelloWorld implements Infos
 		GL.useProgram(shaderProgram);
 		GL.viewport(0, 0, stage.width, stage.height);
 		
+		GL.clearColor(0, 0, 0, 1);
+		GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);		
+		
 		GL.enable(GL.DEPTH_TEST);
 		GL.enable(GL.BLEND);
 		GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 
-		projectionMatrixUniform.setMatrix4(projection.matrix);
 		vertexPositionAttribute.vertexAttribPointer();
 
+		worldMatrixUniform.setMatrix4(camera.matrix);
+		projectionMatrixUniform.setMatrix4(projection.matrix);
+
+		for(x in -10...10)
+			drawRect(Map.linear(x, -10, 10, -3, 3), 0, 0, new Color(Map.linear(x, -10, 10, 0, 1), 0, 0, 0.5));
+		
 		for(y in -10...10)
 			drawRect(0, Map.linear(y, -10, 10, -3, 3), 0, new Color(0, Map.linear(y, -10, 10, 0, 1), 0, 0.5));
 			
 		for(z in -10...10)
 			drawRect(0, 0, Map.linear(z, -10, 10, -3, 3), new Color(0, 0, Map.linear(z, -10, 10, 0, 1), 0.5));
-			
-		for(x in -10...10)
-			drawRect(Map.linear(x, -10, 10, -3, 3), 0, 0, new Color(Map.linear(x, -10, 10, 0, 1), 0, 0, 0.5));
-			
 	}
 	
-	private function drawRect(x, y, z, color)
+	private function drawRect(x : Float, y : Float, z : Float, color)
 	{
-		var worldViewMatrix = new Matrix4(camera.matrix);
-		worldViewMatrix.appendRotation(time.ms / 50000, new Vec3(1, -1, -1));
-		worldViewMatrix.appendTranslation(x, y, z);
-		worldViewMatrix.appendScale(0.1, 0.1, 0.1);
-		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
+		var viewMatrix = new Matrix4();
+		viewMatrix.appendScale(0.1, 0.1, 0.1);
+		viewMatrix.appendTranslation(x, y, z);
+		viewMatrix.appendRotation(time.ms / 10000, new Vec3(1, 1, 1).normalize());
+		viewMatrixUniform.setMatrix4(viewMatrix);
+
 		colorUniform.setRGBA(color);
 		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
 	}
@@ -90,14 +98,15 @@ class HelloWorld implements Infos
 
 	attribute vec2 vertexPosition;
 
+	uniform mat4 viewMatrix;
+	uniform mat4 worldMatrix;
 	uniform mat4 projectionMatrix;
-	uniform mat4 worldViewMatrix;
 
 	varying vec4 vertex;
 
 	void main(void)
 	{
-		gl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);
+		gl_Position = projectionMatrix * worldMatrix * viewMatrix * vec4(vertexPosition, 0.0, 1.0);
 		vertex = vec4(vertexPosition, 0.0, 1.0);
 	}
 

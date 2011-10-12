@@ -42,6 +42,8 @@ class Vec3
 		x /= length;
 		y /= length;
 		z /= length;
+		
+		return this;
 	}
 
 	public function cross(vec : Vec3)

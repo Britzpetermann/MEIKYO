@@ -67,7 +67,7 @@ class GLDisplayObject
 			graphic.height = height;
 			
 			transformIsInvalid = false;
-			matrix.identity();
+			matrix.setIdentity();
 			matrix.appendTranslation(x, y, 0);
 			matrix.appendScale(scaleX, scaleY, 1);
 		}

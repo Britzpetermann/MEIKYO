@@ -61,7 +61,7 @@ class GLDisplayListRenderer
 		gl.vertexAttribPointer(vertexPositionAttribute, 2, gl.BYTE, false, 0, 0);
 
 		var projectionMatrix = new Matrix4();
-		projectionMatrix.ortho(0, width, height, 0, 0, 1);
+		projectionMatrix.setOrtho(0, width, height, 0, 0, 1);
 		gl.uniformMatrix4fv(projectionMatrixUniform.location, false, projectionMatrix.buffer);
 
 		var stage = GLDisplayList.getDefault().stage;
@@ -93,8 +93,8 @@ class GLDisplayListRenderer
 		displayObject.validateTransform();
 
 		var result = new Matrix4();
-		result.multiply(parentMatrix);
-		result.multiply(displayObject.matrix);
+		result.append(parentMatrix);
+		result.append(displayObject.matrix);
 
 		if (displayObject.skipDraw)
 			return result;

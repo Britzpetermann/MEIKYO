@@ -40,8 +40,8 @@ class GLHitareaPicker
 		displayObject.validateTransform();
 
 		var result = new Matrix4();
-		result.multiply(parentMatrix);
-		result.multiply(displayObject.matrix);
+		result.append(parentMatrix);
+		result.append(displayObject.matrix);
 
 		return result;
 	}

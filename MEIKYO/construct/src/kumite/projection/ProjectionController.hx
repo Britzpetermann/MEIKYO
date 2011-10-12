@@ -29,6 +29,6 @@ class ProjectionController implements Infos
 	@Message
 	public function updateProjectionSizeFromStage(?message : StageResizeMessage)
 	{
-		projection.matrix.perspective(fov, stage.aspect, near, far);
+		projection.matrix.setPerspective(fov, stage.aspect, near, far);
 	}	
 }

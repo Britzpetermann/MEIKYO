@@ -136,14 +136,14 @@ class FlyingManLayer implements LayerLifecycle, implements Infos
 			{
 				var rad = r * Math.PI / (n / 2);
 				var worldViewMatrix = new Matrix4();
-				worldViewMatrix.multiply(camera.matrix);
-				worldViewMatrix.appendTranslation(0, -1, 10);
-				worldViewMatrix.appendEulerRotation(Math.sin(time.ms / 2000) * 0.2, Math.sin(time.ms / speed) * 0.1, 0);
-				worldViewMatrix.appendEulerRotation(0, 0, 0.2);
-				worldViewMatrix.appendEulerRotation(-time.ms / speed, 0, 0);
-				worldViewMatrix.appendTranslation(Math.sin(rad) * radius, 0, Math.cos(rad) * radius);
-				worldViewMatrix.appendEulerRotation(-rad, 0, 0);
-				worldViewMatrix.appendEulerRotation(0, Math.PI, 0);
+				//worldViewMatrix.multiply(camera.matrix);
+				//worldViewMatrix.appendTranslation(0, -1, 10);
+				//worldViewMatrix.appendEulerRotation(Math.sin(time.ms / 2000) * 0.2, Math.sin(time.ms / speed) * 0.1, 0);
+				//worldViewMatrix.appendEulerRotation(0, 0, 0.2);
+				//worldViewMatrix.appendEulerRotation(-time.ms / speed, 0, 0);
+				//worldViewMatrix.appendTranslation(Math.sin(rad) * radius, 0, Math.cos(rad) * radius);
+				//worldViewMatrix.appendEulerRotation(-rad, 0, 0);
+				//worldViewMatrix.appendEulerRotation(0, Math.PI, 0);
 				worldViewMatrix.appendScale(0.5, 0.5, 0.5);
 				
 				worldViewMatrixUniform.setMatrix4(worldViewMatrix);
@@ -163,13 +163,13 @@ class FlyingManLayer implements LayerLifecycle, implements Infos
 				textureUniform.setTexture(textureRegistry.get(FLOWER2));
 				
 			var worldViewMatrix = new Matrix4();
-			worldViewMatrix.multiply(camera.matrix);
-			worldViewMatrix.appendTranslation(0, -1, 10);
-			worldViewMatrix.appendEulerRotation(Math.sin(time.ms / 2000) * 0.2, Math.sin(time.ms / 1000) * 0.1, 0);
-			worldViewMatrix.appendEulerRotation(0, 0, 0.2);
-			worldViewMatrix.appendTranslation(Math.sin(rad * 0.8) * 20, 0, Math.cos(rad) * 20 - 7);
-			worldViewMatrix.appendEulerRotation(0, 0, 0);
-			worldViewMatrix.appendEulerRotation(0, Math.PI, 0);
+			//worldViewMatrix.multiply(camera.matrix);
+			//worldViewMatrix.appendTranslation(0, -1, 10);
+			//worldViewMatrix.appendEulerRotation(Math.sin(time.ms / 2000) * 0.2, Math.sin(time.ms / 1000) * 0.1, 0);
+			//worldViewMatrix.appendEulerRotation(0, 0, 0.2);
+			//worldViewMatrix.appendTranslation(Math.sin(rad * 0.8) * 20, 0, Math.cos(rad) * 20 - 7);
+			//worldViewMatrix.appendEulerRotation(0, 0, 0);
+			//worldViewMatrix.appendEulerRotation(0, Math.PI, 0);
 			worldViewMatrix.appendScale(0.9, 0.9, 0.9);
 			
 			worldViewMatrixUniform.setMatrix4(worldViewMatrix);

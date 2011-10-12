@@ -285,7 +285,7 @@ GLDisplayObject.prototype.validateTransform = function() {
 		this.graphic.setWidth(this.width);
 		this.graphic.setHeight(this.height);
 		this.transformIsInvalid = false;
-		this.matrix.identity();
+		this.matrix.setIdentity();
 		this.matrix.appendTranslation(this.x,this.y,0);
 		this.matrix.appendScale(this.scaleX,this.scaleY,1);
 	}
@@ -1408,7 +1408,7 @@ GLDisplayListRenderer.prototype.render = function(width,height) {
 	GL.gl.enableVertexAttribArray(this.vertexPositionAttribute);
 	gl.vertexAttribPointer(this.vertexPositionAttribute,2,gl.BYTE,false,0,0);
 	var projectionMatrix = new Matrix4();
-	projectionMatrix.ortho(0,width,height,0,0,1);
+	projectionMatrix.setOrtho(0,width,height,0,0,1);
 	gl.uniformMatrix4fv(this.projectionMatrixUniform.location,false,projectionMatrix.buffer);
 	var stage = GLDisplayList.getDefault().stage;
 	gl.activeTexture(gl.TEXTURE0);
@@ -1438,8 +1438,8 @@ GLDisplayListRenderer.prototype.renderDisplayObject = function(displayObject,par
 	var gl = GL.gl;
 	displayObject.validateTransform();
 	var result = new Matrix4();
-	result.multiply(parentMatrix);
-	result.multiply(displayObject.matrix);
+	result.append(parentMatrix);
+	result.append(displayObject.matrix);
 	if(displayObject.skipDraw) {
 		$s.pop();
 		return result;
@@ -1897,106 +1897,157 @@ kumite.stage.Config.prototype.stage = null;
 kumite.stage.Config.prototype.stageResizeAction = null;
 kumite.stage.Config.prototype.__class__ = kumite.stage.Config;
 kumite.stage.Config.__interfaces__ = [haxe.rtti.Infos];
-Matrix4 = function(cloneFrom) { if( cloneFrom === $_ ) return; {
+Matrix4 = function(p) { if( p === $_ ) return; {
 	$s.push("Matrix4::new");
 	var $spos = $s.length;
 	this.buffer = new Float32Array(16);
-	if(cloneFrom != null) {
-		this.setFrom(cloneFrom);
-	}
-	else {
-		this.identity();
-	}
+	this.setIdentity();
 	$s.pop();
 }}
 Matrix4.__name__ = ["Matrix4"];
-Matrix4.createTranslation = function(x,y,z) {
-	$s.push("Matrix4::createTranslation");
+Matrix4.prototype.buffer = null;
+Matrix4.prototype.n11 = null;
+Matrix4.prototype.n12 = null;
+Matrix4.prototype.n13 = null;
+Matrix4.prototype.n14 = null;
+Matrix4.prototype.n21 = null;
+Matrix4.prototype.n22 = null;
+Matrix4.prototype.n23 = null;
+Matrix4.prototype.n24 = null;
+Matrix4.prototype.n31 = null;
+Matrix4.prototype.n32 = null;
+Matrix4.prototype.n33 = null;
+Matrix4.prototype.n34 = null;
+Matrix4.prototype.n41 = null;
+Matrix4.prototype.n42 = null;
+Matrix4.prototype.n43 = null;
+Matrix4.prototype.n44 = null;
+Matrix4.prototype.setIdentity = function() {
+	$s.push("Matrix4::setIdentity");
 	var $spos = $s.length;
-	var result = new Matrix4();
-	result.buffer[0] = 1;
-	result.buffer[1] = 0;
-	result.buffer[2] = 0;
-	result.buffer[3] = 0;
-	result.buffer[4] = 0;
-	result.buffer[5] = 1;
-	result.buffer[6] = 0;
-	result.buffer[7] = 0;
-	result.buffer[8] = 0;
-	result.buffer[9] = 0;
-	result.buffer[10] = 1;
-	result.buffer[11] = 0;
-	result.buffer[12] = x;
-	result.buffer[13] = y;
-	result.buffer[14] = z;
-	result.buffer[15] = 1;
+	this.set(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
 	{
 		$s.pop();
-		return result;
+		return this;
 	}
 	$s.pop();
 }
-Matrix4.prototype.buffer = null;
-Matrix4.prototype.identity = function() {
-	$s.push("Matrix4::identity");
+Matrix4.prototype.set = function(n11,n12,n13,n14,n21,n22,n23,n24,n31,n32,n33,n34,n41,n42,n43,n44) {
+	$s.push("Matrix4::set");
 	var $spos = $s.length;
-	this.buffer[0] = 1;
-	this.buffer[1] = 0;
-	this.buffer[2] = 0;
-	this.buffer[3] = 0;
-	this.buffer[4] = 0;
-	this.buffer[5] = 1;
-	this.buffer[6] = 0;
-	this.buffer[7] = 0;
-	this.buffer[8] = 0;
-	this.buffer[9] = 0;
-	this.buffer[10] = 1;
-	this.buffer[11] = 0;
-	this.buffer[12] = 0;
-	this.buffer[13] = 0;
-	this.buffer[14] = 0;
-	this.buffer[15] = 1;
+	this.buffer[0] = n11;
+	this.buffer[1] = n21;
+	this.buffer[2] = n31;
+	this.buffer[3] = n41;
+	this.buffer[4] = n12;
+	this.buffer[5] = n22;
+	this.buffer[6] = n32;
+	this.buffer[7] = n42;
+	this.buffer[8] = n13;
+	this.buffer[9] = n23;
+	this.buffer[10] = n33;
+	this.buffer[11] = n43;
+	this.buffer[12] = n14;
+	this.buffer[13] = n24;
+	this.buffer[14] = n34;
+	this.buffer[15] = n44;
+	{
+		$s.pop();
+		return this;
+	}
 	$s.pop();
 }
 Matrix4.prototype.setFrom = function(from) {
 	$s.push("Matrix4::setFrom");
 	var $spos = $s.length;
-	this.buffer[0] = from.buffer[0];
-	this.buffer[1] = from.buffer[1];
-	this.buffer[2] = from.buffer[2];
-	this.buffer[3] = from.buffer[3];
-	this.buffer[4] = from.buffer[4];
-	this.buffer[5] = from.buffer[5];
-	this.buffer[6] = from.buffer[6];
-	this.buffer[7] = from.buffer[7];
-	this.buffer[8] = from.buffer[8];
-	this.buffer[9] = from.buffer[9];
-	this.buffer[10] = from.buffer[10];
-	this.buffer[11] = from.buffer[11];
-	this.buffer[12] = from.buffer[12];
-	this.buffer[13] = from.buffer[13];
-	this.buffer[14] = from.buffer[14];
-	this.buffer[15] = from.buffer[15];
+	this.buffer.set(from.buffer);
+	{
+		$s.pop();
+		return this;
+	}
 	$s.pop();
 }
-Matrix4.prototype.lookAt = function(eye,center,up) {
-	$s.push("Matrix4::lookAt");
+Matrix4.prototype.setTranslation = function(x,y,z) {
+	$s.push("Matrix4::setTranslation");
 	var $spos = $s.length;
-	var eyex = eye.x, eyey = eye.y, eyez = eye.z, upx = up.x, upy = up.y, upz = up.z, centerx = center.x, centery = center.y, centerz = center.z;
-	if(eyex == centerx && eyey == centery && eyez == centerz) {
-		this.identity();
+	this.set(1,0,0,x,0,1,0,y,0,0,1,z,0,0,0,1);
+	{
+		$s.pop();
+		return this;
 	}
-	var z0, z1, z2, x0, x1, x2, y0, y1, y2, len;
-	z0 = eyex - center.x;
-	z1 = eyey - center.y;
-	z2 = eyez - center.z;
-	len = 1 / Math.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
+	$s.pop();
+}
+Matrix4.prototype.setScale = function(x,y,z) {
+	$s.push("Matrix4::setScale");
+	var $spos = $s.length;
+	this.set(x,0,0,0,0,y,0,0,0,0,z,0,0,0,0,1);
+	{
+		$s.pop();
+		return this;
+	}
+	$s.pop();
+}
+Matrix4.prototype.setRotationX = function(angle) {
+	$s.push("Matrix4::setRotationX");
+	var $spos = $s.length;
+	var c = Math.cos(angle), s = Math.sin(angle);
+	this.set(1,0,0,0,0,c,-s,0,0,s,c,0,0,0,0,1);
+	{
+		$s.pop();
+		return this;
+	}
+	$s.pop();
+}
+Matrix4.prototype.setRotationY = function(angle) {
+	$s.push("Matrix4::setRotationY");
+	var $spos = $s.length;
+	var c = Math.cos(angle), s = Math.sin(angle);
+	this.set(c,0,s,0,0,1,0,0,-s,0,c,0,0,0,0,1);
+	{
+		$s.pop();
+		return this;
+	}
+	$s.pop();
+}
+Matrix4.prototype.setRotationZ = function(angle) {
+	$s.push("Matrix4::setRotationZ");
+	var $spos = $s.length;
+	var c = Math.cos(angle), s = Math.sin(angle);
+	this.set(c,-s,0,0,s,c,0,0,0,0,1,0,0,0,0,1);
+	{
+		$s.pop();
+		return this;
+	}
+	$s.pop();
+}
+Matrix4.prototype.setRotation = function(angle,axis) {
+	$s.push("Matrix4::setRotation");
+	var $spos = $s.length;
+	var c = Math.cos(angle), s = Math.sin(angle), t = 1 - c, x = axis.x, y = axis.y, z = axis.z, tx = t * x, ty = t * y;
+	this.set(tx * x + c,tx * y - s * z,tx * z + s * y,0,tx * y + s * z,ty * y + c,ty * z - s * x,0,tx * z - s * y,ty * z + s * x,t * z * z + c,0,0,0,0,1);
+	{
+		$s.pop();
+		return this;
+	}
+	$s.pop();
+}
+Matrix4.prototype.setLookAt = function(eye,at,up) {
+	$s.push("Matrix4::setLookAt");
+	var $spos = $s.length;
+	var eyex = eye.x, eyey = eye.y, eyez = eye.z, upx = up.x, upy = up.y, upz = up.z, atx = at.x, aty = at.y, atz = at.z;
+	if(eyex == atx && eyey == aty && eyez == atz) {
+		this.setIdentity();
+	}
+	var z0 = eyex - at.x;
+	var z1 = eyey - at.y;
+	var z2 = eyez - at.z;
+	var len = 1 / Math.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
 	z0 *= len;
 	z1 *= len;
 	z2 *= len;
-	x0 = upy * z2 - upz * z1;
-	x1 = upz * z0 - upx * z2;
-	x2 = upx * z1 - upy * z0;
+	var x0 = upy * z2 - upz * z1;
+	var x1 = upz * z0 - upx * z2;
+	var x2 = upx * z1 - upy * z0;
 	len = Math.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
 	if(Math.isNaN(len)) {
 		x0 = 0;
@@ -2009,9 +2060,9 @@ Matrix4.prototype.lookAt = function(eye,center,up) {
 		x1 *= len;
 		x2 *= len;
 	}
-	y0 = z1 * x2 - z2 * x1;
-	y1 = z2 * x0 - z0 * x2;
-	y2 = z0 * x1 - z1 * x0;
+	var y0 = z1 * x2 - z2 * x1;
+	var y1 = z2 * x0 - z0 * x2;
+	var y2 = z0 * x1 - z1 * x0;
 	len = Math.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
 	if(Math.isNaN(len)) {
 		y0 = 0;
@@ -2030,7 +2081,7 @@ Matrix4.prototype.lookAt = function(eye,center,up) {
 	this.buffer[3] = 0;
 	this.buffer[4] = x1;
 	this.buffer[5] = y1;
-	this.buffer[6] = z1;
+	this.buffer[9] = z1;
 	this.buffer[7] = 0;
 	this.buffer[8] = x2;
 	this.buffer[9] = y2;
@@ -2042,8 +2093,8 @@ Matrix4.prototype.lookAt = function(eye,center,up) {
 	this.buffer[15] = 1;
 	$s.pop();
 }
-Matrix4.prototype.ortho = function(left,right,bottom,top,near,far) {
-	$s.push("Matrix4::ortho");
+Matrix4.prototype.setOrtho = function(left,right,bottom,top,near,far) {
+	$s.push("Matrix4::setOrtho");
 	var $spos = $s.length;
 	var rl = right - left;
 	var tb = top - bottom;
@@ -2066,16 +2117,16 @@ Matrix4.prototype.ortho = function(left,right,bottom,top,near,far) {
 	this.buffer[15] = 1;
 	$s.pop();
 }
-Matrix4.prototype.perspective = function(fovy,aspect,near,far) {
-	$s.push("Matrix4::perspective");
+Matrix4.prototype.setPerspective = function(fovy,aspect,near,far) {
+	$s.push("Matrix4::setPerspective");
 	var $spos = $s.length;
-	var top = near * Math.tan(fovy * Math.PI / 360.0);
+	var top = near * Math.tan(fovy * Math.PI / 360);
 	var right = top * aspect;
-	this.frustum(-right,right,-top,top,near,far);
+	this.setFrustum(-right,right,-top,top,near,far);
 	$s.pop();
 }
-Matrix4.prototype.frustum = function(left,right,bottom,top,near,far) {
-	$s.push("Matrix4::frustum");
+Matrix4.prototype.setFrustum = function(left,right,bottom,top,near,far) {
+	$s.push("Matrix4::setFrustum");
 	var $spos = $s.length;
 	var rl = right - left;
 	var tb = top - bottom;
@@ -2098,214 +2149,382 @@ Matrix4.prototype.frustum = function(left,right,bottom,top,near,far) {
 	this.buffer[15] = 0;
 	$s.pop();
 }
+Matrix4.prototype.append = function(a) {
+	$s.push("Matrix4::append");
+	var $spos = $s.length;
+	var b = this;
+	var a11 = a.buffer[0], a21 = a.buffer[1], a31 = a.buffer[2], a41 = a.buffer[3], a12 = a.buffer[4], a22 = a.buffer[5], a32 = a.buffer[6], a42 = a.buffer[7], a13 = a.buffer[8], a23 = a.buffer[9], a33 = a.buffer[10], a43 = a.buffer[11], a14 = a.buffer[12], a24 = a.buffer[13], a34 = a.buffer[14], a44 = a.buffer[15], b11 = b.buffer[0], b21 = b.buffer[1], b31 = b.buffer[2], b41 = b.buffer[3], b12 = b.buffer[4], b22 = b.buffer[5], b32 = b.buffer[6], b42 = b.buffer[7], b13 = b.buffer[8], b23 = b.buffer[9], b33 = b.buffer[10], b43 = b.buffer[11], b14 = b.buffer[12], b24 = b.buffer[13], b34 = b.buffer[14], b44 = b.buffer[15];
+	this.buffer[0] = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
+	this.buffer[1] = a21 * b11 + a22 * b21 + a23 * b31 + a24 * b41;
+	this.buffer[2] = a31 * b11 + a32 * b21 + a33 * b31 + a34 * b41;
+	this.buffer[3] = a41 * b11 + a42 * b21 + a43 * b31 + a44 * b41;
+	this.buffer[4] = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
+	this.buffer[5] = a21 * b12 + a22 * b22 + a23 * b32 + a24 * b42;
+	this.buffer[6] = a31 * b12 + a32 * b22 + a33 * b32 + a34 * b42;
+	this.buffer[7] = a41 * b12 + a42 * b22 + a43 * b32 + a44 * b42;
+	this.buffer[8] = a11 * b13 + a12 * b23 + a13 * b33 + a14 * b43;
+	this.buffer[9] = a21 * b13 + a22 * b23 + a23 * b33 + a24 * b43;
+	this.buffer[10] = a31 * b13 + a32 * b23 + a33 * b33 + a34 * b43;
+	this.buffer[11] = a41 * b13 + a42 * b23 + a43 * b33 + a44 * b43;
+	this.buffer[12] = a11 * b14 + a12 * b24 + a13 * b34 + a14 * b44;
+	this.buffer[13] = a21 * b14 + a22 * b24 + a23 * b34 + a24 * b44;
+	this.buffer[14] = a31 * b14 + a32 * b24 + a33 * b34 + a34 * b44;
+	this.buffer[15] = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
+	$s.pop();
+}
 Matrix4.prototype.appendTranslation = function(x,y,z) {
 	$s.push("Matrix4::appendTranslation");
 	var $spos = $s.length;
-	var m = Matrix4.createTranslation(x,y,z);
-	this.multiply(m);
+	var m = new Matrix4().setTranslation(x,y,z);
+	this.append(m);
 	$s.pop();
 }
 Matrix4.prototype.appendScale = function(x,y,z) {
 	$s.push("Matrix4::appendScale");
 	var $spos = $s.length;
-	this.buffer[0] = this.buffer[0] * x;
-	this.buffer[1] = this.buffer[1] * x;
-	this.buffer[2] = this.buffer[2] * x;
-	this.buffer[3] = this.buffer[3] * x;
-	this.buffer[4] = this.buffer[4] * y;
-	this.buffer[5] = this.buffer[5] * y;
-	this.buffer[6] = this.buffer[6] * y;
-	this.buffer[7] = this.buffer[7] * y;
-	this.buffer[8] = this.buffer[8] * z;
-	this.buffer[9] = this.buffer[9] * z;
-	this.buffer[10] = this.buffer[10] * z;
-	this.buffer[11] = this.buffer[11] * z;
-	this.buffer[12] = this.buffer[12];
-	this.buffer[13] = this.buffer[13];
-	this.buffer[14] = this.buffer[14];
-	this.buffer[15] = this.buffer[15];
+	var m = new Matrix4().setScale(x,y,z);
+	this.append(m);
 	$s.pop();
 }
 Matrix4.prototype.appendRotation = function(angle,axis) {
 	$s.push("Matrix4::appendRotation");
 	var $spos = $s.length;
-	var x = axis.x, y = axis.y, z = axis.y;
-	var len = Math.sqrt(x * x + y * y + z * z);
-	len = 1 / len;
-	x *= len;
-	y *= len;
-	z *= len;
-	var s = Math.sin(angle);
-	var c = Math.cos(angle);
-	var t = 1 - c;
-	var a00 = this.buffer[0], a01 = this.buffer[1], a02 = this.buffer[2], a03 = this.buffer[3];
-	var a10 = this.buffer[4], a11 = this.buffer[5], a12 = this.buffer[6], a13 = this.buffer[7];
-	var a20 = this.buffer[8], a21 = this.buffer[9], a22 = this.buffer[10], a23 = this.buffer[11];
-	var b00 = x * x * t + c, b01 = y * x * t + z * s, b02 = z * x * t - y * s;
-	var b10 = x * y * t - z * s, b11 = y * y * t + c, b12 = z * y * t + x * s;
-	var b20 = x * z * t + y * s, b21 = y * z * t - x * s, b22 = z * z * t + c;
-	this.buffer[0] = a00 * b00 + a10 * b01 + a20 * b02;
-	this.buffer[1] = a01 * b00 + a11 * b01 + a21 * b02;
-	this.buffer[2] = a02 * b00 + a12 * b01 + a22 * b02;
-	this.buffer[3] = a03 * b00 + a13 * b01 + a23 * b02;
-	this.buffer[4] = a00 * b10 + a10 * b11 + a20 * b12;
-	this.buffer[5] = a01 * b10 + a11 * b11 + a21 * b12;
-	this.buffer[6] = a02 * b10 + a12 * b11 + a22 * b12;
-	this.buffer[7] = a03 * b10 + a13 * b11 + a23 * b12;
-	this.buffer[8] = a00 * b20 + a10 * b21 + a20 * b22;
-	this.buffer[9] = a01 * b20 + a11 * b21 + a21 * b22;
-	this.buffer[10] = a02 * b20 + a12 * b21 + a22 * b22;
-	this.buffer[11] = a03 * b20 + a13 * b21 + a23 * b22;
-	$s.pop();
-}
-Matrix4.prototype.rotateEuler = function(heading,attitude,bank) {
-	$s.push("Matrix4::rotateEuler");
-	var $spos = $s.length;
-	this.identity();
-	var ch = Math.cos(heading);
-	var sh = Math.sin(heading);
-	var ca = Math.cos(attitude);
-	var sa = Math.sin(attitude);
-	var cb = Math.cos(bank);
-	var sb = Math.sin(bank);
-	this.buffer[0] = ch * ca;
-	this.buffer[1] = sh * sb - ch * sa * cb;
-	this.buffer[2] = ch * sa * sb + sh * cb;
-	this.buffer[4] = sa;
-	this.buffer[5] = ca * cb;
-	this.buffer[6] = -ca * sb;
-	this.buffer[8] = -sh * ca;
-	this.buffer[9] = sh * sa * cb + ch * sb;
-	this.buffer[10] = -sh * sa * sb + ch * cb;
-	$s.pop();
-}
-Matrix4.prototype.appendEulerRotation = function(heading,attitude,bank) {
-	$s.push("Matrix4::appendEulerRotation");
-	var $spos = $s.length;
-	var mEuler = new Matrix4();
-	mEuler.rotateEuler(heading,attitude,bank);
-	this.multiply(mEuler);
-	$s.pop();
-}
-Matrix4.prototype.inverse = function() {
-	$s.push("Matrix4::inverse");
-	var $spos = $s.length;
-	var a00 = this.buffer[0], a01 = this.buffer[1], a02 = this.buffer[2], a03 = this.buffer[3];
-	var a10 = this.buffer[4], a11 = this.buffer[5], a12 = this.buffer[6], a13 = this.buffer[7];
-	var a20 = this.buffer[8], a21 = this.buffer[9], a22 = this.buffer[10], a23 = this.buffer[11];
-	var a30 = this.buffer[12], a31 = this.buffer[13], a32 = this.buffer[14], a33 = this.buffer[15];
-	var b00 = a00 * a11 - a01 * a10;
-	var b01 = a00 * a12 - a02 * a10;
-	var b02 = a00 * a13 - a03 * a10;
-	var b03 = a01 * a12 - a02 * a11;
-	var b04 = a01 * a13 - a03 * a11;
-	var b05 = a02 * a13 - a03 * a12;
-	var b06 = a20 * a31 - a21 * a30;
-	var b07 = a20 * a32 - a22 * a30;
-	var b08 = a20 * a33 - a23 * a30;
-	var b09 = a21 * a32 - a22 * a31;
-	var b10 = a21 * a33 - a23 * a31;
-	var b11 = a22 * a33 - a23 * a32;
-	var invDet = 1 / (b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
-	this.buffer[0] = (a11 * b11 - a12 * b10 + a13 * b09) * invDet;
-	this.buffer[1] = (-a01 * b11 + a02 * b10 - a03 * b09) * invDet;
-	this.buffer[2] = (a31 * b05 - a32 * b04 + a33 * b03) * invDet;
-	this.buffer[3] = (-a21 * b05 + a22 * b04 - a23 * b03) * invDet;
-	this.buffer[4] = (-a10 * b11 + a12 * b08 - a13 * b07) * invDet;
-	this.buffer[5] = (a00 * b11 - a02 * b08 + a03 * b07) * invDet;
-	this.buffer[6] = (-a30 * b05 + a32 * b02 - a33 * b01) * invDet;
-	this.buffer[7] = (a20 * b05 - a22 * b02 + a23 * b01) * invDet;
-	this.buffer[8] = (a10 * b10 - a11 * b08 + a13 * b06) * invDet;
-	this.buffer[9] = (-a00 * b10 + a01 * b08 - a03 * b06) * invDet;
-	this.buffer[10] = (a30 * b04 - a31 * b02 + a33 * b00) * invDet;
-	this.buffer[11] = (-a20 * b04 + a21 * b02 - a23 * b00) * invDet;
-	this.buffer[12] = (-a10 * b09 + a11 * b07 - a12 * b06) * invDet;
-	this.buffer[13] = (a00 * b09 - a01 * b07 + a02 * b06) * invDet;
-	this.buffer[14] = (-a30 * b03 + a31 * b01 - a32 * b00) * invDet;
-	this.buffer[15] = (a20 * b03 - a21 * b01 + a22 * b00) * invDet;
-	$s.pop();
-}
-Matrix4.prototype.multiply = function(mat2) {
-	$s.push("Matrix4::multiply");
-	var $spos = $s.length;
-	var a00 = this.buffer[0], a01 = this.buffer[1], a02 = this.buffer[2], a03 = this.buffer[3];
-	var a10 = this.buffer[4], a11 = this.buffer[5], a12 = this.buffer[6], a13 = this.buffer[7];
-	var a20 = this.buffer[8], a21 = this.buffer[9], a22 = this.buffer[10], a23 = this.buffer[11];
-	var a30 = this.buffer[12], a31 = this.buffer[13], a32 = this.buffer[14], a33 = this.buffer[15];
-	var b00 = mat2.buffer[0], b01 = mat2.buffer[1], b02 = mat2.buffer[2], b03 = mat2.buffer[3];
-	var b10 = mat2.buffer[4], b11 = mat2.buffer[5], b12 = mat2.buffer[6], b13 = mat2.buffer[7];
-	var b20 = mat2.buffer[8], b21 = mat2.buffer[9], b22 = mat2.buffer[10], b23 = mat2.buffer[11];
-	var b30 = mat2.buffer[12], b31 = mat2.buffer[13], b32 = mat2.buffer[14], b33 = mat2.buffer[15];
-	this.buffer[0] = b00 * a00 + b01 * a10 + b02 * a20 + b03 * a30;
-	this.buffer[1] = b00 * a01 + b01 * a11 + b02 * a21 + b03 * a31;
-	this.buffer[2] = b00 * a02 + b01 * a12 + b02 * a22 + b03 * a32;
-	this.buffer[3] = b00 * a03 + b01 * a13 + b02 * a23 + b03 * a33;
-	this.buffer[4] = b10 * a00 + b11 * a10 + b12 * a20 + b13 * a30;
-	this.buffer[5] = b10 * a01 + b11 * a11 + b12 * a21 + b13 * a31;
-	this.buffer[6] = b10 * a02 + b11 * a12 + b12 * a22 + b13 * a32;
-	this.buffer[7] = b10 * a03 + b11 * a13 + b12 * a23 + b13 * a33;
-	this.buffer[8] = b20 * a00 + b21 * a10 + b22 * a20 + b23 * a30;
-	this.buffer[9] = b20 * a01 + b21 * a11 + b22 * a21 + b23 * a31;
-	this.buffer[10] = b20 * a02 + b21 * a12 + b22 * a22 + b23 * a32;
-	this.buffer[11] = b20 * a03 + b21 * a13 + b22 * a23 + b23 * a33;
-	this.buffer[12] = b30 * a00 + b31 * a10 + b32 * a20 + b33 * a30;
-	this.buffer[13] = b30 * a01 + b31 * a11 + b32 * a21 + b33 * a31;
-	this.buffer[14] = b30 * a02 + b31 * a12 + b32 * a22 + b33 * a32;
-	this.buffer[15] = b30 * a03 + b31 * a13 + b32 * a23 + b33 * a33;
-	$s.pop();
-}
-Matrix4.prototype.toInverseMatrix3 = function() {
-	$s.push("Matrix4::toInverseMatrix3");
-	var $spos = $s.length;
-	var a00 = this.buffer[0], a01 = this.buffer[1], a02 = this.buffer[2];
-	var a10 = this.buffer[4], a11 = this.buffer[5], a12 = this.buffer[6];
-	var a20 = this.buffer[8], a21 = this.buffer[9], a22 = this.buffer[10];
-	var b01 = a22 * a11 - a12 * a21;
-	var b11 = -a22 * a10 + a12 * a20;
-	var b21 = a21 * a10 - a11 * a20;
-	var d = a00 * b01 + a01 * b11 + a02 * b21;
-	if(d == null) {
-		$s.pop();
-		return null;
-	}
-	var id = 1 / d;
-	var result = new Matrix3();
-	result.buffer[0] = b01 * id;
-	result.buffer[1] = (-a22 * a01 + a02 * a21) * id;
-	result.buffer[2] = (a12 * a01 - a02 * a11) * id;
-	result.buffer[3] = b11 * id;
-	result.buffer[4] = (a22 * a00 - a02 * a20) * id;
-	result.buffer[5] = (-a12 * a00 + a02 * a10) * id;
-	result.buffer[6] = b21 * id;
-	result.buffer[7] = (-a21 * a00 + a01 * a20) * id;
-	result.buffer[8] = (a11 * a00 - a01 * a10) * id;
-	{
-		$s.pop();
-		return result;
-	}
-	$s.pop();
-}
-Matrix4.prototype.clone = function() {
-	$s.push("Matrix4::clone");
-	var $spos = $s.length;
-	{
-		var $tmp = new Matrix4(this);
-		$s.pop();
-		return $tmp;
-	}
+	var m = new Matrix4().setRotation(angle,axis);
+	this.append(m);
 	$s.pop();
 }
 Matrix4.prototype.toString = function() {
 	$s.push("Matrix4::toString");
 	var $spos = $s.length;
-	var result = "Matrix4:";
-	result += "\r\t" + this.buffer[0] + "," + this.buffer[1] + "," + this.buffer[2] + "," + this.buffer[3];
-	result += "\r\t" + this.buffer[4] + "," + this.buffer[5] + "," + this.buffer[6] + "," + this.buffer[7];
-	result += "\r\t" + this.buffer[8] + "," + this.buffer[9] + "," + this.buffer[10] + "," + this.buffer[11];
-	result += "\r\t" + this.buffer[12] + "," + this.buffer[13] + "," + this.buffer[14] + "," + this.buffer[15];
+	var result = "[Matrix4: ";
+	result += " | " + this.buffer[0] + "," + this.buffer[4] + "," + this.buffer[8] + "," + this.buffer[12];
+	result += " | " + this.buffer[1] + "," + this.buffer[5] + "," + this.buffer[9] + "," + this.buffer[13];
+	result += " | " + this.buffer[2] + "," + this.buffer[6] + "," + this.buffer[10] + "," + this.buffer[14];
+	result += " | " + this.buffer[3] + "," + this.buffer[7] + "," + this.buffer[11] + "," + this.buffer[15];
+	result += " | ]";
 	{
 		$s.pop();
 		return result;
+	}
+	$s.pop();
+}
+Matrix4.prototype.get11 = function() {
+	$s.push("Matrix4::get11");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[0];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.set11 = function(v) {
+	$s.push("Matrix4::set11");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[0] = v;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.get12 = function() {
+	$s.push("Matrix4::get12");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[4];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.set12 = function(v) {
+	$s.push("Matrix4::set12");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[4] = v;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.get13 = function() {
+	$s.push("Matrix4::get13");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[8];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.set13 = function(v) {
+	$s.push("Matrix4::set13");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[8] = v;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.get14 = function() {
+	$s.push("Matrix4::get14");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[12];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.set14 = function(v) {
+	$s.push("Matrix4::set14");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[12] = v;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.get21 = function() {
+	$s.push("Matrix4::get21");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[1];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.set21 = function(v) {
+	$s.push("Matrix4::set21");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[1] = v;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.get22 = function() {
+	$s.push("Matrix4::get22");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[5];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.set22 = function(v) {
+	$s.push("Matrix4::set22");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[5] = v;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.get23 = function() {
+	$s.push("Matrix4::get23");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[9];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.set23 = function(v) {
+	$s.push("Matrix4::set23");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[9] = v;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.get24 = function() {
+	$s.push("Matrix4::get24");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[13];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.set24 = function(v) {
+	$s.push("Matrix4::set24");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[13] = v;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.get31 = function() {
+	$s.push("Matrix4::get31");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[2];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.set31 = function(v) {
+	$s.push("Matrix4::set31");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[2] = v;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.get32 = function() {
+	$s.push("Matrix4::get32");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[6];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.set32 = function(v) {
+	$s.push("Matrix4::set32");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[6] = v;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.get33 = function() {
+	$s.push("Matrix4::get33");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[10];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.set33 = function(v) {
+	$s.push("Matrix4::set33");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[10] = v;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.get34 = function() {
+	$s.push("Matrix4::get34");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[14];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.set34 = function(v) {
+	$s.push("Matrix4::set34");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[14] = v;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.get41 = function() {
+	$s.push("Matrix4::get41");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[3];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.set41 = function(v) {
+	$s.push("Matrix4::set41");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[3] = v;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.get42 = function() {
+	$s.push("Matrix4::get42");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[7];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.set42 = function(v) {
+	$s.push("Matrix4::set42");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[7] = v;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.get43 = function() {
+	$s.push("Matrix4::get43");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[11];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.set43 = function(v) {
+	$s.push("Matrix4::set43");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[11] = v;
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.get44 = function() {
+	$s.push("Matrix4::get44");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[15];
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
+}
+Matrix4.prototype.set44 = function(v) {
+	$s.push("Matrix4::set44");
+	var $spos = $s.length;
+	{
+		var $tmp = this.buffer[15] = v;
+		$s.pop();
+		return $tmp;
 	}
 	$s.pop();
 }
@@ -2730,10 +2949,11 @@ kumite.layer.TestLayer.prototype.render = function() {
 	GL.gl.blendFunc(770,771);
 	GL.gl.uniformMatrix4fv(this.projectionMatrixUniform.location,false,this.projection.matrix.buffer);
 	this.vertexPositionAttribute.vertexAttribPointer();
-	var worldViewMatrix = new Matrix4(this.camera.matrix);
-	worldViewMatrix.appendTranslation(this.position.x,this.position.y,this.position.z + 10);
-	worldViewMatrix.appendRotation(this.time.ms / 4000,new Vec3(1,1,1));
+	var worldViewMatrix = new Matrix4();
 	worldViewMatrix.appendScale(this.scale,this.scale,this.scale);
+	worldViewMatrix.appendTranslation(this.position.x,this.position.y,this.position.z);
+	worldViewMatrix.appendRotation(this.time.ms / 4000,new Vec3(1,1,1).normalize());
+	worldViewMatrix.append(this.camera.matrix);
 	GL.gl.uniformMatrix4fv(this.worldViewMatrixUniform.location,false,worldViewMatrix.buffer);
 	var colorWithTransition = this.color.clone();
 	colorWithTransition.a *= this.transitionAlpha;
@@ -4083,14 +4303,6 @@ kumite.flyingman.FlyingManLayer.prototype.render = function() {
 					var r = _g1++;
 					var rad = r * Math.PI / (n / 2);
 					var worldViewMatrix = new Matrix4();
-					worldViewMatrix.multiply(this.camera.matrix);
-					worldViewMatrix.appendTranslation(0,-1,10);
-					worldViewMatrix.appendEulerRotation(Math.sin(this.time.ms / 2000) * 0.2,Math.sin(this.time.ms / speed) * 0.1,0);
-					worldViewMatrix.appendEulerRotation(0,0,0.2);
-					worldViewMatrix.appendEulerRotation(-this.time.ms / speed,0,0);
-					worldViewMatrix.appendTranslation(Math.sin(rad) * radius,0,Math.cos(rad) * radius);
-					worldViewMatrix.appendEulerRotation(-rad,0,0);
-					worldViewMatrix.appendEulerRotation(0,Math.PI,0);
 					worldViewMatrix.appendScale(0.5,0.5,0.5);
 					GL.gl.uniformMatrix4fv(this.worldViewMatrixUniform.location,false,worldViewMatrix.buffer);
 					GL.gl.uniform1f(this.alphaUniform.location,this.alphaTransition.getTransition() * Map.linear(Math.cos(rad + this.time.ms / speed),1,-1,0.4,1));
@@ -4115,13 +4327,6 @@ kumite.flyingman.FlyingManLayer.prototype.render = function() {
 				GL.gl.uniform1i(this.textureUniform.location,0);
 			}
 			var worldViewMatrix = new Matrix4();
-			worldViewMatrix.multiply(this.camera.matrix);
-			worldViewMatrix.appendTranslation(0,-1,10);
-			worldViewMatrix.appendEulerRotation(Math.sin(this.time.ms / 2000) * 0.2,Math.sin(this.time.ms / 1000) * 0.1,0);
-			worldViewMatrix.appendEulerRotation(0,0,0.2);
-			worldViewMatrix.appendTranslation(Math.sin(rad * 0.8) * 20,0,Math.cos(rad) * 20 - 7);
-			worldViewMatrix.appendEulerRotation(0,0,0);
-			worldViewMatrix.appendEulerRotation(0,Math.PI,0);
 			worldViewMatrix.appendScale(0.9,0.9,0.9);
 			GL.gl.uniformMatrix4fv(this.worldViewMatrixUniform.location,false,worldViewMatrix.buffer);
 			GL.gl.uniform1f(this.alphaUniform.location,this.alphaTransition.getTransition() * Map.linear(Math.cos(rad),1,-1,0.2,2));
@@ -5484,7 +5689,7 @@ kumite.projection.ProjectionController.prototype.init = function() {
 kumite.projection.ProjectionController.prototype.updateProjectionSizeFromStage = function(message) {
 	$s.push("kumite.projection.ProjectionController::updateProjectionSizeFromStage");
 	var $spos = $s.length;
-	this.projection.matrix.perspective(this.fov,this.stage.getAspect(),this.near,this.far);
+	this.projection.matrix.setPerspective(this.fov,this.stage.getAspect(),this.near,this.far);
 	$s.pop();
 }
 kumite.projection.ProjectionController.prototype.__class__ = kumite.projection.ProjectionController;
@@ -7728,8 +7933,8 @@ kumite.camera.CameraMouseMover.prototype.init = function() {
 kumite.camera.CameraMouseMover.prototype.updateCamera = function() {
 	$s.push("kumite.camera.CameraMouseMover::updateCamera");
 	var $spos = $s.length;
-	this.camera.matrix.identity();
-	this.camera.matrix.lookAt(new Vec3(0,0,0),new Vec3(0,0,10),new Vec3(0,1,0));
+	this.camera.matrix.setIdentity();
+	this.camera.matrix.setLookAt(new Vec3(0,0,10),new Vec3(0,0,0),new Vec3(0,1,0));
 	$s.pop();
 }
 kumite.camera.CameraMouseMover.prototype.__class__ = kumite.camera.CameraMouseMover;
@@ -8398,12 +8603,12 @@ kumite.layer.ColorLayer.prototype.render = function() {
 	GL.gl.enable(3042);
 	GL.gl.blendFunc(770,771);
 	var projectionMatrix = new Matrix4();
-	projectionMatrix.ortho(0,this.stage.width,this.stage.height,0,0,1);
+	projectionMatrix.setOrtho(0,this.stage.width,this.stage.height,0,0,1);
 	GL.gl.uniformMatrix4fv(this.projectionMatrixUniform.location,false,projectionMatrix.buffer);
 	this.vertexPositionAttribute.vertexAttribPointer();
 	var worldViewMatrix = new Matrix4();
-	worldViewMatrix.appendScale(this.stage.width,this.stage.height,1);
 	worldViewMatrix.appendTranslation(this.moveTransition.direction * (1 - this.moveTransition.getTransition()),0,0);
+	worldViewMatrix.appendScale(this.stage.width,this.stage.height,1);
 	GL.gl.uniformMatrix4fv(this.worldViewMatrixUniform.location,false,worldViewMatrix.buffer);
 	var colorWithTransition = this.color.clone();
 	colorWithTransition.a *= this.alphaTransition.getTransition();
@@ -9159,6 +9364,10 @@ Vec3.prototype.normalize = function() {
 	this.x /= length;
 	this.y /= length;
 	this.z /= length;
+	{
+		$s.pop();
+		return this;
+	}
 	$s.pop();
 }
 Vec3.prototype.cross = function(vec) {
@@ -9974,13 +10183,13 @@ kumite.layer.TextureLayer.prototype.render = function() {
 	GL.gl.enable(3042);
 	GL.gl.blendFunc(770,771);
 	var projectionMatrix = new Matrix4();
-	projectionMatrix.ortho(0,this.stage.width,this.stage.height,0,0,1);
+	projectionMatrix.setOrtho(0,this.stage.width,this.stage.height,0,0,1);
 	GL.gl.uniformMatrix4fv(this.projectionMatrixUniform.location,false,projectionMatrix.buffer);
 	this.vertexPositionAttribute.vertexAttribPointer();
 	var texture = this.textureRegistry.get(this.textureConfig);
 	var worldViewMatrix = new Matrix4();
-	worldViewMatrix.appendTranslation((this.stage.width - texture.width * this.scale) / 2,(this.stage.height - texture.height * this.scale) / 2,0);
 	worldViewMatrix.appendScale(texture.width * this.scale,texture.height * this.scale,1);
+	worldViewMatrix.appendTranslation((this.stage.width - texture.width * this.scale) / 2,(this.stage.height - texture.height * this.scale) / 2,0);
 	GL.gl.uniformMatrix4fv(this.worldViewMatrixUniform.location,false,worldViewMatrix.buffer);
 	{
 		GL.gl.activeTexture(33984);
@@ -10053,8 +10262,8 @@ GLHitareaPicker.prototype.pickDisplayObject = function(displayObject,parentMatri
 	var $spos = $s.length;
 	displayObject.validateTransform();
 	var result = new Matrix4();
-	result.multiply(parentMatrix);
-	result.multiply(displayObject.matrix);
+	result.append(parentMatrix);
+	result.append(displayObject.matrix);
 	{
 		$s.pop();
 		return result;
@@ -11553,6 +11762,22 @@ Log.filters = new Array();
 Log.args = new Array();
 kumite.scene.Config.__rtti = "<class path=\"kumite.scene.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<scenes public=\"1\"><c path=\"kumite.scene.Scenes\"/></scenes>\n\t<sceneNavigator public=\"1\"><c path=\"kumite.scene.SceneNavigator\"/></sceneNavigator>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.stage.Config.__rtti = "<class path=\"kumite.stage.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<stageResizeAction public=\"1\"><c path=\"kumite.stage.StageResizeAction\"/></stageResizeAction>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+Matrix4.i11 = 0;
+Matrix4.i12 = 4;
+Matrix4.i13 = 8;
+Matrix4.i14 = 12;
+Matrix4.i21 = 1;
+Matrix4.i22 = 5;
+Matrix4.i23 = 9;
+Matrix4.i24 = 13;
+Matrix4.i31 = 2;
+Matrix4.i32 = 6;
+Matrix4.i33 = 10;
+Matrix4.i34 = 14;
+Matrix4.i41 = 3;
+Matrix4.i42 = 7;
+Matrix4.i43 = 11;
+Matrix4.i44 = 15;
 kumite.testscene.TestScene4.__meta__ = { fields : { testLayer2 : { Inject : null}, testLayer3 : { Inject : null}, textureLayer2 : { Inject : null}, colorLayer3 : { Inject : null}, displayList : { Inject : null}}};
 kumite.testscene.TestScene4.__rtti = "<class path=\"kumite.testscene.TestScene4\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.SceneLifecycle\"/>\n\t<SCENE_ID public=\"1\" line=\"13\" static=\"1\"><c path=\"String\"/></SCENE_ID>\n\t<testLayer2 public=\"1\"><c path=\"kumite.layer.TestLayer\"/></testLayer2>\n\t<testLayer3 public=\"1\"><c path=\"kumite.layer.TestLayer\"/></testLayer3>\n\t<textureLayer2 public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></textureLayer2>\n\t<colorLayer3 public=\"1\"><c path=\"kumite.layer.ColorLayer\"/></colorLayer3>\n\t<displayList public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayList>\n\t<sceneInit public=\"1\" set=\"method\" line=\"32\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></sceneInit>\n\t<initTransition public=\"1\" set=\"method\" line=\"42\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></initTransition>\n\t<renderTransition public=\"1\" set=\"method\" line=\"57\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"62\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"30\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.testscene.TestScene4.SCENE_ID = "GREEN-BLUE";

@@ -8,6 +8,7 @@
 -cp construct/src_reflect
 -lib hsl-1
 
+
 --next
 
 -js release/bin/Testrunner.js
@@ -16,4 +17,7 @@
 -cp construct/src_test
 -cp construct/src
 -cp construct/src_reflect
+-cp construct/src_bpmgl
+-cp construct/src_extern
 -lib hsl-1
+
