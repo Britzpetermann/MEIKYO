@@ -6,6 +6,10 @@ class GLTextureLoadingTask extends bpmjs.ImageLoaderTask
 	public function new(textureRegistry : GLTextureRegistry, textureConfig : GLTextureConfig)
 	{
 		super();
+		
+		if (textureRegistry == null)
+			throw "TextureRegistry was null!";
+			
 		this.textureRegistry = textureRegistry;
 		this.textureConfig = textureConfig;
 	}
@@ -33,7 +37,7 @@ class GLTextureLoadingTask extends bpmjs.ImageLoaderTask
 		}
 		else
 		{
-			textureRegistry.register(textureConfig, textureRegistry.createGLTextureFromImage(image, GL.NEAREST));
+			textureRegistry.register(textureConfig, textureRegistry.createGLTextureFromImage(image, textureConfig.filter));
 		}
 		Log.info("Complete: ", textureConfig.path);
 		complete();

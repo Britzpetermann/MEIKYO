@@ -10,13 +10,8 @@ import haxe.rtti.Infos;
 
 class FlyingManScene implements SceneLifecycle, implements Infos
 {
-	public static var SCENE_ID : String = "FLYING MAN";
-	
 	@Inject
 	public var paperBackground : kumite.layer.TextureLayer;
-	
-	@Inject
-	public var flyingManLayer : FlyingManLayer;
 	
 	@Inject
 	public var displayList : DisplayListLayer;
@@ -24,11 +19,20 @@ class FlyingManScene implements SceneLifecycle, implements Infos
 	@Inject
 	public var textureRegistry : GLTextureRegistry;
 	
-	public function new();
+	@Inject
+	public var graph : FlyingManGraph;
+	
+	public var flyingManLayer : FlyingManLayer;
+	
+	var sceneId : String;
+	public function new(sceneId : String)
+	{
+		this.sceneId = sceneId;
+	}
 	
 	public function sceneInit(scene : Scene)
 	{
-		scene.id = scene.name = SCENE_ID;
+		scene.id = scene.name = sceneId;
 		scene.addLayer(new DelegateLayer(paperBackground));
 		scene.addLayer(new DelegateLayer(flyingManLayer));
 		scene.addLayer(new DelegateLayer(displayList));
@@ -54,6 +58,7 @@ class FlyingManScene implements SceneLifecycle, implements Infos
 		
 	public function render()
 	{
+		graph.update();
 		GL.clearColor(0, 0, 0, 1);
 		GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);		
 	}

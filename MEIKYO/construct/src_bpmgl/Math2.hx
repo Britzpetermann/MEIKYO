@@ -12,4 +12,13 @@ class Math2
 		val++;
 		return val;
 	}
+	
+	public static function signum(value : Float) : Float
+	{
+		if (value > 0)
+			return 1;
+		else if (value < 0)
+			return -1;
+		return 0;
+	}	
 }

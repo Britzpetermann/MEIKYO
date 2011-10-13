@@ -98,4 +98,11 @@ class Time
 	{
 		return from * (1 - f * timeScale) + to * (f * timeScale);
 	}
+	
+	public function interpolateVec3To(from : Vec3, to : Vec3, f : Float) : Void
+	{
+		from.x = interpolateTo(from.x, to.x, f);
+		from.y = interpolateTo(from.y, to.y, f);
+		from.z = interpolateTo(from.z, to.z, f);
+	}
 }

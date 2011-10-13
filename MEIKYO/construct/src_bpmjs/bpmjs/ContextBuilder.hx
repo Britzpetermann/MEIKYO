@@ -121,6 +121,10 @@ class ContextBuilder
 
 	function wireContextObject(contextObject : ContextObject)
 	{
+		//Log.info("Wire: ", contextObject.name, contextObject.classInfo.name);
+		
+		if (!contextObject.classInfo.hasRtti)
+			Log.warn("No RTTI for: ", contextObject.name, contextObject.classInfo.name);
 		for (property in contextObject.classInfo.properties)
 		{
 			if (property.hasMetadata("Inject"))

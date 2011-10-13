@@ -71,6 +71,7 @@ class SceneNavigator implements Infos
 		{
 			for (layer in scene.scene.layers)
 			{
+				Log.info("Init layer:", layer.layerId);
 				layer.init();
 			}			
 		}
