@@ -2,12 +2,12 @@ package bpmgl;
 
 class TestMatrix4Append extends Matrix4TestCase
 {
-	var testMatrix : Matrix4;
+	var m : Matrix4;
 	
 	override function setup()
 	{
-		testMatrix = new Matrix4();
-		testMatrix.set(
+		m = new Matrix4();
+		m.set(
 			2, 3, 4, 5,
 			6, 7, 8, 9,
 			10, 11, 12, 13,
@@ -16,15 +16,7 @@ class TestMatrix4Append extends Matrix4TestCase
 	}
 
 	public function testAppend()
-	{
-		var m1 = new Matrix4();
-		m1.set(
-			2, 3, 4, 5,
-			6, 7, 8, 9,
-			10, 11, 12, 13,
-			14, 15, 16 ,17
-		);
-			
+	{		
 		var m2 = new Matrix4();
 		m2.set(
 			18, 19, 20, 21,
@@ -32,20 +24,20 @@ class TestMatrix4Append extends Matrix4TestCase
 			26, 27, 28, 29,
 			30, 31, 32, 33
 		);
-		m1.append(m2);
-		assertEquals("[Matrix4:  | 356,370,384,398 | 740,770,800,830 | 1124,1170,1216,1262 | 1508,1570,1632,1694 | ]", m1.toString());
+		m.append(m2);
+		matrixEquals("644,722,800,878 | 772,866,960,1054 | 900,1010,1120,1230 | 1028,1154,1280,1406", m);
 	}
 
 	public function testAppendTranslation()
 	{
-		testMatrix.appendTranslation(2, 3, 4);
-		assertEquals("[Matrix4:  | 2,3,4,34 | 6,7,8,74 | 10,11,12,114 | 14,15,16,154 | ]", testMatrix.toString());
+		m.appendTranslation(2, 3, 4);
+		matrixEquals("30,33,36,39 | 48,52,56,60 | 66,71,76,81 | 14,15,16,17", m);
 	}
 	
 	public function testAppendScale()
 	{
-		testMatrix.appendScale(2, 3, 4);
-		assertEquals("[Matrix4:  | 4,9,16,5 | 12,21,32,9 | 20,33,48,13 | 28,45,64,17 | ]", testMatrix.toString());
+		m.appendScale(2, 3, 4);
+		matrixEquals("4,6,8,10 | 18,21,24,27 | 40,44,48,52 | 14,15,16,17", m);
 	}
 
 }

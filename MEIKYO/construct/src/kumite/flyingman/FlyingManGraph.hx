@@ -64,6 +64,7 @@ class FlyingManGraph implements Infos
 			sprite.position.y = 0;
 			sprite.position.z = Rand.float(-100, 100);
 			sprite.texture = textureRegistry.get(MAN1);
+			sprite.rotationY = Rand.float(-3, 3);
 			sprites.push(sprite);
 		}
 		

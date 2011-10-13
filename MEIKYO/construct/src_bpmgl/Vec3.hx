@@ -62,11 +62,10 @@ class Vec3
 	public function transform(matrix : Matrix4)
 	{
 		var x1 = this.x, y1 = this.y, z1 = this.z;
-		var mat = matrix.buffer;
 
-		this.x = mat[0]*x1 + mat[4]*y1 + mat[8]*z1 + mat[12];
-		this.y = mat[1]*x1 + mat[5]*y1 + mat[9]*z1 + mat[13];
-		this.z = mat[2]*x1 + mat[6]*y1 + mat[10]*z1 + mat[14];
+		this.x = matrix.n11 * x1 + matrix.n12 * y1 + matrix.n13 * z1 + matrix.n14;
+		this.y = matrix.n21 * x1 + matrix.n22 * y1 + matrix.n23 * z1 + matrix.n24;
+		this.z = matrix.n31 * x1 + matrix.n32 * y1 + matrix.n33 * z1 + matrix.n34;
 	}
 
 	public function setFrom(?value : Float, ?vec3 : Vec3Components)

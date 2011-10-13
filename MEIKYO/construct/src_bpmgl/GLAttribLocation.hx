@@ -19,6 +19,12 @@ class GLAttribLocation
 		buffer = GL.createArrayBuffer(arrayBuffer);
 	}
 
+	public function updateBuffer2(arrayBuffer : ArrayBuffer, ?type : GLenum = GL.STATIC_DRAW)
+	{
+		GL.bindBuffer(GL.ARRAY_BUFFER, buffer);
+		GL.bufferData(GL.ARRAY_BUFFER, arrayBuffer, type);
+	}
+
 	public function vertexAttribPointer()
 	{
 		GL.bindBuffer(GL.ARRAY_BUFFER, buffer);

@@ -6,11 +6,13 @@ class ButterflyLife extends Component
 {
 	public var position : Vec3;
 	public var velocity : Vec3;
+	public var rotationY : Float;
 	
 	override function init()
 	{
 		position = getNewPosition().clone();
 		velocity = new Vec3(0, 0.1, 0);
+		rotationY = 0;
 	}
 	
 	override function update()
@@ -20,6 +22,7 @@ class ButterflyLife extends Component
 		
 		position.setFrom(newPosition);
 		
+		sprite.rotationY += 0.1;
 		sprite.position.setFrom(position);
 	}
 	

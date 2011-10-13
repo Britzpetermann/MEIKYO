@@ -18,7 +18,6 @@ class TestRunner
 		
 		var startTime = Date.now().getTime();
 		runner.run();
-		
 		//runTimes(3000, runner);
 		trace("Time for testing... " + (Date.now().getTime() - startTime) + "ms");
 	}
@@ -26,17 +25,19 @@ class TestRunner
 	function addTests(runner : haxe.unit.TestRunner)
 	{
 		bpmgl.Tests.addTo(runner);
-		reflect.Tests.addTo(runner);
-		bpmjs.Tests.addTo(runner);
-		runner.add(new kumite.scene.TestLayerOrder());
+		//reflect.Tests.addTo(runner);
+		//bpmjs.Tests.addTo(runner);
+		//runner.add(new kumite.scene.TestLayerOrder());
 	}
 	
 	function runTimes(times : Int, runner : haxe.unit.TestRunner)
 	{
+		Log.profile("tests...");
 		for (i in 0...times)
 		{
 			haxe.Log.clear();
 			runner.run();
 		}		
+		Log.profileEnd();
 	}
 }

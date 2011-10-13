@@ -465,8 +465,8 @@ class GL
 	public static function getAttribLocation2(name : String, size : GLint, type : GLenum) : GLAttribLocation
 	{
 		var location = gl.getAttribLocation(currentProgramm, name);
-		if (location == null)
-			trace ("Could not find " + name + " in shader");
+		if (location == null || location == -1)
+			Log.warn ("getAttribLocation " + name + " returned -1 or null");
 
 		var result = new GLAttribLocation();
 		result.location = location;
@@ -568,6 +568,11 @@ class GL
 	public static inline function drawArrays(mode : GLenum, first : GLint, count : GLsizei) : Void
 	{
 		gl.drawArrays(mode, first, count);
+	}
+	
+	public static inline function drawElements(mode : GLenum, count : GLsizei, type : GLenum, offset : GLintptr) : Void
+	{
+		gl.drawElements(mode, count, type, offset);
 	}
 
 	public static inline function enable(cap : GLenum) : Void

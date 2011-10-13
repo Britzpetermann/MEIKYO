@@ -5,6 +5,30 @@
  */
 class Matrix4
 {
+	private static var IDENTITY_BUFFER : Float32Array = createIdentityBuffer();
+	private static var tempMatrix1 : Matrix4 = new Matrix4();
+	private static function createIdentityBuffer()
+	{
+		var buffer = new Float32Array(16);
+		buffer[0] = 1;
+		buffer[1] = 0;
+		buffer[2] = 0;
+		buffer[3] = 0;
+		buffer[4] = 0;
+		buffer[5] = 1;
+		buffer[6] = 0;
+		buffer[7] = 0;
+		buffer[8] = 0;
+		buffer[9] = 0;
+		buffer[10] = 1;
+		buffer[11] = 0;
+		buffer[12] = 0;
+		buffer[13] = 0;
+		buffer[14] = 0;
+		buffer[15] = 1;
+		return buffer;
+	}
+	
 	public var buffer : Float32Array;
 	
 	public var n11(get11, set11) : Float;
@@ -29,21 +53,15 @@ class Matrix4
 
 	public function new()
 	{
-		buffer = new Float32Array(16);
-		setIdentity();
+		buffer = new Float32Array(IDENTITY_BUFFER);
 	}
 
 	public function setIdentity() {
-		set(
-			1, 0, 0, 0,
-			0, 1, 0, 0,
-			0, 0, 1, 0,
-			0, 0, 0, 1
-		);
+		buffer.set(IDENTITY_BUFFER);
 		return this;
 	}
 
-	public function set(n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44)
+	public inline function set(n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44)
 	{
 		this.n11 = n11;
 		this.n21 = n21;
@@ -334,20 +352,20 @@ class Matrix4
 
 	public function appendTranslation(x : Float, y : Float, z : Float)
 	{
-		var m = new Matrix4().setTranslation(x, y, z);
-		append(m);
+		tempMatrix1.setTranslation(x, y, z);
+		append(tempMatrix1);
 	}
 	
 	public function appendScale(x : Float, y : Float, z : Float)
 	{
-		var m = new Matrix4().setScale(x, y, z);
-		append(m);
+		tempMatrix1.setScale(x, y, z);
+		append(tempMatrix1);
 	}
 	
 	public function appendRotation(angle, axis : {x : Float, y : Float, z : Float})
 	{
-		var m = new Matrix4().setRotation(angle, axis);
-		append(m);
+		tempMatrix1.setRotation(angle, axis);
+		append(tempMatrix1);
 	}
 
 	public function toString()

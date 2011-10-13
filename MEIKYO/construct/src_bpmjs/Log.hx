@@ -9,6 +9,16 @@ class Log
 		untyped __js__("debugger");
 	}
 		
+	public static inline function profile(title : String)
+	{
+		untyped console.profile(title);
+	}
+		
+	public static inline function profileEnd()
+	{
+		untyped console.profileEnd();
+	}
+		
 	public static function init()
 	{
 		untyped

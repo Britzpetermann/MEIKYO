@@ -24,15 +24,15 @@ class FlyingManLayer implements LayerLifecycle, implements Infos
 	public var projection : Projection;
 	
 	@Inject
-	public var camera : Camera;
-	
-	@Inject
 	public var graph : FlyingManGraph;
 	
 	public var layerId : String;
 	
 	public var transitions : LayerTransitions;
 	public var alphaTransition : LayerTransition;
+	
+	var cameraMatrix : Matrix4;
+	var viewMatrix : Matrix4;
 	
 	var shaderProgram : WebGLProgram;
 	var vertexPositionAttribute : GLAttribLocation;
@@ -47,6 +47,9 @@ class FlyingManLayer implements LayerLifecycle, implements Infos
 	public function new()
 	{
 		layerId = "FlyingManLayer";
+
+		cameraMatrix = new Matrix4();
+		viewMatrix = new Matrix4();
 
 		transitions = new LayerTransitions();
 		transitions.add(alphaTransition = new LayerTransition("alpha"));
@@ -85,34 +88,33 @@ class FlyingManLayer implements LayerLifecycle, implements Infos
 		GL.useProgram(shaderProgram);
 		GL.viewport(0, 0, stage.width, stage.height);
 		
-		GL.disable(GL.DEPTH_TEST);
+		GL.enable(GL.DEPTH_TEST);
 		GL.enable(GL.BLEND);
 		GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 		
 		vertexPositionAttribute.vertexAttribPointer();
 		projectionMatrixUniform.setMatrix4(projection.matrix);
 		
-		var camera : Matrix4 = new Matrix4();
 		switch (layerId)
 		{
 			case "flyingMan1":
-				camera.setFrom(graph.butterflyCloseupCamera2.matrix);
+				cameraMatrix.setFrom(graph.butterflyCloseupCamera2.matrix);
 			case "flyingMan2":
-				camera.setLookAt(new Vec3(0, 100, 100), new Vec3(0, 0, 20), new Vec3(0, 1, 0));
+				cameraMatrix.setLookAt(new Vec3(0, 100, 100), new Vec3(0, 0, 20), new Vec3(0, 1, 0));
 			case "flyingMan3":
-				camera.setFrom(graph.butterflyCloseupCamera.matrix);
+				cameraMatrix.setFrom(graph.butterflyCloseupCamera.matrix);
 			case "flyingMan4":
-				camera.setLookAt(new Vec3(0, 5, 5), new Vec3(0, 0, 20), new Vec3(0, 1, 0));
+				cameraMatrix.setLookAt(new Vec3(0, 5, 5), new Vec3(0, 0, 20), new Vec3(0, 1, 0));
 		}
 		 
-		worldMatrixUniform.setMatrix4(camera);
+		worldMatrixUniform.setMatrix4(cameraMatrix);
 		
-		var viewMatrix = new Matrix4();
-
 		var lastTexture : GLTexture = null;
 		for(sprite in graph.sprites)
-		{		
-			viewMatrix.setTranslation(sprite.position.x, sprite.position.y, sprite.position.z);
+		{	
+			viewMatrix.setIdentity();
+			viewMatrix.appendRotation(sprite.rotationY, new Vec3(0, 1, 0));
+			viewMatrix.appendTranslation(sprite.position.x, sprite.position.y, sprite.position.z);
 			viewMatrixUniform.setMatrix4(viewMatrix);
 			
 			if (sprite.texture != lastTexture)

@@ -27,7 +27,7 @@ class VJInterface implements Infos
 	public function start()
 	{
 		stage = GLDisplayList.getDefault().stage;
-		//stage.addChild(new GLStats());
+		stage.addChild(new GLStats());
 
 		addSceneButtons();
 	}
