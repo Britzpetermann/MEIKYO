@@ -2162,7 +2162,7 @@ bpmjs.Task.__name__ = ["bpmjs","Task"];
 bpmjs.Task.prototype.startSignaler = null;
 bpmjs.Task.prototype.completeSignaler = null;
 bpmjs.Task.prototype.errorSignaler = null;
-bpmjs.Task.prototype.start = function(positionInformation) {
+bpmjs.Task.prototype.start = function() {
 	try {
 		var t = this;
 		this.startSignaler.dispatch(t,null,{ fileName : "Task.hx", lineNumber : 25, className : "bpmjs.Task", methodName : "start"});
@@ -2197,8 +2197,9 @@ bpmjs.Task.prototype.error = function(result,error) {
 	this.errorSignaler.dispatch(taskError,null,{ fileName : "Task.hx", lineNumber : 49, className : "bpmjs.Task", methodName : "error"});
 }
 bpmjs.Task.prototype.__class__ = bpmjs.Task;
-bpmjs.ImageLoaderTask = function(p) { if( p === $_ ) return; {
+bpmjs.ImageLoaderTask = function(location) { if( location === $_ ) return; {
 	bpmjs.Task.call(this);
+	this.location = location;
 }}
 bpmjs.ImageLoaderTask.__name__ = ["bpmjs","ImageLoaderTask"];
 bpmjs.ImageLoaderTask.__super__ = bpmjs.Task;
@@ -2207,7 +2208,7 @@ bpmjs.ImageLoaderTask.prototype.location = null;
 bpmjs.ImageLoaderTask.prototype.image = null;
 bpmjs.ImageLoaderTask.prototype.doStart = function() {
 	{
-		Log.posInfo = { fileName : "ImageLoaderTask.hx", lineNumber : 11, className : "bpmjs.ImageLoaderTask", methodName : "doStart"};
+		Log.posInfo = { fileName : "ImageLoaderTask.hx", lineNumber : 17, className : "bpmjs.ImageLoaderTask", methodName : "doStart"};
 		if(Log.filter(LogLevel.INFO)) {
 			Log.fetchInput("Loading: ",this.location,null,null,null,null,null);
 			console.info(Log.createMessage());
@@ -2219,7 +2220,7 @@ bpmjs.ImageLoaderTask.prototype.doStart = function() {
 }
 bpmjs.ImageLoaderTask.prototype.handleImageLoaded = function() {
 	{
-		Log.posInfo = { fileName : "ImageLoaderTask.hx", lineNumber : 19, className : "bpmjs.ImageLoaderTask", methodName : "handleImageLoaded"};
+		Log.posInfo = { fileName : "ImageLoaderTask.hx", lineNumber : 25, className : "bpmjs.ImageLoaderTask", methodName : "handleImageLoaded"};
 		if(Log.filter(LogLevel.INFO)) {
 			Log.fetchInput("Complete: ",this.location,null,null,null,null,null);
 			console.info(Log.createMessage());
@@ -2876,7 +2877,7 @@ bpmjs.Sequencer.prototype.start = function(name) {
 	sequence.addLoadingTask();
 	sequence.addExecuteTask("start");
 	sequence.addExecuteTask("startComplete");
-	sequence.start({ fileName : "Sequencer.hx", lineNumber : 27, className : "bpmjs.Sequencer", methodName : "start"});
+	sequence.start();
 }
 bpmjs.Sequencer.prototype.__class__ = bpmjs.Sequencer;
 bpmjs.Sequencer.__interfaces__ = [haxe.rtti.Infos];
@@ -2898,7 +2899,7 @@ bpmjs.TaskGroup.prototype.nextTask = function() {
 	if(this.tasks.length > 0) {
 		var task = this.tasks.shift();
 		task.completeSignaler.bind($closure(this,"handleTaskComplete"));
-		task.start({ fileName : "TaskGroup.hx", lineNumber : 29, className : "bpmjs.TaskGroup", methodName : "nextTask"});
+		task.start();
 	}
 	else {
 		this.complete();
@@ -3113,6 +3114,53 @@ LogLevel.prototype.isSmallerOrEqual = function(level) {
 	return this.value <= level.value;
 }
 LogLevel.prototype.__class__ = LogLevel;
+GLTextureConfig = function(p) { if( p === $_ ) return; {
+	null;
+}}
+GLTextureConfig.__name__ = ["GLTextureConfig"];
+GLTextureConfig.create = function(location,filter) {
+	if(filter == null) filter = 9728;
+	var result = new GLTextureConfig();
+	result.location = location;
+	result.textureId = location;
+	result.filter = filter;
+	return result;
+}
+GLTextureConfig.prototype.location = null;
+GLTextureConfig.prototype.textureId = null;
+GLTextureConfig.prototype.filter = null;
+GLTextureConfig.prototype.toString = function() {
+	return "[GLTextureConfig: " + this.location + " ]";
+}
+GLTextureConfig.prototype.__class__ = GLTextureConfig;
+GLTextureAtlasConfig = function(p) { if( p === $_ ) return; {
+	GLTextureConfig.call(this);
+	this.parts = new Array();
+}}
+GLTextureAtlasConfig.__name__ = ["GLTextureAtlasConfig"];
+GLTextureAtlasConfig.__super__ = GLTextureConfig;
+for(var k in GLTextureConfig.prototype ) GLTextureAtlasConfig.prototype[k] = GLTextureConfig.prototype[k];
+GLTextureAtlasConfig.create = function(width,height,filter) {
+	if(filter == null) filter = 9728;
+	GLTextureAtlasConfig.instanceCount++;
+	var path = "atlas_" + GLTextureAtlasConfig.instanceCount;
+	var result = new GLTextureAtlasConfig();
+	result.textureId = path;
+	result.filter = filter;
+	result.width = width;
+	result.height = height;
+	return result;
+}
+GLTextureAtlasConfig.prototype.width = null;
+GLTextureAtlasConfig.prototype.height = null;
+GLTextureAtlasConfig.prototype.parts = null;
+GLTextureAtlasConfig.prototype.add = function(part) {
+	this.parts.push(part);
+}
+GLTextureAtlasConfig.prototype.toString = function() {
+	return "[Atlas: " + this.parts.join(",") + " ]";
+}
+GLTextureAtlasConfig.prototype.__class__ = GLTextureAtlasConfig;
 kumite.canvas.Config = function(p) { if( p === $_ ) return; {
 	this.canvasCase = new kumite.canvas.CanvasCase();
 	this.canvasController = new kumite.canvas.CanvasController();
@@ -3459,15 +3507,18 @@ GLTextureRegistry.prototype.createGLTextureFromImage = function(image,filter) {
 	result.texture = texture;
 	return result;
 }
-GLTextureRegistry.prototype.createGLTextureFromCanvas = function(canvas) {
+GLTextureRegistry.prototype.createGLTextureFromCanvas = function(canvas,filter) {
 	var testPowerOfTwoWidth = Std["int"](Math2.nextPowerOf2(canvas.width));
 	var testPowerOfTwoHeight = Std["int"](Math2.nextPowerOf2(canvas.height));
 	if(testPowerOfTwoWidth != canvas.width || testPowerOfTwoHeight != canvas.height) throw "Canvas size must be a valid texture size!";
 	var texture = GL.gl.createTexture();
 	GL.gl.bindTexture(3553,texture);
 	GL.gl.texImage2D(3553,0,6408,6408,5121,canvas);
-	GL.gl.texParameteri(3553,10240,9728);
-	GL.gl.texParameteri(3553,10241,9728);
+	GL.gl.texParameteri(3553,10240,filter != null?filter:9728);
+	GL.gl.texParameteri(3553,10241,filter != null?filter:9728);
+	if(filter == 9984 || filter == 9986 || filter == 9985 || filter == 9987) {
+		GL.gl.generateMipmap(3553);
+	}
 	var result = new GLTexture();
 	result.width = canvas.width;
 	result.height = canvas.height;
@@ -4632,22 +4683,6 @@ kumite.launch.Launcher.prototype.showError = function() {
 }
 kumite.launch.Launcher.prototype.__class__ = kumite.launch.Launcher;
 kumite.launch.Launcher.__interfaces__ = [haxe.rtti.Infos];
-GLTextureConfig = function(p) { if( p === $_ ) return; {
-	null;
-}}
-GLTextureConfig.__name__ = ["GLTextureConfig"];
-GLTextureConfig.create = function(path,filter) {
-	if(filter == null) filter = 9728;
-	var result = new GLTextureConfig();
-	result.path = path;
-	result.textureId = path;
-	result.filter = filter;
-	return result;
-}
-GLTextureConfig.prototype.path = null;
-GLTextureConfig.prototype.textureId = null;
-GLTextureConfig.prototype.filter = null;
-GLTextureConfig.prototype.__class__ = GLTextureConfig;
 kumite.testscene.Config = function(p) { if( p === $_ ) return; {
 	this.colorLayer1 = new kumite.layer.ColorLayer();
 	this.colorLayer1.color = new Color(0.5,0.5,0.5,1);
@@ -4883,6 +4918,100 @@ kumite.scene.SceneChangeRequest = function(sceneId) { if( sceneId === $_ ) retur
 kumite.scene.SceneChangeRequest.__name__ = ["kumite","scene","SceneChangeRequest"];
 kumite.scene.SceneChangeRequest.prototype.sceneId = null;
 kumite.scene.SceneChangeRequest.prototype.__class__ = kumite.scene.SceneChangeRequest;
+GLTextureAtlasLoadingTask = function(textureRegistry,atlas) { if( textureRegistry === $_ ) return; {
+	bpmjs.Task.call(this);
+	if(textureRegistry == null) throw "TextureRegistry was null!";
+	if(atlas == null) throw "GLTextureAtlasConfig was null!";
+	this.textureRegistry = textureRegistry;
+	this.atlas = atlas;
+}}
+GLTextureAtlasLoadingTask.__name__ = ["GLTextureAtlasLoadingTask"];
+GLTextureAtlasLoadingTask.__super__ = bpmjs.Task;
+for(var k in bpmjs.Task.prototype ) GLTextureAtlasLoadingTask.prototype[k] = bpmjs.Task.prototype[k];
+GLTextureAtlasLoadingTask.prototype.textureRegistry = null;
+GLTextureAtlasLoadingTask.prototype.atlas = null;
+GLTextureAtlasLoadingTask.prototype.partLoaderGroup = null;
+GLTextureAtlasLoadingTask.prototype.graphics = null;
+GLTextureAtlasLoadingTask.prototype.currentOffsetX = null;
+GLTextureAtlasLoadingTask.prototype.currentOffsetY = null;
+GLTextureAtlasLoadingTask.prototype.nextOffsetX = null;
+GLTextureAtlasLoadingTask.prototype.nextOffsetY = null;
+GLTextureAtlasLoadingTask.prototype.currentMaxY = null;
+GLTextureAtlasLoadingTask.prototype.doStart = function() {
+	this.graphics = new CanvasGraphic();
+	this.graphics.setWidth(this.atlas.width);
+	this.graphics.setHeight(this.atlas.height);
+	this.currentOffsetX = 0;
+	this.currentOffsetY = 0;
+	this.nextOffsetX = 0;
+	this.nextOffsetY = 0;
+	this.currentMaxY = 0;
+	this.partLoaderGroup = new bpmjs.TaskGroup();
+	{
+		var _g = 0, _g1 = this.atlas.parts;
+		while(_g < _g1.length) {
+			var part = _g1[_g];
+			++_g;
+			this.addPart(part);
+		}
+	}
+	this.partLoaderGroup.completeSignaler.bind($closure(this,"handleComplete"));
+	this.partLoaderGroup.errorSignaler.bind($closure(this,"handleError"));
+	this.partLoaderGroup.start();
+}
+GLTextureAtlasLoadingTask.prototype.addPart = function(part) {
+	var task = new bpmjs.ObjectProxyTask(part,new bpmjs.ImageLoaderTask(part.location));
+	task.completeSignaler.bind($closure(this,"addImageToAtlas"));
+	this.partLoaderGroup.add(task);
+}
+GLTextureAtlasLoadingTask.prototype.addImageToAtlas = function(task) {
+	var image = task.child.image;
+	var part = task.object;
+	this.advancePosition(image);
+	part.width = image.naturalWidth;
+	part.height = image.naturalWidth;
+	part.u0 = this.currentOffsetX / this.atlas.width;
+	part.v0 = this.currentOffsetY / this.atlas.height;
+	part.u1 = (this.currentOffsetX + part.width) / this.atlas.width;
+	part.v1 = (this.currentOffsetY + part.height) / this.atlas.height;
+	{
+		Log.posInfo = { fileName : "GLTextureAtlasLoadingTask.hx", lineNumber : 72, className : "GLTextureAtlasLoadingTask", methodName : "addImageToAtlas"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput("Add image",task.child.location,"to atlas at:",this.currentOffsetX,this.currentOffsetY,part,null);
+			console.info(Log.createMessage());
+		}
+	}
+	this.graphics.drawImage(image,this.currentOffsetX,this.currentOffsetY,image.naturalWidth,image.naturalHeight);
+}
+GLTextureAtlasLoadingTask.prototype.advancePosition = function(image) {
+	this.currentOffsetX = this.nextOffsetX;
+	this.currentOffsetY = this.nextOffsetY;
+	if(this.currentOffsetX + image.naturalWidth > this.atlas.width) {
+		this.currentOffsetX = 0;
+		this.currentOffsetY = this.currentMaxY;
+		this.nextOffsetX = this.currentOffsetX;
+		this.nextOffsetY = this.currentOffsetY;
+	}
+	this.nextOffsetX += image.naturalWidth;
+	if(this.currentOffsetY + image.naturalHeight > this.currentMaxY) {
+		this.currentMaxY = this.currentOffsetY + image.naturalHeight;
+		if(this.currentMaxY > this.atlas.height) {
+			Log.posInfo = { fileName : "GLTextureAtlasLoadingTask.hx", lineNumber : 94, className : "GLTextureAtlasLoadingTask", methodName : "advancePosition"};
+			if(Log.filter(LogLevel.ERROR)) {
+				Log.fetchInput("Atlas",this.atlas.toString(),"is too small!",null,null,null,null);
+				console.error(Log.createMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
+			}
+		}
+	}
+}
+GLTextureAtlasLoadingTask.prototype.handleComplete = function(group) {
+	this.textureRegistry.register(this.atlas,this.textureRegistry.createGLTextureFromCanvas(this.graphics.canvas,this.atlas.filter));
+	this.complete();
+}
+GLTextureAtlasLoadingTask.prototype.handleError = function(taskError) {
+	this.error(this,taskError.error);
+}
+GLTextureAtlasLoadingTask.prototype.__class__ = GLTextureAtlasLoadingTask;
 haxe.rtti.CType = { __ename__ : ["haxe","rtti","CType"], __constructs__ : ["CUnknown","CEnum","CClass","CTypedef","CFunction","CAnonymous","CDynamic"] }
 haxe.rtti.CType.CUnknown = ["CUnknown",0];
 haxe.rtti.CType.CUnknown.toString = $estr;
@@ -6204,7 +6333,7 @@ for(var k in bpmjs.ImageLoaderTask.prototype ) GLTextureLoadingTask.prototype[k]
 GLTextureLoadingTask.prototype.textureRegistry = null;
 GLTextureLoadingTask.prototype.textureConfig = null;
 GLTextureLoadingTask.prototype.doStart = function() {
-	this.location = this.textureConfig.path;
+	this.location = this.textureConfig.location;
 	bpmjs.ImageLoaderTask.prototype.doStart.call(this);
 }
 GLTextureLoadingTask.prototype.handleImageLoaded = function() {
@@ -6214,7 +6343,7 @@ GLTextureLoadingTask.prototype.handleImageLoaded = function() {
 		{
 			Log.posInfo = { fileName : "GLTextureLoadingTask.hx", lineNumber : 29, className : "GLTextureLoadingTask", methodName : "handleImageLoaded"};
 			if(Log.filter(LogLevel.WARN)) {
-				Log.fetchInput("Image",this.textureConfig.path,"size must be a valid texture size! Resizing...",null,null,null,null);
+				Log.fetchInput("Image",this.textureConfig.location,"size must be a valid texture size! Resizing...",null,null,null,null);
 				console.warn(Log.createMessage());
 			}
 		}
@@ -6230,7 +6359,7 @@ GLTextureLoadingTask.prototype.handleImageLoaded = function() {
 	{
 		Log.posInfo = { fileName : "GLTextureLoadingTask.hx", lineNumber : 42, className : "GLTextureLoadingTask", methodName : "handleImageLoaded"};
 		if(Log.filter(LogLevel.INFO)) {
-			Log.fetchInput("Complete: ",this.textureConfig.path,null,null,null,null,null);
+			Log.fetchInput("Complete: ",this.textureConfig.location,null,null,null,null,null);
 			console.info(Log.createMessage());
 		}
 	}
@@ -6457,6 +6586,52 @@ haxe.Timer.prototype.run = function() {
 	null;
 }
 haxe.Timer.prototype.__class__ = haxe.Timer;
+bpmjs.ObjectProxyTask = function(object,child) { if( object === $_ ) return; {
+	bpmjs.Task.call(this);
+	this.object = object;
+	this.child = child;
+	child.completeSignaler.bind($closure(this,"handleComplete"));
+	child.errorSignaler.bind($closure(this,"handleError"));
+}}
+bpmjs.ObjectProxyTask.__name__ = ["bpmjs","ObjectProxyTask"];
+bpmjs.ObjectProxyTask.__super__ = bpmjs.Task;
+for(var k in bpmjs.Task.prototype ) bpmjs.ObjectProxyTask.prototype[k] = bpmjs.Task.prototype[k];
+bpmjs.ObjectProxyTask.prototype.object = null;
+bpmjs.ObjectProxyTask.prototype.child = null;
+bpmjs.ObjectProxyTask.prototype.start = function() {
+	bpmjs.Task.prototype.start.call(this);
+	this.child.start();
+}
+bpmjs.ObjectProxyTask.prototype.handleComplete = function(v) {
+	this.complete();
+}
+bpmjs.ObjectProxyTask.prototype.handleError = function(v) {
+	this.error(this,v.error);
+}
+bpmjs.ObjectProxyTask.prototype.__class__ = bpmjs.ObjectProxyTask;
+GLTextureAtlasPartConfig = function(p) { if( p === $_ ) return; {
+	null;
+}}
+GLTextureAtlasPartConfig.__name__ = ["GLTextureAtlasPartConfig"];
+GLTextureAtlasPartConfig.create = function(atlas,location) {
+	var result = new GLTextureAtlasPartConfig();
+	result.location = location;
+	result.atlas = atlas;
+	atlas.add(result);
+	return result;
+}
+GLTextureAtlasPartConfig.prototype.location = null;
+GLTextureAtlasPartConfig.prototype.atlas = null;
+GLTextureAtlasPartConfig.prototype.width = null;
+GLTextureAtlasPartConfig.prototype.height = null;
+GLTextureAtlasPartConfig.prototype.u0 = null;
+GLTextureAtlasPartConfig.prototype.v0 = null;
+GLTextureAtlasPartConfig.prototype.u1 = null;
+GLTextureAtlasPartConfig.prototype.v1 = null;
+GLTextureAtlasPartConfig.prototype.toString = function() {
+	return "[GLTextureAtlasPartConfig: " + this.location + " uv:" + this.u0 + ", " + this.v0 + ", " + this.u1 + ", " + this.v1 + ", size: " + this.width + ", " + this.height + " ]";
+}
+GLTextureAtlasPartConfig.prototype.__class__ = GLTextureAtlasPartConfig;
 kumite.spritemesh2.Config = function(p) { if( p === $_ ) return; {
 	this.spritemesh2ColorLayer = new kumite.layer.ColorLayer();
 	this.spritemesh2ColorLayer.color = new Color(0.1,0.2,0.3,1);
@@ -6465,9 +6640,15 @@ kumite.spritemesh2.Config = function(p) { if( p === $_ ) return; {
 	this.scene = new kumite.spritemesh2.SpriteMeshScene();
 }}
 kumite.spritemesh2.Config.__name__ = ["kumite","spritemesh2","Config"];
+kumite.spritemesh2.Config.prototype.textureRegistry = null;
 kumite.spritemesh2.Config.prototype.layer = null;
 kumite.spritemesh2.Config.prototype.scene = null;
 kumite.spritemesh2.Config.prototype.spritemesh2ColorLayer = null;
+kumite.spritemesh2.Config.prototype.startPrepare = function() {
+	var group = new bpmjs.SequencerTaskGroup();
+	group.add(new GLTextureAtlasLoadingTask(this.textureRegistry,kumite.spritemesh2.Config.TEST_ATLAS));
+	return group;
+}
 kumite.spritemesh2.Config.prototype.__class__ = kumite.spritemesh2.Config;
 kumite.spritemesh2.Config.__interfaces__ = [haxe.rtti.Infos];
 kumite.flyingman.Config = function(p) { if( p === $_ ) return; {
@@ -8122,6 +8303,7 @@ LogLevel.INFO = new LogLevel(1);
 LogLevel.WARN = new LogLevel(2);
 LogLevel.ERROR = new LogLevel(3);
 LogLevel.OFF = new LogLevel(4);
+GLTextureAtlasConfig.instanceCount = 0;
 kumite.canvas.Config.__rtti = "<class path=\"kumite.canvas.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvasCase public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvasCase>\n\t<canvasController public=\"1\"><c path=\"kumite.canvas.CanvasController\"/></canvasController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.displaylist.ConfigAsLayer.__rtti = "<class path=\"kumite.displaylist.ConfigAsLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<displayListLayer public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayListLayer>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.time.Config.__rtti = "<class path=\"kumite.time.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<timeController public=\"1\"><c path=\"kumite.time.TimeController\"/></timeController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
@@ -8165,7 +8347,15 @@ kumite.vjinterface.VJInterface.__rtti = "<class path=\"kumite.vjinterface.VJInte
 kumite.displaylist.DisplayListLayer.__meta__ = { fields : { stage : { Inject : null}}};
 kumite.displaylist.DisplayListLayer.__rtti = "<class path=\"kumite.displaylist.DisplayListLayer\" params=\"\">\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<layerId public=\"1\"><c path=\"String\"/></layerId>\n\t<transition public=\"1\"><c path=\"Float\"/></transition>\n\t<renderer><c path=\"GLDisplayListRenderer\"/></renderer>\n\t<init public=\"1\" set=\"method\" line=\"25\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"32\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"38\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"23\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 haxe.Timer.arr = new Array();
-kumite.spritemesh2.Config.__rtti = "<class path=\"kumite.spritemesh2.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<layer public=\"1\"><c path=\"kumite.spritemesh2.SpriteMeshLayer\"/></layer>\n\t<scene public=\"1\"><c path=\"kumite.spritemesh2.SpriteMeshScene\"/></scene>\n\t<spritemesh2ColorLayer public=\"1\"><c path=\"kumite.layer.ColorLayer\"/></spritemesh2ColorLayer>\n\t<new public=\"1\" set=\"method\" line=\"11\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.spritemesh2.Config.__meta__ = { fields : { textureRegistry : { Inject : null}, startPrepare : { Sequence : ["boot","startPrepare"]}}};
+kumite.spritemesh2.Config.__rtti = "<class path=\"kumite.spritemesh2.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<TEST_ATLAS public=\"1\" line=\"7\" static=\"1\"><c path=\"GLTextureAtlasConfig\"/></TEST_ATLAS>\n\t<MAN1 public=\"1\" line=\"9\" static=\"1\"><c path=\"GLTextureAtlasPartConfig\"/></MAN1>\n\t<MAN2 public=\"1\" line=\"10\" static=\"1\"><c path=\"GLTextureAtlasPartConfig\"/></MAN2>\n\t<MAN3 public=\"1\" line=\"11\" static=\"1\"><c path=\"GLTextureAtlasPartConfig\"/></MAN3>\n\t<FLOWER1 public=\"1\" line=\"12\" static=\"1\"><c path=\"GLTextureAtlasPartConfig\"/></FLOWER1>\n\t<FLOWER2 public=\"1\" line=\"13\" static=\"1\"><c path=\"GLTextureAtlasPartConfig\"/></FLOWER2>\n\t<BUTTERFLY public=\"1\" line=\"14\" static=\"1\"><c path=\"GLTextureAtlasPartConfig\"/></BUTTERFLY>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<layer public=\"1\"><c path=\"kumite.spritemesh2.SpriteMeshLayer\"/></layer>\n\t<scene public=\"1\"><c path=\"kumite.spritemesh2.SpriteMeshScene\"/></scene>\n\t<spritemesh2ColorLayer public=\"1\"><c path=\"kumite.layer.ColorLayer\"/></spritemesh2ColorLayer>\n\t<startPrepare public=\"1\" set=\"method\" line=\"34\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></startPrepare>\n\t<new public=\"1\" set=\"method\" line=\"23\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.spritemesh2.Config.TEST_ATLAS = GLTextureAtlasConfig.create(1024,1024);
+kumite.spritemesh2.Config.MAN1 = GLTextureAtlasPartConfig.create(kumite.spritemesh2.Config.TEST_ATLAS,"data/image/flyingman/man1.png");
+kumite.spritemesh2.Config.MAN2 = GLTextureAtlasPartConfig.create(kumite.spritemesh2.Config.TEST_ATLAS,"data/image/flyingman/man2.png");
+kumite.spritemesh2.Config.MAN3 = GLTextureAtlasPartConfig.create(kumite.spritemesh2.Config.TEST_ATLAS,"data/image/flyingman/man3.png");
+kumite.spritemesh2.Config.FLOWER1 = GLTextureAtlasPartConfig.create(kumite.spritemesh2.Config.TEST_ATLAS,"data/image/flyingman/flower1.png");
+kumite.spritemesh2.Config.FLOWER2 = GLTextureAtlasPartConfig.create(kumite.spritemesh2.Config.TEST_ATLAS,"data/image/flyingman/flower2.png");
+kumite.spritemesh2.Config.BUTTERFLY = GLTextureAtlasPartConfig.create(kumite.spritemesh2.Config.TEST_ATLAS,"data/image/flyingman/butterfly.png");
 kumite.flyingman.Config.__meta__ = { fields : { textureRegistry : { Inject : null}, startPrepare : { Sequence : ["boot","startPrepare"]}}};
 kumite.flyingman.Config.__rtti = "<class path=\"kumite.flyingman.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<PAPER public=\"1\" line=\"7\" static=\"1\"><c path=\"GLTextureConfig\"/></PAPER>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<paperBackground public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></paperBackground>\n\t<flyingManGraph public=\"1\"><c path=\"kumite.flyingman.FlyingManGraph\"/></flyingManGraph>\n\t<flyingManLayer3 public=\"1\"><c path=\"kumite.flyingman.FlyingManLayer\"/></flyingManLayer3>\n\t<flyingManScene3 public=\"1\"><c path=\"kumite.flyingman.FlyingManScene\"/></flyingManScene3>\n\t<flyingManLayer1 public=\"1\"><c path=\"kumite.flyingman.FlyingManLayer\"/></flyingManLayer1>\n\t<flyingManScene1 public=\"1\"><c path=\"kumite.flyingman.FlyingManScene\"/></flyingManScene1>\n\t<flyingManLayer2 public=\"1\"><c path=\"kumite.flyingman.FlyingManLayer\"/></flyingManLayer2>\n\t<flyingManScene2 public=\"1\"><c path=\"kumite.flyingman.FlyingManScene\"/></flyingManScene2>\n\t<flyingManLayer4 public=\"1\"><c path=\"kumite.flyingman.FlyingManLayer\"/></flyingManLayer4>\n\t<flyingManScene4 public=\"1\"><c path=\"kumite.flyingman.FlyingManScene\"/></flyingManScene4>\n\t<startPrepare public=\"1\" set=\"method\" line=\"58\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></startPrepare>\n\t<new public=\"1\" set=\"method\" line=\"28\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.flyingman.Config.PAPER = GLTextureConfig.create("data/image/flyingman/paper.jpg");

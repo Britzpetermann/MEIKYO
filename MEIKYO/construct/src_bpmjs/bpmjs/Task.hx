@@ -17,7 +17,7 @@ class Task<T>
 		errorSignaler = new DirectSignaler(this);
 	}
 
-	public function start(?positionInformation:haxe.PosInfos)
+	public function start()
 	{
 		try
 		{

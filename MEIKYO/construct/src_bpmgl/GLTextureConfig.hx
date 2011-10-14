@@ -1,17 +1,22 @@
 class GLTextureConfig
 {
-	public static function create(path : String, ?filter : Int = GL.NEAREST)
+	public static function create(location : String, ?filter : Int = GL.NEAREST)
 	{
 		var result = new GLTextureConfig();
-		result.path = path;
-		result.textureId = path;
+		result.location = location;
+		result.textureId = location;
 		result.filter = filter;
 		return result;
 	}
-	
-	public var path : String;
+		
+	public var location : String;
 	public var textureId : String;
 	public var filter : Int;
 	
 	public function new();
+	
+	public function toString()
+	{
+		return "[GLTextureConfig: " + location + " ]";
+	}	
 }
