@@ -12,7 +12,10 @@ class SpriteMeshScene implements SceneLifecycle, implements Infos
 {
 	
 	@Inject
-	public var spritemeshColorLayer : kumite.layer.ColorLayer;
+	public var paperBackground : kumite.layer.TextureLayer;
+	
+	@Inject
+	public var spritemesh2ColorLayer : kumite.layer.ColorLayer;
 	
 	@Inject
 	public var layer : SpriteMeshLayer;
@@ -24,15 +27,15 @@ class SpriteMeshScene implements SceneLifecycle, implements Infos
 	
 	public function sceneInit(scene : Scene)
 	{
-		scene.id = scene.name = "SPRITE";
-		scene.addLayer(new DelegateLayer(spritemeshColorLayer));
+		scene.id = scene.name = "SPRITES";
+		scene.addLayer(new DelegateLayer(paperBackground));
 		scene.addLayer(new DelegateLayer(layer));
 		scene.addLayer(new DelegateLayer(displayList));
 	}
 
 	public function initTransition(transitionContext : TransitionContext) : Void
 	{
-		spritemeshColorLayer.transitions.enableChild("alpha");
+		spritemesh2ColorLayer.transitions.enableChild("alpha");
 	}
 
 	public function renderTransition(transitionContext : TransitionContext)
@@ -42,7 +45,7 @@ class SpriteMeshScene implements SceneLifecycle, implements Infos
 	
 	public function render()
 	{
-		GL.clearColor(0, 0, 0, 1);
-		GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);		
+		GL.clearColor(1, 1, 1, 0);
+		GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT | GL.STENCIL_BUFFER_BIT);		
 	}
 }

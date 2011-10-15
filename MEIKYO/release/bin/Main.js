@@ -1839,31 +1839,6 @@ kumite.scene.SceneLifecycle.prototype.initTransition = null;
 kumite.scene.SceneLifecycle.prototype.renderTransition = null;
 kumite.scene.SceneLifecycle.prototype.render = null;
 kumite.scene.SceneLifecycle.prototype.__class__ = kumite.scene.SceneLifecycle;
-if(!kumite.spritemesh2) kumite.spritemesh2 = {}
-kumite.spritemesh2.SpriteMeshScene = function(p) { if( p === $_ ) return; {
-	null;
-}}
-kumite.spritemesh2.SpriteMeshScene.__name__ = ["kumite","spritemesh2","SpriteMeshScene"];
-kumite.spritemesh2.SpriteMeshScene.prototype.spritemesh2ColorLayer = null;
-kumite.spritemesh2.SpriteMeshScene.prototype.layer = null;
-kumite.spritemesh2.SpriteMeshScene.prototype.displayList = null;
-kumite.spritemesh2.SpriteMeshScene.prototype.sceneInit = function(scene) {
-	scene.id = scene.name = "SPRITE2";
-	scene.addLayer(new kumite.scene.DelegateLayer(this.layer));
-	scene.addLayer(new kumite.scene.DelegateLayer(this.displayList));
-}
-kumite.spritemesh2.SpriteMeshScene.prototype.initTransition = function(transitionContext) {
-	this.spritemesh2ColorLayer.transitions.enableChild("alpha");
-}
-kumite.spritemesh2.SpriteMeshScene.prototype.renderTransition = function(transitionContext) {
-	this.render();
-}
-kumite.spritemesh2.SpriteMeshScene.prototype.render = function() {
-	GL.gl.clearColor(1,1,1,0);
-	GL.gl.clear(17664);
-}
-kumite.spritemesh2.SpriteMeshScene.prototype.__class__ = kumite.spritemesh2.SpriteMeshScene;
-kumite.spritemesh2.SpriteMeshScene.__interfaces__ = [haxe.rtti.Infos,kumite.scene.SceneLifecycle];
 if(!kumite.testscene) kumite.testscene = {}
 kumite.testscene.TestScene4 = function(p) { if( p === $_ ) return; {
 	null;
@@ -2618,6 +2593,187 @@ hsl.haxe._DirectSignaler.AdvancedBond.prototype.__class__ = hsl.haxe._DirectSign
 hsl.haxe._DirectSignaler.PropagationStatus = function() { }
 hsl.haxe._DirectSignaler.PropagationStatus.__name__ = ["hsl","haxe","_DirectSignaler","PropagationStatus"];
 hsl.haxe._DirectSignaler.PropagationStatus.prototype.__class__ = hsl.haxe._DirectSignaler.PropagationStatus;
+if(!kumite.spritemesh) kumite.spritemesh = {}
+kumite.spritemesh.SpriteMeshLayer = function(p) { if( p === $_ ) return; {
+	this.layerId = "SpriteMeshLayer2";
+	this.cameraMatrix = new Matrix4();
+	this.transitions = new kumite.layer.LayerTransitions();
+	this.transitions.add(this.alphaTransition = new kumite.layer.LayerTransition("alpha"));
+	this.transitions.enableChild("alpha");
+	this.alphaTransition.ease = $closure(ease.Quad,"easeInOut");
+	this.sprites = new Array();
+	{
+		var _g1 = 0, _g = kumite.spritemesh.SpriteMeshLayer.max;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var sprite = new kumite.spritemesh.Sprite();
+			this.sprites.push(sprite);
+		}
+	}
+}}
+kumite.spritemesh.SpriteMeshLayer.__name__ = ["kumite","spritemesh","SpriteMeshLayer"];
+kumite.spritemesh.SpriteMeshLayer.prototype.stage = null;
+kumite.spritemesh.SpriteMeshLayer.prototype.time = null;
+kumite.spritemesh.SpriteMeshLayer.prototype.projection = null;
+kumite.spritemesh.SpriteMeshLayer.prototype.textureRegistry = null;
+kumite.spritemesh.SpriteMeshLayer.prototype.layerId = null;
+kumite.spritemesh.SpriteMeshLayer.prototype.transitions = null;
+kumite.spritemesh.SpriteMeshLayer.prototype.alphaTransition = null;
+kumite.spritemesh.SpriteMeshLayer.prototype.sprites = null;
+kumite.spritemesh.SpriteMeshLayer.prototype.cameraMatrix = null;
+kumite.spritemesh.SpriteMeshLayer.prototype.shaderProgram = null;
+kumite.spritemesh.SpriteMeshLayer.prototype.vertexBuffer = null;
+kumite.spritemesh.SpriteMeshLayer.prototype.vertexPositionAttribute = null;
+kumite.spritemesh.SpriteMeshLayer.prototype.vertexUVBuffer = null;
+kumite.spritemesh.SpriteMeshLayer.prototype.vertexUVAttribute = null;
+kumite.spritemesh.SpriteMeshLayer.prototype.cubeVerticesIndexBuffer = null;
+kumite.spritemesh.SpriteMeshLayer.prototype.projectionMatrixUniform = null;
+kumite.spritemesh.SpriteMeshLayer.prototype.viewMatrixUniform = null;
+kumite.spritemesh.SpriteMeshLayer.prototype.alphaUniform = null;
+kumite.spritemesh.SpriteMeshLayer.prototype.textureUniform = null;
+kumite.spritemesh.SpriteMeshLayer.prototype.init = function() {
+	this.shaderProgram = GL.createProgram(kumite.spritemesh._SpriteMeshLayer.Vertex,kumite.spritemesh._SpriteMeshLayer.Fragment);
+	this.vertexBuffer = new Float32Array(kumite.spritemesh.SpriteMeshLayer.max * 12);
+	{
+		var _g1 = 0, _g = kumite.spritemesh.SpriteMeshLayer.max;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var j = i * 12;
+			this.vertexBuffer[j] = -1;
+			this.vertexBuffer[1 + j] = -1;
+			this.vertexBuffer[2 + j] = 0;
+			this.vertexBuffer[3 + j] = 1;
+			this.vertexBuffer[4 + j] = -1;
+			this.vertexBuffer[5 + j] = 0;
+			this.vertexBuffer[6 + j] = -1;
+			this.vertexBuffer[7 + j] = 1;
+			this.vertexBuffer[8 + j] = 0;
+			this.vertexBuffer[9 + j] = 1;
+			this.vertexBuffer[10 + j] = 1;
+			this.vertexBuffer[11 + j] = 0;
+		}
+	}
+	this.vertexPositionAttribute = GL.getAttribLocation2("vertexPosition",3,5126);
+	this.vertexPositionAttribute.updateBuffer(this.vertexBuffer);
+	this.vertexUVBuffer = new Float32Array(kumite.spritemesh.SpriteMeshLayer.max * 8);
+	{
+		var _g1 = 0, _g = kumite.spritemesh.SpriteMeshLayer.max;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var image = kumite.spritemesh.Config.BIER;
+			var j = i * 8;
+			this.vertexUVBuffer[j] = image.u0;
+			this.vertexUVBuffer[1 + j] = image.v1;
+			this.vertexUVBuffer[2 + j] = image.u1;
+			this.vertexUVBuffer[3 + j] = image.v1;
+			this.vertexUVBuffer[4 + j] = image.u0;
+			this.vertexUVBuffer[5 + j] = image.v0;
+			this.vertexUVBuffer[6 + j] = image.u1;
+			this.vertexUVBuffer[7 + j] = image.v0;
+		}
+	}
+	this.vertexUVAttribute = GL.getAttribLocation2("vertexUV",2,5126);
+	this.vertexUVAttribute.updateBuffer(this.vertexUVBuffer);
+	this.cubeVerticesIndexBuffer = GL.gl.createBuffer();
+	GL.gl.bindBuffer(34963,this.cubeVerticesIndexBuffer);
+	var elementIndexes = new Uint16Array(6 * kumite.spritemesh.SpriteMeshLayer.max);
+	{
+		var _g1 = 0, _g = kumite.spritemesh.SpriteMeshLayer.max;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var j = i * 6;
+			var k = i * 4;
+			elementIndexes[j] = k;
+			elementIndexes[1 + j] = 1 + k;
+			elementIndexes[2 + j] = 2 + k;
+			elementIndexes[3 + j] = 1 + k;
+			elementIndexes[4 + j] = 3 + k;
+			elementIndexes[5 + j] = 2 + k;
+		}
+	}
+	GL.gl.bufferData(34963,elementIndexes,35044);
+	this.projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
+	this.alphaUniform = GL.getUniformLocation("alpha");
+	this.textureUniform = GL.getUniformLocation("texture");
+	this.cameraMatrix = new Matrix4();
+	this.cameraMatrix.setLookAt(new Vec3(0,0,70),new Vec3(0,0,0),new Vec3(0,1,0));
+}
+kumite.spritemesh.SpriteMeshLayer.prototype.renderTransition = function(transitionContext) {
+	this.transitions.setTransition(transitionContext.getTransition());
+	this.render();
+}
+kumite.spritemesh.SpriteMeshLayer.prototype.orderByZ = function(s1,s2) {
+	var z1 = s1.floats[2];
+	var z2 = s2.floats[2];
+	if(z1 < z2) return -1;
+	else if(z1 > z2) return 1;
+	else return 0;
+}
+kumite.spritemesh.SpriteMeshLayer.prototype.render = function() {
+	GL.useProgram(this.shaderProgram);
+	GL.gl.viewport(0,0,this.stage.width,this.stage.height);
+	GL.gl.disable(2929);
+	GL.gl.enable(3042);
+	GL.gl.blendFunc(770,771);
+	var axis = new Vec3(1,1,1).normalize();
+	var d = 50;
+	{
+		var _g1 = 0, _g = kumite.spritemesh.SpriteMeshLayer.max;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var sprite = this.sprites[i];
+			var m = sprite.matrix;
+			m.setScale(1.1,1.1,1.1);
+			m.appendRotation(this.time.ms / 1000 + i * 5,axis);
+			m.appendTranslation(Math.sin(this.time.ms / 10700 + i * 3.442) * d,Math.cos(this.time.ms / 17800 + i * 3.443) * d,Math.cos(this.time.ms / 18000 - i * 3.441) * d);
+			m.appendRotation(this.time.ms / 5000,axis);
+			m.append(this.cameraMatrix);
+			sprite.transform();
+		}
+	}
+	this.sprites.sort(this.orderByZ);
+	var j = 0;
+	{
+		var _g1 = 0, _g = kumite.spritemesh.SpriteMeshLayer.max;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var sprite = this.sprites[i];
+			this.vertexBuffer[j++] = sprite.floats[0];
+			this.vertexBuffer[j++] = sprite.floats[1];
+			this.vertexBuffer[j++] = sprite.floats[2];
+			this.vertexBuffer[j++] = sprite.floats[3];
+			this.vertexBuffer[j++] = sprite.floats[4];
+			this.vertexBuffer[j++] = sprite.floats[5];
+			this.vertexBuffer[j++] = sprite.floats[6];
+			this.vertexBuffer[j++] = sprite.floats[7];
+			this.vertexBuffer[j++] = sprite.floats[8];
+			this.vertexBuffer[j++] = sprite.floats[9];
+			this.vertexBuffer[j++] = sprite.floats[10];
+			this.vertexBuffer[j++] = sprite.floats[11];
+		}
+	}
+	this.vertexPositionAttribute.updateBuffer2(this.vertexBuffer);
+	GL.gl.bindBuffer(34963,this.cubeVerticesIndexBuffer);
+	this.vertexPositionAttribute.vertexAttribPointer();
+	this.vertexUVAttribute.vertexAttribPointer();
+	GL.gl.uniformMatrix4fv(this.projectionMatrixUniform.location,false,this.projection.matrix.buffer);
+	GL.gl.uniform1f(this.alphaUniform.location,this.alphaTransition.getTransition());
+	{
+		GL.gl.activeTexture(33984);
+		GL.gl.bindTexture(3553,this.textureRegistry.get(kumite.spritemesh.Config.TEST_ATLAS).texture);
+		GL.gl.uniform1i(this.textureUniform.location,0);
+	}
+	GL.gl.drawElements(4,kumite.spritemesh.SpriteMeshLayer.max * 6,5123,0);
+}
+kumite.spritemesh.SpriteMeshLayer.prototype.__class__ = kumite.spritemesh.SpriteMeshLayer;
+kumite.spritemesh.SpriteMeshLayer.__interfaces__ = [haxe.rtti.Infos,kumite.scene.LayerLifecycle];
+if(!kumite.spritemesh._SpriteMeshLayer) kumite.spritemesh._SpriteMeshLayer = {}
+kumite.spritemesh._SpriteMeshLayer.Vertex = function() { }
+kumite.spritemesh._SpriteMeshLayer.Vertex.__name__ = ["kumite","spritemesh","_SpriteMeshLayer","Vertex"];
+kumite.spritemesh._SpriteMeshLayer.Vertex.prototype.__class__ = kumite.spritemesh._SpriteMeshLayer.Vertex;
+kumite.spritemesh._SpriteMeshLayer.Fragment = function() { }
+kumite.spritemesh._SpriteMeshLayer.Fragment.__name__ = ["kumite","spritemesh","_SpriteMeshLayer","Fragment"];
+kumite.spritemesh._SpriteMeshLayer.Fragment.prototype.__class__ = kumite.spritemesh._SpriteMeshLayer.Fragment;
 hsl.haxe.Signal = function(data,currentBond,currentTarget,origin) { if( data === $_ ) return; {
 	this.data = data;
 	this.currentBond = currentBond;
@@ -4588,6 +4744,40 @@ kumite.layer.LayerTransition.prototype.setTransition = function(value) {
 	return this.getTransition();
 }
 kumite.layer.LayerTransition.prototype.__class__ = kumite.layer.LayerTransition;
+kumite.spritemesh.Sprite = function(p) { if( p === $_ ) return; {
+	this.matrix = new Matrix4();
+	this.floats = new Float32Array(12);
+}}
+kumite.spritemesh.Sprite.__name__ = ["kumite","spritemesh","Sprite"];
+kumite.spritemesh.Sprite.prototype.matrix = null;
+kumite.spritemesh.Sprite.prototype.floats = null;
+kumite.spritemesh.Sprite.prototype.getZ = function() {
+	return this.floats[2];
+}
+kumite.spritemesh.Sprite.prototype.transform = function() {
+	var n11 = this.matrix.buffer[0];
+	var n21 = this.matrix.buffer[1];
+	var n31 = this.matrix.buffer[2];
+	var n12 = this.matrix.buffer[4];
+	var n22 = this.matrix.buffer[5];
+	var n32 = this.matrix.buffer[6];
+	var n14 = this.matrix.buffer[12];
+	var n24 = this.matrix.buffer[13];
+	var n34 = this.matrix.buffer[14];
+	this.floats[0] = -n11 - n12 + n14;
+	this.floats[1] = -n21 - n22 + n24;
+	this.floats[2] = -n31 - n32 + n34;
+	this.floats[3] = n11 - n12 + n14;
+	this.floats[4] = n21 - n22 + n24;
+	this.floats[5] = n31 - n32 + n34;
+	this.floats[6] = -n11 + n12 + n14;
+	this.floats[7] = -n21 + n22 + n24;
+	this.floats[8] = -n31 + n32 + n34;
+	this.floats[9] = n11 + n12 + n14;
+	this.floats[10] = n21 + n22 + n24;
+	this.floats[11] = n31 + n32 + n34;
+}
+kumite.spritemesh.Sprite.prototype.__class__ = kumite.spritemesh.Sprite;
 Reflect = function() { }
 Reflect.__name__ = ["Reflect"];
 Reflect.hasField = function(o,field) {
@@ -4708,40 +4898,6 @@ reflect.Parameter.prototype.getType = function() {
 	return reflect.ClassInfo.forCType(this.def.t);
 }
 reflect.Parameter.prototype.__class__ = reflect.Parameter;
-kumite.spritemesh2.Sprite = function(p) { if( p === $_ ) return; {
-	this.matrix = new Matrix4();
-	this.floats = new Float32Array(12);
-}}
-kumite.spritemesh2.Sprite.__name__ = ["kumite","spritemesh2","Sprite"];
-kumite.spritemesh2.Sprite.prototype.matrix = null;
-kumite.spritemesh2.Sprite.prototype.floats = null;
-kumite.spritemesh2.Sprite.prototype.getZ = function() {
-	return this.floats[2];
-}
-kumite.spritemesh2.Sprite.prototype.transform = function() {
-	var n11 = this.matrix.buffer[0];
-	var n21 = this.matrix.buffer[1];
-	var n31 = this.matrix.buffer[2];
-	var n12 = this.matrix.buffer[4];
-	var n22 = this.matrix.buffer[5];
-	var n32 = this.matrix.buffer[6];
-	var n14 = this.matrix.buffer[12];
-	var n24 = this.matrix.buffer[13];
-	var n34 = this.matrix.buffer[14];
-	this.floats[0] = -n11 - n12 + n14;
-	this.floats[1] = -n21 - n22 + n24;
-	this.floats[2] = -n31 - n32 + n34;
-	this.floats[3] = n11 - n12 + n14;
-	this.floats[4] = n21 - n22 + n24;
-	this.floats[5] = n31 - n32 + n34;
-	this.floats[6] = -n11 + n12 + n14;
-	this.floats[7] = -n21 + n22 + n24;
-	this.floats[8] = -n31 + n32 + n34;
-	this.floats[9] = n11 + n12 + n14;
-	this.floats[10] = n21 + n22 + n24;
-	this.floats[11] = n31 + n32 + n34;
-}
-kumite.spritemesh2.Sprite.prototype.__class__ = kumite.spritemesh2.Sprite;
 reflect.Method = function(field,args,ret,definedInClass,owner) { if( field === $_ ) return; {
 	reflect.Field.call(this,field,definedInClass,owner);
 	this.args = args;
@@ -5397,186 +5553,6 @@ kumite.webgl.Config.__name__ = ["kumite","webgl","Config"];
 kumite.webgl.Config.prototype.initAction = null;
 kumite.webgl.Config.prototype.__class__ = kumite.webgl.Config;
 kumite.webgl.Config.__interfaces__ = [haxe.rtti.Infos];
-kumite.spritemesh2.SpriteMeshLayer = function(p) { if( p === $_ ) return; {
-	this.layerId = "SpriteMeshLayer2";
-	this.cameraMatrix = new Matrix4();
-	this.transitions = new kumite.layer.LayerTransitions();
-	this.transitions.add(this.alphaTransition = new kumite.layer.LayerTransition("alpha"));
-	this.transitions.enableChild("alpha");
-	this.alphaTransition.ease = $closure(ease.Quad,"easeInOut");
-	this.sprites = new Array();
-	{
-		var _g1 = 0, _g = kumite.spritemesh2.SpriteMeshLayer.max;
-		while(_g1 < _g) {
-			var i = _g1++;
-			var sprite = new kumite.spritemesh2.Sprite();
-			this.sprites.push(sprite);
-		}
-	}
-}}
-kumite.spritemesh2.SpriteMeshLayer.__name__ = ["kumite","spritemesh2","SpriteMeshLayer"];
-kumite.spritemesh2.SpriteMeshLayer.prototype.stage = null;
-kumite.spritemesh2.SpriteMeshLayer.prototype.time = null;
-kumite.spritemesh2.SpriteMeshLayer.prototype.projection = null;
-kumite.spritemesh2.SpriteMeshLayer.prototype.textureRegistry = null;
-kumite.spritemesh2.SpriteMeshLayer.prototype.layerId = null;
-kumite.spritemesh2.SpriteMeshLayer.prototype.transitions = null;
-kumite.spritemesh2.SpriteMeshLayer.prototype.alphaTransition = null;
-kumite.spritemesh2.SpriteMeshLayer.prototype.sprites = null;
-kumite.spritemesh2.SpriteMeshLayer.prototype.cameraMatrix = null;
-kumite.spritemesh2.SpriteMeshLayer.prototype.shaderProgram = null;
-kumite.spritemesh2.SpriteMeshLayer.prototype.vertexBuffer = null;
-kumite.spritemesh2.SpriteMeshLayer.prototype.vertexPositionAttribute = null;
-kumite.spritemesh2.SpriteMeshLayer.prototype.vertexUVBuffer = null;
-kumite.spritemesh2.SpriteMeshLayer.prototype.vertexUVAttribute = null;
-kumite.spritemesh2.SpriteMeshLayer.prototype.cubeVerticesIndexBuffer = null;
-kumite.spritemesh2.SpriteMeshLayer.prototype.projectionMatrixUniform = null;
-kumite.spritemesh2.SpriteMeshLayer.prototype.viewMatrixUniform = null;
-kumite.spritemesh2.SpriteMeshLayer.prototype.alphaUniform = null;
-kumite.spritemesh2.SpriteMeshLayer.prototype.textureUniform = null;
-kumite.spritemesh2.SpriteMeshLayer.prototype.init = function() {
-	this.shaderProgram = GL.createProgram(kumite.spritemesh2._SpriteMeshLayer.Vertex,kumite.spritemesh2._SpriteMeshLayer.Fragment);
-	this.vertexBuffer = new Float32Array(kumite.spritemesh2.SpriteMeshLayer.max * 12);
-	{
-		var _g1 = 0, _g = kumite.spritemesh2.SpriteMeshLayer.max;
-		while(_g1 < _g) {
-			var i = _g1++;
-			var j = i * 12;
-			this.vertexBuffer[j] = -1;
-			this.vertexBuffer[1 + j] = -1;
-			this.vertexBuffer[2 + j] = 0;
-			this.vertexBuffer[3 + j] = 1;
-			this.vertexBuffer[4 + j] = -1;
-			this.vertexBuffer[5 + j] = 0;
-			this.vertexBuffer[6 + j] = -1;
-			this.vertexBuffer[7 + j] = 1;
-			this.vertexBuffer[8 + j] = 0;
-			this.vertexBuffer[9 + j] = 1;
-			this.vertexBuffer[10 + j] = 1;
-			this.vertexBuffer[11 + j] = 0;
-		}
-	}
-	this.vertexPositionAttribute = GL.getAttribLocation2("vertexPosition",3,5126);
-	this.vertexPositionAttribute.updateBuffer(this.vertexBuffer);
-	this.vertexUVBuffer = new Float32Array(kumite.spritemesh2.SpriteMeshLayer.max * 8);
-	{
-		var _g1 = 0, _g = kumite.spritemesh2.SpriteMeshLayer.max;
-		while(_g1 < _g) {
-			var i = _g1++;
-			var image = kumite.spritemesh2.Config.BIER;
-			var j = i * 8;
-			this.vertexUVBuffer[j] = image.u0;
-			this.vertexUVBuffer[1 + j] = image.v1;
-			this.vertexUVBuffer[2 + j] = image.u1;
-			this.vertexUVBuffer[3 + j] = image.v1;
-			this.vertexUVBuffer[4 + j] = image.u0;
-			this.vertexUVBuffer[5 + j] = image.v0;
-			this.vertexUVBuffer[6 + j] = image.u1;
-			this.vertexUVBuffer[7 + j] = image.v0;
-		}
-	}
-	this.vertexUVAttribute = GL.getAttribLocation2("vertexUV",2,5126);
-	this.vertexUVAttribute.updateBuffer(this.vertexUVBuffer);
-	this.cubeVerticesIndexBuffer = GL.gl.createBuffer();
-	GL.gl.bindBuffer(34963,this.cubeVerticesIndexBuffer);
-	var elementIndexes = new Uint16Array(6 * kumite.spritemesh2.SpriteMeshLayer.max);
-	{
-		var _g1 = 0, _g = kumite.spritemesh2.SpriteMeshLayer.max;
-		while(_g1 < _g) {
-			var i = _g1++;
-			var j = i * 6;
-			var k = i * 4;
-			elementIndexes[j] = k;
-			elementIndexes[1 + j] = 1 + k;
-			elementIndexes[2 + j] = 2 + k;
-			elementIndexes[3 + j] = 1 + k;
-			elementIndexes[4 + j] = 3 + k;
-			elementIndexes[5 + j] = 2 + k;
-		}
-	}
-	GL.gl.bufferData(34963,elementIndexes,35044);
-	this.projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
-	this.alphaUniform = GL.getUniformLocation("alpha");
-	this.textureUniform = GL.getUniformLocation("texture");
-	this.cameraMatrix = new Matrix4();
-	this.cameraMatrix.setLookAt(new Vec3(0,0,70),new Vec3(0,0,0),new Vec3(0,1,0));
-}
-kumite.spritemesh2.SpriteMeshLayer.prototype.renderTransition = function(transitionContext) {
-	this.transitions.setTransition(transitionContext.getTransition());
-	this.render();
-}
-kumite.spritemesh2.SpriteMeshLayer.prototype.orderByZ = function(s1,s2) {
-	var z1 = s1.floats[2];
-	var z2 = s2.floats[2];
-	if(z1 < z2) return -1;
-	else if(z1 > z2) return 1;
-	else return 0;
-}
-kumite.spritemesh2.SpriteMeshLayer.prototype.render = function() {
-	GL.useProgram(this.shaderProgram);
-	GL.gl.viewport(0,0,this.stage.width,this.stage.height);
-	GL.gl.disable(2929);
-	GL.gl.enable(3042);
-	GL.gl.blendFunc(770,771);
-	var axis = new Vec3(1,1,1).normalize();
-	var d = 50;
-	{
-		var _g1 = 0, _g = kumite.spritemesh2.SpriteMeshLayer.max;
-		while(_g1 < _g) {
-			var i = _g1++;
-			var sprite = this.sprites[i];
-			var m = sprite.matrix;
-			m.setScale(1.1,1.1,1.1);
-			m.appendRotation(this.time.ms / 1000 + i * 5,axis);
-			m.appendTranslation(Math.sin(this.time.ms / 10700 + i * 3.442) * d,Math.cos(this.time.ms / 17800 + i * 3.443) * d,Math.cos(this.time.ms / 18000 - i * 3.441) * d);
-			m.appendRotation(this.time.ms / 5000,axis);
-			m.append(this.cameraMatrix);
-			sprite.transform();
-		}
-	}
-	this.sprites.sort(this.orderByZ);
-	var j = 0;
-	{
-		var _g1 = 0, _g = kumite.spritemesh2.SpriteMeshLayer.max;
-		while(_g1 < _g) {
-			var i = _g1++;
-			var sprite = this.sprites[i];
-			this.vertexBuffer[j++] = sprite.floats[0];
-			this.vertexBuffer[j++] = sprite.floats[1];
-			this.vertexBuffer[j++] = sprite.floats[2];
-			this.vertexBuffer[j++] = sprite.floats[3];
-			this.vertexBuffer[j++] = sprite.floats[4];
-			this.vertexBuffer[j++] = sprite.floats[5];
-			this.vertexBuffer[j++] = sprite.floats[6];
-			this.vertexBuffer[j++] = sprite.floats[7];
-			this.vertexBuffer[j++] = sprite.floats[8];
-			this.vertexBuffer[j++] = sprite.floats[9];
-			this.vertexBuffer[j++] = sprite.floats[10];
-			this.vertexBuffer[j++] = sprite.floats[11];
-		}
-	}
-	this.vertexPositionAttribute.updateBuffer2(this.vertexBuffer);
-	GL.gl.bindBuffer(34963,this.cubeVerticesIndexBuffer);
-	this.vertexPositionAttribute.vertexAttribPointer();
-	this.vertexUVAttribute.vertexAttribPointer();
-	GL.gl.uniformMatrix4fv(this.projectionMatrixUniform.location,false,this.projection.matrix.buffer);
-	GL.gl.uniform1f(this.alphaUniform.location,this.alphaTransition.getTransition());
-	{
-		GL.gl.activeTexture(33984);
-		GL.gl.bindTexture(3553,this.textureRegistry.get(kumite.spritemesh2.Config.TEST_ATLAS).texture);
-		GL.gl.uniform1i(this.textureUniform.location,0);
-	}
-	GL.gl.drawElements(4,kumite.spritemesh2.SpriteMeshLayer.max * 6,5123,0);
-}
-kumite.spritemesh2.SpriteMeshLayer.prototype.__class__ = kumite.spritemesh2.SpriteMeshLayer;
-kumite.spritemesh2.SpriteMeshLayer.__interfaces__ = [haxe.rtti.Infos,kumite.scene.LayerLifecycle];
-if(!kumite.spritemesh2._SpriteMeshLayer) kumite.spritemesh2._SpriteMeshLayer = {}
-kumite.spritemesh2._SpriteMeshLayer.Vertex = function() { }
-kumite.spritemesh2._SpriteMeshLayer.Vertex.__name__ = ["kumite","spritemesh2","_SpriteMeshLayer","Vertex"];
-kumite.spritemesh2._SpriteMeshLayer.Vertex.prototype.__class__ = kumite.spritemesh2._SpriteMeshLayer.Vertex;
-kumite.spritemesh2._SpriteMeshLayer.Fragment = function() { }
-kumite.spritemesh2._SpriteMeshLayer.Fragment.__name__ = ["kumite","spritemesh2","_SpriteMeshLayer","Fragment"];
-kumite.spritemesh2._SpriteMeshLayer.Fragment.prototype.__class__ = kumite.spritemesh2._SpriteMeshLayer.Fragment;
 kumite.time.TimeController = function(p) { if( p === $_ ) return; {
 	null;
 }}
@@ -5824,6 +5800,32 @@ Matrix3.prototype.toString = function() {
 	return result;
 }
 Matrix3.prototype.__class__ = Matrix3;
+kumite.spritemesh.SpriteMeshScene = function(p) { if( p === $_ ) return; {
+	null;
+}}
+kumite.spritemesh.SpriteMeshScene.__name__ = ["kumite","spritemesh","SpriteMeshScene"];
+kumite.spritemesh.SpriteMeshScene.prototype.paperBackground = null;
+kumite.spritemesh.SpriteMeshScene.prototype.spritemesh2ColorLayer = null;
+kumite.spritemesh.SpriteMeshScene.prototype.layer = null;
+kumite.spritemesh.SpriteMeshScene.prototype.displayList = null;
+kumite.spritemesh.SpriteMeshScene.prototype.sceneInit = function(scene) {
+	scene.id = scene.name = "SPRITES";
+	scene.addLayer(new kumite.scene.DelegateLayer(this.paperBackground));
+	scene.addLayer(new kumite.scene.DelegateLayer(this.layer));
+	scene.addLayer(new kumite.scene.DelegateLayer(this.displayList));
+}
+kumite.spritemesh.SpriteMeshScene.prototype.initTransition = function(transitionContext) {
+	this.spritemesh2ColorLayer.transitions.enableChild("alpha");
+}
+kumite.spritemesh.SpriteMeshScene.prototype.renderTransition = function(transitionContext) {
+	this.render();
+}
+kumite.spritemesh.SpriteMeshScene.prototype.render = function() {
+	GL.gl.clearColor(1,1,1,0);
+	GL.gl.clear(17664);
+}
+kumite.spritemesh.SpriteMeshScene.prototype.__class__ = kumite.spritemesh.SpriteMeshScene;
+kumite.spritemesh.SpriteMeshScene.__interfaces__ = [haxe.rtti.Infos,kumite.scene.SceneLifecycle];
 kumite.projection.Projection = function(p) { if( p === $_ ) return; {
 	null;
 }}
@@ -5905,14 +5907,14 @@ for(var k in bpmjs.TaskGroup.prototype ) bpmjs.SequencerTaskGroup.prototype[k] =
 bpmjs.SequencerTaskGroup.prototype.__class__ = bpmjs.SequencerTaskGroup;
 Main = function(canvas) { if( canvas === $_ ) return; {
 	try {
-		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.textureregistry.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.time.Config,kumite.projection.Config,kumite.camera.Config,kumite.mouse.Config,kumite.displaylist.ConfigAsLayer,kumite.vjinterface.Config,kumite.scene.Config,kumite.flyingman.Config,kumite.testscene.Config,kumite.spritemesh2.Config]);
+		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.textureregistry.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.time.Config,kumite.projection.Config,kumite.camera.Config,kumite.mouse.Config,kumite.displaylist.ConfigAsLayer,kumite.vjinterface.Config,kumite.scene.Config,kumite.flyingman.Config,kumite.testscene.Config,kumite.spritemesh.Config]);
 	}
 	catch( $e0 ) {
 		{
 			var e = $e0;
 			{
 				{
-					Log.posInfo = { fileName : "Main.hx", lineNumber : 49, className : "Main", methodName : "new"};
+					Log.posInfo = { fileName : "Main.hx", lineNumber : 48, className : "Main", methodName : "new"};
 					if(Log.filter(LogLevel.ERROR)) {
 						Log.fetchInput("Error building application! \n" + e,null,null,null,null,null,null);
 						console.error(Log.createMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
@@ -5952,6 +5954,48 @@ haxe.Log.clear = function() {
 	js.Boot.__clear_trace();
 }
 haxe.Log.prototype.__class__ = haxe.Log;
+GLTextureAtlasPartConfig = function(p) { if( p === $_ ) return; {
+	null;
+}}
+GLTextureAtlasPartConfig.__name__ = ["GLTextureAtlasPartConfig"];
+GLTextureAtlasPartConfig.create = function(atlas,location) {
+	var result = new GLTextureAtlasPartConfig();
+	result.location = location;
+	result.atlas = atlas;
+	atlas.add(result);
+	return result;
+}
+GLTextureAtlasPartConfig.prototype.location = null;
+GLTextureAtlasPartConfig.prototype.atlas = null;
+GLTextureAtlasPartConfig.prototype.width = null;
+GLTextureAtlasPartConfig.prototype.height = null;
+GLTextureAtlasPartConfig.prototype.u0 = null;
+GLTextureAtlasPartConfig.prototype.v0 = null;
+GLTextureAtlasPartConfig.prototype.u1 = null;
+GLTextureAtlasPartConfig.prototype.v1 = null;
+GLTextureAtlasPartConfig.prototype.toString = function() {
+	return "[GLTextureAtlasPartConfig: " + this.location + " uv:" + this.u0 + ", " + this.v0 + ", " + this.u1 + ", " + this.v1 + ", size: " + this.width + ", " + this.height + " ]";
+}
+GLTextureAtlasPartConfig.prototype.__class__ = GLTextureAtlasPartConfig;
+kumite.spritemesh.Config = function(p) { if( p === $_ ) return; {
+	this.spritemesh2ColorLayer = new kumite.layer.ColorLayer();
+	this.spritemesh2ColorLayer.color = new Color(1.0,1.0,1.0,1);
+	this.spritemesh2ColorLayer.layerId = "spritemesh2ColorLayer";
+	this.layer = new kumite.spritemesh.SpriteMeshLayer();
+	this.scene = new kumite.spritemesh.SpriteMeshScene();
+}}
+kumite.spritemesh.Config.__name__ = ["kumite","spritemesh","Config"];
+kumite.spritemesh.Config.prototype.textureRegistry = null;
+kumite.spritemesh.Config.prototype.layer = null;
+kumite.spritemesh.Config.prototype.scene = null;
+kumite.spritemesh.Config.prototype.spritemesh2ColorLayer = null;
+kumite.spritemesh.Config.prototype.startPrepare = function() {
+	var group = new bpmjs.SequencerTaskGroup();
+	group.add(new GLTextureAtlasLoadingTask(this.textureRegistry,kumite.spritemesh.Config.TEST_ATLAS));
+	return group;
+}
+kumite.spritemesh.Config.prototype.__class__ = kumite.spritemesh.Config;
+kumite.spritemesh.Config.__interfaces__ = [haxe.rtti.Infos];
 kumite.layer.ColorLayer = function(p) { if( p === $_ ) return; {
 	this.layerId = "TestBackgroundLayer";
 	this.color = new Color(1,1,1,0.2);
@@ -6465,48 +6509,6 @@ bpmjs.ObjectProxyTask.prototype.handleError = function(v) {
 	this.error(this,v.error);
 }
 bpmjs.ObjectProxyTask.prototype.__class__ = bpmjs.ObjectProxyTask;
-GLTextureAtlasPartConfig = function(p) { if( p === $_ ) return; {
-	null;
-}}
-GLTextureAtlasPartConfig.__name__ = ["GLTextureAtlasPartConfig"];
-GLTextureAtlasPartConfig.create = function(atlas,location) {
-	var result = new GLTextureAtlasPartConfig();
-	result.location = location;
-	result.atlas = atlas;
-	atlas.add(result);
-	return result;
-}
-GLTextureAtlasPartConfig.prototype.location = null;
-GLTextureAtlasPartConfig.prototype.atlas = null;
-GLTextureAtlasPartConfig.prototype.width = null;
-GLTextureAtlasPartConfig.prototype.height = null;
-GLTextureAtlasPartConfig.prototype.u0 = null;
-GLTextureAtlasPartConfig.prototype.v0 = null;
-GLTextureAtlasPartConfig.prototype.u1 = null;
-GLTextureAtlasPartConfig.prototype.v1 = null;
-GLTextureAtlasPartConfig.prototype.toString = function() {
-	return "[GLTextureAtlasPartConfig: " + this.location + " uv:" + this.u0 + ", " + this.v0 + ", " + this.u1 + ", " + this.v1 + ", size: " + this.width + ", " + this.height + " ]";
-}
-GLTextureAtlasPartConfig.prototype.__class__ = GLTextureAtlasPartConfig;
-kumite.spritemesh2.Config = function(p) { if( p === $_ ) return; {
-	this.spritemesh2ColorLayer = new kumite.layer.ColorLayer();
-	this.spritemesh2ColorLayer.color = new Color(1.0,1.0,1.0,1);
-	this.spritemesh2ColorLayer.layerId = "spritemesh2ColorLayer";
-	this.layer = new kumite.spritemesh2.SpriteMeshLayer();
-	this.scene = new kumite.spritemesh2.SpriteMeshScene();
-}}
-kumite.spritemesh2.Config.__name__ = ["kumite","spritemesh2","Config"];
-kumite.spritemesh2.Config.prototype.textureRegistry = null;
-kumite.spritemesh2.Config.prototype.layer = null;
-kumite.spritemesh2.Config.prototype.scene = null;
-kumite.spritemesh2.Config.prototype.spritemesh2ColorLayer = null;
-kumite.spritemesh2.Config.prototype.startPrepare = function() {
-	var group = new bpmjs.SequencerTaskGroup();
-	group.add(new GLTextureAtlasLoadingTask(this.textureRegistry,kumite.spritemesh2.Config.TEST_ATLAS));
-	return group;
-}
-kumite.spritemesh2.Config.prototype.__class__ = kumite.spritemesh2.Config;
-kumite.spritemesh2.Config.__interfaces__ = [haxe.rtti.Infos];
 kumite.flyingman.Config = function(p) { if( p === $_ ) return; {
 	this.paperBackground = new kumite.layer.TextureLayer();
 	this.paperBackground.textureConfig = kumite.flyingman.Config.PAPER;
@@ -8119,8 +8121,6 @@ Matrix4.i41 = 3;
 Matrix4.i42 = 7;
 Matrix4.i43 = 11;
 Matrix4.i44 = 15;
-kumite.spritemesh2.SpriteMeshScene.__meta__ = { fields : { spritemesh2ColorLayer : { Inject : null}, layer : { Inject : null}, displayList : { Inject : null}}};
-kumite.spritemesh2.SpriteMeshScene.__rtti = "<class path=\"kumite.spritemesh2.SpriteMeshScene\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.SceneLifecycle\"/>\n\t<spritemesh2ColorLayer public=\"1\"><c path=\"kumite.layer.ColorLayer\"/></spritemesh2ColorLayer>\n\t<layer public=\"1\"><c path=\"kumite.spritemesh2.SpriteMeshLayer\"/></layer>\n\t<displayList public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayList>\n\t<sceneInit public=\"1\" set=\"method\" line=\"25\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></sceneInit>\n\t<initTransition public=\"1\" set=\"method\" line=\"33\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></initTransition>\n\t<renderTransition public=\"1\" set=\"method\" line=\"38\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"43\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"23\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.testscene.TestScene4.__meta__ = { fields : { testLayer2 : { Inject : null}, testLayer3 : { Inject : null}, textureLayer2 : { Inject : null}, colorLayer3 : { Inject : null}, displayList : { Inject : null}}};
 kumite.testscene.TestScene4.__rtti = "<class path=\"kumite.testscene.TestScene4\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.SceneLifecycle\"/>\n\t<SCENE_ID public=\"1\" line=\"13\" static=\"1\"><c path=\"String\"/></SCENE_ID>\n\t<testLayer2 public=\"1\"><c path=\"kumite.layer.TestLayer\"/></testLayer2>\n\t<testLayer3 public=\"1\"><c path=\"kumite.layer.TestLayer\"/></testLayer3>\n\t<textureLayer2 public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></textureLayer2>\n\t<colorLayer3 public=\"1\"><c path=\"kumite.layer.ColorLayer\"/></colorLayer3>\n\t<displayList public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayList>\n\t<sceneInit public=\"1\" set=\"method\" line=\"32\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></sceneInit>\n\t<initTransition public=\"1\" set=\"method\" line=\"42\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></initTransition>\n\t<renderTransition public=\"1\" set=\"method\" line=\"57\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"62\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"30\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.testscene.TestScene4.SCENE_ID = "GREEN-BLUE";
@@ -8147,6 +8147,11 @@ kumite.testscene.TestScene1.SCENE_ID = "EMPTY";
 hsl.haxe._DirectSignaler.PropagationStatus.IMMEDIATELY_STOPPED = 1;
 hsl.haxe._DirectSignaler.PropagationStatus.STOPPED = 2;
 hsl.haxe._DirectSignaler.PropagationStatus.UNDISTURBED = 3;
+kumite.spritemesh.SpriteMeshLayer.__meta__ = { fields : { stage : { Inject : null}, time : { Inject : null}, projection : { Inject : null}, textureRegistry : { Inject : null}}};
+kumite.spritemesh.SpriteMeshLayer.__rtti = "<class path=\"kumite.spritemesh.SpriteMeshLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<max public=\"1\" line=\"17\" static=\"1\"><c path=\"Int\"/></max>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<layerId public=\"1\"><c path=\"String\"/></layerId>\n\t<transitions public=\"1\"><c path=\"kumite.layer.LayerTransitions\"/></transitions>\n\t<alphaTransition public=\"1\"><c path=\"kumite.layer.LayerTransition\"/></alphaTransition>\n\t<sprites><c path=\"Array\"><c path=\"kumite.spritemesh.Sprite\"/></c></sprites>\n\t<cameraMatrix><c path=\"Matrix4\"/></cameraMatrix>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexBuffer><c path=\"Float32Array\"/></vertexBuffer>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexUVBuffer><c path=\"Float32Array\"/></vertexUVBuffer>\n\t<vertexUVAttribute><c path=\"GLAttribLocation\"/></vertexUVAttribute>\n\t<cubeVerticesIndexBuffer><c path=\"WebGLBuffer\"/></cubeVerticesIndexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<viewMatrixUniform><c path=\"GLUniformLocation\"/></viewMatrixUniform>\n\t<alphaUniform><c path=\"GLUniformLocation\"/></alphaUniform>\n\t<textureUniform><c path=\"GLUniformLocation\"/></textureUniform>\n\t<init public=\"1\" set=\"method\" line=\"74\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"149\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<orderByZ set=\"method\" line=\"155\"><f a=\"s1:s2\">\n\t<c path=\"kumite.spritemesh.Sprite\"/>\n\t<c path=\"kumite.spritemesh.Sprite\"/>\n\t<c path=\"Int\"/>\n</f></orderByZ>\n\t<render public=\"1\" set=\"method\" line=\"166\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"54\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.spritemesh.SpriteMeshLayer.max = 12000;
+kumite.spritemesh._SpriteMeshLayer.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec3 vertexPosition;\n\tattribute vec2 vertexUV;\n\n\tuniform mat4 projectionMatrix;\n\n\tvarying vec2 uv;\n\tvarying vec3 v;\n\n\tvoid main(void)\n\t{\n\t\tuv = vertexUV;\n\t\tv = vertexPosition;\n\t\tgl_Position = projectionMatrix * vec4(vertexPosition, 1.0);\n\t}\n\n"]}};
+kumite.spritemesh._SpriteMeshLayer.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform sampler2D texture;\n\tuniform float alpha;\n\n\tvarying vec2 uv;\n\tvarying vec3 v;\n\n\tvoid main(void)\n\t{\n\t\tvec4 color = texture2D(texture, uv);\n\t\tgl_FragColor = color * vec4(1.0, 1.0, 1.0, alpha) - vec4(1.0, 1.0, 1.0, 0.0) * (cos(v.z / 100.0) - 1.0);\n\t}\n\n\n"]}};
 bpmjs.Sequencer.__meta__ = { fields : { context : { Inject : null}}};
 bpmjs.Sequencer.__rtti = "<class path=\"bpmjs.Sequencer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context public=\"1\"><c path=\"bpmjs.Context\"/></context>\n\t<start public=\"1\" set=\"method\" line=\"14\"><f a=\"name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></start>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.flyingman.FlyingManLayer.__meta__ = { fields : { stage : { Inject : null}, time : { Inject : null}, projection : { Inject : null}, graph : { Inject : null}}};
@@ -8178,16 +8183,23 @@ kumite.textureregistry.Config.__rtti = "<class path=\"kumite.textureregistry.Con
 kumite.camera.CameraMouseMover.__meta__ = { fields : { camera : { Inject : null}, init : { Sequence : ["boot","init"]}}};
 kumite.camera.CameraMouseMover.__rtti = "<class path=\"kumite.camera.CameraMouseMover\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<init public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateCamera set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></updateCamera>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.webgl.Config.__rtti = "<class path=\"kumite.webgl.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<initAction public=\"1\"><c path=\"kumite.webgl.InitAction\"/></initAction>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.spritemesh2.SpriteMeshLayer.__meta__ = { fields : { stage : { Inject : null}, time : { Inject : null}, projection : { Inject : null}, textureRegistry : { Inject : null}}};
-kumite.spritemesh2.SpriteMeshLayer.__rtti = "<class path=\"kumite.spritemesh2.SpriteMeshLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<max public=\"1\" line=\"17\" static=\"1\"><c path=\"Int\"/></max>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<layerId public=\"1\"><c path=\"String\"/></layerId>\n\t<transitions public=\"1\"><c path=\"kumite.layer.LayerTransitions\"/></transitions>\n\t<alphaTransition public=\"1\"><c path=\"kumite.layer.LayerTransition\"/></alphaTransition>\n\t<sprites><c path=\"Array\"><c path=\"kumite.spritemesh2.Sprite\"/></c></sprites>\n\t<cameraMatrix><c path=\"Matrix4\"/></cameraMatrix>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexBuffer><c path=\"Float32Array\"/></vertexBuffer>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexUVBuffer><c path=\"Float32Array\"/></vertexUVBuffer>\n\t<vertexUVAttribute><c path=\"GLAttribLocation\"/></vertexUVAttribute>\n\t<cubeVerticesIndexBuffer><c path=\"WebGLBuffer\"/></cubeVerticesIndexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<viewMatrixUniform><c path=\"GLUniformLocation\"/></viewMatrixUniform>\n\t<alphaUniform><c path=\"GLUniformLocation\"/></alphaUniform>\n\t<textureUniform><c path=\"GLUniformLocation\"/></textureUniform>\n\t<init public=\"1\" set=\"method\" line=\"74\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"149\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<orderByZ set=\"method\" line=\"155\"><f a=\"s1:s2\">\n\t<c path=\"kumite.spritemesh2.Sprite\"/>\n\t<c path=\"kumite.spritemesh2.Sprite\"/>\n\t<c path=\"Int\"/>\n</f></orderByZ>\n\t<render public=\"1\" set=\"method\" line=\"166\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"54\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.spritemesh2.SpriteMeshLayer.max = 12000;
-kumite.spritemesh2._SpriteMeshLayer.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec3 vertexPosition;\n\tattribute vec2 vertexUV;\n\n\tuniform mat4 projectionMatrix;\n\n\tvarying vec2 uv;\n\tvarying vec3 v;\n\n\tvoid main(void)\n\t{\n\t\tuv = vertexUV;\n\t\tv = vertexPosition;\n\t\tgl_Position = projectionMatrix * vec4(vertexPosition, 1.0);\n\t}\n\n"]}};
-kumite.spritemesh2._SpriteMeshLayer.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform sampler2D texture;\n\tuniform float alpha;\n\n\tvarying vec2 uv;\n\tvarying vec3 v;\n\n\tvoid main(void)\n\t{\n\t\tvec4 color = texture2D(texture, uv);\n\t\tgl_FragColor = color * vec4(1.0, 1.0, 1.0, alpha) - vec4(1.0, 1.0, 1.0, 0.0) * (cos(v.z / 100.0) - 1.0);\n\t}\n\n\n"]}};
 kumite.time.TimeController.__meta__ = { fields : { time : { Inject : null}, messenger : { Messenger : null}, startComplete : { Sequence : ["boot","startComplete"]}}};
 kumite.time.TimeController.__rtti = "<class path=\"kumite.time.TimeController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<startComplete public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"24\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<new public=\"1\" set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 reflect.ClassInfo.cache = new Hash();
+kumite.spritemesh.SpriteMeshScene.__meta__ = { fields : { paperBackground : { Inject : null}, spritemesh2ColorLayer : { Inject : null}, layer : { Inject : null}, displayList : { Inject : null}}};
+kumite.spritemesh.SpriteMeshScene.__rtti = "<class path=\"kumite.spritemesh.SpriteMeshScene\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.SceneLifecycle\"/>\n\t<paperBackground public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></paperBackground>\n\t<spritemesh2ColorLayer public=\"1\"><c path=\"kumite.layer.ColorLayer\"/></spritemesh2ColorLayer>\n\t<layer public=\"1\"><c path=\"kumite.spritemesh.SpriteMeshLayer\"/></layer>\n\t<displayList public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayList>\n\t<sceneInit public=\"1\" set=\"method\" line=\"28\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></sceneInit>\n\t<initTransition public=\"1\" set=\"method\" line=\"36\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></initTransition>\n\t<renderTransition public=\"1\" set=\"method\" line=\"41\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"46\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"26\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.webgl.InitAction.__meta__ = { fields : { canvas : { Inject : null}, init : { Sequence : ["boot","init"]}}};
 kumite.webgl.InitAction.__rtti = "<class path=\"kumite.webgl.InitAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<antialias public=\"1\"><e path=\"Bool\"/></antialias>\n\t<init public=\"1\" set=\"method\" line=\"16\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<new public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.spritemesh.Config.__meta__ = { fields : { textureRegistry : { Inject : null}, startPrepare : { Sequence : ["boot","startPrepare"]}}};
+kumite.spritemesh.Config.__rtti = "<class path=\"kumite.spritemesh.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<TEST_ATLAS public=\"1\" line=\"7\" static=\"1\"><c path=\"GLTextureAtlasConfig\"/></TEST_ATLAS>\n\t<MAN1 public=\"1\" line=\"9\" static=\"1\"><c path=\"GLTextureAtlasPartConfig\"/></MAN1>\n\t<MAN2 public=\"1\" line=\"10\" static=\"1\"><c path=\"GLTextureAtlasPartConfig\"/></MAN2>\n\t<MAN3 public=\"1\" line=\"11\" static=\"1\"><c path=\"GLTextureAtlasPartConfig\"/></MAN3>\n\t<FLOWER1 public=\"1\" line=\"12\" static=\"1\"><c path=\"GLTextureAtlasPartConfig\"/></FLOWER1>\n\t<FLOWER2 public=\"1\" line=\"13\" static=\"1\"><c path=\"GLTextureAtlasPartConfig\"/></FLOWER2>\n\t<BUTTERFLY public=\"1\" line=\"14\" static=\"1\"><c path=\"GLTextureAtlasPartConfig\"/></BUTTERFLY>\n\t<BIER public=\"1\" line=\"15\" static=\"1\"><c path=\"GLTextureAtlasPartConfig\"/></BIER>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<layer public=\"1\"><c path=\"kumite.spritemesh.SpriteMeshLayer\"/></layer>\n\t<scene public=\"1\"><c path=\"kumite.spritemesh.SpriteMeshScene\"/></scene>\n\t<spritemesh2ColorLayer public=\"1\"><c path=\"kumite.layer.ColorLayer\"/></spritemesh2ColorLayer>\n\t<startPrepare public=\"1\" set=\"method\" line=\"35\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></startPrepare>\n\t<new public=\"1\" set=\"method\" line=\"24\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.spritemesh.Config.TEST_ATLAS = GLTextureAtlasConfig.create(2048,2048,9985);
+kumite.spritemesh.Config.MAN1 = GLTextureAtlasPartConfig.create(kumite.spritemesh.Config.TEST_ATLAS,"data/image/flyingman/man1.png");
+kumite.spritemesh.Config.MAN2 = GLTextureAtlasPartConfig.create(kumite.spritemesh.Config.TEST_ATLAS,"data/image/flyingman/man2.png");
+kumite.spritemesh.Config.MAN3 = GLTextureAtlasPartConfig.create(kumite.spritemesh.Config.TEST_ATLAS,"data/image/flyingman/man3.png");
+kumite.spritemesh.Config.FLOWER1 = GLTextureAtlasPartConfig.create(kumite.spritemesh.Config.TEST_ATLAS,"data/image/flyingman/flower1.png");
+kumite.spritemesh.Config.FLOWER2 = GLTextureAtlasPartConfig.create(kumite.spritemesh.Config.TEST_ATLAS,"data/image/flyingman/flower2.png");
+kumite.spritemesh.Config.BUTTERFLY = GLTextureAtlasPartConfig.create(kumite.spritemesh.Config.TEST_ATLAS,"data/image/flyingman/butterfly.png");
+kumite.spritemesh.Config.BIER = GLTextureAtlasPartConfig.create(kumite.spritemesh.Config.TEST_ATLAS,"data/image/bierdeckel.png");
 kumite.layer.ColorLayer.__meta__ = { fields : { stage : { Inject : null}, time : { Inject : null}}};
 kumite.layer.ColorLayer.__rtti = "<class path=\"kumite.layer.ColorLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<layerId public=\"1\"><c path=\"String\"/></layerId>\n\t<transitions public=\"1\"><c path=\"kumite.layer.LayerTransitions\"/></transitions>\n\t<cutTransition public=\"1\"><c path=\"kumite.layer.LayerTransition\"/></cutTransition>\n\t<moveTransition public=\"1\"><c path=\"kumite.layer.LayerTransition\"/></moveTransition>\n\t<alphaTransition public=\"1\"><c path=\"kumite.layer.LayerTransition\"/></alphaTransition>\n\t<color public=\"1\"><c path=\"Color\"/></color>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<worldViewMatrixUniform><c path=\"GLUniformLocation\"/></worldViewMatrixUniform>\n\t<colorUniform><c path=\"GLUniformLocation\"/></colorUniform>\n\t<init public=\"1\" set=\"method\" line=\"49\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"66\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"72\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"38\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.layer._ColorLayer.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 worldViewMatrix;\n\n\tvarying vec4 vertex;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);\n\t\tvertex = vec4(vertexPosition, 0.0, 1.0);\n\t}\n\n"]}};
@@ -8198,16 +8210,6 @@ kumite.vjinterface.VJInterface.__rtti = "<class path=\"kumite.vjinterface.VJInte
 kumite.displaylist.DisplayListLayer.__meta__ = { fields : { stage : { Inject : null}}};
 kumite.displaylist.DisplayListLayer.__rtti = "<class path=\"kumite.displaylist.DisplayListLayer\" params=\"\">\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<layerId public=\"1\"><c path=\"String\"/></layerId>\n\t<transition public=\"1\"><c path=\"Float\"/></transition>\n\t<renderer><c path=\"GLDisplayListRenderer\"/></renderer>\n\t<init public=\"1\" set=\"method\" line=\"25\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"32\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"38\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<new public=\"1\" set=\"method\" line=\"23\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 haxe.Timer.arr = new Array();
-kumite.spritemesh2.Config.__meta__ = { fields : { textureRegistry : { Inject : null}, startPrepare : { Sequence : ["boot","startPrepare"]}}};
-kumite.spritemesh2.Config.__rtti = "<class path=\"kumite.spritemesh2.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<TEST_ATLAS public=\"1\" line=\"7\" static=\"1\"><c path=\"GLTextureAtlasConfig\"/></TEST_ATLAS>\n\t<MAN1 public=\"1\" line=\"9\" static=\"1\"><c path=\"GLTextureAtlasPartConfig\"/></MAN1>\n\t<MAN2 public=\"1\" line=\"10\" static=\"1\"><c path=\"GLTextureAtlasPartConfig\"/></MAN2>\n\t<MAN3 public=\"1\" line=\"11\" static=\"1\"><c path=\"GLTextureAtlasPartConfig\"/></MAN3>\n\t<FLOWER1 public=\"1\" line=\"12\" static=\"1\"><c path=\"GLTextureAtlasPartConfig\"/></FLOWER1>\n\t<FLOWER2 public=\"1\" line=\"13\" static=\"1\"><c path=\"GLTextureAtlasPartConfig\"/></FLOWER2>\n\t<BUTTERFLY public=\"1\" line=\"14\" static=\"1\"><c path=\"GLTextureAtlasPartConfig\"/></BUTTERFLY>\n\t<BIER public=\"1\" line=\"15\" static=\"1\"><c path=\"GLTextureAtlasPartConfig\"/></BIER>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<layer public=\"1\"><c path=\"kumite.spritemesh2.SpriteMeshLayer\"/></layer>\n\t<scene public=\"1\"><c path=\"kumite.spritemesh2.SpriteMeshScene\"/></scene>\n\t<spritemesh2ColorLayer public=\"1\"><c path=\"kumite.layer.ColorLayer\"/></spritemesh2ColorLayer>\n\t<startPrepare public=\"1\" set=\"method\" line=\"35\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></startPrepare>\n\t<new public=\"1\" set=\"method\" line=\"24\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.spritemesh2.Config.TEST_ATLAS = GLTextureAtlasConfig.create(2048,2048,9985);
-kumite.spritemesh2.Config.MAN1 = GLTextureAtlasPartConfig.create(kumite.spritemesh2.Config.TEST_ATLAS,"data/image/flyingman/man1.png");
-kumite.spritemesh2.Config.MAN2 = GLTextureAtlasPartConfig.create(kumite.spritemesh2.Config.TEST_ATLAS,"data/image/flyingman/man2.png");
-kumite.spritemesh2.Config.MAN3 = GLTextureAtlasPartConfig.create(kumite.spritemesh2.Config.TEST_ATLAS,"data/image/flyingman/man3.png");
-kumite.spritemesh2.Config.FLOWER1 = GLTextureAtlasPartConfig.create(kumite.spritemesh2.Config.TEST_ATLAS,"data/image/flyingman/flower1.png");
-kumite.spritemesh2.Config.FLOWER2 = GLTextureAtlasPartConfig.create(kumite.spritemesh2.Config.TEST_ATLAS,"data/image/flyingman/flower2.png");
-kumite.spritemesh2.Config.BUTTERFLY = GLTextureAtlasPartConfig.create(kumite.spritemesh2.Config.TEST_ATLAS,"data/image/flyingman/butterfly.png");
-kumite.spritemesh2.Config.BIER = GLTextureAtlasPartConfig.create(kumite.spritemesh2.Config.TEST_ATLAS,"data/image/bierdeckel.png");
 kumite.flyingman.Config.__meta__ = { fields : { textureRegistry : { Inject : null}, startPrepare : { Sequence : ["boot","startPrepare"]}}};
 kumite.flyingman.Config.__rtti = "<class path=\"kumite.flyingman.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<PAPER public=\"1\" line=\"7\" static=\"1\"><c path=\"GLTextureConfig\"/></PAPER>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<paperBackground public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></paperBackground>\n\t<flyingManGraph public=\"1\"><c path=\"kumite.flyingman.FlyingManGraph\"/></flyingManGraph>\n\t<flyingManLayer3 public=\"1\"><c path=\"kumite.flyingman.FlyingManLayer\"/></flyingManLayer3>\n\t<flyingManScene3 public=\"1\"><c path=\"kumite.flyingman.FlyingManScene\"/></flyingManScene3>\n\t<flyingManLayer1 public=\"1\"><c path=\"kumite.flyingman.FlyingManLayer\"/></flyingManLayer1>\n\t<flyingManScene1 public=\"1\"><c path=\"kumite.flyingman.FlyingManScene\"/></flyingManScene1>\n\t<flyingManLayer2 public=\"1\"><c path=\"kumite.flyingman.FlyingManLayer\"/></flyingManLayer2>\n\t<flyingManScene2 public=\"1\"><c path=\"kumite.flyingman.FlyingManScene\"/></flyingManScene2>\n\t<flyingManLayer4 public=\"1\"><c path=\"kumite.flyingman.FlyingManLayer\"/></flyingManLayer4>\n\t<flyingManScene4 public=\"1\"><c path=\"kumite.flyingman.FlyingManScene\"/></flyingManScene4>\n\t<startPrepare public=\"1\" set=\"method\" line=\"58\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></startPrepare>\n\t<new public=\"1\" set=\"method\" line=\"28\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.flyingman.Config.PAPER = GLTextureConfig.create("data/image/flyingman/paper.jpg");
