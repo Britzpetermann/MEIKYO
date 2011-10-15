@@ -355,7 +355,31 @@ class Matrix4
 		tempMatrix1.setTranslation(x, y, z);
 		append(tempMatrix1);
 	}
-	
+
+	public function appendTranslation2(x : Float, y : Float, z : Float)
+	{
+		var b41 = buffer[i41];
+		var b42 = buffer[i42];
+		var b43 = buffer[i43];
+		var b44 = buffer[i44];
+		
+		buffer[i11] += x * b41;
+		buffer[i21] += y * b41;
+		buffer[i31] += z * b41;
+		
+		buffer[i12] += x * b42;
+		buffer[i22] += y * b42;
+		buffer[i32] += z * b42;
+		
+		buffer[i13] += x * b43;
+		buffer[i23] += y * b43;
+		buffer[i33] += z * b43;
+		
+		buffer[i14] += x * b44;
+		buffer[i24] += y * b44;
+		buffer[i34] += z * b44;
+	}
+
 	public function appendScale(x : Float, y : Float, z : Float)
 	{
 		tempMatrix1.setScale(x, y, z);

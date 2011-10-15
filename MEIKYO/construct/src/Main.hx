@@ -41,7 +41,7 @@ class Main {
 					kumite.flyingman.Config,
 					kumite.testscene.Config,
 					kumite.spritemesh2.Config,
-					kumite.spritemesh.Config,
+					//kumite.spritemesh.Config,
 				]);
 		}
 		catch(e : Dynamic)

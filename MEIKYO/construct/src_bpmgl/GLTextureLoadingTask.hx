@@ -16,7 +16,7 @@ class GLTextureLoadingTask extends bpmjs.ImageLoaderTask
 	
 	override function doStart()
 	{
-		location = textureConfig.path;
+		location = textureConfig.location;
 		super.doStart();
 	}
 	
@@ -26,7 +26,7 @@ class GLTextureLoadingTask extends bpmjs.ImageLoaderTask
 		var testPowerOfTwoHeight = Std.int(Math2.nextPowerOf2(image.height));
 		if (testPowerOfTwoWidth != image.width || testPowerOfTwoHeight != image.height)
 		{
-			Log.warn("Image", textureConfig.path, "size must be a valid texture size! Resizing...");
+			Log.warn("Image", textureConfig.location, "size must be a valid texture size! Resizing...");
 			
 			var canvasGraphic = new CanvasGraphic();
 			canvasGraphic.width = Std.int(testPowerOfTwoWidth / 2);
@@ -39,7 +39,7 @@ class GLTextureLoadingTask extends bpmjs.ImageLoaderTask
 		{
 			textureRegistry.register(textureConfig, textureRegistry.createGLTextureFromImage(image, textureConfig.filter));
 		}
-		Log.info("Complete: ", textureConfig.path);
+		Log.info("Complete: ", textureConfig.location);
 		complete();
 	}
 }

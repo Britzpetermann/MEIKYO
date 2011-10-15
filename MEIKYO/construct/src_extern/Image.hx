@@ -6,5 +6,8 @@ extern class Image implements ImageData
 	var width : Int;
 	var height : Int;
 
+	var naturalWidth : Int;
+	var naturalHeight : Int;
+
 	function new() : Void;
 }

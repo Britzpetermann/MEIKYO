@@ -559,6 +559,11 @@ class GL
 	{
 		gl.deleteBuffer(buffer);
 	}
+	
+	public static inline function depthFunc(func : GLenum) : Void
+	{
+		gl.depthFunc(func);
+	}
 
 	public static inline function disable(cap : GLenum) : Void
 	{

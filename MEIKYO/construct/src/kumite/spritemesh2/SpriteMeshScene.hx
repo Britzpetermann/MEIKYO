@@ -25,7 +25,7 @@ class SpriteMeshScene implements SceneLifecycle, implements Infos
 	public function sceneInit(scene : Scene)
 	{
 		scene.id = scene.name = "SPRITE2";
-		scene.addLayer(new DelegateLayer(spritemesh2ColorLayer));
+		//scene.addLayer(new DelegateLayer(spritemesh2ColorLayer));
 		scene.addLayer(new DelegateLayer(layer));
 		scene.addLayer(new DelegateLayer(displayList));
 	}
@@ -42,7 +42,7 @@ class SpriteMeshScene implements SceneLifecycle, implements Infos
 	
 	public function render()
 	{
-		GL.clearColor(0, 0, 0, 1);
-		GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);		
+		GL.clearColor(1, 1, 1, 0);
+		GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT | GL.STENCIL_BUFFER_BIT);		
 	}
 }

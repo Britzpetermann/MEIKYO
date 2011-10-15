@@ -14,7 +14,7 @@ import haxe.rtti.Infos;
 
 class SpriteMeshLayer implements LayerLifecycle, implements Infos
 {
-	public static var max : Int = 15000;
+	public static var max : Int = 12000;
 	
 	@Inject
 	public var stage : Stage;
@@ -25,23 +25,31 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 	@Inject
 	public var projection : Projection;
 	
-	public var layerId : String;
+	@Inject
+	public var textureRegistry : GLTextureRegistry;
 	
-	var vertextBuffer : Float32Array;
+	public var layerId : String;
 	
 	public var transitions : LayerTransitions;
 	public var alphaTransition : LayerTransition;
+	
+	var sprites : Array<Sprite>;
 	
 	var cameraMatrix : Matrix4;
 	
 	var shaderProgram : WebGLProgram;
 
-	var cubeVerticesIndexBuffer : WebGLBuffer;	
+	var vertexBuffer : Float32Array;
 	var vertexPositionAttribute : GLAttribLocation;
+	
+	var vertexUVBuffer : Float32Array;
+	var vertexUVAttribute : GLAttribLocation;
+	
+	var cubeVerticesIndexBuffer : WebGLBuffer;	
 	var projectionMatrixUniform : GLUniformLocation;
-	var worldMatrixUniform : GLUniformLocation;
 	var viewMatrixUniform : GLUniformLocation;
 	var alphaUniform : GLUniformLocation;
+	var textureUniform : GLUniformLocation;
 		
 	public function new()
 	{
@@ -54,35 +62,63 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 		transitions.enableChild("alpha");
 		
 		alphaTransition.ease = ease.Quad.easeInOut;
+		
+		sprites = new Array();
+		for (i in  0...max)
+		{
+			var sprite = new Sprite();
+			sprites.push(sprite);
+		}
 	}
 	
 	public function init()
 	{
 		shaderProgram = GL.createProgram(Vertex, Fragment);
 
-		vertextBuffer = new Float32Array(max * 12);
+		vertexBuffer = new Float32Array(max * 12);
 		for (i in 0...max)
 		{
 			var j = i * 12;
-			vertextBuffer[0 + j] = -1;
-			vertextBuffer[1 + j] = -1;
-			vertextBuffer[2 + j] = 0;
+			vertexBuffer[0 + j] = -1;
+			vertexBuffer[1 + j] = -1;
+			vertexBuffer[2 + j] = 0;
 			
-			vertextBuffer[3 + j] = 1;
-			vertextBuffer[4 + j] = -1;
-			vertextBuffer[5 + j] = 0;
+			vertexBuffer[3 + j] = 1;
+			vertexBuffer[4 + j] = -1;
+			vertexBuffer[5 + j] = 0;
 			
-			vertextBuffer[6 + j] = -1;
-			vertextBuffer[7 + j] = 1;
-			vertextBuffer[8 + j] = 0;
+			vertexBuffer[6 + j] = -1;
+			vertexBuffer[7 + j] = 1;
+			vertexBuffer[8 + j] = 0;
 			
-			vertextBuffer[9 + j] = 1;
-			vertextBuffer[10 + j] = 1;
-			vertextBuffer[11 + j] = 0;
+			vertexBuffer[9 + j] = 1;
+			vertexBuffer[10 + j] = 1;
+			vertexBuffer[11 + j] = 0;
 		}
 		
 		vertexPositionAttribute = GL.getAttribLocation2("vertexPosition", 3, GL.FLOAT);
-		vertexPositionAttribute.updateBuffer(vertextBuffer);
+		vertexPositionAttribute.updateBuffer(vertexBuffer);
+		
+		vertexUVBuffer = new Float32Array(max * 8);
+		for (i in 0...max)
+		{
+			var image = Config.BIER;
+			var j = i * 8;
+			vertexUVBuffer[0 + j] = image.u0;
+			vertexUVBuffer[1 + j] = image.v1;
+			
+			vertexUVBuffer[2 + j] = image.u1;
+			vertexUVBuffer[3 + j] = image.v1;
+			
+			vertexUVBuffer[4 + j] = image.u0;
+			vertexUVBuffer[5 + j] = image.v0;
+			
+			vertexUVBuffer[6 + j] = image.u1;
+			vertexUVBuffer[7 + j] = image.v0;
+		}
+		
+		vertexUVAttribute = GL.getAttribLocation2("vertexUV", 2, GL.FLOAT);
+		vertexUVAttribute.updateBuffer(vertexUVBuffer);
 		
 		cubeVerticesIndexBuffer = GL.createBuffer();  
   		GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, cubeVerticesIndexBuffer); 	
@@ -103,11 +139,11 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 		GL.bufferData(GL.ELEMENT_ARRAY_BUFFER,  elementIndexes, GL.STATIC_DRAW);  
 
 		projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
-		worldMatrixUniform = GL.getUniformLocation("worldMatrix");
 		alphaUniform = GL.getUniformLocation("alpha");
+		textureUniform = GL.getUniformLocation("texture");
 		
 		cameraMatrix = new Matrix4();
-		cameraMatrix.setLookAt(new Vec3(0, 0, 10), new Vec3(0, 0, 0), new Vec3(0, 1, 0));
+		cameraMatrix.setLookAt(new Vec3(0, 0, 70), new Vec3(0, 0, 0), new Vec3(0, 1, 0));
 	}
 	
 	public function renderTransition(transitionContext : TransitionContext)
@@ -115,70 +151,74 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 		transitions.transition = transitionContext.transition;
 		render();
 	}
+	
+	function orderByZ(s1 : Sprite, s2 : Sprite) : Int {
+		var z1 = s1.getZ();
+		var z2 = s2.getZ();
+		if (z1 < z2)
+			return -1;
+		else if (z1 > z2)
+			return 1;
+		else
+			return 0;	
+	}	
 		
 	public function render()
 	{
 		GL.useProgram(shaderProgram);
 		GL.viewport(0, 0, stage.width, stage.height);
 		
-		GL.enable(GL.DEPTH_TEST);
+		GL.disable(GL.DEPTH_TEST);
 		GL.enable(GL.BLEND);
 		GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 		
-		var m = new Matrix4();
 
-
-		var v = new Vec3();
+		var axis = new Vec3(1, 1, 1).normalize();
+		var d = 50;
 		for (i in 0...max)
 		{
-			var j = i * 12;
+			var sprite = sprites[i];
 			
-			m.setIdentity();	
-			m.appendScale(0.2, 0.2, 0.2);
-			m.appendTranslation(Math.sin(time.ms / 1700 + i * 2) * 3, Math.cos(time.ms / 1800 + i /3) * 3, Math.cos(time.ms / 2000 - i) * 3);
-			m.appendRotation(time.ms / 1000, new Vec3(1, 1, 1).normalize());
+			var m = sprite.matrix;
+			m.setScale(1.1, 1.1, 1.1);
+			m.appendRotation(time.ms / 1000 + i * 5, axis);
+			m.appendTranslation(Math.sin(time.ms / 10700 + i * 3.442) * d, Math.cos(time.ms / 17800 + i * 3.443) * d, Math.cos(time.ms / 18000 - i * 3.441) * d);
+			m.appendRotation(time.ms / 5000, axis);
+			m.append(cameraMatrix);
 			
-			v.x = -1;
-			v.y = -1;
-			v.z = 0;
-			v.transform(m);
-			vertextBuffer[0 + j] = v.x;
-			vertextBuffer[1 + j] = v.y;
-			vertextBuffer[2 + j] = v.z;
-			
-			v.x = 1;
-			v.y = -1;
-			v.z = 0;
-			v.transform(m);
-			vertextBuffer[3 + j] = v.x;
-			vertextBuffer[4 + j] = v.y;
-			vertextBuffer[5 + j] = v.z;
-			
-			v.x = -1;
-			v.y = 1;
-			v.z = 0;
-			v.transform(m);
-			vertextBuffer[6 + j] = v.x;
-			vertextBuffer[7 + j] = v.y;
-			vertextBuffer[8 + j] = v.z;
-			
-			v.x = 1;
-			v.y = 1;
-			v.z = 0;
-			v.transform(m);
-			vertextBuffer[9 + j] = v.x;
-			vertextBuffer[10 + j] = v.y;
-			vertextBuffer[11 + j] = v.z;
+			sprite.transform();
 		}
 		
-		vertexPositionAttribute.updateBuffer2(vertextBuffer);
+		untyped __js__("this.sprites.sort(this.orderByZ)");
+		
+		var j = 0;
+		for (i in 0...max)
+		{
+			var sprite = sprites[i];
+			vertexBuffer[j++] = sprite.floats[0];
+			vertexBuffer[j++] = sprite.floats[1];
+			vertexBuffer[j++] = sprite.floats[2];
+			vertexBuffer[j++] = sprite.floats[3];
+			vertexBuffer[j++] = sprite.floats[4];
+			vertexBuffer[j++] = sprite.floats[5];
+			vertexBuffer[j++] = sprite.floats[6];
+			vertexBuffer[j++] = sprite.floats[7];
+			vertexBuffer[j++] = sprite.floats[8];
+			vertexBuffer[j++] = sprite.floats[9];
+			vertexBuffer[j++] = sprite.floats[10];
+			vertexBuffer[j++] = sprite.floats[11];
+		}
+		
+		vertexPositionAttribute.updateBuffer2(vertexBuffer);
 		
 		GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, cubeVerticesIndexBuffer);  
 		vertexPositionAttribute.vertexAttribPointer();
+		vertexUVAttribute.vertexAttribPointer();
 
 		projectionMatrixUniform.setMatrix4(projection.matrix);
-		worldMatrixUniform.setMatrix4(cameraMatrix);
 		alphaUniform.setFloat(alphaTransition.transition);
+		
+		textureUniform.setTexture(textureRegistry.get(Config.TEST_ATLAS));
 		
 		GL.drawElements(GL.TRIANGLES, max * 6, GL.UNSIGNED_SHORT, 0);
 	}
@@ -187,13 +227,18 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 @GLSL("
 
 	attribute vec3 vertexPosition;
+	attribute vec2 vertexUV;
 
 	uniform mat4 projectionMatrix;
-	uniform mat4 worldMatrix;
+
+	varying vec2 uv;
+	varying vec3 v;
 
 	void main(void)
 	{
-		gl_Position = projectionMatrix * worldMatrix * vec4(vertexPosition, 1.0);
+		uv = vertexUV;
+		v = vertexPosition;
+		gl_Position = projectionMatrix * vec4(vertexPosition, 1.0);
 	}
 
 ") private class Vertex {}
@@ -204,11 +249,16 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 		precision highp float;
 	#endif
 
+	uniform sampler2D texture;
 	uniform float alpha;
+
+	varying vec2 uv;
+	varying vec3 v;
 
 	void main(void)
 	{
-		gl_FragColor = vec4(1.0, 1.0, 1.0, alpha);
+		vec4 color = texture2D(texture, uv);
+		gl_FragColor = color * vec4(1.0, 1.0, 1.0, alpha) - vec4(1.0, 1.0, 1.0, 0.0) * (cos(v.z / 100.0) - 1.0);
 	}
 
 

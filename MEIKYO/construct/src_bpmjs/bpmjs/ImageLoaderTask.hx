@@ -5,6 +5,12 @@ class ImageLoaderTask extends Task<ImageLoaderTask>
 	public var location : String;
 
 	public var image : Image;
+	
+	public function new(?location : String)
+	{
+		super();
+		this.location = location;
+	}
 
 	override function doStart()
 	{
