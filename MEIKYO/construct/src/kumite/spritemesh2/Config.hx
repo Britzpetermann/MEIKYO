@@ -13,7 +13,7 @@ class Config implements Infos
 	public static var FLOWER2 : GLTextureAtlasPartConfig = GLTextureAtlasPartConfig.create(TEST_ATLAS, "data/image/flyingman/flower2.png");
 	public static var BUTTERFLY : GLTextureAtlasPartConfig = GLTextureAtlasPartConfig.create(TEST_ATLAS, "data/image/flyingman/butterfly.png");
 	public static var BIER : GLTextureAtlasPartConfig = GLTextureAtlasPartConfig.create(TEST_ATLAS, "data/image/bierdeckel.png");
-	
+		
 	@Inject
 	public var textureRegistry : GLTextureRegistry;
 		
