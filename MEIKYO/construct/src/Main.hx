@@ -38,8 +38,8 @@ class Main {
 					kumite.displaylist.ConfigAsLayer,
 					kumite.vjinterface.Config,
 					kumite.scene.Config,
-					kumite.flyingman.Config,
-					kumite.testscene.Config,
+					//kumite.flyingman.Config,
+					//kumite.testscene.Config,
 					kumite.spritemesh.Config,
 				]);
 		}
@@ -47,6 +47,10 @@ class Main {
 		{
 			Log.error("Error building application! \n" + e);
 		}
+		
+		var i = 1 | 1 << 16;
+		Log.info(i);
+		i = i & 0xffff;
+		Log.info(i);
 	}
-
 }

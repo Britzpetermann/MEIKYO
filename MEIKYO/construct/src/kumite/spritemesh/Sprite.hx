@@ -4,18 +4,20 @@ class Sprite
 {
 	public var matrix : Matrix4;
 	
-	public var floats : Float32Array;
+	public var vertexes : Float32Array;
+	public var normals : Float32Array;
 	
 	public function new()
 	{
 		matrix = new Matrix4();
 		
-		floats = new Float32Array(12);
+		vertexes = new Float32Array(12);
+		normals = new Float32Array(3);
 	}
 	
 	public inline function getZ()
 	{
-		return floats[2];
+		return vertexes[2];
 	}
 	
 	public inline function transform()
@@ -32,21 +34,27 @@ class Sprite
 		var n24 = matrix.n24;
 		var n34 = matrix.n34;
 		
-		floats[0] = -n11 - n12 + n14;
-		floats[1] = -n21 - n22 + n24;
-		floats[2] = -n31 - n32 + n34;
+		vertexes[0] = -n11 - n12 + n14;
+		vertexes[1] = -n21 - n22 + n24;
+		vertexes[2] = -n31 - n32 + n34;
 		
-		floats[3] = n11 - n12 + n14;
-		floats[4] = n21 - n22 + n24;
-		floats[5] = n31 - n32 + n34;
+		vertexes[3] = n11 - n12 + n14;
+		vertexes[4] = n21 - n22 + n24;
+		vertexes[5] = n31 - n32 + n34;
 		
-		floats[6] = -n11 + n12 + n14;
-		floats[7] = -n21 + n22 + n24;
-		floats[8] = -n31 + n32 + n34;
+		vertexes[6] = -n11 + n12 + n14;
+		vertexes[7] = -n21 + n22 + n24;
+		vertexes[8] = -n31 + n32 + n34;
 		
-		floats[9] = n11 + n12 + n14;
-		floats[10] = n21 + n22 + n24;
-		floats[11] = n31 + n32 + n34;
+		vertexes[9] = n11 + n12 + n14;
+		vertexes[10] = n21 + n22 + n24;
+		vertexes[11] = n31 + n32 + n34;
+		
+		var x1 = 0, y1 = 0, z1 = 1;
+
+		normals[0] = matrix.n11 * x1 + matrix.n12 * y1 + matrix.n13 * z1 + matrix.n14;
+		normals[1] = matrix.n21 * x1 + matrix.n22 * y1 + matrix.n23 * z1 + matrix.n24;
+		normals[2] = matrix.n31 * x1 + matrix.n32 * y1 + matrix.n33 * z1 + matrix.n34;		
 	}
 	
 }

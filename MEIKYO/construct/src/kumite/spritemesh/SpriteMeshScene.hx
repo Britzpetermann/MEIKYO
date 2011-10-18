@@ -1,5 +1,6 @@
 package kumite.spritemesh;
 
+import kumite.time.Time;
 import kumite.scene.SceneLifecycle;
 import kumite.scene.TransitionContext;
 import kumite.scene.Scene;
@@ -10,10 +11,6 @@ import haxe.rtti.Infos;
 
 class SpriteMeshScene implements SceneLifecycle, implements Infos
 {
-	
-	@Inject
-	public var paperBackground : kumite.layer.TextureLayer;
-	
 	@Inject
 	public var spritemesh2ColorLayer : kumite.layer.ColorLayer;
 	
@@ -23,12 +20,14 @@ class SpriteMeshScene implements SceneLifecycle, implements Infos
 	@Inject
 	public var displayList : DisplayListLayer;
 	
+	@Inject
+	public var time : Time;
+	
 	public function new();
 	
 	public function sceneInit(scene : Scene)
 	{
 		scene.id = scene.name = "SPRITES";
-		scene.addLayer(new DelegateLayer(paperBackground));
 		scene.addLayer(new DelegateLayer(layer));
 		scene.addLayer(new DelegateLayer(displayList));
 	}
@@ -45,7 +44,7 @@ class SpriteMeshScene implements SceneLifecycle, implements Infos
 	
 	public function render()
 	{
-		GL.clearColor(1, 1, 1, 0);
+		GL.clearColor(0.18, 0.17, 0.2, 0);
 		GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT | GL.STENCIL_BUFFER_BIT);		
 	}
 }

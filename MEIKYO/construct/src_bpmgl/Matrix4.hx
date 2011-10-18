@@ -7,6 +7,7 @@ class Matrix4
 {
 	private static var IDENTITY_BUFFER : Float32Array = createIdentityBuffer();
 	private static var tempMatrix1 : Matrix4 = new Matrix4();
+	private static var tempMatrix2 : Matrix4 = new Matrix4();
 	private static function createIdentityBuffer()
 	{
 		var buffer = new Float32Array(16);
@@ -61,7 +62,7 @@ class Matrix4
 		return this;
 	}
 
-	public inline function set(n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44)
+	public function set(n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44)
 	{
 		this.n11 = n11;
 		this.n21 = n21;
@@ -150,7 +151,7 @@ class Matrix4
 		return this;
 	}
 
-	public function setRotation(angle, axis : {x : Float, y : Float, z : Float})
+	public function setRotation(angle, axis : Vec3)
 	{
 		//axis must be normalized!
 		
@@ -314,6 +315,22 @@ class Matrix4
 		buffer[i44] = 0;
 	}
 		
+	public function append2(a : Matrix4)
+	{
+		for(i in 0...4)
+			for(j in 0...4)
+			{
+				var ij = i + j * 4;
+				tempMatrix2.buffer[ij] = 0;
+				for(k in 0...4)
+				{
+					tempMatrix2.buffer[ij] += a.buffer[i + k * 4] * this.buffer[k + j * 4];
+				}
+			}
+		
+		buffer.set(tempMatrix2.buffer);	
+	}
+		
 	public function append(a : Matrix4)
 	{
 		var b = this;
@@ -386,7 +403,7 @@ class Matrix4
 		append(tempMatrix1);
 	}
 	
-	public function appendRotation(angle, axis : {x : Float, y : Float, z : Float})
+	public function appendRotation(angle, axis : Vec3)
 	{
 		tempMatrix1.setRotation(angle, axis);
 		append(tempMatrix1);
