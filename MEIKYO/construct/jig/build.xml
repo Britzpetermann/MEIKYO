@@ -1,3 +1,45 @@
 <project name="MEIKYO" basedir="../../">
 
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="ant_lib/ant-contrib-0.3.jar" />
+		</classpath>
+	</taskdef>
+
+	<target name="publish_code">
+		<foreach target="upload_file" param="file">
+			<path>
+				<fileset dir="release">
+					<include name="*.*" />
+					<include name="css/*.*" />
+					<include name="bin/*.*" />
+				</fileset>
+			</path>
+		</foreach>
+	</target>
+	
+	<target name="upload_file">
+		<upload file="${file}"/>
+	</target>
+	
+	<macrodef name="upload">
+		<attribute name="file" />
+		<sequential>
+
+			<path id="temp.path">
+				<pathelement location="@{file}" />
+			</path>
+
+			<pathconvert property="file.rel" refid="temp.path">
+				<globmapper from="${basedir}/release/*" to="*" />
+			</pathconvert>
+
+			<ftp password="${bpm_pass}" server="britzpetermann.com" userid="${bpm_user}" verbose="true" remotedir="/subdomains/home/httpdocs/nico/experiments/flyingman" passive="false">
+				<fileset dir="release">
+					<include name="${file.rel}" />
+				</fileset>
+			</ftp>
+		</sequential>
+	</macrodef>
+	
 </project>
