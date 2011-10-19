@@ -14,6 +14,11 @@ class Scenes
 		return all[0];
 	}
 	
+	public function getRandomScene() : SceneAndLifecycle
+	{
+		return all[Rand.int(0, all.length)];
+	}
+	
 	public function getSceneById(id : String) : SceneAndLifecycle
 	{
 		for (result in all)

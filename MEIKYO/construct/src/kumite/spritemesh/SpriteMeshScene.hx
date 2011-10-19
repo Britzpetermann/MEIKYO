@@ -14,7 +14,6 @@ class SpriteMeshScene implements SceneLifecycle, implements Infos
 	@Inject
 	public var spritemesh2ColorLayer : kumite.layer.ColorLayer;
 	
-	@Inject
 	public var layer : SpriteMeshLayer;
 	
 	@Inject
@@ -23,11 +22,16 @@ class SpriteMeshScene implements SceneLifecycle, implements Infos
 	@Inject
 	public var time : Time;
 	
-	public function new();
+	var name : String;
+	
+	public function new(name : String)
+	{
+		this.name = name;
+	}
 	
 	public function sceneInit(scene : Scene)
 	{
-		scene.id = scene.name = "SPRITES";
+		scene.id = scene.name = "S_" + name;
 		scene.addLayer(new DelegateLayer(layer));
 		scene.addLayer(new DelegateLayer(displayList));
 	}
@@ -39,12 +43,12 @@ class SpriteMeshScene implements SceneLifecycle, implements Infos
 
 	public function renderTransition(transitionContext : TransitionContext)
 	{
-		render();
+		//render();
 	}
 	
 	public function render()
 	{
-		GL.clearColor(0.18, 0.17, 0.2, 0);
-		GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT | GL.STENCIL_BUFFER_BIT);		
+		//GL.clearColor(0.18, 0.17, 0.2, 0);
+		//GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT | GL.STENCIL_BUFFER_BIT);		
 	}
 }

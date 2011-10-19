@@ -9,6 +9,8 @@ import bpmjs.Messenger;
 import haxe.rtti.Infos;
 import kumite.scene.SceneChangeRequest;
 
+import haxe.Timer;
+
 class VJInterface implements Infos
 {
 	@Inject
@@ -16,6 +18,8 @@ class VJInterface implements Infos
 	
 	@Messenger
 	public var messenger : Messenger;
+	
+	var timer : Timer;
 	
 	var stage : GLStage;
 	
@@ -28,6 +32,9 @@ class VJInterface implements Infos
 	{
 		stage = GLDisplayList.getDefault().stage;
 		stage.addChild(new GLStats());
+		
+		timer = new Timer(5000);
+		timer.run = navigateNext;
 
 		addSceneButtons();
 	}
@@ -71,5 +78,14 @@ class VJInterface implements Infos
 	function handleButtonClick(scene : Scene)
 	{
 		messenger.send(new SceneChangeRequest(scene.id));
+	}
+	
+	function navigateNext()
+	{
+		Log.info();
+		//TODO getNextScene (config:roll);
+		var newSceneId = scenes.getRandomScene().scene.id;
+		
+		messenger.send(new SceneChangeRequest(newSceneId));
 	}
 }

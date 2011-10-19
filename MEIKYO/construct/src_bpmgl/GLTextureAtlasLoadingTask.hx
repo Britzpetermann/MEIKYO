@@ -21,6 +21,8 @@ class GLTextureAtlasLoadingTask extends bpmjs.Task<GLTextureAtlasLoadingTask>
 	{
 		super();
 		
+		monitor.name = "GLTextureAtlasLoadingTask";
+		
 		if (textureRegistry == null)
 			throw "TextureRegistry was null!";
 			
@@ -44,6 +46,7 @@ class GLTextureAtlasLoadingTask extends bpmjs.Task<GLTextureAtlasLoadingTask>
 		currentMaxY = 0;
 		
 		partLoaderGroup = new TaskGroup();
+		monitor.append(partLoaderGroup.monitor, 1);
 		for(part in atlas.parts)
 			addPart(part);
 		partLoaderGroup.completeSignaler.bind(handleComplete);
@@ -69,7 +72,7 @@ class GLTextureAtlasLoadingTask extends bpmjs.Task<GLTextureAtlasLoadingTask>
 		part.v0 = currentOffsetY / atlas.height; 
 		part.u1 = (currentOffsetX + part.width) / atlas.width; 
 		part.v1 = (currentOffsetY + part.height) / atlas.height; 
-		Log.info("Add image", task.child.location, "to atlas at:", currentOffsetX, currentOffsetY, part);
+		//Log.info("Add image", task.child.location, "to atlas at:", currentOffsetX, currentOffsetY, part);
 		graphics.drawImage(image, currentOffsetX, currentOffsetY, image.naturalWidth, image.naturalHeight);
 	}
 	

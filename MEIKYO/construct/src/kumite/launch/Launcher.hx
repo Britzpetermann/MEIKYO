@@ -20,5 +20,11 @@ class Launcher implements Infos
 	public function showError()
 	{
 		//Log.error(sequencer.error);
+	}
+		
+	@Sequence("boot", "percent")
+	public function bootPercent(value : Float)
+	{
+		Log.info(value);
 	}	
 }

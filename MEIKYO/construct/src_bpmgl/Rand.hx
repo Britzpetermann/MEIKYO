@@ -4,5 +4,10 @@ class Rand
 	{
 		return from + Math.random() * (to - from);
 	}
+	
+	public static inline function int(from : Float, to : Float) : Int
+	{
+		return Std.int((from + Math.random() * (to - from)));
+	}
 
 }

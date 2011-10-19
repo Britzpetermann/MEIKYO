@@ -10,11 +10,15 @@ class Task<T>
 	public var completeSignaler : Signaler<T>;
 	public var errorSignaler : Signaler<TaskError<T>>;
 
+	public var monitor(getMonitor, setMonitor) : ProgressMonitor;
+	
 	public function new()
 	{
 		startSignaler = new DirectSignaler(this);
 		completeSignaler = new DirectSignaler(this);
 		errorSignaler = new DirectSignaler(this);
+		
+		monitor = new ProgressMonitor();
 	}
 
 	public function start()
@@ -37,6 +41,7 @@ class Task<T>
 
 	public function complete()
 	{
+		monitor.current = 1; 
 		var t : T = cast this;
 		completeSignaler.dispatch(t);
 	}
@@ -47,5 +52,16 @@ class Task<T>
 		taskError.task = result;
 		taskError.error = error;
 		errorSignaler.dispatch(taskError);
+	}
+	
+	function getMonitor()
+	{
+		return monitor;
+	}
+	
+	function setMonitor(monitor)
+	{
+		this.monitor = monitor;
+		return monitor;
 	}
 }

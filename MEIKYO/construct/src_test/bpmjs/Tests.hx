@@ -4,6 +4,7 @@ class Tests
 {
 	public static function addTo(runner : haxe.unit.TestRunner)
 	{
+		/*
 		runner.add(new TestMessenger());
 		runner.add(new TestGetObject());
 		runner.add(new TestInject());
@@ -15,7 +16,9 @@ class Tests
 		runner.add(new TestObserve());
 		runner.add(new TestFrontMessenger());
 		runner.add(new TestSequencer());
+		 */
+		runner.add(new TestProgressMonitor());
 		
-		bpmjs.integration.Tests.addTo(runner);
+		//bpmjs.integration.Tests.addTo(runner);
 	}
 }

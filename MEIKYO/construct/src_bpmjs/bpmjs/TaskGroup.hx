@@ -1,5 +1,7 @@
 package bpmjs;
 
+import reflect.ClassInfo;
+
 class TaskGroup extends Task<TaskGroup>
 {
 	public var tasks : Array<Task<Dynamic>>;
@@ -17,6 +19,12 @@ class TaskGroup extends Task<TaskGroup>
 
 	override public function doStart()
 	{
+		for(task in tasks)
+		{
+			//TODO if monitor is zero...			
+			monitor.append(task.monitor, 1 / tasks.length);
+		}
+		
 		nextTask();
 	}
 

@@ -2,14 +2,14 @@ package bpmjs;
 
 import bpmjs.Context;
 
+import haxe.Timer;
+
 class Sequencer implements haxe.rtti.Infos
 {
 	@Inject
 	public var context : Context;
 	
-	public function new()
-	{
-	}
+	public function new();
 	
 	public function start(name : String)
 	{
@@ -36,10 +36,14 @@ class Sequence extends bpmjs.TaskGroup
 	
 	var loadingTaskGroup : LoadingTaskGroup;
 	
+	var timer : Timer;
+	
 	public function new(name : String)
 	{
 		super();
+		monitor.name = name;
 		this.name = name;
+		timer = new Timer(100);
 	}
 	
 	public function addExecuteTask(phase : String)
@@ -50,7 +54,19 @@ class Sequence extends bpmjs.TaskGroup
 	public function addLoadingTask()
 	{
 		loadingTaskGroup = new LoadingTaskGroup(this);
+		loadingTaskGroup.monitor.weight = 100;
 		add(loadingTaskGroup);
+	}
+	
+	override function start()
+	{
+		timer.run = handleProgress;
+		super.start();
+	}
+	
+	function handleProgress()
+	{
+		Log.info(monitor.current);
 	}
 	
 	public function execute(phase : String)
@@ -91,6 +107,7 @@ class ExecutePhaseTask extends bpmjs.Task<ExecutePhaseTask>
 	public function new(sequence : Sequence, phase : String)
 	{
 		super();
+		monitor.name = "execute: " + phase;
 		this.sequence = sequence;
 		this.phase = phase;
 	}
@@ -107,5 +124,6 @@ class LoadingTaskGroup extends bpmjs.TaskGroup
 	public function new(sequence : Sequence)
 	{
 		super();
+		monitor.name = "loading";
 	}
 }
