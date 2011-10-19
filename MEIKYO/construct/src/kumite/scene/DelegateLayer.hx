@@ -20,7 +20,7 @@ class DelegateLayer extends Layer
 		}
 		catch(e : Dynamic)
 		{
-			Log.error("Error initializing layer:", layerId, e);	
+			Log.error("Error initializing layer:\n" + layerId, e);	
 		}
 	}
 	
@@ -32,7 +32,7 @@ class DelegateLayer extends Layer
 		}
 		catch(e : Dynamic)
 		{
-			Log.error("Error rendering layer:", layerId, e);	
+			Log.error("Error rendering layer:\n" + layerId, e);	
 		}
 	}
 	
@@ -44,7 +44,7 @@ class DelegateLayer extends Layer
 		}
 		catch(e : Dynamic)
 		{
-			Log.error("Error rendering layer:", layerId, e);	
+			Log.error("Error rendering layer:\n" + layerId, e);	
 		}
 	}
 	

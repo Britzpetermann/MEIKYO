@@ -207,7 +207,7 @@ class TransitionState extends State
 	override function enter()
 	{
 		enterTime = time.ms;
-		exitTime = time.ms + 8000;
+		exitTime = time.ms + 5000;
 		
 		transitionContext.transition = 0;
 		transitionContext.outScene = navigator.lastScene;

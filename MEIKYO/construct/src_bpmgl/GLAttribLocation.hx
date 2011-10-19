@@ -10,19 +10,25 @@ class GLAttribLocation
 
 	public function new(){}
 
-	public function updateBuffer(arrayBuffer : ArrayBuffer)
+	public function updateBuffer(arrayBuffer : ArrayBuffer, ?type : GLenum = GL.STATIC_DRAW)
 	{
 		if (buffer != null)
 			GL.deleteBuffer(buffer);
 
 		currentLength = arrayBuffer.byteLength;
-		buffer = GL.createArrayBuffer(arrayBuffer);
+		buffer = GL.createArrayBuffer(arrayBuffer, type);
 	}
 
 	public function updateBuffer2(arrayBuffer : ArrayBuffer, ?type : GLenum = GL.STATIC_DRAW)
 	{
 		GL.bindBuffer(GL.ARRAY_BUFFER, buffer);
 		GL.bufferData(GL.ARRAY_BUFFER, arrayBuffer, type);
+	}
+
+	public function updateBuffer3(arrayBuffer : ArrayBuffer)
+	{
+		GL.bindBuffer(GL.ARRAY_BUFFER, buffer);
+		GL.bufferSubData(GL.ARRAY_BUFFER, 0, arrayBuffer);
 	}
 
 	public function vertexAttribPointer()

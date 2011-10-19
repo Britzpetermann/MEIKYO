@@ -1,5 +1,9 @@
 package kumite.launch;
 
+import js.Lib;
+import js.Dom;
+import bpmjs.ProgressMonitor;
+
 import haxe.rtti.Infos;
 
 class Launcher implements Infos
@@ -12,19 +16,12 @@ class Launcher implements Infos
 	@PostComplete
 	public function handlePostComplete()
 	{
-		Log.info();
 		sequencer.start("boot");
 	}
 	
 	@Sequence("boot", "error")
-	public function showError()
+	public function showError(message : String)
 	{
-		//Log.error(sequencer.error);
+		Log.error(message);
 	}
-		
-	@Sequence("boot", "percent")
-	public function bootPercent(value : Float)
-	{
-		Log.info(value);
-	}	
 }

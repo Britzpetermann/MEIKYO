@@ -46,14 +46,14 @@ class GLTween
 			if (Reflect.hasField(o, field))
 			{
 				var property = new Property();
-				property.from = Reflect.field(o, field);
-				property.to = Reflect.field(params, field);
+				property.from = Std.parseFloat(Reflect.field(o, field));
+				property.to = Std.parseFloat(Reflect.field(params, field));
 				property.field = field;
 				properties.push(property);
 			}
 			else
 			{
-				trace("Unkown field: " + field);
+				Log.warn("Unkown field: " + field);
 			}
 		}
 	}
@@ -80,8 +80,8 @@ class GLTween
 
 class Property
 {
-	public var from : Dynamic;
-	public var to : Dynamic;
+	public var from : Float;
+	public var to : Float;
 	public var field : String;
 
 	public function new(){}

@@ -30,8 +30,9 @@ class ImageLoaderTask extends Task<ImageLoaderTask>
 	function handleImageLoaded()
 	{
 		//Log.info("Complete: ", location);
-		timer = new Timer(30);
-		timer.run = doComplete;
+		//timer = new Timer(0);
+		//timer.run = doComplete;
+		complete();
 	}
 	
 	function doComplete()

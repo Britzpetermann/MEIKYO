@@ -391,7 +391,7 @@ class GL
 	{
 		var params = {antialias : antialias};
 
-		gl = canvas.getContext("webgl", params);
+		gl = canvas.getContext("webg", params);
 		if (gl == null)
 			gl = canvas.getContext("experimental-webgl", params);
 
@@ -505,9 +505,14 @@ class GL
 		gl.blendFunc(sfactor, dfactor);
 	}
 
-	public static inline function bufferData(target : GLenum, data : ArrayBuffer , usage : GLenum ) : Void
+	public static inline function bufferData(target : GLenum, data : ArrayBuffer , usage : GLenum) : Void
 	{
 		gl.bufferData(target, data, usage);
+	}
+
+	public static inline function bufferSubData(target : GLenum, offset : GLintptr, data : ArrayBuffer) : Void
+	{
+		gl.bufferSubData(target, offset, data);
 	}
 
 	public static inline function clear(mask : GLbitfield) : Void

@@ -14,6 +14,31 @@ body {
     white-space:pre;
 }
 
+.preloader {
+	width: 100%;
+    font-family: "Courier";
+    margin-top: 38%;
+    font-size: 80px;
+    position: absolute;
+    color: #ffffff;
+    opacity:0.8;
+    white-space:pre;
+    text-align:center;
+    letter-spacing:20px;
+}
+
+.error {
+    font-family: "Courier";
+    margin-top: 20px;
+    margin-left: 20px;
+    font-size: 20px;
+    position: absolute;
+    color: #ff5050;
+    opacity:0.8;
+    white-space:pre;
+    text-align:left;
+}
+
 .content {
     position: absolute;
     width: 100%;

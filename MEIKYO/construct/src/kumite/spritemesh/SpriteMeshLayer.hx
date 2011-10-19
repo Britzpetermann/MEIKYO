@@ -14,7 +14,7 @@ import haxe.rtti.Infos;
 
 class SpriteMeshLayer implements LayerLifecycle, implements Infos
 {
-	public static var max : Int = 9000;
+	public static var max : Int = 16000;
 	
 	@Inject
 	public var stage : Stage;
@@ -59,12 +59,13 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 	
 	var cubeVerticesIndexBuffer : WebGLBuffer;	
 	var projectionMatrixUniform : GLUniformLocation;
-	var viewMatrixUniform : GLUniformLocation;
 	var alphaUniform : GLUniformLocation;
 	var textureUniform : GLUniformLocation;
 	
 	var spriteRenderIndexes : Uint32Array;
 	var spriteRenderIndexesCount : Int;
+	
+	var cameraMatrix2 : Matrix4;
 		
 	public function new()
 	{
@@ -81,16 +82,19 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 		
 		alphaTransition.ease = ease.Quad.easeInOut;
 		
-		sprites = new Array();
-		for (i in  0...max)
-		{
-			var sprite = new Sprite();
-			sprites.push(sprite);
-		}
+		cameraMatrix2 = new Matrix4();
 	}
 	
 	public function init()
 	{
+		sprites = new Array();
+		for (i in  0...max)
+		{
+			var image = Config.TEST_ATLAS.parts[Std.int((Math.sin(i * textureFrequenceParam) + 1) * textureAmpParam + 0) % Config.TEST_ATLAS.parts.length];
+			var sprite = new Sprite();
+			sprite.image = image;
+			sprites.push(sprite);
+		}
 		initGl();
 	}
 	
@@ -104,7 +108,7 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 	
 	public function render()
 	{
-		timems = time.ms * 0.2 + offset;
+		timems = time.ms * 0.15 + offset;
 		
 		renderGLInit();
 
@@ -127,34 +131,36 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 		//GL.blendFunc(GL.SRC_ALPHA, GL.ONE);
 	}
 	
+	static var axis = new Vec3(1, 1, 1).normalize();
+	static var zAxis = new Vec3(0,0,1);
+	
 	function updateModel()
 	{
-		var axis = new Vec3(1, 1, 1).normalize();
-		
-		var cameraMatrix2 = new Matrix4();
-		cameraMatrix2.appendRotation(Math.sin(timems / 5000) * 0.4 + timems / 14000, axis);
-		//cameraMatrix2.appendRotation(Math.sin(timems / 1000) * 0.1, new Vec3(-1, 0.5, 1).normalize());
-		//cameraMatrix2.appendRotation(timems / 10000, new Vec3(-1, 0.5, 1).normalize());
-		//cameraMatrix2.appendRotation(timems / 15000, new Vec3(0.4, 0.7, -1).normalize());
-		cameraMatrix2.append(cameraMatrix);
+		cameraMatrix2.setRotation(Math.sin(timems / 10000) * 0.4 + timems / 24000, axis);
+		cameraMatrix2.appendAffine(cameraMatrix);
 
-		var d = 30;
-		var d2 = 1.0;
+		var scaleAmplitudeTemp1 = (1 - alphaTransition.transition) * 1.35;
+		var scaleAmplitude = (0.2 + scaleAmplitudeTemp1 * scaleAmplitudeTemp1 * scaleAmplitudeTemp1);
+		
+		var objectAmplitude1 = 30;
+		var objectAmplitude2 = objectAmplitude1 / 3;
+		var objectAmplitude3 = objectAmplitude1 / 2;
+		
 		for (i in 0...max)
 		{
 			var sprite = sprites[i];
-			var scale = Math.sin(-timems / 2000 + i * 3.440) * (0.2 + (Math.pow((1 - alphaTransition.transition) * 1.35, 3)) * 1) + 0.7;
-			scale = scale * 1.1;
 			var m = sprite.matrix;
+			
+			var scale = (Math.sin(-timems / 2000 + i * 3.440) * scaleAmplitude + 0.7) * 1.1;
 			m.setScale(scale, scale, scale);
-			m.appendRotation(Math.sin(-timems / 4000 + i * 0.05) * 10, new Vec3(0,0,1));
-			m.appendRotation(-timems / 5000 + i * 3.440, axis);
+			m.appendRotationAffine(-timems / 5000 + i * 3.440, axis);
 			
-			var tx = Math.sin(timems / 10700 + i * 3.442 * d2) * d + Math.cos(timems / 7000 - i * 3.439 * d2) * d / 3;
+			var tx = Math.sin(timems / 10700 + i * 3.442) * objectAmplitude1 + Math.cos(timems / 7000 - i * 3.439) * objectAmplitude2;
+			var ty = Math.cos(timems / 17800 + i * 3.443) * objectAmplitude1;
+			var tz = Math.cos(timems / 18000 - i * 3.441) * objectAmplitude1 + Math.cos(timems / 8000 - i * 3.440) * objectAmplitude3;
+			m.appendTranslationAffine(tx, ty, tz);
 			
-			m.appendTranslation(tx, Math.cos(timems / 17800 + i * 3.443 * d2) * d, Math.cos(timems / 18000 - i * 3.441 * d2) * d + Math.cos(timems / 8000 - i * 3.440 * d2) * d / 2);
-			//m.appendTranslation(0, Math.sin(tx * 0.8 + timems / 6000) * 0.3, Math.sin(tx * 0.8 + timems / 4000) * 0.3);
-			m.append(cameraMatrix2);
+			m.appendAffine(cameraMatrix2);
 			
 			sprite.transform();
 		}
@@ -212,69 +218,56 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 	
 	function updateBuffer()
 	{
-		var j = 0;
+		var vi = 0;
+		var ni = 0;
+		var ti = 0;
 		for (i in 0...spriteRenderIndexesCount)
 		{
 			var spriteIndex : Int = spriteRenderIndexes[i] & 0xffff;
 			var sprite = sprites[spriteIndex];
 			
-			vertexNormalBuffer[j] = sprite.normals[0];
-			vertexBuffer[j++] = sprite.vertexes[0];
+			vertexBuffer[vi++] = sprite.vertexes[0];
+			vertexBuffer[vi++] = sprite.vertexes[1];
+			vertexBuffer[vi++] = sprite.vertexes[2];
+			vertexBuffer[vi++] = sprite.vertexes[3];
+			vertexBuffer[vi++] = sprite.vertexes[4];
+			vertexBuffer[vi++] = sprite.vertexes[5];
+			vertexBuffer[vi++] = sprite.vertexes[6];
+			vertexBuffer[vi++] = sprite.vertexes[7];
+			vertexBuffer[vi++] = sprite.vertexes[8];
+			vertexBuffer[vi++] = sprite.vertexes[9];
+			vertexBuffer[vi++] = sprite.vertexes[10];
+			vertexBuffer[vi++] = sprite.vertexes[11];
 			
-			vertexNormalBuffer[j] = sprite.normals[1];
-			vertexBuffer[j++] = sprite.vertexes[1];
+			vertexNormalBuffer[ni++] = sprite.normals[0];
+			vertexNormalBuffer[ni++] = sprite.normals[1];
+			vertexNormalBuffer[ni++] = sprite.normals[2];
+			vertexNormalBuffer[ni++] = sprite.normals[0];
+			vertexNormalBuffer[ni++] = sprite.normals[1];
+			vertexNormalBuffer[ni++] = sprite.normals[2];
+			vertexNormalBuffer[ni++] = sprite.normals[0];
+			vertexNormalBuffer[ni++] = sprite.normals[1];
+			vertexNormalBuffer[ni++] = sprite.normals[2];
+			vertexNormalBuffer[ni++] = sprite.normals[0];
+			vertexNormalBuffer[ni++] = sprite.normals[1];
+			vertexNormalBuffer[ni++] = sprite.normals[2];
 			
-			vertexNormalBuffer[j] = sprite.normals[2];
-			vertexBuffer[j++] = sprite.vertexes[2];
-			
-			vertexNormalBuffer[j] = sprite.normals[0];
-			vertexBuffer[j++] = sprite.vertexes[3];
-			
-			vertexNormalBuffer[j] = sprite.normals[1];
-			vertexBuffer[j++] = sprite.vertexes[4];
-			
-			vertexNormalBuffer[j] = sprite.normals[2];
-			vertexBuffer[j++] = sprite.vertexes[5];
-			
-			vertexNormalBuffer[j] = sprite.normals[0];
-			vertexBuffer[j++] = sprite.vertexes[6];
-			
-			vertexNormalBuffer[j] = sprite.normals[1];
-			vertexBuffer[j++] = sprite.vertexes[7];
-			
-			vertexNormalBuffer[j] = sprite.normals[2];
-			vertexBuffer[j++] = sprite.vertexes[8];
-			
-			vertexNormalBuffer[j] = sprite.normals[0];
-			vertexBuffer[j++] = sprite.vertexes[9];
-			
-			vertexNormalBuffer[j] = sprite.normals[1];
-			vertexBuffer[j++] = sprite.vertexes[10];
-			
-			vertexNormalBuffer[j] = sprite.normals[2];
-			vertexBuffer[j++] = sprite.vertexes[11];
-			
-			var image = Config.TEST_ATLAS.parts[Std.int((Math.sin(spriteIndex * textureFrequenceParam) + 1) * textureAmpParam + 0) % Config.TEST_ATLAS.parts.length];
-			var j2 = i * 8;
-			vertexUVBuffer[0 + j2] = image.u0;
-			vertexUVBuffer[1 + j2] = image.v1;
-			
-			vertexUVBuffer[2 + j2] = image.u1;
-			vertexUVBuffer[3 + j2] = image.v1;
-			
-			vertexUVBuffer[4 + j2] = image.u0;
-			vertexUVBuffer[5 + j2] = image.v0;
-			
-			vertexUVBuffer[6 + j2] = image.u1;
-			vertexUVBuffer[7 + j2] = image.v0;
+			vertexUVBuffer[ti++] = sprite.image.u0;
+			vertexUVBuffer[ti++] = sprite.image.v1;
+			vertexUVBuffer[ti++] = sprite.image.u1;
+			vertexUVBuffer[ti++] = sprite.image.v1;
+			vertexUVBuffer[ti++] = sprite.image.u0;
+			vertexUVBuffer[ti++] = sprite.image.v0;
+			vertexUVBuffer[ti++] = sprite.image.u1;
+			vertexUVBuffer[ti++] = sprite.image.v0;
 		}
 	}
 	
 	function renderGL()
 	{
-		vertexUVAttribute.updateBuffer2(vertexUVBuffer);
-		vertexPositionAttribute.updateBuffer2(vertexBuffer);
-		vertexNormalAttribute.updateBuffer2(vertexNormalBuffer);
+		vertexUVAttribute.updateBuffer3(vertexUVBuffer);
+		vertexPositionAttribute.updateBuffer3(vertexBuffer);
+		vertexNormalAttribute.updateBuffer3(vertexNormalBuffer);
 		
 		vertexNormalAttribute.vertexAttribPointer();
 		vertexPositionAttribute.vertexAttribPointer();
@@ -283,14 +276,13 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 		GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, cubeVerticesIndexBuffer);
 		  
 		projectionMatrixUniform.setMatrix4(projection.matrix);
-		viewMatrixUniform.setMatrix4(cameraMatrix);
 		
-		//Log.info(alphaTransition.transition);
 		alphaUniform.setFloat(alphaTransition.transition);
 		
 		textureUniform.setTexture(textureRegistry.get(Config.TEST_ATLAS));
 		
 		GL.drawElements(GL.TRIANGLES, spriteRenderIndexesCount * 6, GL.UNSIGNED_SHORT, 0);
+		//GL.drawElements(GL.TRIANGLES, 1 * 6, GL.UNSIGNED_SHORT, 0);
 	}
 	
 	function initGl()
@@ -319,7 +311,7 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 		}
 		
 		vertexPositionAttribute = GL.getAttribLocation2("vertexPosition", 3, GL.FLOAT);
-		vertexPositionAttribute.updateBuffer(vertexBuffer);
+		vertexPositionAttribute.updateBuffer(vertexBuffer, GL.STREAM_DRAW);
 		
 		vertexNormalBuffer = new Float32Array(max * 12);
 		for (i in 0...max)
@@ -343,7 +335,7 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 		}
 		
 		vertexNormalAttribute = GL.getAttribLocation2("vertexNormal", 3, GL.FLOAT);
-		vertexNormalAttribute.updateBuffer(vertexNormalBuffer);
+		vertexNormalAttribute.updateBuffer(vertexNormalBuffer, GL.STREAM_DRAW);
 		
 		vertexUVBuffer = new Float32Array(max * 8);
 		for (i in 0...max)
@@ -364,7 +356,7 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 		}
 		
 		vertexUVAttribute = GL.getAttribLocation2("vertexUV", 2, GL.FLOAT);
-		vertexUVAttribute.updateBuffer(vertexUVBuffer);
+		vertexUVAttribute.updateBuffer(vertexUVBuffer, GL.STREAM_DRAW);
 		
 		cubeVerticesIndexBuffer = GL.createBuffer();  
   		GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, cubeVerticesIndexBuffer); 	
@@ -385,7 +377,6 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 		GL.bufferData(GL.ELEMENT_ARRAY_BUFFER,  elementIndexes, GL.STATIC_DRAW);  
 
 		projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
-		viewMatrixUniform = GL.getUniformLocation("viewMatrix");
 		alphaUniform = GL.getUniformLocation("alpha");
 		textureUniform = GL.getUniformLocation("texture");
 		
@@ -401,7 +392,7 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 	attribute vec2 vertexUV;
 
 	uniform mat4 projectionMatrix;
-	uniform mat4 viewMatrix;
+
 	uniform float alpha;
 
 	varying vec2 uv;
@@ -412,7 +403,7 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 	{
 		uv = vertexUV;
 		vertex = vertexPosition;
-		gl_Position = projectionMatrix * vec4(vertexPosition - vec3(0.0, 0.0, (1.0 - alpha) * 5.0), 1.0);
+		gl_Position = projectionMatrix * vec4(vertexPosition - vec3(0.0, 0.0, (1.0 - alpha) * 7.0), 1.0);
 
 		vec3 normalRot = normalize(vertexPosition - vertexNormal);
 		vec3 lightDir = normalize(vertexPosition - vec3(0.0, 0.0, -30.0));
@@ -422,7 +413,7 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 		vec3 h1 = normalize(lightDir + viewDir);
 		float specular1 = clamp(pow(dot(normalRot, h1), 30.0), 0.0, 1.0);
 
-		light = (1.0 + (diffuse * 0.9 + specular1 * 1.5)) * alpha * 0.8;
+		light = clamp((0.5 + (diffuse * 1.3 + specular1 * 1.5)), 0.1, 100.0) * alpha * 0.8;
 	}
 
 ") private class Vertex {}

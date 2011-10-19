@@ -1,8 +1,13 @@
+import js.Lib;
+import js.Dom;
+
 class Log
 {
-	private static var filters : Array<LogFilter> = new Array();
-	private static var posInfo : haxe.PosInfos;
-	private static var args : Array<Dynamic> = new Array();
+	static var filters : Array<LogFilter> = new Array();
+	static var posInfo : haxe.PosInfos;
+	static var args : Array<Dynamic> = new Array();
+	static var errors : Array<String> = new Array();
+	static var errorDiv : HtmlDom;
 
 	public static inline function debugger()
 	{
@@ -63,7 +68,8 @@ class Log
 		if (filter(LogLevel.ERROR))
 		{
 			fetchInput(m0, m1, m2, m3, m4, m5, m6);
-			untyped console.error(createMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
+			untyped console.error(createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
+			displayError(createErrorMessage());
 		}
 	}
 	
@@ -100,7 +106,7 @@ class Log
 			untyped console.groupEnd();
 	}
 	
-	private static function fetchInput(?m0 : Dynamic, ?m1 : Dynamic, ?m2 : Dynamic, ?m3 : Dynamic, ?m4 : Dynamic, ?m5 : Dynamic, ?m6 : Dynamic)
+	static function fetchInput(?m0 : Dynamic, ?m1 : Dynamic, ?m2 : Dynamic, ?m3 : Dynamic, ?m4 : Dynamic, ?m5 : Dynamic, ?m6 : Dynamic)
 	{
 		args = new Array();
 		if (m0 != null)	args.push(m0);
@@ -112,13 +118,19 @@ class Log
 		if (m6 != null) args.push(m6);		
 	}
 	
-	private static function createMessage()
+	static function createMessage()
 	{
 		var from = posInfo.className + "." + posInfo.methodName;
 		return "[" + from + "] " + args.join(" ");
 	}
 		
-	private static function filter(level : LogLevel)
+	static function createErrorMessage()
+	{
+		var from = posInfo.className + "." + posInfo.methodName;
+		return "[" + from + "]\n" + args.join(" ");
+	}
+		
+	static function filter(level : LogLevel)
 	{
 		var result = true;
 		
@@ -128,11 +140,34 @@ class Log
 		return result;
 	}
 	
-	private static function infoConsole(v : Dynamic, ?i : haxe.PosInfos)
+	static function infoConsole(v : Dynamic, ?i : haxe.PosInfos)
 	{
 		posInfo = i;
 		fetchInput(v);
 		untyped console.log("" + createMessage() + " (trace)");
+	}
+	
+	static function displayError(message : String)
+	{
+		if (errorDiv == null)
+		{
+			errorDiv = Lib.document.createElement("div");
+			errorDiv.className = "Error";
+			Lib.document.body.appendChild(errorDiv);
+			
+			errorDiv.innerHTML = "<h1>Ups!</h1>I could not start!\nPlease use up-to-date hardware and an up-to-date browser for this experience.\n\n\nTechnical Details:\n";
+		}
+		
+		if (!Lambda.has(errors, message))
+		{
+			errors.push(message);
+			errorDiv.innerHTML += message + "\n";
+		}
+	}
+	
+	function errorFilter()
+	{
+		
 	}
 	
 }

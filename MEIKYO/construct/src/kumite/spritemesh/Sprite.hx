@@ -3,6 +3,7 @@ package kumite.spritemesh;
 class Sprite
 {
 	public var matrix : Matrix4;
+	public var image : GLTextureAtlasPartConfig;	
 	
 	public var vertexes : Float32Array;
 	public var normals : Float32Array;

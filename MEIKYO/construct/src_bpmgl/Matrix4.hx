@@ -315,22 +315,6 @@ class Matrix4
 		buffer[i44] = 0;
 	}
 		
-	public function append2(a : Matrix4)
-	{
-		for(i in 0...4)
-			for(j in 0...4)
-			{
-				var ij = i + j * 4;
-				tempMatrix2.buffer[ij] = 0;
-				for(k in 0...4)
-				{
-					tempMatrix2.buffer[ij] += a.buffer[i + k * 4] * this.buffer[k + j * 4];
-				}
-			}
-		
-		buffer.set(tempMatrix2.buffer);	
-	}
-		
 	public function append(a : Matrix4)
 	{
 		var b = this;
@@ -365,6 +349,35 @@ class Matrix4
 		n24 = a21 * b14 + a22 * b24 + a23 * b34 + a24 * b44;
 		n34 = a31 * b14 + a32 * b24 + a33 * b34 + a34 * b44;
 		n44 = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
+	}
+		
+	public function appendAffine(a : Matrix4)
+	{
+		var 
+		a11 = a.n11, a21 = a.n21, a31 = a.n31,
+		a12 = a.n12, a22 = a.n22, a32 = a.n32,
+		a13 = a.n13, a23 = a.n23, a33 = a.n33,
+
+		b11 = n11, b21 = n21, b31 = n31,
+		b12 = n12, b22 = n22, b32 = n32,
+		b13 = n13, b23 = n23, b33 = n33,
+		b14 = n14, b24 = n24, b34 = n34;
+
+		n11 = a11 * b11 + a12 * b21 + a13 * b31;
+		n21 = a21 * b11 + a22 * b21 + a23 * b31;
+		n31 = a31 * b11 + a32 * b21 + a33 * b31;
+		
+		n12 = a11 * b12 + a12 * b22 + a13 * b32;
+		n22 = a21 * b12 + a22 * b22 + a23 * b32;
+		n32 = a31 * b12 + a32 * b22 + a33 * b32;
+		
+		n13 = a11 * b13 + a12 * b23 + a13 * b33;
+		n23 = a21 * b13 + a22 * b23 + a23 * b33;
+		n33 = a31 * b13 + a32 * b23 + a33 * b33;
+		
+		n14 = a11 * b14 + a12 * b24 + a13 * b34 + a.n14;
+		n24 = a21 * b14 + a22 * b24 + a23 * b34 + a.n24;
+		n34 = a31 * b14 + a32 * b24 + a33 * b34 + a.n34;
 	}	
 
 	public function appendTranslation(x : Float, y : Float, z : Float)
@@ -373,28 +386,10 @@ class Matrix4
 		append(tempMatrix1);
 	}
 
-	public function appendTranslation2(x : Float, y : Float, z : Float)
+	public function appendTranslationAffine(x : Float, y : Float, z : Float)
 	{
-		var b41 = buffer[i41];
-		var b42 = buffer[i42];
-		var b43 = buffer[i43];
-		var b44 = buffer[i44];
-		
-		buffer[i11] += x * b41;
-		buffer[i21] += y * b41;
-		buffer[i31] += z * b41;
-		
-		buffer[i12] += x * b42;
-		buffer[i22] += y * b42;
-		buffer[i32] += z * b42;
-		
-		buffer[i13] += x * b43;
-		buffer[i23] += y * b43;
-		buffer[i33] += z * b43;
-		
-		buffer[i14] += x * b44;
-		buffer[i24] += y * b44;
-		buffer[i34] += z * b44;
+		tempMatrix1.setTranslation(x, y, z);
+		appendAffine(tempMatrix1);
 	}
 
 	public function appendScale(x : Float, y : Float, z : Float)
@@ -407,6 +402,30 @@ class Matrix4
 	{
 		tempMatrix1.setRotation(angle, axis);
 		append(tempMatrix1);
+	}
+
+	public function appendRotationZ(angle)
+	{
+		tempMatrix1.setRotationZ(angle);
+		append(tempMatrix1);
+	}
+
+	public function appendScaleAffine(x : Float, y : Float, z : Float)
+	{
+		tempMatrix1.setScale(x, y, z);
+		appendAffine(tempMatrix1);
+	}
+	
+	public function appendRotationAffine(angle, axis : Vec3)
+	{
+		tempMatrix1.setRotation(angle, axis);
+		appendAffine(tempMatrix1);
+	}
+
+	public function appendRotationZAffine(angle)
+	{
+		tempMatrix1.setRotationZ(angle);
+		appendAffine(tempMatrix1);
 	}
 
 	public function toString()

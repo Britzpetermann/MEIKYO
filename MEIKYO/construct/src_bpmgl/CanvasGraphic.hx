@@ -42,9 +42,11 @@ class CanvasGraphic
 		isInvalid = true;
 	}
 	
-	public function fillText(text:String, x:Float, y:Float, ?maxWidth:Float)
+	public function fillText(text : String, x : Float, y : Float, ?maxWidth : Float)
 	{
-		context.fillText(text, x, y, maxWidth);
+		if (text == null)
+			text = "null";
+		context.fillText(text, x, y);
 		isInvalid = true;
 	}
 	

@@ -34,6 +34,7 @@ class TaskGroup extends Task<TaskGroup>
 		{
 			var task = tasks.shift();
 			task.completeSignaler.bind(handleTaskComplete);
+			task.errorSignaler.bind(handleTaskError);
 			task.start();
 		}
 		else
@@ -45,5 +46,10 @@ class TaskGroup extends Task<TaskGroup>
 	function handleTaskComplete(task : Task<Dynamic>)
 	{
 		nextTask();
+	}
+	
+	function handleTaskError(taskError : TaskError<Dynamic>)
+	{
+		error(this, taskError.error);
 	}
 }

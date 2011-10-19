@@ -45,7 +45,7 @@ class Main {
 		}
 		catch(e : Dynamic)
 		{
-			Log.error("Error building application! \n" + e);
+			Log.error("Error building application!\n" + e);
 		}
 		
 		var i = 1 | 1 << 16;

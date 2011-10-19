@@ -43,12 +43,14 @@ class SpriteMeshScene implements SceneLifecycle, implements Infos
 
 	public function renderTransition(transitionContext : TransitionContext)
 	{
-		//render();
+		render();
 	}
 	
 	public function render()
 	{
-		//GL.clearColor(0.18, 0.17, 0.2, 0);
-		//GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT | GL.STENCIL_BUFFER_BIT);		
+		//GL.clearColor(0.18, 0.17, 0.2, 1.0);
+		//GL.clearColor(0.1, 0.1, 0.1, 1.0);
+		GL.clearColor(0.0, 0.0, 0.0, 1.0);
+		GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);		
 	}
 }

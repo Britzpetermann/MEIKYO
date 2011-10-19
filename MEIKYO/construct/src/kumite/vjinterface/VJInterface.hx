@@ -33,7 +33,7 @@ class VJInterface implements Infos
 		stage = GLDisplayList.getDefault().stage;
 		stage.addChild(new GLStats());
 		
-		timer = new Timer(5000);
+		timer = new Timer(8000);
 		timer.run = navigateNext;
 
 		addSceneButtons();
@@ -83,9 +83,7 @@ class VJInterface implements Infos
 	function navigateNext()
 	{
 		Log.info();
-		//TODO getNextScene (config:roll);
 		var newSceneId = scenes.getRandomScene().scene.id;
-		
 		messenger.send(new SceneChangeRequest(newSceneId));
 	}
 }
