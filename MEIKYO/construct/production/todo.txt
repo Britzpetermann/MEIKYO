@@ -6,4 +6,6 @@
 - fix layer proposal (e.g. background always in back)
 - scene change while in transition vs append next scene vs ignore
 
-- create group (e.g. between layers) instead of all initially 
+- create group (e.g. between layers) instead of all initially
+
+- move LayerTransition to package scene 

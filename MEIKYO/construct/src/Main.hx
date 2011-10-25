@@ -38,9 +38,10 @@ class Main {
 					kumite.displaylist.ConfigAsLayer,
 					kumite.vjinterface.Config,
 					kumite.scene.Config,
-					//kumite.flyingman.Config,
-					//kumite.testscene.Config,
+					kumite.flyingman.Config,
+					kumite.testscene.Config,
 					kumite.spritemesh.Config,
+					kumite.framebuffereffect.Config,
 				]);
 		}
 		catch(e : Dynamic)

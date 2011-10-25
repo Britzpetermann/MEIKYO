@@ -66,15 +66,7 @@ class SceneNavigator implements Infos
 			return;
 		}
 		
-		Log.info("Init all scenes and layers...");
-		for(scene in scenes.all)
-		{
-			for (layer in scene.scene.layers)
-			{
-				Log.info("Init layer:", layer.layerId);
-				layer.init();
-			}			
-		}
+		initAllLayers();
 		
 		enterScene(scenes.getFirstScene());
 	}
@@ -144,6 +136,52 @@ class SceneNavigator implements Infos
 		this.state = state;
 		state.enter();
 	}
+	
+	function initAllLayers()
+	{
+		Log.info("Init all scenes and layers...");
+		
+		var layerIdToLifecycle : Hash<LayerLifecycle> = new Hash();
+		
+		var autoLayerIndex = 0;
+		for(scene in scenes.all)
+		{
+			for (layer in scene.scene.layers)
+			{
+				Log.info("Init layer:", layer.layerId);
+				if (layer.layerId == null)
+				{
+					if (Std.is(layer, DelegateLayer))
+					{
+						var lifecycle = cast(layer, DelegateLayer).lifecycle;
+						for(key in layerIdToLifecycle.keys())
+						{
+							if (layerIdToLifecycle.get(key) == lifecycle)
+							{
+								layer.layerId = key;
+								Log.info("Reuse DelegateLayer:", layer.layerId);
+								break;
+							}
+						}
+					}
+					
+					if (layer.layerId == null)
+					{
+						layer.layerId = "layer_" + autoLayerIndex + ": " + layer;
+						Log.info("auto add layer:", layer.layerId);
+						autoLayerIndex++;
+					}
+				}
+				
+				if (Std.is(layer, DelegateLayer))
+				{
+					layerIdToLifecycle.set(layer.layerId, cast(layer, DelegateLayer).lifecycle);
+				}
+				
+				layer.init();
+			}			
+		}
+	}
 }
 
 class State
@@ -207,7 +245,7 @@ class TransitionState extends State
 	override function enter()
 	{
 		enterTime = time.ms;
-		exitTime = time.ms + 5000;
+		exitTime = time.ms + 1000;
 		
 		transitionContext.transition = 0;
 		transitionContext.outScene = navigator.lastScene;

@@ -29,27 +29,26 @@ class Config implements Infos
 	{
 		paperBackground = new kumite.layer.TextureLayer();
 		paperBackground.textureConfig = PAPER;
-		paperBackground.layerId = "paperBackground";
 		
 		flyingManGraph = new FlyingManGraph();
 
 		flyingManLayer1 = new FlyingManLayer();
-		flyingManLayer1.layerId = "flyingMan1";
+		flyingManLayer1.cameraId = "flyingMan1";
 		flyingManScene1 = new FlyingManScene("B CLOSEUP 2");
 		flyingManScene1.flyingManLayer = flyingManLayer1;
 		
 		flyingManLayer2 = new FlyingManLayer();
-		flyingManLayer2.layerId = "flyingMan2";
+		flyingManLayer2.cameraId = "flyingMan2";
 		flyingManScene2 = new FlyingManScene("FLYING MAN 2");
 		flyingManScene2.flyingManLayer = flyingManLayer2;
 		
 		flyingManLayer3 = new FlyingManLayer();
-		flyingManLayer3.layerId = "flyingMan3";
+		flyingManLayer3.cameraId = "flyingMan3";
 		flyingManScene3 = new FlyingManScene("B CLOSEUP");
 		flyingManScene3.flyingManLayer = flyingManLayer3;
 		
 		flyingManLayer4 = new FlyingManLayer();
-		flyingManLayer4.layerId = "flyingMan4";
+		flyingManLayer4.cameraId = "flyingMan4";
 		flyingManScene4 = new FlyingManScene("FLYING MAN 4");
 		flyingManScene4.flyingManLayer = flyingManLayer4;
 	}

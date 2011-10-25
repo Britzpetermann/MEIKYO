@@ -24,10 +24,10 @@ class TestRunner
 	
 	function addTests(runner : haxe.unit.TestRunner)
 	{
-		//bpmgl.Tests.addTo(runner);
-		//reflect.Tests.addTo(runner);
+		bpmgl.Tests.addTo(runner);
+		reflect.Tests.addTo(runner);
 		bpmjs.Tests.addTo(runner);
-		//runner.add(new kumite.scene.TestLayerOrder());
+		runner.add(new kumite.scene.TestLayerOrder());
 	}
 	
 	function runTimes(times : Int, runner : haxe.unit.TestRunner)

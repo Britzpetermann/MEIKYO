@@ -27,8 +27,6 @@ class TextureLayer implements LayerLifecycle, implements Infos
 	public var moveTransition : LayerTransition;
 	public var alphaTransition : LayerTransition;
 	
-	public var layerId : String;
-	
 	public var scale : Float;
 	
 	public var textureConfig : GLTextureConfig;
@@ -44,7 +42,6 @@ class TextureLayer implements LayerLifecycle, implements Infos
 		
 	public function new()
 	{
-		layerId = "TextureLayer";
 		scale = 1;
 		transitions = new LayerTransitions();
 		transitions.add(cutTransition = new LayerTransition("cut"));

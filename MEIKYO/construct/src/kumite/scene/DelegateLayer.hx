@@ -1,15 +1,17 @@
 package kumite.scene;
 
+import reflect.ClassInfo;
+
 class DelegateLayer extends Layer
 {
-	private var lifecycle : LayerLifecycle;
+	public var lifecycle : LayerLifecycle;
 	
-	public function new(lifecycle : LayerLifecycle)
+	public function new(lifecycle : LayerLifecycle, ?layerId : String = null)
 	{
 		super();
 		
 		this.lifecycle = lifecycle;
-		this.layerId = lifecycle.layerId;
+		this.layerId = layerId;
 	}
 	
 	override public function init()
@@ -46,6 +48,11 @@ class DelegateLayer extends Layer
 		{
 			Log.error("Error rendering layer:\n" + layerId, e);	
 		}
+	}
+	
+	public function toString()
+	{
+		return "[DelegateLayer " + ClassInfo.forInstance(lifecycle).name + "]";
 	}
 	
 }

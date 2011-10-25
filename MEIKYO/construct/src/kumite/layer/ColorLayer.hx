@@ -18,8 +18,6 @@ class ColorLayer implements LayerLifecycle, implements Infos
 	@Inject
 	public var time : Time;
 	
-	public var layerId : String;
-	
 	public var transitions : LayerTransitions;
 	public var cutTransition : LayerTransition;
 	public var moveTransition : LayerTransition;
@@ -37,7 +35,6 @@ class ColorLayer implements LayerLifecycle, implements Infos
 		
 	public function new()
 	{
-		layerId = "TestBackgroundLayer";
 		color = new Color(1, 1, 1, 0.2);
 		transitions = new LayerTransitions();
 		transitions.add(cutTransition = new LayerTransition("cut"));

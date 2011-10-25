@@ -26,7 +26,8 @@ class FlyingManLayer implements LayerLifecycle, implements Infos
 	@Inject
 	public var graph : FlyingManGraph;
 	
-	public var layerId : String;
+	@Param
+	public var cameraId : String;
 	
 	public var transitions : LayerTransitions;
 	public var alphaTransition : LayerTransition;
@@ -46,8 +47,6 @@ class FlyingManLayer implements LayerLifecycle, implements Infos
 		
 	public function new()
 	{
-		layerId = "FlyingManLayer";
-
 		cameraMatrix = new Matrix4();
 		viewMatrix = new Matrix4();
 
@@ -95,7 +94,7 @@ class FlyingManLayer implements LayerLifecycle, implements Infos
 		vertexPositionAttribute.vertexAttribPointer();
 		projectionMatrixUniform.setMatrix4(projection.matrix);
 		
-		switch (layerId)
+		switch (cameraId)
 		{
 			case "flyingMan1":
 				cameraMatrix.setFrom(graph.butterflyCloseupCamera2.matrix);

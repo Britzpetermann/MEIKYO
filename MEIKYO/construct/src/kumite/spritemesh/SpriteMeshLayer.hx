@@ -28,8 +28,6 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 	@Inject
 	public var textureRegistry : GLTextureRegistry;
 	
-	public var layerId : String;
-	
 	public var transitions : LayerTransitions;
 	public var alphaTransition : LayerTransition;
 	
@@ -70,7 +68,6 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 	public function new()
 	{
 		offset = Rand.float(-1000 * 20, 1000 * 20);
-		layerId = "SpriteMeshLayer2" + offset;
 		
 		spriteRenderIndexes = new Uint32Array(max);
 

@@ -32,6 +32,7 @@ class SpriteMeshScene implements SceneLifecycle, implements Infos
 	public function sceneInit(scene : Scene)
 	{
 		scene.id = scene.name = "S_" + name;
+		scene.addLayer(new DelegateLayer(spritemesh2ColorLayer));
 		scene.addLayer(new DelegateLayer(layer));
 		scene.addLayer(new DelegateLayer(displayList));
 	}
