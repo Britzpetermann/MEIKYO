@@ -2,6 +2,7 @@ package kumite.displaylist;
 
 import kumite.stage.Stage;
 import kumite.time.Tick;
+import kumite.scene.RenderContext;
 import kumite.scene.LayerLifecycle;
 import kumite.scene.TransitionContext;
 
@@ -11,9 +12,6 @@ import haxe.rtti.Infos;
 
 class DisplayListLayer implements Infos, implements LayerLifecycle
 {
-	@Inject
-	public var stage : Stage;
-	
 	public var transition : Float;
 	
 	private var renderer : GLDisplayListRenderer;
@@ -29,16 +27,16 @@ class DisplayListLayer implements Infos, implements LayerLifecycle
 	public function renderTransition(transitionContext : TransitionContext)
 	{
 		transition = transitionContext.transition;
-		render();
+		render(transitionContext);
 	}
 		
-	public function render()
+	public function render(renderContext : RenderContext)
 	{
 		Stats.measureFPS();
 		
 		GLDisplayList.getDefault().stage.alpha = transition;
-		GLDisplayList.getDefault().setStageSize(stage.width, stage.height);
+		GLDisplayList.getDefault().setStageSize(renderContext.width, renderContext.height);
 		GLDisplayList.getDefault().dispatchEnterFrame();
-		renderer.render(stage.width, stage.height);		
+		renderer.render(renderContext.width, renderContext.height);		
 	}
 }

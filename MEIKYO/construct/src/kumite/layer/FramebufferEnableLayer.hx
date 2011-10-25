@@ -1,38 +1,39 @@
-package kumite.framebuffereffect;
+package kumite.layer;
 
 import kumite.scene.LayerLifecycle;
-import kumite.scene.Layer;
-import kumite.layer.LayerTransition;
-import kumite.layer.LayerTransitions;
+import kumite.scene.RenderContext;
 import kumite.scene.TransitionContext;
-import kumite.stage.Stage;
-import kumite.time.Time;
-import kumite.projection.Projection;
-import kumite.camera.Camera;
 
 import haxe.rtti.Infos;
 
-class FBEnableLayer implements LayerLifecycle, implements Infos
+class FramebufferEnableLayer implements LayerLifecycle, implements Infos
 {
+	@Inject
+	public var textureRegistry : GLTextureRegistry;
+	
 	public var framebuffer : GLFramebuffer;
+	
+	public var textureConfig : GLTextureConfig;
 		
-	public function new()
+	public function new(width : Int, height : Int)
 	{
 		framebuffer = new GLFramebuffer();
+		framebuffer.width = width;
+		framebuffer.height = height;
+		textureConfig = GLTextureConfig.createForFrameBuffer();
 	}
 	
 	public function init()
 	{
-		framebuffer.width = 1024;
-		framebuffer.height = 1024;
-
 		framebuffer.framebuffer = GL.createFramebuffer();
 		GL.bindFramebuffer(GL.FRAMEBUFFER, framebuffer.framebuffer);
-
 		framebuffer.texture = GL.createTexture();
+		
+		textureRegistry.register(textureConfig, framebuffer);
+		
 		GL.bindTexture(GL.TEXTURE_2D, framebuffer.texture);
-		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
-		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR);
 
 		GL.texImage2DArrayBufferView(GL.TEXTURE_2D, 0, GL.RGBA, framebuffer.width, framebuffer.height, 0, GL.RGBA, GL.UNSIGNED_BYTE, null);
 		GL.framebufferTexture2D(GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, framebuffer.texture, 0);
@@ -43,11 +44,12 @@ class FBEnableLayer implements LayerLifecycle, implements Infos
 	
 	public function renderTransition(transitionContext : TransitionContext)
 	{
-		render();
+		render(transitionContext);
 	}
 	
-	public function render()
+	public function render(renderContext : RenderContext)
 	{
+		renderContext.pushViewport(framebuffer.width, framebuffer.height);
 		GL.bindFramebuffer(GL.FRAMEBUFFER, framebuffer.framebuffer);		
 	}
 }

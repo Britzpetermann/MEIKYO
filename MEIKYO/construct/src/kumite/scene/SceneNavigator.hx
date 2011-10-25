@@ -1,5 +1,7 @@
 package kumite.scene;
 
+import kumite.stage.Stage;
+
 import kumite.time.Time;
 import kumite.time.Tick;
 
@@ -13,7 +15,11 @@ class SceneNavigator implements Infos
 	@Inject
 	public var time : Time;
 	
+	@Inject
+	public var stage : Stage;
+	
 	public var transitionContext : TransitionContext;
+	public var renderContext : RenderContext;
 	
 	public var initState : InitState;
 	public var idleState : IdleState;
@@ -36,6 +42,7 @@ class SceneNavigator implements Infos
 		currentScene.lifecycle = new NullSceneLifecycle();
 		
 		transitionContext = new TransitionContext();
+		renderContext = new RenderContext();
 		
 		initState = new InitState(this);
 		idleState = new IdleState(this);
@@ -87,6 +94,8 @@ class SceneNavigator implements Infos
 		var mixer = new SceneMixer();
 		var mixedScene = mixer.mix(lastScene.scene, currentScene.scene);
 		
+		transitionContext.resetViewport(stage.width, stage.height);
+				
 		lastScene.lifecycle.renderTransition(transitionContext.toIn());
 		currentScene.lifecycle.renderTransition(transitionContext.toOut());
 		
@@ -100,7 +109,7 @@ class SceneNavigator implements Infos
 				case LayerState.OUT:
 					layer.renderTransition(transitionContext.toOut());
 				case LayerState.KEEP:
-					layer.render();
+					layer.render(transitionContext);
 			}
 		}
 	}
@@ -113,10 +122,12 @@ class SceneNavigator implements Infos
 	
 	public function renderNormal()
 	{
+		renderContext.resetViewport(stage.width, stage.height);
+		
 		currentScene.lifecycle.render();
 		for (layer in currentScene.scene.layers)
 		{
-			layer.render();
+			layer.render(renderContext);
 		}
 	}
 	

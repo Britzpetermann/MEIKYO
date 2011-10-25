@@ -4,6 +4,8 @@ import kumite.scene.LayerLifecycle;
 import kumite.scene.Layer;
 import kumite.scene.TransitionContext;
 import kumite.scene.LayerState;
+import kumite.scene.RenderContext;
+
 import kumite.stage.Stage;
 import kumite.time.Time;
 import kumite.projection.Projection;
@@ -13,9 +15,6 @@ import haxe.rtti.Infos;
 
 class TextureLayer implements LayerLifecycle, implements Infos
 {
-	@Inject
-	public var stage : Stage;
-	
 	@Inject
 	public var time : Time;
 	
@@ -27,8 +26,13 @@ class TextureLayer implements LayerLifecycle, implements Infos
 	public var moveTransition : LayerTransition;
 	public var alphaTransition : LayerTransition;
 	
+	@Param
 	public var scale : Float;
 	
+	@Param
+	public var position : Vec3;
+	
+	@Param
 	public var textureConfig : GLTextureConfig;
 	
 	var shaderProgram : WebGLProgram;
@@ -43,6 +47,7 @@ class TextureLayer implements LayerLifecycle, implements Infos
 	public function new()
 	{
 		scale = 1;
+		position = new Vec3(0, 0, 0);
 		transitions = new LayerTransitions();
 		transitions.add(cutTransition = new LayerTransition("cut"));
 		transitions.add(moveTransition = new LayerTransition("move"));
@@ -71,20 +76,20 @@ class TextureLayer implements LayerLifecycle, implements Infos
 	public function renderTransition(transitionContext : TransitionContext)
 	{
 		transitions.transition = transitionContext.transition;
-		render();
+		render(transitionContext);
 	}
 		
-	public function render()
+	public function render(renderContext : RenderContext)
 	{
 		GL.useProgram(shaderProgram);
-		GL.viewport(0, 0, stage.width, stage.height);
+		GL.viewport(0, 0, renderContext.width, renderContext.height);
 		
 		GL.disable(GL.DEPTH_TEST);
 		GL.enable(GL.BLEND);
 		GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 
 		var projectionMatrix = new Matrix4();
-		projectionMatrix.setOrtho(0, stage.width, stage.height, 0, 0, 1);
+		projectionMatrix.setOrtho(0, renderContext.width, renderContext.height, 0, 0, 1);
 		projectionMatrixUniform.setMatrix4(projectionMatrix);
 		
 		vertexPositionAttribute.vertexAttribPointer();
@@ -93,7 +98,8 @@ class TextureLayer implements LayerLifecycle, implements Infos
 
 		var worldViewMatrix = new Matrix4();
 		worldViewMatrix.appendScale(texture.width * scale, texture.height * scale, 1);
-		worldViewMatrix.appendTranslation((stage.width - texture.width * scale) / 2, (stage.height - texture.height * scale) / 2, 0);
+		worldViewMatrix.appendTranslation(position.x, position.y, position.z);
+		worldViewMatrix.appendTranslation((renderContext.width - texture.width * scale) / 2, (renderContext.height - texture.height * scale) / 2, 0);
 		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
 		
 		textureUniform.setTexture(texture);

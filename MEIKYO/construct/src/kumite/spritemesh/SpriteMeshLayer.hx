@@ -5,6 +5,7 @@ import kumite.scene.Layer;
 import kumite.layer.LayerTransition;
 import kumite.layer.LayerTransitions;
 import kumite.scene.TransitionContext;
+import kumite.scene.RenderContext;
 import kumite.stage.Stage;
 import kumite.time.Time;
 import kumite.projection.Projection;
@@ -14,16 +15,10 @@ import haxe.rtti.Infos;
 
 class SpriteMeshLayer implements LayerLifecycle, implements Infos
 {
-	public static var max : Int = 16000;
-	
-	@Inject
-	public var stage : Stage;
+	public static var max : Int = 10000;
 	
 	@Inject
 	public var time : Time;
-	
-	@Inject
-	public var projection : Projection;
 	
 	@Inject
 	public var textureRegistry : GLTextureRegistry;
@@ -42,7 +37,10 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 	
 	var sprites : Array<Sprite>;
 	
+	var projectionMatrix : Matrix4;
+	
 	var cameraMatrix : Matrix4;
+	var cameraMatrix2 : Matrix4;
 	
 	var shaderProgram : WebGLProgram;
 
@@ -63,7 +61,6 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 	var spriteRenderIndexes : Uint32Array;
 	var spriteRenderIndexesCount : Int;
 	
-	var cameraMatrix2 : Matrix4;
 		
 	public function new()
 	{
@@ -71,15 +68,15 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 		
 		spriteRenderIndexes = new Uint32Array(max);
 
+		projectionMatrix = new Matrix4();
 		cameraMatrix = new Matrix4();
+		cameraMatrix2 = new Matrix4();
 
 		transitions = new LayerTransitions();
 		transitions.add(alphaTransition = new LayerTransition("alpha"));
 		transitions.enableChild("alpha");
 		
 		alphaTransition.ease = ease.Quad.easeInOut;
-		
-		cameraMatrix2 = new Matrix4();
 	}
 	
 	public function init()
@@ -98,16 +95,16 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 	public function renderTransition(transitionContext : TransitionContext)
 	{
 		transitions.transition = transitionContext.transition;
-		render();
+		render(transitionContext);
 	}
 	
 	var timems : Float;
 	
-	public function render()
+	public function render(renderContext : RenderContext)
 	{
 		timems = time.ms * 0.15 + offset;
 		
-		renderGLInit();
+		renderGLInit(renderContext);
 
 		updateModel();
 		updateIndexes();
@@ -117,15 +114,15 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 		renderGL();
 	}
 	
-	function renderGLInit()
+	function renderGLInit(renderContext : RenderContext)
 	{
 		GL.useProgram(shaderProgram);
-		GL.viewport(0, 0, stage.width, stage.height);
+		GL.viewport(0, 0, renderContext.width, renderContext.height);
+		projectionMatrix.setPerspective(40, renderContext.aspect, 0.1, 500);
 		
 		GL.disable(GL.DEPTH_TEST);
 		GL.enable(GL.BLEND);
 		GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
-		//GL.blendFunc(GL.SRC_ALPHA, GL.ONE);
 	}
 	
 	static var axis = new Vec3(1, 1, 1).normalize();
@@ -273,7 +270,7 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 
 		GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, cubeVerticesIndexBuffer);
 		  
-		projectionMatrixUniform.setMatrix4(projection.matrix);
+		projectionMatrixUniform.setMatrix4(projectionMatrix);
 		
 		alphaUniform.setFloat(alphaTransition.transition);
 		

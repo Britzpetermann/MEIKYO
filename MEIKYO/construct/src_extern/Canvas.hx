@@ -1,10 +1,10 @@
 extern class Canvas
 {
-	public var width : Float;
-	public var height : Float;
+	public var width : Int;
+	public var height : Int;
 
-	public var clientWidth : Float;
-	public var clientHeight : Float;
+	public var clientWidth : Int;
+	public var clientHeight : Int;
 
 	public var style : Dynamic;
 

@@ -3,6 +3,7 @@ package kumite.layer;
 import kumite.scene.LayerLifecycle;
 import kumite.scene.Layer;
 import kumite.scene.TransitionContext;
+import kumite.scene.RenderContext;
 import kumite.stage.Stage;
 import kumite.time.Time;
 import kumite.projection.Projection;
@@ -13,23 +14,25 @@ import haxe.rtti.Infos;
 class TestLayer implements LayerLifecycle, implements Infos
 {
 	@Inject
-	public var stage : Stage;
-	
-	@Inject
 	public var time : Time;
 	
-	@Inject
-	public var projection : Projection;
 	
 	@Inject
 	public var camera : Camera;
 	
+	public var transitions : LayerTransitions;
+	public var alphaTransition : LayerTransition;
+	
+	@Param
 	public var color : Color;
+	
+	@Param
 	public var scale : Float;
+	
+	@Param
 	public var position : Vec3;
 	
-	var transitionAlpha : Float;
-	
+	var projectionMatrix : Matrix4;
 	var shaderProgram : WebGLProgram;
 	var vertexPositionAttribute : GLAttribLocation;
 	var vertexBuffer : WebGLBuffer;
@@ -43,7 +46,13 @@ class TestLayer implements LayerLifecycle, implements Infos
 		color = new Color(1, 1, 0, 0.5);
 		scale = 1;
 		position = new Vec3(0, 0, 0);
-		transitionAlpha = 1;
+		
+		transitions = new LayerTransitions();
+		transitions.add(alphaTransition = new LayerTransition("alpha"));
+		transitions.add(new LayerTransition("cut"));
+		transitions.enableChild("alpha");
+		
+		projectionMatrix = new Matrix4();	
 	}
 	
 	public function init()
@@ -65,20 +74,22 @@ class TestLayer implements LayerLifecycle, implements Infos
 	
 	public function renderTransition(transitionContext : TransitionContext)
 	{
-		transitionAlpha = transitionContext.transition;
-		render();
+		transitions.transition = transitionContext.transition;
+		render(transitionContext);
 	}
 		
-	public function render()
+	public function render(renderContext : RenderContext)
 	{
+		Log.info(Std.string(renderContext));
 		GL.useProgram(shaderProgram);
-		GL.viewport(0, 0, stage.width, stage.height);
+		GL.viewport(0, 0, renderContext.width, renderContext.height);
 		
 		GL.disable(GL.DEPTH_TEST);
 		GL.enable(GL.BLEND);
 		GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 
-		projectionMatrixUniform.setMatrix4(projection.matrix);
+		projectionMatrix.setPerspective(40, renderContext.aspect, 0.1, 500);
+		projectionMatrixUniform.setMatrix4(projectionMatrix);
 		vertexPositionAttribute.vertexAttribPointer();
 
 		var worldViewMatrix = new Matrix4();
@@ -89,7 +100,7 @@ class TestLayer implements LayerLifecycle, implements Infos
 		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
 		
 		var colorWithTransition = color.clone();
-		colorWithTransition.a *= transitionAlpha;
+		colorWithTransition.a *= alphaTransition.transition;
 		colorUniform.setRGBA(colorWithTransition);
 		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
 	}

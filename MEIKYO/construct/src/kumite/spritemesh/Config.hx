@@ -1,7 +1,11 @@
 package kumite.spritemesh;
 
-import kumite.scene.DefaultScene;
 import kumite.layer.ClearLayer;
+import kumite.layer.FramebufferEnableLayer;
+import kumite.layer.FramebufferDisableLayer;
+import kumite.layer.TextureLayer;
+
+import kumite.scene.DefaultScene;
 import kumite.displaylist.DisplayListLayer;
 
 import haxe.rtti.Infos;
@@ -30,6 +34,12 @@ class Config implements Infos
 	public var scene2 : DefaultScene;
 	public var scene3 : DefaultScene;
 	
+	public var framebufferEnableLayer1 : FramebufferEnableLayer;
+	public var framebufferDisableLayer1 : FramebufferDisableLayer;
+	public var clearLayer1 : ClearLayer;
+	public var textureLayer1 : TextureLayer;
+		
+	
 	public function new()
 	{
 		clearLayer = new ClearLayer();
@@ -49,13 +59,20 @@ class Config implements Infos
 		layer2.textureAmpParam = 305; 
 		
 		layer3 = new SpriteMeshLayer();
-		layer3.offset = 1000 * 30;
-		layer3.textureFrequenceParam = 0.00002; 
-		layer3.textureAmpParam = 39.4; 
+		layer3.offset = 0;
+		layer3.textureFrequenceParam = 0.0000031; 
+		layer3.textureAmpParam = 304; 
 		
 		scene1 = new DefaultScene("SPRITES");
 		scene2 = new DefaultScene("SPRITES");
 		scene3 = new DefaultScene("SPRITES");
+		
+		framebufferEnableLayer1 = new FramebufferEnableLayer(2048, 1024);
+		framebufferDisableLayer1 = new FramebufferDisableLayer();
+		clearLayer1 = new ClearLayer();
+		textureLayer1 = new TextureLayer();
+		textureLayer1.scale = 1.1;
+		textureLayer1.textureConfig = framebufferEnableLayer1.textureConfig;
 	}
 	
 	@Complete
@@ -73,7 +90,11 @@ class Config implements Infos
 		
 		scene3.addLayerLifecycle(clearLayer, kumite.layer.LayerId.CLEAR);
 		scene3.addLayerLifecycle(colorLayer);
+		scene3.addLayerLifecycle(framebufferEnableLayer1);
+		scene3.addLayerLifecycle(clearLayer1);
 		scene3.addLayerLifecycle(layer3);
+		scene3.addLayerLifecycle(framebufferDisableLayer1);
+		scene3.addLayerLifecycle(textureLayer1);
 		scene3.addLayerLifecycle(displayListLayer);
 	}
 	

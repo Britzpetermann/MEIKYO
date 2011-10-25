@@ -10,7 +10,7 @@ class Layer implements LayerLifecycle
 	
 	public function init();
 	
-	public function render();
+	public function render(renderContext : RenderContext);
 	
 	public function renderTransition(transitionContext : TransitionContext);
 }

@@ -26,11 +26,11 @@ class DelegateLayer extends Layer
 		}
 	}
 	
-	override public function render()
+	override public function render(renderContext : RenderContext)
 	{
 		try
 		{
-			lifecycle.render();
+			lifecycle.render(renderContext);
 		}
 		catch(e : Dynamic)
 		{

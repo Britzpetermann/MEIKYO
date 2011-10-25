@@ -37,7 +37,7 @@ class Config implements Infos
 		colorLayer1.color = new Color(0.5, 0.5, 0.5, 1);
 		
 		colorLayer2 = new kumite.layer.ColorLayer();
-		colorLayer2.color = new Color(0.7, 0.7, 0.7, 1);
+		colorLayer2.color = new Color(0.0, 0.0, 0.0, 1);
 		
 		colorLayer3 = new kumite.layer.ColorLayer();
 		colorLayer3.color = new Color(0.0, 0.0, 0.0, 1);
@@ -59,7 +59,7 @@ class Config implements Infos
 		testLayer1.position = new Vec3(1, 0, 2);
 		
 		testLayer2 = new kumite.layer.TestLayer();
-		testLayer2.color = new Color(0, 1, 0, 0.6);
+		testLayer2.color = new Color(0, 1, 0, 0.5);
 		testLayer2.scale = 2;
 		testLayer2.position = new Vec3(-1, 0, 1);
 		

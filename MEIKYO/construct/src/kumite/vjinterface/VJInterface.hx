@@ -42,7 +42,7 @@ class VJInterface implements Infos
 	@Message
 	public function render(tick : Tick)
 	{
-		sceneContainer.y = stage.stageHeight - 30;
+		sceneContainer.y = stage.stageHeight - 30 * 3;
 	}
 	
 	function addSceneButtons()
@@ -52,10 +52,12 @@ class VJInterface implements Infos
 		stage.addChild(sceneContainer);
 		
 		var currentX = 0;
+		var currentY = 0;
 		for (sceneAndLifecycle in scenes.all)
 		{
 			var sceneButton = new GLLabel();
 			sceneButton.x = currentX;
+			sceneButton.y = currentY;
 			sceneButton.text = sceneAndLifecycle.scene.name;
 			sceneButton.width = 100;
 			sceneButton.height = 20;
@@ -63,6 +65,11 @@ class VJInterface implements Infos
 			sceneContainer.addChild(sceneButton);
 			
 			currentX += sceneButton.width + 10;
+			if (currentX > 600)
+			{
+				currentX = 0;
+				currentY += sceneButton.height + 10;
+			}
 		}
 	}
 	

@@ -2,9 +2,12 @@ package kumite.flyingman;
 
 import kumite.scene.LayerLifecycle;
 import kumite.scene.Layer;
+import kumite.scene.TransitionContext;
+import kumite.scene.RenderContext;
+
 import kumite.layer.LayerTransition;
 import kumite.layer.LayerTransitions;
-import kumite.scene.TransitionContext;
+
 import kumite.stage.Stage;
 import kumite.time.Time;
 import kumite.projection.Projection;
@@ -14,9 +17,6 @@ import haxe.rtti.Infos;
 
 class FlyingManLayer implements LayerLifecycle, implements Infos
 {
-	@Inject
-	public var stage : Stage;
-	
 	@Inject
 	public var time : Time;
 	
@@ -79,13 +79,13 @@ class FlyingManLayer implements LayerLifecycle, implements Infos
 	public function renderTransition(transitionContext : TransitionContext)
 	{
 		transitions.transition = transitionContext.transition;
-		render();
+		render(transitionContext);
 	}
 		
-	public function render()
+	public function render(renderContext : RenderContext)
 	{
 		GL.useProgram(shaderProgram);
-		GL.viewport(0, 0, stage.width, stage.height);
+		GL.viewport(0, 0, renderContext.width, renderContext.height);
 		
 		GL.enable(GL.DEPTH_TEST);
 		GL.enable(GL.BLEND);

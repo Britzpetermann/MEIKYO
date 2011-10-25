@@ -1,11 +1,11 @@
-package kumite.framebuffereffect;
+package kumite.layer;
 
 import kumite.scene.LayerLifecycle;
 import kumite.scene.Layer;
-import kumite.layer.LayerTransition;
-import kumite.layer.LayerTransitions;
 import kumite.scene.TransitionContext;
 import kumite.scene.LayerState;
+import kumite.scene.RenderContext;
+
 import kumite.stage.Stage;
 import kumite.time.Time;
 import kumite.projection.Projection;
@@ -13,22 +13,27 @@ import kumite.camera.Camera;
 
 import haxe.rtti.Infos;
 
-class FBTextureLayer implements LayerLifecycle, implements Infos
+class Texture3DLayer implements LayerLifecycle, implements Infos
 {
 	@Inject
-	public var stage : Stage;
+	public var time : Time;
 	
 	@Inject
-	public var time : Time;
+	public var textureRegistry : GLTextureRegistry;
 	
 	public var transitions : LayerTransitions;
 	public var cutTransition : LayerTransition;
 	public var moveTransition : LayerTransition;
 	public var alphaTransition : LayerTransition;
 	
-	public var texture : GLFramebuffer;
-	
+	@Param
 	public var scale : Float;
+	
+	@Param
+	public var position : Vec3;
+	
+	@Param
+	public var textureConfig : GLTextureConfig;
 	
 	var shaderProgram : WebGLProgram;
 	var vertexPositionAttribute : GLAttribLocation;
@@ -42,6 +47,7 @@ class FBTextureLayer implements LayerLifecycle, implements Infos
 	public function new()
 	{
 		scale = 1;
+		position = new Vec3(0, 0, 0);
 		transitions = new LayerTransitions();
 		transitions.add(cutTransition = new LayerTransition("cut"));
 		transitions.add(moveTransition = new LayerTransition("move"));
@@ -70,34 +76,35 @@ class FBTextureLayer implements LayerLifecycle, implements Infos
 	public function renderTransition(transitionContext : TransitionContext)
 	{
 		transitions.transition = transitionContext.transition;
-		render();
+		render(transitionContext);
 	}
 		
-	public function render()
+	public function render(renderContext : RenderContext)
 	{
 		GL.useProgram(shaderProgram);
-		GL.viewport(0, 0, stage.width, stage.height);
+		GL.viewport(0, 0, renderContext.width, renderContext.height);
 		
 		GL.disable(GL.DEPTH_TEST);
 		GL.enable(GL.BLEND);
 		GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 
 		var projectionMatrix = new Matrix4();
-		projectionMatrix.setOrtho(0, stage.width, stage.height, 0, 0, 1);
+		projectionMatrix.setPerspective(40, renderContext.aspect, 0.1, 500);
 		projectionMatrixUniform.setMatrix4(projectionMatrix);
 		
 		vertexPositionAttribute.vertexAttribPointer();
 
+		var texture = textureRegistry.get(textureConfig);
+
 		var worldViewMatrix = new Matrix4();
-		worldViewMatrix.appendScale(texture.width * scale, texture.height * scale, 1);
-		worldViewMatrix.appendTranslation((stage.width - texture.width * scale) / 2, (stage.height - texture.height * scale) / 2, 0);
+		worldViewMatrix.appendTranslation(-0.5, -0.5, 0);
+		worldViewMatrix.appendScale(texture.width * scale * 0.01, texture.height * scale * 0.01, 1);
+		worldViewMatrix.appendRotation(time.ms / 20000, new Vec3(-1, 0, -0.428746).normalize());
+		worldViewMatrix.appendTranslation(position.x, position.y, position.z);
+		worldViewMatrix.appendTranslation(0, 0, -10);
 		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
 		
-		GL.activeTexture(GL.TEXTURE0);
-		GL.bindTexture(GL.TEXTURE_2D, texture.texture);
-		textureUniform.uniform1i(0);
-		
-		
+		textureUniform.setTexture(texture);
 		alphaUniform.uniform1f(alphaTransition.transition);
 		
 		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);

@@ -3,6 +3,7 @@ package kumite.layer;
 import kumite.scene.LayerLifecycle;
 import kumite.scene.Layer;
 import kumite.scene.TransitionContext;
+import kumite.scene.RenderContext;
 import kumite.stage.Stage;
 import kumite.time.Time;
 import kumite.projection.Projection;
@@ -12,9 +13,6 @@ import haxe.rtti.Infos;
 
 class ColorLayer implements LayerLifecycle, implements Infos
 {
-	@Inject
-	public var stage : Stage;
-	
 	@Inject
 	public var time : Time;
 	
@@ -63,27 +61,27 @@ class ColorLayer implements LayerLifecycle, implements Infos
 	public function renderTransition(transitionContext : TransitionContext)
 	{
 		transitions.transition = transitionContext.transition;
-		render();
+		render(transitionContext);
 	}
 		
-	public function render()
+	public function render(renderContext : RenderContext)
 	{
 		GL.useProgram(shaderProgram);
-		GL.viewport(0, 0, stage.width, stage.height);
+		GL.viewport(0, 0, renderContext.width, renderContext.height);
 		
 		GL.disable(GL.DEPTH_TEST);
 		GL.enable(GL.BLEND);
 		GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 
 		var projectionMatrix = new Matrix4();
-		projectionMatrix.setOrtho(0, stage.width, stage.height, 0, 0, 1);
+		projectionMatrix.setOrtho(0, renderContext.width, renderContext.height, 0, 0, 1);
 		projectionMatrixUniform.setMatrix4(projectionMatrix);
 		
 		vertexPositionAttribute.vertexAttribPointer();
 
 		var worldViewMatrix = new Matrix4();
 		worldViewMatrix.appendTranslation(moveTransition.direction * (1 - moveTransition.transition), 0, 0);
-		worldViewMatrix.appendScale(stage.width, stage.height, 1);
+		worldViewMatrix.appendScale(renderContext.width, renderContext.height, 1);
 		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
 		
 		var colorWithTransition = color.clone();

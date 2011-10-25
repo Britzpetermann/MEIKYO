@@ -1,7 +1,7 @@
 class GLTexture
 {
-	public var width : Float;
-	public var height : Float;
+	public var width : Int;
+	public var height : Int;
 	public var texture  : WebGLTexture;
 
 	public function new(){}

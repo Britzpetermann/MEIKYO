@@ -1,6 +1,6 @@
 package kumite.scene;
 
-class TransitionContext
+class TransitionContext extends RenderContext
 {
 	public var transition(getTransition, setTransition) : Float;
 	public var layerState : LayerState;
@@ -12,6 +12,7 @@ class TransitionContext
 	
 	public function new()
 	{
+		super();
 	}
 	
 	public function toIn() : TransitionContext
