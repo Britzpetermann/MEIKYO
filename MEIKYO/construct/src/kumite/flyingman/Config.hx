@@ -9,6 +9,8 @@ class Config implements Infos
 	@Inject
 	public var textureRegistry : GLTextureRegistry;
 	
+	public var flyingManClearLayer : kumite.layer.ClearLayer;
+	
 	public var paperBackground : kumite.layer.TextureLayer;
 	
 	public var flyingManGraph : FlyingManGraph;
@@ -27,6 +29,8 @@ class Config implements Infos
 	
 	public function new()
 	{
+		flyingManClearLayer = new kumite.layer.ClearLayer();
+		
 		paperBackground = new kumite.layer.TextureLayer();
 		paperBackground.textureConfig = PAPER;
 		

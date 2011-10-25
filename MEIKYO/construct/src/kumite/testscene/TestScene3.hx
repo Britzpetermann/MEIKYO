@@ -13,6 +13,9 @@ class TestScene3 implements SceneLifecycle, implements Infos
 	public static var SCENE_ID : String = "RED-BLUE";
 	
 	@Inject
+	public var testClearLayer : kumite.layer.ClearLayer;
+	
+	@Inject
 	public var testLayer1 : kumite.layer.TestLayer;
 	
 	@Inject
@@ -32,6 +35,7 @@ class TestScene3 implements SceneLifecycle, implements Infos
 	public function sceneInit(scene : Scene)
 	{
 		scene.id = scene.name = SCENE_ID;
+		scene.addLayer(new DelegateLayer(testClearLayer, kumite.layer.LayerId.CLEAR));
 		scene.addLayer(new DelegateLayer(colorLayer3));
 		scene.addLayer(new DelegateLayer(textureLayer1));
 		scene.addLayer(new DelegateLayer(testLayer1));
@@ -56,12 +60,9 @@ class TestScene3 implements SceneLifecycle, implements Infos
 	
 	public function renderTransition(transitionContext : TransitionContext)
 	{
-		render();
 	}
 		
 	public function render()
 	{
-		GL.clearColor(0, 0, 0, 1);
-		GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);		
 	}
 }

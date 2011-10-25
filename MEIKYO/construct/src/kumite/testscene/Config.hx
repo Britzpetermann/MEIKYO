@@ -10,6 +10,8 @@ class Config implements Infos
 	@Inject
 	public var textureRegistry : GLTextureRegistry;
 	
+	public var testClearLayer : kumite.layer.ClearLayer;
+	
 	public var colorLayer1 : kumite.layer.ColorLayer;
 	public var colorLayer2 : kumite.layer.ColorLayer;
 	public var colorLayer3 : kumite.layer.ColorLayer;
@@ -29,6 +31,8 @@ class Config implements Infos
 	
 	public function new()
 	{
+		testClearLayer = new kumite.layer.ClearLayer();
+		
 		colorLayer1 = new kumite.layer.ColorLayer();
 		colorLayer1.color = new Color(0.5, 0.5, 0.5, 1);
 		
