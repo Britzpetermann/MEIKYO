@@ -33,7 +33,7 @@ class VJInterface implements Infos
 		stage = GLDisplayList.getDefault().stage;
 		stage.addChild(new GLStats());
 		
-		timer = new Timer(8000);
+		timer = new Timer(12000);
 		timer.run = navigateNext;
 
 		addSceneButtons();

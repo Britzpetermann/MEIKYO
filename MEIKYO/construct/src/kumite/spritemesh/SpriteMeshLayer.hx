@@ -153,6 +153,7 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
 			
 			var scale = (Math.sin(-timems / 2000 + i * 3.440) * scaleAmplitude + 0.7) * 1.1;
 			m.setScale(scale, scale, scale);
+			m.appendRotationZAffine(Math.sin(-timems / 10700 * 3.442 + i * 3.442) * 10);
 			m.appendRotationAffine(-timems / 5000 + i * 3.440, axis);
 			
 			var tx = Math.sin(timems / 10700 + i * 3.442) * objectAmplitude1 + Math.cos(timems / 7000 - i * 3.439) * objectAmplitude2;

@@ -29,7 +29,7 @@ class Config implements Infos
 		
 		layer1 = new SpriteMeshLayer();
 		layer1.offset = 0;
-		layer1.textureFrequenceParam = 0.0000047;
+		layer1.textureFrequenceParam = 0.0000031;
 		layer1.textureAmpParam = 304;
 		
 		layer2 = new SpriteMeshLayer();
@@ -39,7 +39,7 @@ class Config implements Infos
 		
 		layer3 = new SpriteMeshLayer();
 		layer3.offset = 1000 * 30;
-		layer3.textureFrequenceParam = 0.00005; 
+		layer3.textureFrequenceParam = 0.00002; 
 		layer3.textureAmpParam = 39.4; 
 		
 		scene1 = new SpriteMeshScene("1");

@@ -2429,6 +2429,7 @@ kumite.spritemesh.SpriteMeshLayer.prototype.updateModel = function() {
 			var m = sprite.matrix;
 			var scale = (Math.sin(-this.timems / 2000 + i * 3.440) * scaleAmplitude + 0.7) * 1.1;
 			m.setScale(scale,scale,scale);
+			m.appendRotationZAffine(Math.sin(-this.timems / 10700 * 3.442 + i * 3.442) * 10);
 			m.appendRotationAffine(-this.timems / 5000 + i * 3.440,kumite.spritemesh.SpriteMeshLayer.axis);
 			var tx = Math.sin(this.timems / 10700 + i * 3.442) * objectAmplitude1 + Math.cos(this.timems / 7000 - i * 3.439) * objectAmplitude2;
 			var ty = Math.cos(this.timems / 17800 + i * 3.443) * objectAmplitude1;
@@ -2451,7 +2452,7 @@ kumite.spritemesh.SpriteMeshLayer.prototype.updateIndexes = function() {
 				var D3 = D4 / 500;
 				if(D3 > 1) {
 					{
-						Log.posInfo = { fileName : "SpriteMeshLayer.hx", lineNumber : 182, className : "kumite.spritemesh.SpriteMeshLayer", methodName : "updateIndexes"};
+						Log.posInfo = { fileName : "SpriteMeshLayer.hx", lineNumber : 183, className : "kumite.spritemesh.SpriteMeshLayer", methodName : "updateIndexes"};
 						if(Log.filter(LogLevel.WARN)) {
 							Log.fetchInput(D3,null,null,null,null,null,null);
 							console.warn(Log.createMessage());
@@ -5878,7 +5879,7 @@ kumite.spritemesh.Config = function(p) { if( p === $_ ) return; {
 	this.spritemesh2ColorLayer.layerId = "spritemesh2ColorLayer";
 	this.layer1 = new kumite.spritemesh.SpriteMeshLayer();
 	this.layer1.offset = 0;
-	this.layer1.textureFrequenceParam = 0.0000047;
+	this.layer1.textureFrequenceParam = 0.0000031;
 	this.layer1.textureAmpParam = 304;
 	this.layer2 = new kumite.spritemesh.SpriteMeshLayer();
 	this.layer2.offset = 20000;
@@ -5886,7 +5887,7 @@ kumite.spritemesh.Config = function(p) { if( p === $_ ) return; {
 	this.layer2.textureAmpParam = 305;
 	this.layer3 = new kumite.spritemesh.SpriteMeshLayer();
 	this.layer3.offset = 30000;
-	this.layer3.textureFrequenceParam = 0.00005;
+	this.layer3.textureFrequenceParam = 0.00002;
 	this.layer3.textureAmpParam = 39.4;
 	this.scene1 = new kumite.spritemesh.SpriteMeshScene("1");
 	this.scene1.layer = this.layer1;
@@ -6048,7 +6049,7 @@ kumite.vjinterface.VJInterface.prototype.sceneContainer = null;
 kumite.vjinterface.VJInterface.prototype.start = function() {
 	this.stage = GLDisplayList.getDefault().stage;
 	this.stage.addChild(new GLStats());
-	this.timer = new haxe.Timer(8000);
+	this.timer = new haxe.Timer(12000);
 	this.timer.run = $closure(this,"navigateNext");
 	this.addSceneButtons();
 }
@@ -7771,7 +7772,7 @@ hsl.haxe._DirectSignaler.PropagationStatus.IMMEDIATELY_STOPPED = 1;
 hsl.haxe._DirectSignaler.PropagationStatus.STOPPED = 2;
 hsl.haxe._DirectSignaler.PropagationStatus.UNDISTURBED = 3;
 kumite.spritemesh.SpriteMeshLayer.__meta__ = { fields : { stage : { Inject : null}, time : { Inject : null}, projection : { Inject : null}, textureRegistry : { Inject : null}, offset : { Param : null}, textureFrequenceParam : { Param : null}, textureAmpParam : { Param : null}}};
-kumite.spritemesh.SpriteMeshLayer.__rtti = "<class path=\"kumite.spritemesh.SpriteMeshLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<max public=\"1\" line=\"17\" static=\"1\"><c path=\"Int\"/></max>\n\t<axis line=\"134\" static=\"1\"><c path=\"Vec3\"/></axis>\n\t<zAxis line=\"135\" static=\"1\"><c path=\"Vec3\"/></zAxis>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<layerId public=\"1\"><c path=\"String\"/></layerId>\n\t<transitions public=\"1\"><c path=\"kumite.layer.LayerTransitions\"/></transitions>\n\t<alphaTransition public=\"1\"><c path=\"kumite.layer.LayerTransition\"/></alphaTransition>\n\t<offset public=\"1\"><c path=\"Float\"/></offset>\n\t<textureFrequenceParam public=\"1\"><c path=\"Float\"/></textureFrequenceParam>\n\t<textureAmpParam public=\"1\"><c path=\"Float\"/></textureAmpParam>\n\t<sprites><c path=\"Array\"><c path=\"kumite.spritemesh.Sprite\"/></c></sprites>\n\t<cameraMatrix><c path=\"Matrix4\"/></cameraMatrix>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexBuffer><c path=\"Float32Array\"/></vertexBuffer>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexUVBuffer><c path=\"Float32Array\"/></vertexUVBuffer>\n\t<vertexUVAttribute><c path=\"GLAttribLocation\"/></vertexUVAttribute>\n\t<vertexNormalBuffer><c path=\"Float32Array\"/></vertexNormalBuffer>\n\t<vertexNormalAttribute><c path=\"GLAttribLocation\"/></vertexNormalAttribute>\n\t<cubeVerticesIndexBuffer><c path=\"WebGLBuffer\"/></cubeVerticesIndexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<alphaUniform><c path=\"GLUniformLocation\"/></alphaUniform>\n\t<textureUniform><c path=\"GLUniformLocation\"/></textureUniform>\n\t<spriteRenderIndexes><c path=\"Uint32Array\"/></spriteRenderIndexes>\n\t<spriteRenderIndexesCount><c path=\"Int\"/></spriteRenderIndexesCount>\n\t<cameraMatrix2><c path=\"Matrix4\"/></cameraMatrix2>\n\t<init public=\"1\" set=\"method\" line=\"88\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"101\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<timems><c path=\"Float\"/></timems>\n\t<render public=\"1\" set=\"method\" line=\"109\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<renderGLInit set=\"method\" line=\"123\"><f a=\"\"><e path=\"Void\"/></f></renderGLInit>\n\t<updateModel set=\"method\" line=\"137\"><f a=\"\"><e path=\"Void\"/></f></updateModel>\n\t<updateIndexes set=\"method\" line=\"170\"><f a=\"\"><e path=\"Void\"/></f></updateIndexes>\n\t<sortIndexes set=\"method\" line=\"196\"><f a=\"\"><e path=\"Void\"/></f></sortIndexes>\n\t<quicksort set=\"method\" line=\"201\"><f a=\"lo:hi\">\n\t<c path=\"Int\"/>\n\t<c path=\"Int\"/>\n\t<e path=\"Void\"/>\n</f></quicksort>\n\t<updateBuffer set=\"method\" line=\"219\"><f a=\"\"><e path=\"Void\"/></f></updateBuffer>\n\t<renderGL set=\"method\" line=\"266\"><f a=\"\"><e path=\"Void\"/></f></renderGL>\n\t<initGl set=\"method\" line=\"288\"><f a=\"\"><e path=\"Void\"/></f></initGl>\n\t<new public=\"1\" set=\"method\" line=\"70\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.spritemesh.SpriteMeshLayer.__rtti = "<class path=\"kumite.spritemesh.SpriteMeshLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<max public=\"1\" line=\"17\" static=\"1\"><c path=\"Int\"/></max>\n\t<axis line=\"134\" static=\"1\"><c path=\"Vec3\"/></axis>\n\t<zAxis line=\"135\" static=\"1\"><c path=\"Vec3\"/></zAxis>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<layerId public=\"1\"><c path=\"String\"/></layerId>\n\t<transitions public=\"1\"><c path=\"kumite.layer.LayerTransitions\"/></transitions>\n\t<alphaTransition public=\"1\"><c path=\"kumite.layer.LayerTransition\"/></alphaTransition>\n\t<offset public=\"1\"><c path=\"Float\"/></offset>\n\t<textureFrequenceParam public=\"1\"><c path=\"Float\"/></textureFrequenceParam>\n\t<textureAmpParam public=\"1\"><c path=\"Float\"/></textureAmpParam>\n\t<sprites><c path=\"Array\"><c path=\"kumite.spritemesh.Sprite\"/></c></sprites>\n\t<cameraMatrix><c path=\"Matrix4\"/></cameraMatrix>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexBuffer><c path=\"Float32Array\"/></vertexBuffer>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexUVBuffer><c path=\"Float32Array\"/></vertexUVBuffer>\n\t<vertexUVAttribute><c path=\"GLAttribLocation\"/></vertexUVAttribute>\n\t<vertexNormalBuffer><c path=\"Float32Array\"/></vertexNormalBuffer>\n\t<vertexNormalAttribute><c path=\"GLAttribLocation\"/></vertexNormalAttribute>\n\t<cubeVerticesIndexBuffer><c path=\"WebGLBuffer\"/></cubeVerticesIndexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<alphaUniform><c path=\"GLUniformLocation\"/></alphaUniform>\n\t<textureUniform><c path=\"GLUniformLocation\"/></textureUniform>\n\t<spriteRenderIndexes><c path=\"Uint32Array\"/></spriteRenderIndexes>\n\t<spriteRenderIndexesCount><c path=\"Int\"/></spriteRenderIndexesCount>\n\t<cameraMatrix2><c path=\"Matrix4\"/></cameraMatrix2>\n\t<init public=\"1\" set=\"method\" line=\"88\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"101\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<timems><c path=\"Float\"/></timems>\n\t<render public=\"1\" set=\"method\" line=\"109\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<renderGLInit set=\"method\" line=\"123\"><f a=\"\"><e path=\"Void\"/></f></renderGLInit>\n\t<updateModel set=\"method\" line=\"137\"><f a=\"\"><e path=\"Void\"/></f></updateModel>\n\t<updateIndexes set=\"method\" line=\"171\"><f a=\"\"><e path=\"Void\"/></f></updateIndexes>\n\t<sortIndexes set=\"method\" line=\"197\"><f a=\"\"><e path=\"Void\"/></f></sortIndexes>\n\t<quicksort set=\"method\" line=\"202\"><f a=\"lo:hi\">\n\t<c path=\"Int\"/>\n\t<c path=\"Int\"/>\n\t<e path=\"Void\"/>\n</f></quicksort>\n\t<updateBuffer set=\"method\" line=\"220\"><f a=\"\"><e path=\"Void\"/></f></updateBuffer>\n\t<renderGL set=\"method\" line=\"267\"><f a=\"\"><e path=\"Void\"/></f></renderGL>\n\t<initGl set=\"method\" line=\"289\"><f a=\"\"><e path=\"Void\"/></f></initGl>\n\t<new public=\"1\" set=\"method\" line=\"70\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.spritemesh.SpriteMeshLayer.max = 16000;
 kumite.spritemesh.SpriteMeshLayer.axis = new Vec3(1,1,1).normalize();
 kumite.spritemesh.SpriteMeshLayer.zAxis = new Vec3(0,0,1);
