@@ -28,6 +28,7 @@ class FlyingManScene implements SceneLifecycle, implements Infos
 	public var flyingManLayer : FlyingManLayer;
 	
 	var sceneId : String;
+	
 	public function new(sceneId : String)
 	{
 		this.sceneId = sceneId;

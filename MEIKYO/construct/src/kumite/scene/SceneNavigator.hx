@@ -48,7 +48,6 @@ class SceneNavigator implements Infos
 	public function handleSceneLifecycleAdded(lifecycle : SceneLifecycle)
 	{
 		var scene = new Scene();
-		lifecycle.sceneInit(scene);
 		
 		var sceneAndLifecycle = new SceneAndLifecycle();
 		sceneAndLifecycle.scene = scene;
@@ -144,8 +143,22 @@ class SceneNavigator implements Infos
 		var layerIdToLifecycle : Hash<LayerLifecycle> = new Hash();
 		
 		var autoLayerIndex = 0;
+		var autoSceneIndex = 0;
 		for(scene in scenes.all)
 		{
+			if (scene.scene.id == null)
+			{
+				scene.scene.id = "AUTO_" + autoSceneIndex;
+				autoSceneIndex++;
+			}
+			
+			scene.lifecycle.sceneInit(scene.scene);
+
+			if (scene.scene.name == null)
+			{
+				scene.scene.name = scene.scene.id;
+			}
+			
 			for (layer in scene.scene.layers)
 			{
 				Log.info("Init layer:", layer.layerId);

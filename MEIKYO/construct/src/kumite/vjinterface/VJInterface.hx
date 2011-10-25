@@ -27,7 +27,7 @@ class VJInterface implements Infos
 	
 	public function new();
 	
-	@Sequence("boot", "start")	
+	@Sequence("boot", "startComplete")	
 	public function start()
 	{
 		stage = GLDisplayList.getDefault().stage;

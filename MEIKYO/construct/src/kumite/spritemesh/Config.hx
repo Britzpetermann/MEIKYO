@@ -1,5 +1,9 @@
 package kumite.spritemesh;
 
+import kumite.scene.DefaultScene;
+import kumite.layer.ClearLayer;
+import kumite.displaylist.DisplayListLayer;
+
 import haxe.rtti.Infos;
 
 //TODO trace offset
@@ -11,20 +15,28 @@ class Config implements Infos
 	@Inject
 	public var textureRegistry : GLTextureRegistry;
 		
+	@Inject
+	public var displayListLayer : DisplayListLayer;
+		
+	public var clearLayer : ClearLayer;
+	
+	public var colorLayer : kumite.layer.ColorLayer;
+	
 	public var layer1 : SpriteMeshLayer;
 	public var layer2 : SpriteMeshLayer;
 	public var layer3 : SpriteMeshLayer;
 	
-	public var scene1 : SpriteMeshScene;
-	public var scene2 : SpriteMeshScene;
-	public var scene3 : SpriteMeshScene;
-	
-	public var  spritemesh2ColorLayer : kumite.layer.ColorLayer;
+	public var scene1 : DefaultScene;
+	public var scene2 : DefaultScene;
+	public var scene3 : DefaultScene;
 	
 	public function new()
 	{
-		spritemesh2ColorLayer = new kumite.layer.ColorLayer();
-		spritemesh2ColorLayer.color = new Color(0.0, 0.0, 0.0, 1);
+		clearLayer = new ClearLayer();
+		
+		colorLayer = new kumite.layer.ColorLayer();
+		colorLayer.color = new Color(0.0, 0.0, 0.0, 1);
+		colorLayer.transitions.enableChild("alpha");
 		
 		layer1 = new SpriteMeshLayer();
 		layer1.offset = 0;
@@ -41,20 +53,28 @@ class Config implements Infos
 		layer3.textureFrequenceParam = 0.00002; 
 		layer3.textureAmpParam = 39.4; 
 		
-		scene1 = new SpriteMeshScene("1");
-		scene1.layer = layer1;
-		
-		scene2 = new SpriteMeshScene("2");
-		scene2.layer = layer2;
-		
-		scene3 = new SpriteMeshScene("3");
-		scene3.layer = layer3;
+		scene1 = new DefaultScene("SPRITES");
+		scene2 = new DefaultScene("SPRITES");
+		scene3 = new DefaultScene("SPRITES");
 	}
 	
-	@Init
-	public function init()
+	@Complete
+	public function complete()
 	{
+		scene1.addLayerLifecycle(clearLayer, kumite.layer.LayerId.CLEAR);
+		scene1.addLayerLifecycle(colorLayer);
+		scene1.addLayerLifecycle(layer1);
+		scene1.addLayerLifecycle(displayListLayer);
 		
+		scene2.addLayerLifecycle(clearLayer, kumite.layer.LayerId.CLEAR);
+		scene2.addLayerLifecycle(colorLayer);
+		scene2.addLayerLifecycle(layer2);
+		scene2.addLayerLifecycle(displayListLayer);
+		
+		scene3.addLayerLifecycle(clearLayer, kumite.layer.LayerId.CLEAR);
+		scene3.addLayerLifecycle(colorLayer);
+		scene3.addLayerLifecycle(layer3);
+		scene3.addLayerLifecycle(displayListLayer);
 	}
 	
 	@Sequence("boot", "startPrepare")
