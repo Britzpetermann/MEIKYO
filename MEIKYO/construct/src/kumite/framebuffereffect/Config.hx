@@ -4,6 +4,8 @@ import kumite.spritemesh.SpriteMeshLayer;
 
 import kumite.displaylist.DisplayListLayer;
 
+import kumite.layer.TestFilter;
+import kumite.layer.CrosshatchFilter;
 import kumite.layer.ColorLayer;
 import kumite.layer.ClearLayer;
 import kumite.layer.TestLayer;
@@ -38,6 +40,9 @@ class Config implements Infos
 	public var textureLayer1 : Texture3DLayer;
 	public var textureLayer2 : Texture3DLayer;
 	
+	public var testFilter : TestFilter;
+	public var crosshatchFilter : CrosshatchFilter;
+	
 	public var scene : DefaultScene;
 	
 	public function new()
@@ -52,7 +57,7 @@ class Config implements Infos
 		clearLayer1.color = new Color(1, 1, 1, 0.15);
 		
 		clearLayer2 = new ClearLayer();
-		clearLayer2.color = new Color(1, 1, 1, 0.15);
+		clearLayer2.color = new Color(0, 0, 0, 0);
 		
 		testLayer = new TestLayer();
 		testLayer.scale = 2;
@@ -62,19 +67,26 @@ class Config implements Infos
 		framebufferEnableLayer1 = new FramebufferEnableLayer(1024, 512);
 		framebufferDisableLayer1 = new FramebufferDisableLayer();
 		
-		framebufferEnableLayer2 = new FramebufferEnableLayer(1024, 1024);
+		framebufferEnableLayer2 = new FramebufferEnableLayer(512, 512);
 		framebufferDisableLayer2 = new FramebufferDisableLayer();
 		
 		textureLayer1 = new Texture3DLayer();
-		textureLayer1.position.z = 3;
 		textureLayer1.scale = 0.7;
 		textureLayer1.textureConfig = framebufferEnableLayer1.textureConfig;
 		textureLayer1.position.x = -3;
+		textureLayer1.position.z = 0;
+		
+		testFilter = new TestFilter();
+		testFilter.textureConfig = framebufferEnableLayer1.textureConfig;
+		
+		crosshatchFilter = new CrosshatchFilter();
+		crosshatchFilter.textureConfig = framebufferEnableLayer2.textureConfig;
 		
 		textureLayer2 = new Texture3DLayer();
-		textureLayer2.scale = 0.25;
+		textureLayer2.scale = 0.9;
 		textureLayer2.textureConfig = framebufferEnableLayer2.textureConfig;
 		textureLayer2.position.x = 3;
+		textureLayer1.position.z = -1;
 		
 		scene = new DefaultScene("FB TEST");
 	}
@@ -88,11 +100,13 @@ class Config implements Infos
 		scene.addLayerLifecycle(framebufferEnableLayer1);
 		scene.addLayerLifecycle(clearLayer1);
 		scene.addLayerLifecycle(layer1);
+		scene.addLayerLifecycle(testFilter);
 		scene.addLayerLifecycle(framebufferDisableLayer1);
 		
 		scene.addLayerLifecycle(framebufferEnableLayer2);
 		scene.addLayerLifecycle(clearLayer2);
 		scene.addLayerLifecycle(testLayer);
+		scene.addLayerLifecycle(crosshatchFilter);
 		scene.addLayerLifecycle(framebufferDisableLayer2);
 		
 		scene.addLayerLifecycle(textureLayer1);

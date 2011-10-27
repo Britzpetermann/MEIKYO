@@ -434,6 +434,25 @@ class GL
 		return currentProgramm;
 	}
 
+	public static function createFragmentProgram(fragmentSourceClass : Class<Dynamic>) : WebGLProgram
+	{
+		currentProgramm = gl.createProgram();
+
+		var fs = gl.createShader(gl.FRAGMENT_SHADER);
+		gl.shaderSource(fs, createGLSLFromClass(fragmentSourceClass));
+		gl.compileShader(fs);
+		if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS))
+			throw gl.getShaderInfoLog(fs);
+
+		gl.attachShader(currentProgramm, fs);
+		gl.linkProgram(currentProgramm);
+
+		if (!gl.getProgramParameter(currentProgramm, gl.LINK_STATUS))
+			throw "Could not link shader!";
+
+		return currentProgramm;
+	}
+
 	public static function createGLSLFromClass(shaderClass : Class<Dynamic>)
 	{
 		var metaDatas = Meta.getType(shaderClass);

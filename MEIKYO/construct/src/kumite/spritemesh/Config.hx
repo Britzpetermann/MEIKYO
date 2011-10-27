@@ -4,6 +4,9 @@ import kumite.layer.ClearLayer;
 import kumite.layer.FramebufferEnableLayer;
 import kumite.layer.FramebufferDisableLayer;
 import kumite.layer.TextureLayer;
+import kumite.layer.TestFilter;
+import kumite.layer.TestFilter2;
+import kumite.layer.CrosshatchFilter;
 
 import kumite.scene.DefaultScene;
 import kumite.displaylist.DisplayListLayer;
@@ -33,11 +36,16 @@ class Config implements Infos
 	public var scene1 : DefaultScene;
 	public var scene2 : DefaultScene;
 	public var scene3 : DefaultScene;
+	public var scene4 : DefaultScene;
+	public var scene5 : DefaultScene;
 	
 	public var framebufferEnableLayer1 : FramebufferEnableLayer;
 	public var framebufferDisableLayer1 : FramebufferDisableLayer;
 	public var clearLayer1 : ClearLayer;
 	public var textureLayer1 : TextureLayer;
+	public var testFilter : TestFilter;
+	public var testFilter2 : TestFilter2;
+	public var crosshatchFilter : CrosshatchFilter;
 		
 	
 	public function new()
@@ -63,16 +71,28 @@ class Config implements Infos
 		layer3.textureFrequenceParam = 0.0000031; 
 		layer3.textureAmpParam = 304; 
 		
-		scene1 = new DefaultScene("SPRITES");
-		scene2 = new DefaultScene("SPRITES");
-		scene3 = new DefaultScene("SPRITES");
+		scene1 = new DefaultScene("S 1");
+		scene2 = new DefaultScene("S 2");
+		scene3 = new DefaultScene("S 3");
+		scene4 = new DefaultScene("S 3 CROSS");
+		scene5 = new DefaultScene("S 3 RG");
 		
 		framebufferEnableLayer1 = new FramebufferEnableLayer(2048, 1024);
 		framebufferDisableLayer1 = new FramebufferDisableLayer();
 		clearLayer1 = new ClearLayer();
+		clearLayer1.color = new Color(0.5, 0.5, 0.5, 1.0);
 		textureLayer1 = new TextureLayer();
-		textureLayer1.scale = 1.1;
+		textureLayer1.scale = 1.0;
 		textureLayer1.textureConfig = framebufferEnableLayer1.textureConfig;
+		
+		testFilter = new TestFilter();
+		testFilter.textureConfig = framebufferEnableLayer1.textureConfig;
+				
+		testFilter2 = new TestFilter2();
+		testFilter2.textureConfig = framebufferEnableLayer1.textureConfig;
+				
+		crosshatchFilter = new CrosshatchFilter();
+		crosshatchFilter.textureConfig = framebufferEnableLayer1.textureConfig;
 	}
 	
 	@Complete
@@ -96,6 +116,26 @@ class Config implements Infos
 		scene3.addLayerLifecycle(framebufferDisableLayer1);
 		scene3.addLayerLifecycle(textureLayer1);
 		scene3.addLayerLifecycle(displayListLayer);
+		
+		scene4.addLayerLifecycle(clearLayer, kumite.layer.LayerId.CLEAR);
+		scene4.addLayerLifecycle(colorLayer);
+		scene4.addLayerLifecycle(framebufferEnableLayer1);
+		scene4.addLayerLifecycle(clearLayer1);
+		scene4.addLayerLifecycle(layer3);
+		scene4.addLayerLifecycle(crosshatchFilter);
+		scene4.addLayerLifecycle(framebufferDisableLayer1);
+		scene4.addLayerLifecycle(textureLayer1);
+		scene4.addLayerLifecycle(displayListLayer);
+		
+		scene5.addLayerLifecycle(clearLayer, kumite.layer.LayerId.CLEAR);
+		scene5.addLayerLifecycle(colorLayer);
+		scene5.addLayerLifecycle(framebufferEnableLayer1);
+		scene5.addLayerLifecycle(clearLayer1);
+		scene5.addLayerLifecycle(layer3);
+		scene5.addLayerLifecycle(testFilter2);
+		scene5.addLayerLifecycle(framebufferDisableLayer1);
+		scene5.addLayerLifecycle(textureLayer1);
+		scene5.addLayerLifecycle(displayListLayer);
 	}
 	
 	@Sequence("boot", "startPrepare")

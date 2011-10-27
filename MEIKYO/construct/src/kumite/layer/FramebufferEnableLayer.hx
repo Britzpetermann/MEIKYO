@@ -34,7 +34,8 @@ class FramebufferEnableLayer implements LayerLifecycle, implements Infos
 		GL.bindTexture(GL.TEXTURE_2D, framebuffer.texture);
 		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR);
 		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR);
-
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.REPEAT);
+    	GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.REPEAT);
 		GL.texImage2DArrayBufferView(GL.TEXTURE_2D, 0, GL.RGBA, framebuffer.width, framebuffer.height, 0, GL.RGBA, GL.UNSIGNED_BYTE, null);
 		GL.framebufferTexture2D(GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, framebuffer.texture, 0);
 

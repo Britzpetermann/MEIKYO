@@ -121,6 +121,11 @@ class GLUniformLocation
 		GL.gl.uniform3f(location, vec.x, vec.y, vec.z);
 	}
 
+	public inline function setVec2(vec : Vec2) : Void
+	{
+		GL.gl.uniform2f(location, vec.x, vec.y);
+	}
+
 	public inline function setRGB(color : Color) : Void
 	{
 		GL.gl.uniform3f(location, color.r, color.g, color.b);

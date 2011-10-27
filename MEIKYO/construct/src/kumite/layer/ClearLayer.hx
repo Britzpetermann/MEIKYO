@@ -1,13 +1,8 @@
 package kumite.layer;
 
 import kumite.scene.LayerLifecycle;
-import kumite.scene.Layer;
 import kumite.scene.TransitionContext;
 import kumite.scene.RenderContext;
-import kumite.stage.Stage;
-import kumite.time.Time;
-import kumite.projection.Projection;
-import kumite.camera.Camera;
 
 import haxe.rtti.Infos;
 
