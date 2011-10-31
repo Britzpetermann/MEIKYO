@@ -13,7 +13,7 @@ import kumite.camera.Camera;
 
 import haxe.rtti.Infos;
 
-class Texture3DLayer implements LayerLifecycle, implements Infos
+class Texture3DLayer2 implements LayerLifecycle, implements Infos
 {
 	@Inject
 	public var time : Time;
@@ -27,17 +27,14 @@ class Texture3DLayer implements LayerLifecycle, implements Infos
 	public var alphaTransition : LayerTransition;
 	
 	@Param
-	public var scale : Float;
-	
-	@Param
-	public var position : Vec3;
-	
-	@Param
 	public var textureConfig : GLTextureConfig;
+	public var vertexes : Float32Array;
+	public var uvs : Float32Array;
 	
 	var shaderProgram : WebGLProgram;
+	
 	var vertexPositionAttribute : GLAttribLocation;
-	var vertexBuffer : WebGLBuffer;
+	var vertexUVAttribute : GLAttribLocation;
 
 	var projectionMatrixUniform : GLUniformLocation;
 	var worldViewMatrixUniform : GLUniformLocation;
@@ -46,26 +43,28 @@ class Texture3DLayer implements LayerLifecycle, implements Infos
 		
 	public function new()
 	{
-		scale = 1;
-		position = new Vec3(0, 0, 0);
 		transitions = new LayerTransitions();
 		transitions.add(cutTransition = new LayerTransition("cut"));
 		transitions.add(moveTransition = new LayerTransition("move"));
 		transitions.add(alphaTransition = new LayerTransition("alpha"));
 		transitions.enableChild("alpha");
+		uvs = new Float32Array([
+			0,  0,
+			1,  0,
+			0,  1,
+			1,  1,
+		]);
 	}
 	
 	public function init()
 	{
 		shaderProgram = GL.createProgram(Vertex, Fragment);
 
-		vertexPositionAttribute = GL.getAttribLocation2("vertexPosition", 2, GL.BYTE);
-		vertexPositionAttribute.updateBuffer(new Int8Array([
-			0,  0,
-			1,  0,
-			0,  1,
-			1,  1,
-		]));
+		vertexPositionAttribute = GL.getAttribLocation2("vertexPosition", 3, GL.FLOAT);
+		vertexPositionAttribute.updateBuffer(vertexes);
+		 
+		vertexUVAttribute = GL.getAttribLocation2("vertexUV", 2, GL.FLOAT);
+		vertexUVAttribute.updateBuffer(uvs);
 
 		projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
 		worldViewMatrixUniform = GL.getUniformLocation("worldViewMatrix");
@@ -89,43 +88,47 @@ class Texture3DLayer implements LayerLifecycle, implements Infos
 		GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 
 		var projectionMatrix = new Matrix4();
-		projectionMatrix.setPerspective(40, renderContext.aspect, 0.1, 500);
+		projectionMatrix.setPerspective(21.3, renderContext.aspect, 0.1, 4000);
 		projectionMatrixUniform.setMatrix4(projectionMatrix);
 		
-		vertexPositionAttribute.vertexAttribPointer();
 
 		var texture = textureRegistry.get(textureConfig);
+		
+		var camera = new Matrix4();
+		camera.setLookAt(new Vec3(0, 0, 2900), new Vec3(0, -540, 0), new Vec3(0, 1, 0));
 
+		var scale = 0.00674;
 		var worldViewMatrix = new Matrix4();
-		worldViewMatrix.appendTranslation(-0.5, -0.5, 0);
-		worldViewMatrix.appendScale(texture.width * scale * 0.01, texture.height * scale * 0.01, 1);
-		//worldViewMatrix.appendRotation(time.ms / 20000, new Vec3(-1, 0, -0.428746).normalize());
-		//worldViewMatrix.appendTranslation(position.x, position.y, position.z);
-		//worldViewMatrix.appendTranslation(0, 0, -10);
+		worldViewMatrix.appendTranslation(0, -530, 0);
+		worldViewMatrix.append(camera);
+		worldViewMatrix.appendTranslation(-1920 / 2, -1080 / 2, 0);
+		worldViewMatrix.appendScale(1, -1, 1);
 		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
 		
 		textureUniform.setTexture(texture);
 		alphaUniform.uniform1f(alphaTransition.transition);
 		
+		vertexPositionAttribute.vertexAttribPointer();
+		vertexUVAttribute.vertexAttribPointer();
 		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
 	}
 }
 
 @GLSL("
 
-	attribute vec2 vertexPosition;
+	attribute vec3 vertexPosition;
+	attribute vec2 vertexUV;
 
 	uniform mat4 projectionMatrix;
 	uniform mat4 worldViewMatrix;
 
-	varying vec4 vertex;
 	varying vec2 textureCoord;
+	varying vec2 uv;
 
 	void main(void)
 	{
-		gl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);
-		vertex = vec4(vertexPosition, 0.0, 1.0);
-		textureCoord = vertexPosition.xy;
+		gl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 1.0);
+		textureCoord = vertexUV;
 	}
 
 ") private class Vertex {}

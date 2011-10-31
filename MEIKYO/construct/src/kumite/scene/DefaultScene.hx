@@ -24,6 +24,9 @@ class DefaultScene implements SceneLifecycle, implements Infos
 	
 	public function addLayerLifecycle(lifecycle : LayerLifecycle, ?layerId : String = null)
 	{
+		if (lifecycle == null)
+			throw "Lifecycle for scene: " + name + " is null!";
+			
 		var lifecycleAndLayerId = new LifecycleAndLayerId();
 		lifecycleAndLayerId.lifecycle = lifecycle;
 		lifecycleAndLayerId.layerId = layerId;

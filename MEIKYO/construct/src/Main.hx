@@ -36,12 +36,13 @@ class Main {
 					kumite.mouse.Config,
 					//kumite.helloworldgl.Config,
 					kumite.displaylist.ConfigAsLayer,
-					kumite.vjinterface.Config,
+					//kumite.vjinterface.Config,
 					kumite.scene.Config,
-					kumite.testscene.Config,
-					kumite.flyingman.Config,
-					kumite.spritemesh.Config,
+					//kumite.testscene.Config,
+					//kumite.flyingman.Config,
 					kumite.framebuffereffect.Config,
+					kumite.spritemesh.Config,
+					kumite.effects.Config,
 				]);
 		}
 		catch(e : Dynamic)

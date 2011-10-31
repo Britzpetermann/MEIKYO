@@ -4,9 +4,9 @@ import kumite.layer.ClearLayer;
 import kumite.layer.FramebufferEnableLayer;
 import kumite.layer.FramebufferDisableLayer;
 import kumite.layer.TextureLayer;
-import kumite.layer.TestFilter;
-import kumite.layer.TestFilter2;
-import kumite.layer.CrosshatchFilter;
+import kumite.layer.effect.TestFilter;
+import kumite.layer.effect.PostproFilter;
+import kumite.layer.effect.CrosshatchFilter;
 
 import kumite.scene.DefaultScene;
 import kumite.displaylist.DisplayListLayer;
@@ -44,7 +44,7 @@ class Config implements Infos
 	public var clearLayer1 : ClearLayer;
 	public var textureLayer1 : TextureLayer;
 	public var testFilter : TestFilter;
-	public var testFilter2 : TestFilter2;
+	public var postproFilter : PostproFilter;
 	public var crosshatchFilter : CrosshatchFilter;
 		
 	
@@ -88,8 +88,8 @@ class Config implements Infos
 		testFilter = new TestFilter();
 		testFilter.textureConfig = framebufferEnableLayer1.textureConfig;
 				
-		testFilter2 = new TestFilter2();
-		testFilter2.textureConfig = framebufferEnableLayer1.textureConfig;
+		postproFilter = new PostproFilter();
+		postproFilter.textureConfig = framebufferEnableLayer1.textureConfig;
 				
 		crosshatchFilter = new CrosshatchFilter();
 		crosshatchFilter.textureConfig = framebufferEnableLayer1.textureConfig;
@@ -132,7 +132,7 @@ class Config implements Infos
 		scene5.addLayerLifecycle(framebufferEnableLayer1);
 		scene5.addLayerLifecycle(clearLayer1);
 		scene5.addLayerLifecycle(layer3);
-		scene5.addLayerLifecycle(testFilter2);
+		scene5.addLayerLifecycle(postproFilter);
 		scene5.addLayerLifecycle(framebufferDisableLayer1);
 		scene5.addLayerLifecycle(textureLayer1);
 		scene5.addLayerLifecycle(displayListLayer);

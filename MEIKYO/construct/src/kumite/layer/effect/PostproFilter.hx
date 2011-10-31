@@ -1,4 +1,6 @@
-package kumite.layer;
+package kumite.layer.effect;
+
+import kumite.time.Time;
 
 import kumite.scene.LayerLifecycle;
 import kumite.scene.TransitionContext;
@@ -6,10 +8,13 @@ import kumite.scene.RenderContext;
 
 import haxe.rtti.Infos;
 
-class CrosshatchFilter implements LayerLifecycle, implements Infos
+class PostproFilter implements LayerLifecycle, implements Infos
 {
 	@Inject
 	public var textureRegistry : GLTextureRegistry;
+	
+	@Inject
+	public var time : Time;
 	
 	@Param
 	public var textureConfig : GLTextureConfig;
@@ -19,8 +24,10 @@ class CrosshatchFilter implements LayerLifecycle, implements Infos
 	var vertexBuffer : WebGLBuffer;
 
 	var textureUniform : GLUniformLocation;
+	var resolutionUniform : GLUniformLocation;
+	var timeUniform : GLUniformLocation;
 	var amountUniform : GLUniformLocation;
-	
+			
 	var amount : Float;
 		
 	public function new();
@@ -31,13 +38,15 @@ class CrosshatchFilter implements LayerLifecycle, implements Infos
 
 		vertexPositionAttribute = GL.getAttribLocation2("vertexPosition", 2, GL.BYTE);
 		vertexPositionAttribute.updateBuffer(new Int8Array([
-			0,  0,
-			1,  0,
-			0,  1,
+			-1,  -1,
+			1,  -1,
+			-1,  1,
 			1,  1,
 		]));
 
 		textureUniform = GL.getUniformLocation("texture");
+		resolutionUniform = GL.getUniformLocation("resolution");
+		timeUniform = GL.getUniformLocation("time");
 		
 		amountUniform = GL.getUniformLocation("amount");
 		amount = 1;
@@ -63,6 +72,9 @@ class CrosshatchFilter implements LayerLifecycle, implements Infos
 		
 		textureUniform.setTexture(texture);
 		amountUniform.setFloat(amount);
+		timeUniform.setFloat(time.ms);
+		resolutionUniform.setVec2(new Vec2(renderContext.width, renderContext.height));
+		
 		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
 	}
 }
@@ -71,14 +83,9 @@ class CrosshatchFilter implements LayerLifecycle, implements Infos
 
 	attribute vec2 vertexPosition;
 
-	varying vec4 vertex;
-	varying vec2 textureCoord;
-
 	void main(void)
 	{
-		gl_Position = vec4((vertexPosition - 0.5) * 2.0, 0.0, 1.0);
-		vertex = vec4(vertexPosition, 0.0, 1.0);
-		textureCoord = vertexPosition.xy;
+		gl_Position = vec4(vertexPosition.x, vertexPosition.y, 0.0, 1.0);
 	}
 
 ") private class Vertex {}
@@ -86,55 +93,45 @@ class CrosshatchFilter implements LayerLifecycle, implements Infos
 @GLSL("
 
 	#ifdef GL_ES
-		precision highp float;
+	precision highp float;
 	#endif
-
+	
+	uniform vec2 resolution;
+	uniform float time;
 	uniform sampler2D texture;
-	uniform float amount;
-
-	varying vec2 textureCoord;
-
+	
 	void main(void)
 	{
-		float hatch_y_offset = 5.0;
-		float lum_threshold_1 = 1.0;
-		float lum_threshold_2 = 0.7;
-		float lum_threshold_3 = 0.5;
-		float lum_threshold_4 = 0.3;
+	    vec2 q = gl_FragCoord.xy / resolution;
+		q.y = 1.0-q.y;
+	    vec3 oricol = texture2D(texture, vec2(q.x,1.0 - q.y)).xyz;
 
-		vec2 uv = textureCoord.xy;
+		vec2 uv = q;
 
-		vec4 pixel = texture2D(texture, uv);
+	    vec3 col;
 
-		float lum = length(pixel.rgb);
-		float tc = 1.0;
-
-		if (lum < lum_threshold_1)
-		{
-			if (mod(gl_FragCoord.x + gl_FragCoord.y, 10.0) == 0.0)
-				tc = 0.0;
-		}
-
-		if (lum < lum_threshold_2)
-		{
-			if (mod(gl_FragCoord.x - gl_FragCoord.y, 10.0) == 0.0)
-				tc = 0.0;
-		}  
-
-		if (lum < lum_threshold_3)
-		{
-			if (mod(gl_FragCoord.x + gl_FragCoord.y - hatch_y_offset, 10.0) == 0.0)
-				tc = 0.0;
-		}
-
-		if (lum < lum_threshold_4)
-		{
-			if (mod(gl_FragCoord.x - gl_FragCoord.y - hatch_y_offset, 10.0) == 0.0)
-				tc = 0.0;
-		}
-
-		//gl_FragColor = vec4(tc, tc, tc, amount) + pixel * (1.0 - amount);
-		gl_FragColor = pixel * (1.0 - amount) + vec4(tc, tc, tc, 1) * amount;
+		//aberation
+		float cax = 3.0;
+		float cay = -3.0;
+	    col.r = texture2D(texture,vec2(uv.x+cax / resolution.x,-uv.y)).x;
+	    col.g = texture2D(texture,vec2(uv.x+0.000,-uv.y)).y;
+	    col.b = texture2D(texture,vec2(uv.x+cay / resolution.x,-uv.y)).z;
+	
+	    col = clamp(col*0.5+0.5*col*col*1.2,0.0,1.0);
+	
+		//vignette
+	    col *= 0.3 + 0.7*16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y);
+	
+		//color
+	    col *= vec3(0.8,1.0,0.7);
+	
+		//v lines
+	    col *= 1.0+0.2*sin(0.01*time+gl_FragCoord.y*2.5);
+	
+		//flicker
+	    col *= 0.99+0.01*sin(0.11*time);
+	
+	    gl_FragColor = vec4(col, 1.0);
 	}
 
 ") private class Fragment {}
