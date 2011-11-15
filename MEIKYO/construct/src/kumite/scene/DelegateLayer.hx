@@ -5,6 +5,7 @@ import reflect.ClassInfo;
 class DelegateLayer extends Layer
 {
 	public var lifecycle : LayerLifecycle;
+	public var params : Array<LayerParam>;
 	
 	public function new(lifecycle : LayerLifecycle, ?layerId : String = null)
 	{
@@ -12,6 +13,8 @@ class DelegateLayer extends Layer
 		
 		this.lifecycle = lifecycle;
 		this.layerId = layerId;
+		
+		createParams();
 	}
 	
 	override public function init()
@@ -53,6 +56,24 @@ class DelegateLayer extends Layer
 	public function toString()
 	{
 		return "[DelegateLayer " + ClassInfo.forInstance(lifecycle).name + "]";
+	}
+	
+	function createParams()
+	{
+		params = new Array();
+		
+		var ci = ClassInfo.forInstance(lifecycle); 
+		
+		for(property in ci.properties)
+		{
+			if (property.hasMetadata("Param"))
+			{
+				var param = new LayerParam();
+				param.property = property;
+				param.object = lifecycle;
+				params.push(param);
+			}
+		}		
 	}
 	
 }

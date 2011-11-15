@@ -93,15 +93,15 @@ class RoadOfRibbon2Effect implements LayerLifecycle, implements Infos
 	//Object A (tunnel)
 	float oa(vec3 q)
 	{
-		//return cos(q.x) + cos(q.z) + (cos(q.y * 1.4) + cos(q.y * 20.0 + time * 10.0) * 0.02 + cos(q.x * 20.0 + time * 10.0) * 0.02) * 0.5;
 		float v = cos(q.x) + cos(q.y) + cos(q.z);
-		return cos(v + q.x) * 0.7 + (cos(q.x) + cos(q.y)) * 0.4;
+		return (v - cos(q.x * 0.3) * 0.5) * 0.4 + 1.0 - v * v * 0.25 + cos(q.x * 0.2) * 0.2;
 	}
 	
 	//Object B (ribbon)
 	float ob(vec3 q)
 	{
-		return length(max(abs(q-vec3(cos(q.z*1.5)*.3,-.5+cos(q.z)*.2,.0))-vec3(.125,.02,time+3.),vec3(.0)));
+		float v = time;
+		return time;
 	}
 	
 	//Scene
@@ -120,28 +120,31 @@ class RoadOfRibbon2Effect implements LayerLifecycle, implements Infos
 	//MainLoop
 	void main(void)
 	{
+		vec4 resultColor = vec4(0.0);
+
 		//-1 ... 1
 		vec2 p = 1.0 - 2.0 * gl_FragCoord.xy / resolution.xy;
 		 
 		//origin (eye point)
-		vec3 origin = vec3(sin(time * 0.05) * 0.5 + 1.0 + time * 0.4, cos(time * 0.5) * 0.25 + 0.4 + time, time * 5.0);
-		//vec3 origin = vec3(3.0, 3.0, -time * 5.0);
+		vec3 origin = vec3(sin(time * 0.05) * 1.0 + 1.0 + time * 0.3, cos(time * 0.5) * 1.0 + 0.1 + time * 0.01, time * 2.0);
 
-		vec3 direction = normalize(vec3(p.x * 0.3, p.y * 0.3, 1.0));
+		vec3 direction = normalize(vec3(sin(time * 0.1) + p.x * 0.3, cos(time * 0.1) + p.y * 0.3, 1.0));
+		//vec3 direction = normalize(vec3(p.x * 0.3, p.y * 0.3, 1.0));
 
 		vec3 q = origin;
 
 		float d = 0.0;
 
 		//First raymarching
-		for(int i = 0; i < 80; i++)
+		for(int i = 0; i < 40; i++)
 		{
 			d = o(q);
 			q += d * direction;
 		}
 
-		//Shading
+		vec3 q1 = q;
 
+		//Shading
 		vec4 objectColor;
 		if(oa(q) > ob(q))
 			objectColor = vec4(1.0, 0.0, 0.0, 1.0);
@@ -165,7 +168,41 @@ class RoadOfRibbon2Effect implements LayerLifecycle, implements Infos
 				+ vec4(0.0) * camDistance
 				;
 		
-		gl_FragColor=vec4(color.xyz,1.0);
+		resultColor += color * 0.6;
+
+		//Second raymarching (reflection)
+		direction=reflect(direction,gn(q));
+		q = direction;
+		for(int i = 0; i < 40; i++)
+		{
+			d = o(q);
+			q += d * direction;
+		}
+
+		if(oa(q) > ob(q))
+			objectColor = vec4(1.0, 0.0, 0.0, 1.0);
+		else
+			objectColor = vec4(0.0, 1.0, 0.0, 1.0);
+
+		lightDirection = normalize(lightPos - q);
+
+		ambient = 0.1;
+		diffuse1 = clamp(dot(gn(q), lightDirection) * 1.0, 0.0, 1.0) * 1.0;
+		diffuse2 = clamp(dot(gn(q), -lightDirection) * 1.0, 0.0, 1.0) * 1.0;
+
+		camDistance = clamp(length(q - origin) * 0.03, 0.0, 1.0);
+
+		color = 
+				objectColor * ambient
+				+ objectColor * diffuse1
+				+ vec4(1.0, 0.0, 0.0, 1.0) * diffuse2
+				- vec4(0.0) * (1.0 - camDistance)
+				+ vec4(0.0) * camDistance
+				;
+		
+		resultColor += color * 0.4;
+
+		gl_FragColor=vec4(resultColor.xyz, 1.0);
 	}
 
 ") private class Fragment {}

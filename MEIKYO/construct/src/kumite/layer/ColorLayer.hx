@@ -21,6 +21,7 @@ class ColorLayer implements LayerLifecycle, implements Infos
 	public var moveTransition : LayerTransition;
 	public var alphaTransition : LayerTransition;
 	
+	@Param
 	public var color : Color;
 	
 	var shaderProgram : WebGLProgram;

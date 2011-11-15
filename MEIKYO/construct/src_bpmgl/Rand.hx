@@ -10,4 +10,9 @@ class Rand
 		return Std.int((from + Math.random() * (to - from)));
 	}
 
+	public static inline function bool(chance : Float) : Bool
+	{
+		return Math.random() < chance;
+	}
+
 }

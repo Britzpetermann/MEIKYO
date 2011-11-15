@@ -16,6 +16,7 @@ class Launcher implements Infos
 	@PostComplete
 	public function handlePostComplete()
 	{
+		//Log.profile("Sequence");
 		sequencer.start("boot");
 	}
 	
@@ -23,5 +24,11 @@ class Launcher implements Infos
 	public function showError(message : String)
 	{
 		Log.error(message);
+	}
+	
+	@Sequence("boot", "finish")
+	public function handleFinish()
+	{
+		//Log.profileEnd();
 	}
 }

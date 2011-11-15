@@ -36,23 +36,19 @@ class Main {
 					kumite.mouse.Config,
 					//kumite.helloworldgl.Config,
 					kumite.displaylist.ConfigAsLayer,
-					//kumite.vjinterface.Config,
+					kumite.vjinterface.Config,
 					kumite.scene.Config,
 					//kumite.testscene.Config,
 					//kumite.flyingman.Config,
-					kumite.framebuffereffect.Config,
-					kumite.spritemesh.Config,
-					kumite.effects.Config,
+					//kumite.framebuffereffect.Config,
+					//kumite.spritemesh.Config,
+					//kumite.effects.Config,
+					kumite.eyes.Config,
 				]);
 		}
 		catch(e : Dynamic)
 		{
 			Log.error("Error building application!\n" + e);
 		}
-		
-		var i = 1 | 1 << 16;
-		Log.info(i);
-		i = i & 0xffff;
-		Log.info(i);
 	}
 }

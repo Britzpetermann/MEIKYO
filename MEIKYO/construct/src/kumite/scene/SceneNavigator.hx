@@ -5,10 +5,15 @@ import kumite.stage.Stage;
 import kumite.time.Time;
 import kumite.time.Tick;
 
+import bpmjs.Messenger;
+
 import haxe.rtti.Infos;
 
 class SceneNavigator implements Infos
 {
+	@Messenger
+	public var messenger : Messenger;
+	
 	@Inject
 	public var scenes : Scenes;
 	
@@ -137,6 +142,7 @@ class SceneNavigator implements Infos
 		{
 			lastScene = currentScene;
 			currentScene = newScene;
+			messenger.send(new SceneEnter(lastScene, currentScene));
 			setState(transitionState);
 		}
 	}
@@ -269,7 +275,7 @@ class TransitionState extends State
 	override function enter()
 	{
 		enterTime = time.ms;
-		exitTime = time.ms + 1000;
+		exitTime = time.ms + 10;
 		
 		transitionContext.transition = 0;
 		transitionContext.outScene = navigator.lastScene;

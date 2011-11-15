@@ -23,6 +23,7 @@ class Sequencer implements haxe.rtti.Infos
 		sequence.addLoadingTask();
 		sequence.addExecuteTask("start");
 		sequence.addExecuteTask("startComplete");
+		sequence.addExecuteTask("finish");
 		
 		sequence.start();
 	}

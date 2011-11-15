@@ -399,6 +399,7 @@ class GL
 		{
 			throw "Could not initialise WebGL.";
 		}
+		
 		return gl;
 	}
 

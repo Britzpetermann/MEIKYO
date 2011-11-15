@@ -1,0 +1,16 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="css/reset.css">
+<link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body>
+<p>To start chatting, select a video camera: <device type=media onchange="update(this.data)"></p> 
+<video></video> 
+<script> 
+function update(stream) { 
+    document.getElementsByTagName('video')[0].src = stream.URL; 
+}
+</script>
+</body>
+</html>

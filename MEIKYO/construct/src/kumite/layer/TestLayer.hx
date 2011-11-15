@@ -26,7 +26,7 @@ class TestLayer implements LayerLifecycle, implements Infos
 	@Param
 	public var color : Color;
 	
-	@Param
+	@Param(-100, 100, 0.1)
 	public var scale : Float;
 	
 	@Param
@@ -80,7 +80,6 @@ class TestLayer implements LayerLifecycle, implements Infos
 		
 	public function render(renderContext : RenderContext)
 	{
-		Log.info(Std.string(renderContext));
 		GL.useProgram(shaderProgram);
 		GL.viewport(0, 0, renderContext.width, renderContext.height);
 		

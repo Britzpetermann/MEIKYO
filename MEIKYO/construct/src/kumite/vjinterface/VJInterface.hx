@@ -31,8 +31,7 @@ class VJInterface implements Infos
 	public function start()
 	{
 		stage = GLDisplayList.getDefault().stage;
-		stage.addChild(new GLStats());
-		
+ 			
 		timer = new Timer(12000);
 		//timer.run = navigateNext;
 
@@ -42,7 +41,7 @@ class VJInterface implements Infos
 	@Message
 	public function render(tick : Tick)
 	{
-		sceneContainer.y = stage.stageHeight - 30 * 3;
+		sceneContainer.y = stage.stageHeight - 60 * 3;
 	}
 	
 	function addSceneButtons()

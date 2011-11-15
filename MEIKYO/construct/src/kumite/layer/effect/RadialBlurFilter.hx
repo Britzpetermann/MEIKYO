@@ -8,13 +8,13 @@ import kumite.scene.RenderContext;
 
 import haxe.rtti.Infos;
 
-class PostproFilter implements LayerLifecycle, implements Infos
+class RadialBlurFilter implements LayerLifecycle, implements Infos
 {
 	@Inject
-	public var textureRegistry : GLTextureRegistry;
+	public var time : Time;
 	
 	@Inject
-	public var time : Time;
+	public var textureRegistry : GLTextureRegistry;
 	
 	@Param
 	public var textureConfig : GLTextureConfig;
@@ -23,10 +23,10 @@ class PostproFilter implements LayerLifecycle, implements Infos
 	var vertexPositionAttribute : GLAttribLocation;
 	var vertexBuffer : WebGLBuffer;
 
-	var textureUniform : GLUniformLocation;
 	var resolutionUniform : GLUniformLocation;
 	var timeUniform : GLUniformLocation;
 	var amountUniform : GLUniformLocation;
+	var textureUniform : GLUniformLocation;
 			
 	var amount : Float;
 		
@@ -44,9 +44,9 @@ class PostproFilter implements LayerLifecycle, implements Infos
 			1,  1,
 		]));
 
-		textureUniform = GL.getUniformLocation("texture");
 		resolutionUniform = GL.getUniformLocation("resolution");
 		timeUniform = GL.getUniformLocation("time");
+		textureUniform = GL.getUniformLocation("texture");
 		
 		amountUniform = GL.getUniformLocation("amount");
 		amount = 1;
@@ -69,10 +69,10 @@ class PostproFilter implements LayerLifecycle, implements Infos
 		vertexPositionAttribute.vertexAttribPointer();
 
 		var texture = textureRegistry.get(textureConfig);
-		
 		textureUniform.setTexture(texture);
+
 		amountUniform.setFloat(amount);
-		timeUniform.setFloat(time.ms);
+		timeUniform.setFloat(time.ms / 1000);
 		resolutionUniform.setVec2(new Vec2(renderContext.width, renderContext.height));
 		
 		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
@@ -83,9 +83,12 @@ class PostproFilter implements LayerLifecycle, implements Infos
 
 	attribute vec2 vertexPosition;
 
+	varying vec2 tc;
+
 	void main(void)
 	{
 		gl_Position = vec4(vertexPosition.x, vertexPosition.y, 0.0, 1.0);
+		tc = (vertexPosition.xy + 1.0) * 0.5;
 	}
 
 ") private class Vertex {}
@@ -100,38 +103,40 @@ class PostproFilter implements LayerLifecycle, implements Infos
 	uniform float time;
 	uniform sampler2D texture;
 	
+	vec3 deform( in vec2 p )
+	{
+	    vec2 uv;
+	
+	    //vec2 q = vec2( sin(1.1*time+p.x) * 0.3,sin(1.2*time+p.y) * 0.3 );
+	    vec2 q = vec2(0.0, 0.0);
+	
+	    float r = sqrt(dot(q,q));
+	
+		uv.x = sin(0.0+1.0*time) * 0.01 + p.x * sqrt(r*r+1.0) + 1.0;
+		uv.y = sin(0.6+1.1*time) * 0.01 + p.y * sqrt(r*r+1.0) + 1.0;
+		//uv.x = p.x * sqrt(r*r+1.0) + 1.0;
+		//uv.y = p.y * sqrt(r*r+1.0) + 1.0;
+
+	    return texture2D(texture, uv * 0.5).xyz;
+	}
+	
 	void main(void)
 	{
-	    vec2 q = gl_FragCoord.xy / resolution;
-		q.y = 1.0-q.y;
-	    vec3 oricol = texture2D(texture, vec2(q.x,1.0 - q.y)).xyz;
-
-		vec2 uv = q;
-
-	    vec3 col;
-
-		//aberation
-		float cax = 5.0;
-		float cay = -5.0;
-	    col.r = texture2D(texture,vec2(uv.x+cax / resolution.x,-uv.y)).x;
-	    col.g = texture2D(texture,vec2(uv.x+0.000,-uv.y)).y;
-	    col.b = texture2D(texture,vec2(uv.x+cay / resolution.x,-uv.y)).z;
+	    vec2 p = 1.0 - 2.0 * gl_FragCoord.xy / resolution.xy;
+	    vec2 s = p;
 	
-	    col = clamp(col*0.5+0.5*col*col*1.2,0.0,1.0);
-	
-		//vignette
-	    col *= 0.3 + 0.7*16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y);
-	
-		//color
-	    col *= vec3(0.8,1.0,0.7);
-	
-		//v lines
-	    col *= 1.0+0.2*sin(0.01*time+gl_FragCoord.y*2.5);
-	
-		//flicker
-	    col *= 0.99+0.01*sin(0.11*time);
-	
-	    gl_FragColor = vec4(col, 1.0);
+	    vec3 total = vec3(0.0);
+	    vec2 d = (vec2(0.0,0.0) - p) / 500.0;
+	    float w = 1.0;
+	    for( int i=0; i<20; i++ )
+	    {
+	        vec3 res = deform(s);
+	        res = smoothstep(0.1,1.0,res*res*res);
+	        total += w*res;
+	        w *= 0.99;
+	        s += d;
+	    }
+	    total /= 20.0;
+	    gl_FragColor = vec4(total, 1.0);
 	}
-
 ") private class Fragment {}

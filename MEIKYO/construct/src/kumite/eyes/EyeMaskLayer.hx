@@ -1,4 +1,4 @@
-package kumite.layer;
+package kumite.eyes;
 
 import kumite.scene.LayerLifecycle;
 import kumite.scene.Layer;
@@ -13,18 +13,13 @@ import kumite.camera.Camera;
 
 import haxe.rtti.Infos;
 
-class TextureLayer implements LayerLifecycle, implements Infos
+class EyeMaskLayer implements LayerLifecycle, implements Infos
 {
 	@Inject
 	public var time : Time;
 	
 	@Inject
 	public var textureRegistry : GLTextureRegistry;
-	
-	public var transitions : LayerTransitions;
-	public var cutTransition : LayerTransition;
-	public var moveTransition : LayerTransition;
-	public var alphaTransition : LayerTransition;
 	
 	@Param
 	public var scale : Float;
@@ -44,18 +39,25 @@ class TextureLayer implements LayerLifecycle, implements Infos
 	var projectionMatrixUniform : GLUniformLocation;
 	var worldViewMatrixUniform : GLUniformLocation;
 	var textureUniform : GLUniformLocation;
-	var alphaUniform : GLUniformLocation;
+	var shutUniform : GLUniformLocation;
+	
+	static var STATE_IDLE : String = "STATE_IDLE";
+	static var STATE_OPENING : String = "STATE_OPENING";
+	static var STATE_CLOSING : String = "STATE_CLOSING";
+	
+	static var OPENING_SPEED : Float = 0.2;
+	static var CLOSING_SPEED : Float = 0.1;
+	static var CLOSING_CHANCE : Float = 0.001;
+	
+	var state : String;
+	var shut : Float;
 		
 	public function new()
 	{
 		blend = true;
 		scale = 1;
 		position = new Vec3(0, 0, 0);
-		transitions = new LayerTransitions();
-		transitions.add(cutTransition = new LayerTransition("cut"));
-		transitions.add(moveTransition = new LayerTransition("move"));
-		transitions.add(alphaTransition = new LayerTransition("alpha"));
-		transitions.enableChild("alpha");
+		state = STATE_IDLE;
 	}
 	
 	public function init()
@@ -73,12 +75,11 @@ class TextureLayer implements LayerLifecycle, implements Infos
 		projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
 		worldViewMatrixUniform = GL.getUniformLocation("worldViewMatrix");
 		textureUniform = GL.getUniformLocation("texture");
-		alphaUniform = GL.getUniformLocation("alpha");
+		shutUniform = GL.getUniformLocation("shut");
 	}
 	
 	public function renderTransition(transitionContext : TransitionContext)
 	{
-		transitions.transition = transitionContext.transition;
 		render(transitionContext);
 	}
 		
@@ -114,7 +115,31 @@ class TextureLayer implements LayerLifecycle, implements Infos
 		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
 		
 		textureUniform.setTexture(texture);
-		alphaUniform.uniform1f(alphaTransition.transition);
+		
+		switch (state)
+		{
+			case STATE_IDLE:
+				shut = 0;
+				if (Rand.bool(CLOSING_CHANCE))
+				{
+					state = STATE_CLOSING;
+				}
+			case STATE_CLOSING:
+				shut += OPENING_SPEED;
+				if (shut > 0.8)
+				{
+					state = STATE_OPENING;
+				}
+			case STATE_OPENING:
+				shut -= CLOSING_SPEED;
+				if (shut < 0)
+				{
+					shut = 0;
+					state = STATE_IDLE;
+				}
+		}
+		
+		shutUniform.setFloat(shut);
 		
 		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
 	}
@@ -129,12 +154,14 @@ class TextureLayer implements LayerLifecycle, implements Infos
 
 	varying vec4 vertex;
 	varying vec2 textureCoord;
+	varying vec2 tc;
 
 	void main(void)
 	{
 		gl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);
 		vertex = vec4(vertexPosition, 0.0, 1.0);
 		textureCoord = vertexPosition.xy;
+		tc = vertexPosition;
 	}
 
 ") private class Vertex {}
@@ -146,15 +173,38 @@ class TextureLayer implements LayerLifecycle, implements Infos
 	#endif
 
 	uniform sampler2D texture;
-	uniform float alpha;
+	uniform float shut;
 
+	varying vec2 tc;
 	varying vec2 textureCoord;
 
 	void main(void)
 	{
+		float zoom = 4.0;
+		vec2 p = (-1.0 + 2.0 * tc) * 0.5;
+		float r = dot(p,p) * zoom;
+
+		float v = shut;
+
+		float zoomTop = 4.0 - v * 3.0;
+		vec2 pTop = (-1.0 + 2.0 * vec2(tc.x, tc.y + pow(v + 0.0, 1.0))) * 0.5;
+		float rTop = dot(pTop,pTop) * zoomTop;
+
+		float zoomBottom = 4.0 - v * 3.0;
+		vec2 pBottom = (-1.0 + 2.0 * vec2(tc.x, tc.y - pow(v + 0.0, 1.0))) * 0.5;
+		float rBottom = dot(pBottom,pBottom) * zoomBottom;
+
+		if (rTop > 1.0)
+			discard;
+
+		if (rBottom > 1.0)
+			discard;
+
+		if (r > 1.0)
+			discard;
+
 		vec4 color = texture2D(texture, vec2(textureCoord.x, textureCoord.y));
-		//gl_FragColor = color * vec4(1.0, 1.0, 1.0, alpha);
-		gl_FragColor = vec4(color.rgb, color.a);
+		gl_FragColor = color;
 	}
 
 ") private class Fragment {}

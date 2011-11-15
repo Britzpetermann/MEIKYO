@@ -17,4 +17,9 @@ class GLDisplayObjectContainer extends GLDisplayObject
 	{
 		children.remove(child);
 	}
+	
+	public function removeAllChildren()
+	{
+		children = new Array();
+	}
 }
