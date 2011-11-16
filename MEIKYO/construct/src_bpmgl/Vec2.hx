@@ -40,6 +40,11 @@ class Vec2
 		y *= invLength;
 	}
 
+	public function getLength()
+	{
+		return Math.sqrt(x * x + y * y);
+	}
+
 	public function transform(matrix : Matrix4)
 	{
 		var x1 = this.x, y1 = this.y, z1 = 0, w1 = 1;

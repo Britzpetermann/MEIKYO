@@ -22,22 +22,29 @@ class GLTextureLoadingTask extends bpmjs.ImageLoaderTask
 	
 	override function handleImageLoaded()
 	{
-		var testPowerOfTwoWidth = Std.int(Math2.nextPowerOf2(image.width));
-		var testPowerOfTwoHeight = Std.int(Math2.nextPowerOf2(image.height));
-		if (testPowerOfTwoWidth != image.width || testPowerOfTwoHeight != image.height)
+		if (textureConfig.textureManipulation != null)
 		{
-			Log.warn("Image", textureConfig.location, "size must be a valid texture size! Resizing...");
-			
-			var canvasGraphic = new CanvasGraphic();
-			canvasGraphic.width = Std.int(testPowerOfTwoWidth / 2);
-			canvasGraphic.height = Std.int(testPowerOfTwoHeight / 2);
-			canvasGraphic.drawImage(image, 0, 0, canvasGraphic.width, canvasGraphic.height);
-			
-			textureRegistry.register(textureConfig, textureRegistry.createGLTextureFromCanvas(canvasGraphic.canvas));
+			textureRegistry.register(textureConfig, textureRegistry.createGLTextureFromCanvas(textureConfig.textureManipulation.create(image), textureConfig.filter));
 		}
 		else
 		{
-			textureRegistry.register(textureConfig, textureRegistry.createGLTextureFromImage(image, textureConfig.filter));
+			var testPowerOfTwoWidth = Std.int(Math2.nextPowerOf2(image.width));
+			var testPowerOfTwoHeight = Std.int(Math2.nextPowerOf2(image.height));
+			if (testPowerOfTwoWidth != image.width || testPowerOfTwoHeight != image.height)
+			{
+				Log.warn("Image", textureConfig.location, "size must be a valid texture size! Resizing...");
+				
+				var canvasGraphic = new CanvasGraphic();
+				canvasGraphic.width = Std.int(testPowerOfTwoWidth / 2);
+				canvasGraphic.height = Std.int(testPowerOfTwoHeight / 2);
+				canvasGraphic.drawImage(image, 0, 0, canvasGraphic.width, canvasGraphic.height);
+				
+				textureRegistry.register(textureConfig, textureRegistry.createGLTextureFromCanvas(canvasGraphic.canvas, textureConfig.filter));
+			}
+			else
+			{
+				textureRegistry.register(textureConfig, textureRegistry.createGLTextureFromImage(image, textureConfig.filter));
+			}
 		}
 		Log.info("Complete: ", textureConfig.location);
 		complete();

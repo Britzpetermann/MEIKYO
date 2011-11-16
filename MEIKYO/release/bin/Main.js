@@ -118,7 +118,7 @@ kumite.layer.effect.EyeEffect.prototype.render = function(renderContext) {
 		GL.gl.uniform1i(this.textureUniform.location,0);
 	}
 	GL.gl.uniform1f(this.timeUniform.location,this.time.ms / 1000);
-	this.directionUniform.setVec2(new Vec2((this.position.x - this.mousePosition.x) / 20000,(this.position.y - this.mousePosition.y) / 20000));
+	this.directionUniform.setVec2(new Vec2((this.position.x - this.mousePosition.x) / 20000,-(this.position.y - this.mousePosition.y) / 20000));
 	this.vertexPositionAttribute.drawArrays(5);
 }
 kumite.layer.effect.EyeEffect.prototype.updateMouse = function(position) {
@@ -129,13 +129,6 @@ kumite.layer.effect.EyeEffect.prototype.updateMouse = function(position) {
 	this.mousePosition.y *= 4.0;
 	this.mousePosition.x *= this.stage.width;
 	this.mousePosition.y *= this.stage.height;
-	{
-		Log.posInfo = { fileName : "EyeEffect.hx", lineNumber : 101, className : "kumite.layer.effect.EyeEffect", methodName : "updateMouse"};
-		if(Log.filter(LogLevel.INFO)) {
-			Log.fetchInput(Std.string(this.mousePosition),null,null,null,null,null,null);
-			console.info(Log.createMessage());
-		}
-	}
 }
 kumite.layer.effect.EyeEffect.prototype.__class__ = kumite.layer.effect.EyeEffect;
 kumite.layer.effect.EyeEffect.__interfaces__ = [haxe.rtti.Infos,kumite.scene.LayerLifecycle];
@@ -2486,8 +2479,6 @@ kumite.layer.effect.PostproFilter.prototype.vertexBuffer = null;
 kumite.layer.effect.PostproFilter.prototype.textureUniform = null;
 kumite.layer.effect.PostproFilter.prototype.resolutionUniform = null;
 kumite.layer.effect.PostproFilter.prototype.timeUniform = null;
-kumite.layer.effect.PostproFilter.prototype.amountUniform = null;
-kumite.layer.effect.PostproFilter.prototype.amount = null;
 kumite.layer.effect.PostproFilter.prototype.init = function() {
 	this.shaderProgram = GL.createProgram(kumite.layer.effect._PostproFilter.Vertex,kumite.layer.effect._PostproFilter.Fragment);
 	this.vertexPositionAttribute = GL.getAttribLocation2("vertexPosition",2,5120);
@@ -2495,11 +2486,8 @@ kumite.layer.effect.PostproFilter.prototype.init = function() {
 	this.textureUniform = GL.getUniformLocation("texture");
 	this.resolutionUniform = GL.getUniformLocation("resolution");
 	this.timeUniform = GL.getUniformLocation("time");
-	this.amountUniform = GL.getUniformLocation("amount");
-	this.amount = 1;
 }
 kumite.layer.effect.PostproFilter.prototype.renderTransition = function(transitionContext) {
-	this.amount = transitionContext.getTransition();
 	this.render(transitionContext);
 }
 kumite.layer.effect.PostproFilter.prototype.render = function(renderContext) {
@@ -2514,7 +2502,6 @@ kumite.layer.effect.PostproFilter.prototype.render = function(renderContext) {
 		GL.gl.bindTexture(3553,texture.texture);
 		GL.gl.uniform1i(this.textureUniform.location,0);
 	}
-	GL.gl.uniform1f(this.amountUniform.location,this.amount);
 	GL.gl.uniform1f(this.timeUniform.location,this.time.ms);
 	this.resolutionUniform.setVec2(new Vec2(renderContext.getWidth(),renderContext.getHeight()));
 	this.vertexPositionAttribute.drawArrays(5);
@@ -2571,6 +2558,9 @@ Vec3.prototype.cross = function(vec) {
 }
 Vec3.prototype.dot = function(vec) {
 	return this.x * vec.x + this.y * vec.y + this.z * vec.z;
+}
+Vec3.prototype.equals = function(vec) {
+	return this.x == vec.x && this.y == vec.y && this.z == vec.z;
 }
 Vec3.prototype.transform = function(matrix) {
 	var x1 = this.x, y1 = this.y, z1 = this.z;
@@ -3206,6 +3196,9 @@ Vec2.prototype.normalize = function() {
 	this.x *= invLength;
 	this.y *= invLength;
 }
+Vec2.prototype.getLength = function() {
+	return Math.sqrt(this.x * this.x + this.y * this.y);
+}
 Vec2.prototype.transform = function(matrix) {
 	var x1 = this.x, y1 = this.y, z1 = 0, w1 = 1;
 	var mat = matrix.buffer;
@@ -3248,12 +3241,16 @@ GLTextureConfig = function(p) { if( p === $_ ) return; {
 	null;
 }}
 GLTextureConfig.__name__ = ["GLTextureConfig"];
-GLTextureConfig.create = function(location,filter) {
+GLTextureConfig.CROP = function(width,height) {
+	return new _GLTextureConfig.CropManipulation(width,height);
+}
+GLTextureConfig.create = function(location,filter,textureManipulation) {
 	if(filter == null) filter = 9728;
 	var result = new GLTextureConfig();
 	result.location = location;
 	result.textureId = location;
 	result.filter = filter;
+	result.textureManipulation = textureManipulation;
 	return result;
 }
 GLTextureConfig.createForFrameBuffer = function() {
@@ -3267,6 +3264,7 @@ GLTextureConfig.createForFrameBuffer = function() {
 GLTextureConfig.prototype.location = null;
 GLTextureConfig.prototype.textureId = null;
 GLTextureConfig.prototype.filter = null;
+GLTextureConfig.prototype.textureManipulation = null;
 GLTextureConfig.prototype.toString = function() {
 	return "[GLTextureConfig: " + this.location + " ]";
 }
@@ -3420,6 +3418,60 @@ kumite.scene.TransitionContext.prototype.setTransition = function(value) {
 	return value;
 }
 kumite.scene.TransitionContext.prototype.__class__ = kumite.scene.TransitionContext;
+if(!kumite.eyes) kumite.eyes = {}
+kumite.eyes.EyePostproFilter = function(p) { if( p === $_ ) return; {
+	this.eyePosition = new Vec2(0,0);
+}}
+kumite.eyes.EyePostproFilter.__name__ = ["kumite","eyes","EyePostproFilter"];
+kumite.eyes.EyePostproFilter.prototype.textureRegistry = null;
+kumite.eyes.EyePostproFilter.prototype.time = null;
+kumite.eyes.EyePostproFilter.prototype.textureConfig = null;
+kumite.eyes.EyePostproFilter.prototype.eyePosition = null;
+kumite.eyes.EyePostproFilter.prototype.shaderProgram = null;
+kumite.eyes.EyePostproFilter.prototype.vertexPositionAttribute = null;
+kumite.eyes.EyePostproFilter.prototype.vertexBuffer = null;
+kumite.eyes.EyePostproFilter.prototype.textureUniform = null;
+kumite.eyes.EyePostproFilter.prototype.resolutionUniform = null;
+kumite.eyes.EyePostproFilter.prototype.timeUniform = null;
+kumite.eyes.EyePostproFilter.prototype.amountUniform = null;
+kumite.eyes.EyePostproFilter.prototype.init = function() {
+	this.shaderProgram = GL.createProgram(kumite.eyes._EyePostproFilter.Vertex,kumite.eyes._EyePostproFilter.Fragment);
+	this.vertexPositionAttribute = GL.getAttribLocation2("vertexPosition",2,5120);
+	this.vertexPositionAttribute.updateBuffer(new Int8Array([-1,-1,1,-1,-1,1,1,1]));
+	this.textureUniform = GL.getUniformLocation("texture");
+	this.resolutionUniform = GL.getUniformLocation("resolution");
+	this.timeUniform = GL.getUniformLocation("time");
+	this.amountUniform = GL.getUniformLocation("amount");
+}
+kumite.eyes.EyePostproFilter.prototype.renderTransition = function(transitionContext) {
+	this.render(transitionContext);
+}
+kumite.eyes.EyePostproFilter.prototype.render = function(renderContext) {
+	GL.useProgram(this.shaderProgram);
+	GL.gl.viewport(0,0,renderContext.getWidth(),renderContext.getHeight());
+	GL.gl.disable(2929);
+	GL.gl.disable(3042);
+	this.vertexPositionAttribute.vertexAttribPointer();
+	var texture = this.textureRegistry.get(this.textureConfig);
+	{
+		GL.gl.activeTexture(33984);
+		GL.gl.bindTexture(3553,texture.texture);
+		GL.gl.uniform1i(this.textureUniform.location,0);
+	}
+	GL.gl.uniform1f(this.timeUniform.location,this.time.ms);
+	this.resolutionUniform.setVec2(new Vec2(renderContext.getWidth(),renderContext.getHeight()));
+	GL.gl.uniform1f(this.amountUniform.location,1 - (Math.pow(Math.abs(Math.sin(-this.eyePosition.getLength() * 0.0002 + this.time.ms / 4000)),10) * 8.0 - 7.0));
+	this.vertexPositionAttribute.drawArrays(5);
+}
+kumite.eyes.EyePostproFilter.prototype.__class__ = kumite.eyes.EyePostproFilter;
+kumite.eyes.EyePostproFilter.__interfaces__ = [haxe.rtti.Infos,kumite.scene.LayerLifecycle];
+if(!kumite.eyes._EyePostproFilter) kumite.eyes._EyePostproFilter = {}
+kumite.eyes._EyePostproFilter.Vertex = function() { }
+kumite.eyes._EyePostproFilter.Vertex.__name__ = ["kumite","eyes","_EyePostproFilter","Vertex"];
+kumite.eyes._EyePostproFilter.Vertex.prototype.__class__ = kumite.eyes._EyePostproFilter.Vertex;
+kumite.eyes._EyePostproFilter.Fragment = function() { }
+kumite.eyes._EyePostproFilter.Fragment.__name__ = ["kumite","eyes","_EyePostproFilter","Fragment"];
+kumite.eyes._EyePostproFilter.Fragment.prototype.__class__ = kumite.eyes._EyePostproFilter.Fragment;
 if(!kumite.displaylist) kumite.displaylist = {}
 kumite.displaylist.ConfigAsLayer = function(p) { if( p === $_ ) return; {
 	this.displayListLayer = new kumite.displaylist.DisplayListLayer();
@@ -3679,6 +3731,8 @@ GLTextureRegistry.prototype.createGLTextureFromImage = function(image,filter) {
 	GL.gl.texImage2D(3553,0,6408,6408,5121,image);
 	GL.gl.texParameteri(3553,10240,filter != null?filter:9728);
 	GL.gl.texParameteri(3553,10241,filter != null?filter:9728);
+	GL.gl.texParameteri(3553,10242,33071);
+	GL.gl.texParameteri(3553,10243,33071);
 	if(filter == 9984 || filter == 9986 || filter == 9985 || filter == 9987) {
 		GL.gl.generateMipmap(3553);
 	}
@@ -3693,10 +3747,12 @@ GLTextureRegistry.prototype.createGLTextureFromCanvas = function(canvas,filter) 
 	var testPowerOfTwoHeight = Std["int"](Math2.nextPowerOf2(canvas.height));
 	if(testPowerOfTwoWidth != canvas.width || testPowerOfTwoHeight != canvas.height) throw "Canvas size must be a valid texture size!";
 	var texture = GL.gl.createTexture();
-	GL.gl.bindTexture(3553,texture);
-	GL.gl.texImage2D(3553,0,6408,6408,5121,canvas);
 	GL.gl.texParameteri(3553,10240,filter != null?filter:9728);
 	GL.gl.texParameteri(3553,10241,filter != null?filter:9728);
+	GL.gl.texParameteri(3553,10242,33071);
+	GL.gl.texParameteri(3553,10243,33071);
+	GL.gl.bindTexture(3553,texture);
+	GL.gl.texImage2D(3553,0,6408,6408,5121,canvas);
 	if(filter == 9984 || filter == 9986 || filter == 9985 || filter == 9987) {
 		GL.gl.generateMipmap(3553);
 	}
@@ -5115,7 +5171,6 @@ reflect.Parameter.prototype.getType = function() {
 	return reflect.ClassInfo.forCType(this.def.t);
 }
 reflect.Parameter.prototype.__class__ = reflect.Parameter;
-if(!kumite.eyes) kumite.eyes = {}
 kumite.eyes.EyeMaskLayer = function(p) { if( p === $_ ) return; {
 	this.blend = true;
 	this.scale = 1;
@@ -5135,6 +5190,8 @@ kumite.eyes.EyeMaskLayer.prototype.vertexBuffer = null;
 kumite.eyes.EyeMaskLayer.prototype.projectionMatrixUniform = null;
 kumite.eyes.EyeMaskLayer.prototype.worldViewMatrixUniform = null;
 kumite.eyes.EyeMaskLayer.prototype.textureUniform = null;
+kumite.eyes.EyeMaskLayer.prototype.colorcube0Uniform = null;
+kumite.eyes.EyeMaskLayer.prototype.colorcube1Uniform = null;
 kumite.eyes.EyeMaskLayer.prototype.shutUniform = null;
 kumite.eyes.EyeMaskLayer.prototype.state = null;
 kumite.eyes.EyeMaskLayer.prototype.shut = null;
@@ -5145,6 +5202,8 @@ kumite.eyes.EyeMaskLayer.prototype.init = function() {
 	this.projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
 	this.worldViewMatrixUniform = GL.getUniformLocation("worldViewMatrix");
 	this.textureUniform = GL.getUniformLocation("texture");
+	this.colorcube0Uniform = GL.getUniformLocation("colorcube0");
+	this.colorcube1Uniform = GL.getUniformLocation("colorcube1");
 	this.shutUniform = GL.getUniformLocation("shut");
 }
 kumite.eyes.EyeMaskLayer.prototype.renderTransition = function(transitionContext) {
@@ -5176,10 +5235,11 @@ kumite.eyes.EyeMaskLayer.prototype.render = function(renderContext) {
 		GL.gl.bindTexture(3553,texture.texture);
 		GL.gl.uniform1i(this.textureUniform.location,0);
 	}
+	var len = Math.sqrt(this.position.x * this.position.x + this.position.y * this.position.y);
 	switch(this.state) {
 	case kumite.eyes.EyeMaskLayer.STATE_IDLE:{
 		this.shut = 0;
-		if(Math.random() < kumite.eyes.EyeMaskLayer.CLOSING_CHANCE) {
+		if(Math.sin(this.time.ms / 1000 / 2 + len * 0.0002) > 0.999 || Math.random() < kumite.eyes.EyeMaskLayer.CLOSING_CHANCE) {
 			this.state = kumite.eyes.EyeMaskLayer.STATE_CLOSING;
 		}
 	}break;
@@ -5828,6 +5888,9 @@ CanvasGraphic.prototype.fillText = function(text,x,y,maxWidth) {
 CanvasGraphic.prototype.drawImage = function(image,dx,dy,dw,dh) {
 	this.context.drawImage(image,dx,dy,dw,dh);
 }
+CanvasGraphic.prototype.drawImage2 = function(image,dx,dy) {
+	this.context.drawImage(image,dx,dy);
+}
 CanvasGraphic.prototype.setFont = function(value) {
 	this.context.font = value;
 	return value;
@@ -6315,7 +6378,7 @@ Main = function(canvas) { if( canvas === $_ ) return; {
 			var e = $e0;
 			{
 				{
-					Log.posInfo = { fileName : "Main.hx", lineNumber : 51, className : "Main", methodName : "new"};
+					Log.posInfo = { fileName : "Main.hx", lineNumber : 52, className : "Main", methodName : "new"};
 					if(Log.filter(LogLevel.ERROR)) {
 						Log.fetchInput("Error building application!\n" + e,null,null,null,null,null,null);
 						console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
@@ -6344,6 +6407,7 @@ Main.main = function() {
 	Log.addFilter(new ERegFilter(LogLevel.INFO,new EReg(".*","")));
 	Log.addFilter(new ERegFilter(LogLevel.WARN,new EReg(".*FrontMessenger\\.handleMessage.*","")));
 	Log.addFilter(new ERegFilter(LogLevel.WARN,new EReg(".*FrontMessenger\\.Receiver\\.execute.*","")));
+	Log.addFilter(new ERegFilter(LogLevel.WARN,new EReg(".*initAllLayers.*","")));
 	js.Lib.setErrorHandler($closure(Main,"globalErrorHandler"));
 }
 Main.prototype.__class__ = Main;
@@ -6730,27 +6794,32 @@ GLTextureLoadingTask.prototype.doStart = function() {
 	bpmjs.ImageLoaderTask.prototype.doStart.call(this);
 }
 GLTextureLoadingTask.prototype.handleImageLoaded = function() {
-	var testPowerOfTwoWidth = Std["int"](Math2.nextPowerOf2(this.image.width));
-	var testPowerOfTwoHeight = Std["int"](Math2.nextPowerOf2(this.image.height));
-	if(testPowerOfTwoWidth != this.image.width || testPowerOfTwoHeight != this.image.height) {
-		{
-			Log.posInfo = { fileName : "GLTextureLoadingTask.hx", lineNumber : 29, className : "GLTextureLoadingTask", methodName : "handleImageLoaded"};
-			if(Log.filter(LogLevel.WARN)) {
-				Log.fetchInput("Image",this.textureConfig.location,"size must be a valid texture size! Resizing...",null,null,null,null);
-				console.warn(Log.createMessage());
-			}
-		}
-		var canvasGraphic = new CanvasGraphic();
-		canvasGraphic.setWidth(Std["int"](testPowerOfTwoWidth / 2));
-		canvasGraphic.setHeight(Std["int"](testPowerOfTwoHeight / 2));
-		canvasGraphic.drawImage(this.image,0,0,canvasGraphic.width,canvasGraphic.height);
-		this.textureRegistry.register(this.textureConfig,this.textureRegistry.createGLTextureFromCanvas(canvasGraphic.canvas));
+	if(this.textureConfig.textureManipulation != null) {
+		this.textureRegistry.register(this.textureConfig,this.textureRegistry.createGLTextureFromCanvas(this.textureConfig.textureManipulation.create(this.image),this.textureConfig.filter));
 	}
 	else {
-		this.textureRegistry.register(this.textureConfig,this.textureRegistry.createGLTextureFromImage(this.image,this.textureConfig.filter));
+		var testPowerOfTwoWidth = Std["int"](Math2.nextPowerOf2(this.image.width));
+		var testPowerOfTwoHeight = Std["int"](Math2.nextPowerOf2(this.image.height));
+		if(testPowerOfTwoWidth != this.image.width || testPowerOfTwoHeight != this.image.height) {
+			{
+				Log.posInfo = { fileName : "GLTextureLoadingTask.hx", lineNumber : 35, className : "GLTextureLoadingTask", methodName : "handleImageLoaded"};
+				if(Log.filter(LogLevel.WARN)) {
+					Log.fetchInput("Image",this.textureConfig.location,"size must be a valid texture size! Resizing...",null,null,null,null);
+					console.warn(Log.createMessage());
+				}
+			}
+			var canvasGraphic = new CanvasGraphic();
+			canvasGraphic.setWidth(Std["int"](testPowerOfTwoWidth / 2));
+			canvasGraphic.setHeight(Std["int"](testPowerOfTwoHeight / 2));
+			canvasGraphic.drawImage(this.image,0,0,canvasGraphic.width,canvasGraphic.height);
+			this.textureRegistry.register(this.textureConfig,this.textureRegistry.createGLTextureFromCanvas(canvasGraphic.canvas,this.textureConfig.filter));
+		}
+		else {
+			this.textureRegistry.register(this.textureConfig,this.textureRegistry.createGLTextureFromImage(this.image,this.textureConfig.filter));
+		}
 	}
 	{
-		Log.posInfo = { fileName : "GLTextureLoadingTask.hx", lineNumber : 42, className : "GLTextureLoadingTask", methodName : "handleImageLoaded"};
+		Log.posInfo = { fileName : "GLTextureLoadingTask.hx", lineNumber : 49, className : "GLTextureLoadingTask", methodName : "handleImageLoaded"};
 		if(Log.filter(LogLevel.INFO)) {
 			Log.fetchInput("Complete: ",this.textureConfig.location,null,null,null,null,null);
 			console.info(Log.createMessage());
@@ -7163,25 +7232,28 @@ kumite.eyes.Config = function(p) { if( p === $_ ) return; {
 	this.clearLayer = new kumite.layer.ClearLayer();
 	this.clearLayer.color = new Color(0,0,0,1);
 	this.shadowLayer = new kumite.layer.TextureLayer();
-	this.shadowLayer.scale = 2.0;
+	this.shadowLayer.scale = 2.05;
 	this.shadowLayer.textureConfig = kumite.eyes.Config.SHADOW;
 	this.reflectionLayer = new kumite.layer.TextureLayer();
-	this.reflectionLayer.scale = 2.0;
+	this.reflectionLayer.scale = 3.0;
 	this.reflectionLayer.textureConfig = kumite.eyes.Config.REFLECTION;
 	this.framebuffer1EnableLayer = new kumite.layer.FramebufferEnableLayer(512,512);
 	this.framebuffer1DisableLayer = new kumite.layer.FramebufferDisableLayer();
+	this.framebufferPostproEnableLayer = new kumite.layer.FramebufferEnableLayer(512,512);
+	this.framebufferPostproDisableLayer = new kumite.layer.FramebufferDisableLayer();
 	this.framebuffer2EnableLayer = new kumite.layer.FramebufferEnableLayer(512,512);
 	this.framebuffer2DisableLayer = new kumite.layer.FramebufferDisableLayer();
 	this.eyeLayers = new Array();
-	this.framebuffer2RenderLayers = new Array();
+	this.eyeMaskLayers = new Array();
 	this.eyeEffects = new Array();
+	this.postproFilters = new Array();
 	this.eyeBlocks = new Array();
 	this.createBlock(-437,84,0.445);
+	this.createBlock(289,64,0.36);
+	this.createBlock(-813,-470,0.195);
 	this.createBlock(-743.5,-93.5,0.355);
 	this.createBlock(-697.1,155,0.192);
-	this.createBlock(-813,-470,0.195);
 	this.createBlock(-785.5,308.5,0.13);
-	this.createBlock(289,64,0.36);
 	this.createBlock(111.5,-63.5,0.195);
 	this.createBlock(458,-203,0.455);
 	this.createBlock(709,-384,0.137);
@@ -7192,27 +7264,44 @@ kumite.eyes.Config = function(p) { if( p === $_ ) return; {
 	this.createBlock(-446,390,0.19);
 	this.createBlock(216,338.5,0.193);
 	this.createBlock(622,283.5,0.132);
+	var colors = new Array();
+	colors.push(new Vec3(0,0,0));
+	colors.push(new Vec3(0,-10,0));
+	colors.push(new Vec3(0.2,0,0));
+	colors.push(new Vec3(-0.2,0,0));
+	colors.push(new Vec3(0.4,0,0));
+	colors.push(new Vec3(-0.4,0,0));
 	{
 		var _g = 0, _g1 = this.eyeBlocks;
 		while(_g < _g1.length) {
 			var eyeBlock = _g1[_g];
 			++_g;
-			var eyeLayer = new kumite.layer.TextureLayer();
-			eyeLayer.scale = 1.2 + Math.random() * 1.8;
+			var postproFilter = new kumite.eyes.EyePostproFilter();
+			postproFilter.eyePosition.x = eyeBlock.position.x;
+			postproFilter.eyePosition.y = eyeBlock.position.y;
+			postproFilter.textureConfig = this.framebuffer1EnableLayer.textureConfig;
+			this.postproFilters.push(postproFilter);
+			var eyeLayer = new kumite.layer.TextureHSLLayer();
+			eyeLayer.colors = colors;
+			eyeLayer.eyePosition.x = eyeBlock.position.x;
+			eyeLayer.eyePosition.y = eyeBlock.position.y;
+			eyeLayer.mixChance = 0.01 + Math.random() * (0.001 - 0.01);
+			eyeLayer.mixSpeed = 0.05 + Math.random() * 0.;
+			eyeLayer.scale = 1.2 + Math.random() * 0.8;
 			eyeLayer.textureConfig = kumite.eyes.Config.EYE;
 			this.eyeLayers.push(eyeLayer);
-			var framebuffer2RenderLayer = new kumite.eyes.EyeMaskLayer();
-			framebuffer2RenderLayer.scale = eyeBlock.scale;
-			framebuffer2RenderLayer.position.x = eyeBlock.position.x;
-			framebuffer2RenderLayer.position.y = eyeBlock.position.y;
-			framebuffer2RenderLayer.blend = false;
-			framebuffer2RenderLayer.textureConfig = this.framebuffer2EnableLayer.textureConfig;
-			this.framebuffer2RenderLayers.push(framebuffer2RenderLayer);
+			var eyeMaskLayer = new kumite.eyes.EyeMaskLayer();
+			eyeMaskLayer.scale = eyeBlock.scale;
+			eyeMaskLayer.position.x = eyeBlock.position.x;
+			eyeMaskLayer.position.y = eyeBlock.position.y;
+			eyeMaskLayer.blend = false;
+			eyeMaskLayer.textureConfig = this.framebuffer2EnableLayer.textureConfig;
+			this.eyeMaskLayers.push(eyeMaskLayer);
 			var eyeEffect = new kumite.layer.effect.EyeEffect();
-			eyeEffect.position.x = framebuffer2RenderLayer.position.x;
-			eyeEffect.position.y = framebuffer2RenderLayer.position.y;
+			eyeEffect.position.x = eyeMaskLayer.position.x;
+			eyeEffect.position.y = eyeMaskLayer.position.y;
 			eyeEffect.offset = Math.random() * 6;
-			eyeEffect.textureConfig = this.framebuffer1EnableLayer.textureConfig;
+			eyeEffect.textureConfig = this.framebufferPostproEnableLayer.textureConfig;
 			this.eyeEffects.push(eyeEffect);
 		}
 	}
@@ -7227,9 +7316,12 @@ kumite.eyes.Config.prototype.shadowLayer = null;
 kumite.eyes.Config.prototype.reflectionLayer = null;
 kumite.eyes.Config.prototype.framebuffer1EnableLayer = null;
 kumite.eyes.Config.prototype.framebuffer1DisableLayer = null;
+kumite.eyes.Config.prototype.framebufferPostproEnableLayer = null;
+kumite.eyes.Config.prototype.framebufferPostproDisableLayer = null;
+kumite.eyes.Config.prototype.postproFilters = null;
 kumite.eyes.Config.prototype.framebuffer2EnableLayer = null;
 kumite.eyes.Config.prototype.framebuffer2DisableLayer = null;
-kumite.eyes.Config.prototype.framebuffer2RenderLayers = null;
+kumite.eyes.Config.prototype.eyeMaskLayers = null;
 kumite.eyes.Config.prototype.eyeEffects = null;
 kumite.eyes.Config.prototype.eyeBlocks = null;
 kumite.eyes.Config.prototype.scene1 = null;
@@ -7249,13 +7341,16 @@ kumite.eyes.Config.prototype.complete = function() {
 			this.scene1.addLayerLifecycle(this.framebuffer1EnableLayer);
 			this.scene1.addLayerLifecycle(this.eyeLayers[i]);
 			this.scene1.addLayerLifecycle(this.framebuffer1DisableLayer);
+			this.scene1.addLayerLifecycle(this.framebufferPostproEnableLayer);
+			this.scene1.addLayerLifecycle(this.postproFilters[i]);
+			this.scene1.addLayerLifecycle(this.framebufferPostproDisableLayer);
 			this.scene1.addLayerLifecycle(this.framebuffer2EnableLayer);
 			this.scene1.addLayerLifecycle(this.clearLayer);
 			this.scene1.addLayerLifecycle(this.eyeEffects[i]);
 			this.scene1.addLayerLifecycle(this.shadowLayer);
 			this.scene1.addLayerLifecycle(this.reflectionLayer);
 			this.scene1.addLayerLifecycle(this.framebuffer2DisableLayer);
-			this.scene1.addLayerLifecycle(this.framebuffer2RenderLayers[i]);
+			this.scene1.addLayerLifecycle(this.eyeMaskLayers[i]);
 		}
 	}
 	this.scene1.addLayerLifecycle(this.displayListLayer);
@@ -7683,6 +7778,30 @@ GLHitareaPicker.prototype.pickDisplayObject = function(displayObject,parentMatri
 	return result;
 }
 GLHitareaPicker.prototype.__class__ = GLHitareaPicker;
+if(typeof _GLTextureConfig=='undefined') _GLTextureConfig = {}
+_GLTextureConfig.TextureManipulation = function() { }
+_GLTextureConfig.TextureManipulation.__name__ = ["_GLTextureConfig","TextureManipulation"];
+_GLTextureConfig.TextureManipulation.prototype.create = function(image) {
+	return null;
+}
+_GLTextureConfig.TextureManipulation.prototype.__class__ = _GLTextureConfig.TextureManipulation;
+_GLTextureConfig.CropManipulation = function(width,height) { if( width === $_ ) return; {
+	this.width = width;
+	this.height = height;
+}}
+_GLTextureConfig.CropManipulation.__name__ = ["_GLTextureConfig","CropManipulation"];
+_GLTextureConfig.CropManipulation.__super__ = _GLTextureConfig.TextureManipulation;
+for(var k in _GLTextureConfig.TextureManipulation.prototype ) _GLTextureConfig.CropManipulation.prototype[k] = _GLTextureConfig.TextureManipulation.prototype[k];
+_GLTextureConfig.CropManipulation.prototype.width = null;
+_GLTextureConfig.CropManipulation.prototype.height = null;
+_GLTextureConfig.CropManipulation.prototype.create = function(image) {
+	var canvasGraphic = new CanvasGraphic();
+	canvasGraphic.setWidth(this.width);
+	canvasGraphic.setHeight(this.height);
+	canvasGraphic.drawImage2(image,0,0);
+	return canvasGraphic.canvas;
+}
+_GLTextureConfig.CropManipulation.prototype.__class__ = _GLTextureConfig.CropManipulation;
 shader.DisplayObjectFragment = function() { }
 shader.DisplayObjectFragment.__name__ = ["shader","DisplayObjectFragment"];
 shader.DisplayObjectFragment.prototype.__class__ = shader.DisplayObjectFragment;
@@ -8090,6 +8209,126 @@ Property.prototype.ease = function(tween,dt) {
 	o[this.field] = value;
 }
 Property.prototype.__class__ = Property;
+kumite.layer.TextureHSLLayer = function(p) { if( p === $_ ) return; {
+	this.state = kumite.layer.TextureHSLLayer.IDLE;
+	this.blend = true;
+	this.scale = 1;
+	this.position = new Vec3(0,0,0);
+	this.eyePosition = new Vec2(0,0);
+	this.transitions = new kumite.layer.LayerTransitions();
+	this.transitions.add(this.cutTransition = new kumite.layer.LayerTransition("cut"));
+	this.transitions.add(this.moveTransition = new kumite.layer.LayerTransition("move"));
+	this.transitions.add(this.alphaTransition = new kumite.layer.LayerTransition("alpha"));
+	this.transitions.enableChild("alpha");
+}}
+kumite.layer.TextureHSLLayer.__name__ = ["kumite","layer","TextureHSLLayer"];
+kumite.layer.TextureHSLLayer.prototype.time = null;
+kumite.layer.TextureHSLLayer.prototype.textureRegistry = null;
+kumite.layer.TextureHSLLayer.prototype.transitions = null;
+kumite.layer.TextureHSLLayer.prototype.cutTransition = null;
+kumite.layer.TextureHSLLayer.prototype.moveTransition = null;
+kumite.layer.TextureHSLLayer.prototype.alphaTransition = null;
+kumite.layer.TextureHSLLayer.prototype.scale = null;
+kumite.layer.TextureHSLLayer.prototype.mixSpeed = null;
+kumite.layer.TextureHSLLayer.prototype.mixChance = null;
+kumite.layer.TextureHSLLayer.prototype.position = null;
+kumite.layer.TextureHSLLayer.prototype.eyePosition = null;
+kumite.layer.TextureHSLLayer.prototype.textureConfig = null;
+kumite.layer.TextureHSLLayer.prototype.colors = null;
+kumite.layer.TextureHSLLayer.prototype.blend = null;
+kumite.layer.TextureHSLLayer.prototype.shaderProgram = null;
+kumite.layer.TextureHSLLayer.prototype.vertexPositionAttribute = null;
+kumite.layer.TextureHSLLayer.prototype.vertexBuffer = null;
+kumite.layer.TextureHSLLayer.prototype.projectionMatrixUniform = null;
+kumite.layer.TextureHSLLayer.prototype.worldViewMatrixUniform = null;
+kumite.layer.TextureHSLLayer.prototype.textureUniform = null;
+kumite.layer.TextureHSLLayer.prototype.alphaUniform = null;
+kumite.layer.TextureHSLLayer.prototype.hsl0Uniform = null;
+kumite.layer.TextureHSLLayer.prototype.hsl1Uniform = null;
+kumite.layer.TextureHSLLayer.prototype.hslMixUniform = null;
+kumite.layer.TextureHSLLayer.prototype.hsl0 = null;
+kumite.layer.TextureHSLLayer.prototype.hsl1 = null;
+kumite.layer.TextureHSLLayer.prototype.hslMix = null;
+kumite.layer.TextureHSLLayer.prototype.state = null;
+kumite.layer.TextureHSLLayer.prototype.init = function() {
+	this.shaderProgram = GL.createProgram(kumite.layer._TextureHSLLayer.Vertex,kumite.layer._TextureHSLLayer.Fragment);
+	this.vertexPositionAttribute = GL.getAttribLocation2("vertexPosition",2,5120);
+	this.vertexPositionAttribute.updateBuffer(new Int8Array([0,0,1,0,0,1,1,1]));
+	this.projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
+	this.worldViewMatrixUniform = GL.getUniformLocation("worldViewMatrix");
+	this.textureUniform = GL.getUniformLocation("texture");
+	this.alphaUniform = GL.getUniformLocation("alpha");
+	this.hsl0Uniform = GL.getUniformLocation("hsl0");
+	this.hsl1Uniform = GL.getUniformLocation("hsl1");
+	this.hslMixUniform = GL.getUniformLocation("hslMix");
+	this.hsl0 = this.colors[Std["int"](Math.random() * this.colors.length)];
+	this.hsl1 = this.colors[Std["int"](Math.random() * this.colors.length)];
+	this.hslMix = 1;
+}
+kumite.layer.TextureHSLLayer.prototype.renderTransition = function(transitionContext) {
+	this.transitions.setTransition(transitionContext.getTransition());
+	this.render(transitionContext);
+}
+kumite.layer.TextureHSLLayer.prototype.render = function(renderContext) {
+	GL.useProgram(this.shaderProgram);
+	GL.gl.viewport(0,0,renderContext.getWidth(),renderContext.getHeight());
+	GL.gl.disable(2929);
+	if(this.blend) {
+		GL.gl.enable(3042);
+		GL.gl.blendFunc(770,771);
+	}
+	else {
+		GL.gl.disable(3042);
+	}
+	var projectionMatrix = new Matrix4();
+	projectionMatrix.setOrtho(0,renderContext.getWidth(),renderContext.getHeight(),0,0,1);
+	GL.gl.uniformMatrix4fv(this.projectionMatrixUniform.location,false,projectionMatrix.buffer);
+	this.vertexPositionAttribute.vertexAttribPointer();
+	var texture = this.textureRegistry.get(this.textureConfig);
+	var worldViewMatrix = new Matrix4();
+	worldViewMatrix.appendScale(texture.width * this.scale,texture.height * this.scale,1);
+	worldViewMatrix.appendTranslation(this.position.x,this.position.y,this.position.z);
+	worldViewMatrix.appendTranslation((renderContext.getWidth() - texture.width * this.scale) / 2,(renderContext.getHeight() - texture.height * this.scale) / 2,0);
+	GL.gl.uniformMatrix4fv(this.worldViewMatrixUniform.location,false,worldViewMatrix.buffer);
+	{
+		GL.gl.activeTexture(33984);
+		GL.gl.bindTexture(3553,texture.texture);
+		GL.gl.uniform1i(this.textureUniform.location,0);
+	}
+	GL.gl.uniform1f(this.alphaUniform.location,this.alphaTransition.getTransition());
+	switch(this.state) {
+	case kumite.layer.TextureHSLLayer.IDLE:{
+		if(Math.sin(-this.eyePosition.getLength() * 0.001 + this.time.ms / 1000) > 0.99) {
+			this.hsl0 = this.hsl1;
+			while(this.hsl0.equals(this.hsl1)) {
+				this.hsl1 = this.colors[Std["int"](Math.random() * this.colors.length)];
+			}
+			this.hslMix = 0;
+			this.state = kumite.layer.TextureHSLLayer.MIX;
+		}
+	}break;
+	case kumite.layer.TextureHSLLayer.MIX:{
+		this.hslMix += this.mixSpeed;
+		if(this.hslMix > 1.0) {
+			this.hslMix = 1.0;
+			this.state = kumite.layer.TextureHSLLayer.IDLE;
+		}
+	}break;
+	}
+	this.hsl0Uniform.setVec3(this.hsl0);
+	this.hsl1Uniform.setVec3(this.hsl1);
+	GL.gl.uniform1f(this.hslMixUniform.location,this.hslMix);
+	this.vertexPositionAttribute.drawArrays(5);
+}
+kumite.layer.TextureHSLLayer.prototype.__class__ = kumite.layer.TextureHSLLayer;
+kumite.layer.TextureHSLLayer.__interfaces__ = [haxe.rtti.Infos,kumite.scene.LayerLifecycle];
+if(!kumite.layer._TextureHSLLayer) kumite.layer._TextureHSLLayer = {}
+kumite.layer._TextureHSLLayer.Vertex = function() { }
+kumite.layer._TextureHSLLayer.Vertex.__name__ = ["kumite","layer","_TextureHSLLayer","Vertex"];
+kumite.layer._TextureHSLLayer.Vertex.prototype.__class__ = kumite.layer._TextureHSLLayer.Vertex;
+kumite.layer._TextureHSLLayer.Fragment = function() { }
+kumite.layer._TextureHSLLayer.Fragment.__name__ = ["kumite","layer","_TextureHSLLayer","Fragment"];
+kumite.layer._TextureHSLLayer.Fragment.prototype.__class__ = kumite.layer._TextureHSLLayer.Fragment;
 GLTextureAtlasPartConfig = function(p) { if( p === $_ ) return; {
 	null;
 }}
@@ -8784,7 +9023,7 @@ js.Boot.__init();
 	Xml.Document = "document";
 }
 kumite.layer.effect.EyeEffect.__meta__ = { fields : { time : { Inject : null}, stage : { Inject : null}, textureRegistry : { Inject : null}, textureConfig : { Param : null}, offset : { Param : null}, position : { Param : null}}};
-kumite.layer.effect.EyeEffect.__rtti = "<class path=\"kumite.layer.effect.EyeEffect\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<textureConfig public=\"1\"><c path=\"GLTextureConfig\"/></textureConfig>\n\t<offset public=\"1\"><c path=\"Float\"/></offset>\n\t<position public=\"1\"><c path=\"Vec2\"/></position>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<directionUniform><c path=\"GLUniformLocation\"/></directionUniform>\n\t<timeUniform><c path=\"GLUniformLocation\"/></timeUniform>\n\t<textureUniform><c path=\"GLUniformLocation\"/></textureUniform>\n\t<mousePosition><c path=\"Vec2\"/></mousePosition>\n\t<init public=\"1\" set=\"method\" line=\"49\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"68\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"73\"><f a=\"renderContext\">\n\t<c path=\"kumite.scene.RenderContext\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<updateMouse set=\"method\" line=\"92\"><f a=\"position\">\n\t<c path=\"Vec2\"/>\n\t<e path=\"Void\"/>\n</f></updateMouse>\n\t<new public=\"1\" set=\"method\" line=\"43\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.layer.effect.EyeEffect.__rtti = "<class path=\"kumite.layer.effect.EyeEffect\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<textureConfig public=\"1\"><c path=\"GLTextureConfig\"/></textureConfig>\n\t<offset public=\"1\"><c path=\"Float\"/></offset>\n\t<position public=\"1\"><c path=\"Vec2\"/></position>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<directionUniform><c path=\"GLUniformLocation\"/></directionUniform>\n\t<timeUniform><c path=\"GLUniformLocation\"/></timeUniform>\n\t<textureUniform><c path=\"GLUniformLocation\"/></textureUniform>\n\t<mousePosition><c path=\"Vec2\"/></mousePosition>\n\t<init public=\"1\" set=\"method\" line=\"48\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"67\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"72\"><f a=\"renderContext\">\n\t<c path=\"kumite.scene.RenderContext\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<updateMouse set=\"method\" line=\"91\"><f a=\"position\">\n\t<c path=\"Vec2\"/>\n\t<e path=\"Void\"/>\n</f></updateMouse>\n\t<new public=\"1\" set=\"method\" line=\"42\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.layer.effect._EyeEffect.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tvarying vec2 tc;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = vec4(vertexPosition.x, vertexPosition.y, 0.0, 1.0);\n\t\ttc = (vertexPosition.xy + 1.0) * 0.5;\n\t}\n\n"]}};
 kumite.layer.effect._EyeEffect.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\tprecision highp float;\n\t#endif\n\t\n\tvarying vec2 tc;\n\n\tuniform vec2 direction;\n\tuniform float time;\n\tuniform sampler2D texture;\n\t\n\tvoid main(void)\n\t{\n\t\tfloat zoom = 4.0;\n\t\tvec2 p = (-1.0 + 2.0 * tc) * 0.5;\n\t\tfloat r = dot(p,p) * zoom;\n\n\t\tfloat f = pow((1.0 - sqrt(1.0 - r)) / r, 0.8);\n\n\t\tvec2 uv;\n\t\tuv.x = p.x * f + 0.5 + direction.x + sin(time * 14.0 + p.y * 10.0) * 0.0005;\n\t\tuv.y = p.y * f + 0.5 + direction.y + cos(time * 14.0 + p.x * 10.0) * 0.0005;\n\n\t\tvec4 pixel = texture2D(texture, uv);\n\t\tgl_FragColor = pixel;\n\t}\n\n"]}};
 Log.filters = new Array();
@@ -8828,9 +9067,9 @@ hsl.haxe._DirectSignaler.PropagationStatus.IMMEDIATELY_STOPPED = 1;
 hsl.haxe._DirectSignaler.PropagationStatus.STOPPED = 2;
 hsl.haxe._DirectSignaler.PropagationStatus.UNDISTURBED = 3;
 kumite.layer.effect.PostproFilter.__meta__ = { fields : { textureRegistry : { Inject : null}, time : { Inject : null}, textureConfig : { Param : null}}};
-kumite.layer.effect.PostproFilter.__rtti = "<class path=\"kumite.layer.effect.PostproFilter\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<textureConfig public=\"1\"><c path=\"GLTextureConfig\"/></textureConfig>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<textureUniform><c path=\"GLUniformLocation\"/></textureUniform>\n\t<resolutionUniform><c path=\"GLUniformLocation\"/></resolutionUniform>\n\t<timeUniform><c path=\"GLUniformLocation\"/></timeUniform>\n\t<amountUniform><c path=\"GLUniformLocation\"/></amountUniform>\n\t<amount><c path=\"Float\"/></amount>\n\t<init public=\"1\" set=\"method\" line=\"35\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"55\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"61\"><f a=\"renderContext\">\n\t<c path=\"kumite.scene.RenderContext\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.layer.effect.PostproFilter.__rtti = "<class path=\"kumite.layer.effect.PostproFilter\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<textureConfig public=\"1\"><c path=\"GLTextureConfig\"/></textureConfig>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<textureUniform><c path=\"GLUniformLocation\"/></textureUniform>\n\t<resolutionUniform><c path=\"GLUniformLocation\"/></resolutionUniform>\n\t<timeUniform><c path=\"GLUniformLocation\"/></timeUniform>\n\t<init public=\"1\" set=\"method\" line=\"32\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"49\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"54\"><f a=\"renderContext\">\n\t<c path=\"kumite.scene.RenderContext\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"30\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.layer.effect._PostproFilter.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = vec4(vertexPosition.x, vertexPosition.y, 0.0, 1.0);\n\t}\n\n"]}};
-kumite.layer.effect._PostproFilter.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\tprecision highp float;\n\t#endif\n\t\n\tuniform vec2 resolution;\n\tuniform float time;\n\tuniform sampler2D texture;\n\t\n\tvoid main(void)\n\t{\n\t    vec2 q = gl_FragCoord.xy / resolution;\n\t\tq.y = 1.0-q.y;\n\t    vec3 oricol = texture2D(texture, vec2(q.x,1.0 - q.y)).xyz;\n\n\t\tvec2 uv = q;\n\n\t    vec3 col;\n\n\t\t//aberation\n\t\tfloat cax = 5.0;\n\t\tfloat cay = -5.0;\n\t    col.r = texture2D(texture,vec2(uv.x+cax / resolution.x,-uv.y)).x;\n\t    col.g = texture2D(texture,vec2(uv.x+0.000,-uv.y)).y;\n\t    col.b = texture2D(texture,vec2(uv.x+cay / resolution.x,-uv.y)).z;\n\t\n\t    col = clamp(col*0.5+0.5*col*col*1.2,0.0,1.0);\n\t\n\t\t//vignette\n\t    col *= 0.3 + 0.7*16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y);\n\t\n\t\t//color\n\t    col *= vec3(0.8,1.0,0.7);\n\t\n\t\t//v lines\n\t    col *= 1.0+0.2*sin(0.01*time+gl_FragCoord.y*2.5);\n\t\n\t\t//flicker\n\t    col *= 0.99+0.01*sin(0.11*time);\n\t\n\t    gl_FragColor = vec4(col, 1.0);\n\t}\n\n"]}};
+kumite.layer.effect._PostproFilter.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\tprecision highp float;\n\t#endif\n\t\n\tuniform vec2 resolution;\n\tuniform float time;\n\tuniform sampler2D texture;\n\t\n\tvoid main(void)\n\t{\n\t    vec2 q = gl_FragCoord.xy / resolution;\n\t\tq.y = 1.0-q.y;\n\t    vec3 oricol = texture2D(texture, vec2(q.x,1.0 - q.y)).xyz;\n\n\t\tvec2 uv = q;\n\n\t    vec3 col;\n\n\t\t//aberation\n\t\tfloat cax = 7.0;\n\t\tfloat cay = -7.0;\n\t    col.r = texture2D(texture,vec2(uv.x+cax / resolution.x,-uv.y)).x;\n\t    col.g = texture2D(texture,vec2(uv.x+0.000,-uv.y)).y;\n\t    col.b = texture2D(texture,vec2(uv.x+cay / resolution.x,-uv.y)).z;\n\t\n\t    col = clamp(col*0.5+0.5*col*col*1.2,0.0,1.0);\n\t\n\t\t//vignette\n\t    col *= 0.3 + 0.7*16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y);\n\t\n\t\t//color\n\t    col *= vec3(0.8,1.0,0.7);\n\t\n\t\t//v lines\n\t    col *= 1.0+0.2*sin(0.01*time+gl_FragCoord.y*2.5);\n\t\n\t\t//flicker\n\t    col *= 0.99+0.01*sin(0.11*time);\n\t\n\t    gl_FragColor = vec4(col, 1.0);\n\t}\n\n"]}};
 kumite.spritemesh.SpriteMeshLayer.__meta__ = { fields : { time : { Inject : null}, textureRegistry : { Inject : null}, offset : { Param : null}, textureFrequenceParam : { Param : null}, textureAmpParam : { Param : null}}};
 kumite.spritemesh.SpriteMeshLayer.__rtti = "<class path=\"kumite.spritemesh.SpriteMeshLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<max public=\"1\" line=\"18\" static=\"1\"><c path=\"Int\"/></max>\n\t<axis line=\"128\" static=\"1\"><c path=\"Vec3\"/></axis>\n\t<zAxis line=\"129\" static=\"1\"><c path=\"Vec3\"/></zAxis>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<transitions public=\"1\"><c path=\"kumite.layer.LayerTransitions\"/></transitions>\n\t<alphaTransition public=\"1\"><c path=\"kumite.layer.LayerTransition\"/></alphaTransition>\n\t<offset public=\"1\"><c path=\"Float\"/></offset>\n\t<textureFrequenceParam public=\"1\"><c path=\"Float\"/></textureFrequenceParam>\n\t<textureAmpParam public=\"1\"><c path=\"Float\"/></textureAmpParam>\n\t<sprites><c path=\"Array\"><c path=\"kumite.spritemesh.Sprite\"/></c></sprites>\n\t<projectionMatrix><c path=\"Matrix4\"/></projectionMatrix>\n\t<cameraMatrix><c path=\"Matrix4\"/></cameraMatrix>\n\t<cameraMatrix2><c path=\"Matrix4\"/></cameraMatrix2>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexBuffer><c path=\"Float32Array\"/></vertexBuffer>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexUVBuffer><c path=\"Float32Array\"/></vertexUVBuffer>\n\t<vertexUVAttribute><c path=\"GLAttribLocation\"/></vertexUVAttribute>\n\t<vertexNormalBuffer><c path=\"Float32Array\"/></vertexNormalBuffer>\n\t<vertexNormalAttribute><c path=\"GLAttribLocation\"/></vertexNormalAttribute>\n\t<cubeVerticesIndexBuffer><c path=\"WebGLBuffer\"/></cubeVerticesIndexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<alphaUniform><c path=\"GLUniformLocation\"/></alphaUniform>\n\t<textureUniform><c path=\"GLUniformLocation\"/></textureUniform>\n\t<spriteRenderIndexes><c path=\"Uint32Array\"/></spriteRenderIndexes>\n\t<spriteRenderIndexesCount><c path=\"Int\"/></spriteRenderIndexesCount>\n\t<init public=\"1\" set=\"method\" line=\"82\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"95\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<timems><c path=\"Float\"/></timems>\n\t<render public=\"1\" set=\"method\" line=\"103\"><f a=\"renderContext\">\n\t<c path=\"kumite.scene.RenderContext\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<renderGLInit set=\"method\" line=\"117\"><f a=\"renderContext\">\n\t<c path=\"kumite.scene.RenderContext\"/>\n\t<e path=\"Void\"/>\n</f></renderGLInit>\n\t<updateModel set=\"method\" line=\"131\"><f a=\"\"><e path=\"Void\"/></f></updateModel>\n\t<updateIndexes set=\"method\" line=\"165\"><f a=\"\"><e path=\"Void\"/></f></updateIndexes>\n\t<sortIndexes set=\"method\" line=\"191\"><f a=\"\"><e path=\"Void\"/></f></sortIndexes>\n\t<quicksort set=\"method\" line=\"196\"><f a=\"lo:hi\">\n\t<c path=\"Int\"/>\n\t<c path=\"Int\"/>\n\t<e path=\"Void\"/>\n</f></quicksort>\n\t<updateBuffer set=\"method\" line=\"214\"><f a=\"\"><e path=\"Void\"/></f></updateBuffer>\n\t<renderGL set=\"method\" line=\"261\"><f a=\"\"><e path=\"Void\"/></f></renderGL>\n\t<initGl set=\"method\" line=\"283\"><f a=\"\"><e path=\"Void\"/></f></initGl>\n\t<new public=\"1\" set=\"method\" line=\"65\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.spritemesh.SpriteMeshLayer.max = 1000;
@@ -8847,6 +9086,10 @@ LogLevel.OFF = new LogLevel(4);
 GLTextureConfig.FRAMEBUFFER_ID = 0;
 GLTextureAtlasConfig.instanceCount = 0;
 kumite.canvas.Config.__rtti = "<class path=\"kumite.canvas.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvasCase public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvasCase>\n\t<canvasController public=\"1\"><c path=\"kumite.canvas.CanvasController\"/></canvasController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.eyes.EyePostproFilter.__meta__ = { fields : { textureRegistry : { Inject : null}, time : { Inject : null}, textureConfig : { Param : null}, eyePosition : { Param : null}}};
+kumite.eyes.EyePostproFilter.__rtti = "<class path=\"kumite.eyes.EyePostproFilter\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<textureConfig public=\"1\"><c path=\"GLTextureConfig\"/></textureConfig>\n\t<eyePosition public=\"1\"><c path=\"Vec2\"/></eyePosition>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<textureUniform><c path=\"GLUniformLocation\"/></textureUniform>\n\t<resolutionUniform><c path=\"GLUniformLocation\"/></resolutionUniform>\n\t<timeUniform><c path=\"GLUniformLocation\"/></timeUniform>\n\t<amountUniform><c path=\"GLUniformLocation\"/></amountUniform>\n\t<init public=\"1\" set=\"method\" line=\"39\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"58\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"63\"><f a=\"renderContext\">\n\t<c path=\"kumite.scene.RenderContext\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"34\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.eyes._EyePostproFilter.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = vec4(vertexPosition.x, vertexPosition.y, 0.0, 1.0);\n\t}\n\n"]}};
+kumite.eyes._EyePostproFilter.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\tprecision highp float;\n\t#endif\n\t\n\tuniform vec2 resolution;\n\tuniform float time;\n\tuniform float amount;\n\tuniform sampler2D texture;\n\t\n\tvoid main(void)\n\t{\n\t    vec2 q = gl_FragCoord.xy / resolution;\n\t\tq.y = 1.0-q.y;\n\t    vec3 oricol = texture2D(texture, vec2(q.x,1.0 - q.y)).xyz;\n\n\t\tvec2 uv = q;\n\n\t    vec3 col;\n\n\t\t//aberation\n\t\tfloat cax = 10.0;\n\t\tfloat cay = -10.0;\n\t    col.r = texture2D(texture,vec2(uv.x+cax / resolution.x,-uv.y)).x;\n\t    col.g = texture2D(texture,vec2(uv.x+0.000,-uv.y)).y;\n\t    col.b = texture2D(texture,vec2(uv.x+cay / resolution.x,-uv.y)).z;\n\t\n\t    col = clamp(col*0.5+0.5*col*col*1.2,0.0,1.0);\n\t\n\t\t//vignette\n\t    col *= 0.3 + 0.7*16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y);\n\t\n\t\t//color\n\t    col *= vec3(0.8,1.0,0.7);\n\t\n\t\t//v lines\n\t    col *= 1.0+0.3*sin(0.01*time+gl_FragCoord.y*2.5);\n\t\n\t\t//flicker\n\t    col *= 0.97+0.03*sin(0.11*time);\n\t\n\t    gl_FragColor = vec4(mix(col, oricol, clamp(amount, 0.0, 1.0)), 1.0);\n\t}\n\n"]}};
 kumite.displaylist.ConfigAsLayer.__rtti = "<class path=\"kumite.displaylist.ConfigAsLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<displayListLayer public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayListLayer>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.time.Config.__rtti = "<class path=\"kumite.time.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<timeController public=\"1\"><c path=\"kumite.time.TimeController\"/></timeController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.projection.ProjectionController.__meta__ = { fields : { projection : { Inject : null}, stage : { Inject : null}, init : { Sequence : ["boot","init"]}, updateProjectionSizeFromStage : { Message : null}}};
@@ -8865,15 +9108,15 @@ kumite.canvas.CanvasController.__rtti = "<class path=\"kumite.canvas.CanvasContr
 kumite.launch.Launcher.__meta__ = { fields : { sequencer : { Inject : null}, handlePostComplete : { PostComplete : null}, showError : { Sequence : ["boot","error"]}, handleFinish : { Sequence : ["boot","finish"]}}};
 kumite.launch.Launcher.__rtti = "<class path=\"kumite.launch.Launcher\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<handlePostComplete public=\"1\" set=\"method\" line=\"17\"><f a=\"\"><e path=\"Void\"/></f></handlePostComplete>\n\t<showError public=\"1\" set=\"method\" line=\"24\"><f a=\"message\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></showError>\n\t<handleFinish public=\"1\" set=\"method\" line=\"30\"><f a=\"\"><e path=\"Void\"/></f></handleFinish>\n\t<new public=\"1\" set=\"method\" line=\"14\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.eyes.EyeMaskLayer.__meta__ = { fields : { time : { Inject : null}, textureRegistry : { Inject : null}, scale : { Param : null}, position : { Param : null}, textureConfig : { Param : null}}};
-kumite.eyes.EyeMaskLayer.__rtti = "<class path=\"kumite.eyes.EyeMaskLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<STATE_IDLE line=\"44\" static=\"1\"><c path=\"String\"/></STATE_IDLE>\n\t<STATE_OPENING line=\"45\" static=\"1\"><c path=\"String\"/></STATE_OPENING>\n\t<STATE_CLOSING line=\"46\" static=\"1\"><c path=\"String\"/></STATE_CLOSING>\n\t<OPENING_SPEED line=\"48\" static=\"1\"><c path=\"Float\"/></OPENING_SPEED>\n\t<CLOSING_SPEED line=\"49\" static=\"1\"><c path=\"Float\"/></CLOSING_SPEED>\n\t<CLOSING_CHANCE line=\"50\" static=\"1\"><c path=\"Float\"/></CLOSING_CHANCE>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<scale public=\"1\"><c path=\"Float\"/></scale>\n\t<position public=\"1\"><c path=\"Vec3\"/></position>\n\t<textureConfig public=\"1\"><c path=\"GLTextureConfig\"/></textureConfig>\n\t<blend public=\"1\"><e path=\"Bool\"/></blend>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<worldViewMatrixUniform><c path=\"GLUniformLocation\"/></worldViewMatrixUniform>\n\t<textureUniform><c path=\"GLUniformLocation\"/></textureUniform>\n\t<shutUniform><c path=\"GLUniformLocation\"/></shutUniform>\n\t<state><c path=\"String\"/></state>\n\t<shut><c path=\"Float\"/></shut>\n\t<init public=\"1\" set=\"method\" line=\"63\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"81\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"86\"><f a=\"renderContext\">\n\t<c path=\"kumite.scene.RenderContext\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"55\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.eyes.EyeMaskLayer.__rtti = "<class path=\"kumite.eyes.EyeMaskLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<STATE_IDLE line=\"46\" static=\"1\"><c path=\"String\"/></STATE_IDLE>\n\t<STATE_OPENING line=\"47\" static=\"1\"><c path=\"String\"/></STATE_OPENING>\n\t<STATE_CLOSING line=\"48\" static=\"1\"><c path=\"String\"/></STATE_CLOSING>\n\t<OPENING_SPEED line=\"50\" static=\"1\"><c path=\"Float\"/></OPENING_SPEED>\n\t<CLOSING_SPEED line=\"51\" static=\"1\"><c path=\"Float\"/></CLOSING_SPEED>\n\t<CLOSING_CHANCE line=\"52\" static=\"1\"><c path=\"Float\"/></CLOSING_CHANCE>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<scale public=\"1\"><c path=\"Float\"/></scale>\n\t<position public=\"1\"><c path=\"Vec3\"/></position>\n\t<textureConfig public=\"1\"><c path=\"GLTextureConfig\"/></textureConfig>\n\t<blend public=\"1\"><e path=\"Bool\"/></blend>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<worldViewMatrixUniform><c path=\"GLUniformLocation\"/></worldViewMatrixUniform>\n\t<textureUniform><c path=\"GLUniformLocation\"/></textureUniform>\n\t<colorcube0Uniform><c path=\"GLUniformLocation\"/></colorcube0Uniform>\n\t<colorcube1Uniform><c path=\"GLUniformLocation\"/></colorcube1Uniform>\n\t<shutUniform><c path=\"GLUniformLocation\"/></shutUniform>\n\t<state><c path=\"String\"/></state>\n\t<shut><c path=\"Float\"/></shut>\n\t<init public=\"1\" set=\"method\" line=\"65\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"85\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"90\"><f a=\"renderContext\">\n\t<c path=\"kumite.scene.RenderContext\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"57\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.eyes.EyeMaskLayer.STATE_IDLE = "STATE_IDLE";
 kumite.eyes.EyeMaskLayer.STATE_OPENING = "STATE_OPENING";
 kumite.eyes.EyeMaskLayer.STATE_CLOSING = "STATE_CLOSING";
 kumite.eyes.EyeMaskLayer.OPENING_SPEED = 0.2;
 kumite.eyes.EyeMaskLayer.CLOSING_SPEED = 0.1;
-kumite.eyes.EyeMaskLayer.CLOSING_CHANCE = 0.001;
+kumite.eyes.EyeMaskLayer.CLOSING_CHANCE = 0.0001;
 kumite.eyes._EyeMaskLayer.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 worldViewMatrix;\n\n\tvarying vec4 vertex;\n\tvarying vec2 textureCoord;\n\tvarying vec2 tc;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);\n\t\tvertex = vec4(vertexPosition, 0.0, 1.0);\n\t\ttextureCoord = vertexPosition.xy;\n\t\ttc = vertexPosition;\n\t}\n\n"]}};
-kumite.eyes._EyeMaskLayer.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform sampler2D texture;\n\tuniform float shut;\n\n\tvarying vec2 tc;\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tfloat zoom = 4.0;\n\t\tvec2 p = (-1.0 + 2.0 * tc) * 0.5;\n\t\tfloat r = dot(p,p) * zoom;\n\n\t\tfloat v = shut;\n\n\t\tfloat zoomTop = 4.0 - v * 3.0;\n\t\tvec2 pTop = (-1.0 + 2.0 * vec2(tc.x, tc.y + pow(v + 0.0, 1.0))) * 0.5;\n\t\tfloat rTop = dot(pTop,pTop) * zoomTop;\n\n\t\tfloat zoomBottom = 4.0 - v * 3.0;\n\t\tvec2 pBottom = (-1.0 + 2.0 * vec2(tc.x, tc.y - pow(v + 0.0, 1.0))) * 0.5;\n\t\tfloat rBottom = dot(pBottom,pBottom) * zoomBottom;\n\n\t\tif (rTop > 1.0)\n\t\t\tdiscard;\n\n\t\tif (rBottom > 1.0)\n\t\t\tdiscard;\n\n\t\tif (r > 1.0)\n\t\t\tdiscard;\n\n\t\tvec4 color = texture2D(texture, vec2(textureCoord.x, textureCoord.y));\n\t\tgl_FragColor = color;\n\t}\n\n"]}};
+kumite.eyes._EyeMaskLayer.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform sampler2D texture;\n\n\tuniform float shut;\n\n\tvarying vec2 tc;\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tfloat zoom = 4.0;\n\t\tvec2 p = (-1.0 + 2.0 * tc) * 0.5;\n\t\tfloat r = dot(p,p) * zoom;\n\n\t\tfloat v = shut;\n\n\t\tfloat zoomTop = 4.0 - v * 3.0;\n\t\tvec2 pTop = (-1.0 + 2.0 * vec2(tc.x, tc.y + pow(v + 0.0, 1.0))) * 0.5;\n\t\tfloat rTop = dot(pTop,pTop) * zoomTop;\n\n\t\tfloat zoomBottom = 4.0 - v * 3.0;\n\t\tvec2 pBottom = (-1.0 + 2.0 * vec2(tc.x, tc.y - pow(v + 0.0, 1.0))) * 0.5;\n\t\tfloat rBottom = dot(pBottom,pBottom) * zoomBottom;\n\n\t\tif (rTop > 1.0)\n\t\t\tdiscard;\n\n\t\tif (rBottom > 1.0)\n\t\t\tdiscard;\n\n\t\tif (r > 1.0)\n\t\t\tdiscard;\n\n\t\tvec4 color = texture2D(texture, vec2(textureCoord.x, 1.0 - textureCoord.y));\n\t\tgl_FragColor = color;\n\t}\n\n"]}};
 kumite.layer.ClearLayer.__meta__ = { fields : { color : { Param : null}}};
 kumite.layer.ClearLayer.__rtti = "<class path=\"kumite.layer.ClearLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<color public=\"1\"><c path=\"Color\"/></color>\n\t<init public=\"1\" set=\"method\" line=\"19\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"23\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"28\"><f a=\"renderContext\">\n\t<c path=\"kumite.scene.RenderContext\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"14\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.textureregistry.Config.__rtti = "<class path=\"kumite.textureregistry.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
@@ -8906,7 +9149,7 @@ kumite.layer._Texture3DLayer.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribut
 kumite.layer._Texture3DLayer.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform sampler2D texture;\n\tuniform float alpha;\n\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tvec4 color = texture2D(texture, textureCoord);\n\t\tgl_FragColor = color * vec4(1.0, 1.0, 1.0, alpha);\n\t}\n\n"]}};
 haxe.Timer.arr = new Array();
 kumite.eyes.Config.__meta__ = { fields : { textureRegistry : { Inject : null}, displayListLayer : { Inject : null}, startPrepare : { Sequence : ["boot","startPrepare"]}, complete : { Complete : null}}};
-kumite.eyes.Config.__rtti = "<class path=\"kumite.eyes.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<EYE public=\"1\" line=\"24\" static=\"1\"><c path=\"GLTextureConfig\"/></EYE>\n\t<SHADOW public=\"1\" line=\"25\" static=\"1\"><c path=\"GLTextureConfig\"/></SHADOW>\n\t<REFLECTION public=\"1\" line=\"26\" static=\"1\"><c path=\"GLTextureConfig\"/></REFLECTION>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<displayListLayer public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayListLayer>\n\t<clearLayer public=\"1\"><c path=\"kumite.layer.ClearLayer\"/></clearLayer>\n\t<eyeLayers public=\"1\"><c path=\"Array\"><c path=\"kumite.layer.TextureLayer\"/></c></eyeLayers>\n\t<shadowLayer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></shadowLayer>\n\t<reflectionLayer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></reflectionLayer>\n\t<framebuffer1EnableLayer public=\"1\"><c path=\"kumite.layer.FramebufferEnableLayer\"/></framebuffer1EnableLayer>\n\t<framebuffer1DisableLayer public=\"1\"><c path=\"kumite.layer.FramebufferDisableLayer\"/></framebuffer1DisableLayer>\n\t<framebuffer2EnableLayer public=\"1\"><c path=\"kumite.layer.FramebufferEnableLayer\"/></framebuffer2EnableLayer>\n\t<framebuffer2DisableLayer public=\"1\"><c path=\"kumite.layer.FramebufferDisableLayer\"/></framebuffer2DisableLayer>\n\t<framebuffer2RenderLayers public=\"1\"><c path=\"Array\"><c path=\"kumite.eyes.EyeMaskLayer\"/></c></framebuffer2RenderLayers>\n\t<eyeEffects public=\"1\"><c path=\"Array\"><c path=\"kumite.layer.effect.EyeEffect\"/></c></eyeEffects>\n\t<eyeBlocks public=\"1\"><c path=\"Array\"><c path=\"kumite.eyes.EyeBlock\"/></c></eyeBlocks>\n\t<scene1 public=\"1\"><c path=\"kumite.scene.DefaultScene\"/></scene1>\n\t<startPrepare public=\"1\" set=\"method\" line=\"121\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></startPrepare>\n\t<complete public=\"1\" set=\"method\" line=\"133\"><f a=\"\"><e path=\"Void\"/></f></complete>\n\t<createBlock set=\"method\" line=\"155\"><f a=\"x:y:scale\">\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<e path=\"Void\"/>\n</f></createBlock>\n\t<new public=\"1\" set=\"method\" line=\"53\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.eyes.Config.__rtti = "<class path=\"kumite.eyes.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<EYE public=\"1\" line=\"25\" static=\"1\"><c path=\"GLTextureConfig\"/></EYE>\n\t<SHADOW public=\"1\" line=\"26\" static=\"1\"><c path=\"GLTextureConfig\"/></SHADOW>\n\t<REFLECTION public=\"1\" line=\"27\" static=\"1\"><c path=\"GLTextureConfig\"/></REFLECTION>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<displayListLayer public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayListLayer>\n\t<clearLayer public=\"1\"><c path=\"kumite.layer.ClearLayer\"/></clearLayer>\n\t<eyeLayers public=\"1\"><c path=\"Array\"><c path=\"kumite.layer.TextureHSLLayer\"/></c></eyeLayers>\n\t<shadowLayer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></shadowLayer>\n\t<reflectionLayer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></reflectionLayer>\n\t<framebuffer1EnableLayer public=\"1\"><c path=\"kumite.layer.FramebufferEnableLayer\"/></framebuffer1EnableLayer>\n\t<framebuffer1DisableLayer public=\"1\"><c path=\"kumite.layer.FramebufferDisableLayer\"/></framebuffer1DisableLayer>\n\t<framebufferPostproEnableLayer public=\"1\"><c path=\"kumite.layer.FramebufferEnableLayer\"/></framebufferPostproEnableLayer>\n\t<framebufferPostproDisableLayer public=\"1\"><c path=\"kumite.layer.FramebufferDisableLayer\"/></framebufferPostproDisableLayer>\n\t<postproFilters public=\"1\"><c path=\"Array\"><c path=\"kumite.eyes.EyePostproFilter\"/></c></postproFilters>\n\t<framebuffer2EnableLayer public=\"1\"><c path=\"kumite.layer.FramebufferEnableLayer\"/></framebuffer2EnableLayer>\n\t<framebuffer2DisableLayer public=\"1\"><c path=\"kumite.layer.FramebufferDisableLayer\"/></framebuffer2DisableLayer>\n\t<eyeMaskLayers public=\"1\"><c path=\"Array\"><c path=\"kumite.eyes.EyeMaskLayer\"/></c></eyeMaskLayers>\n\t<eyeEffects public=\"1\"><c path=\"Array\"><c path=\"kumite.layer.effect.EyeEffect\"/></c></eyeEffects>\n\t<eyeBlocks public=\"1\"><c path=\"Array\"><c path=\"kumite.eyes.EyeBlock\"/></c></eyeBlocks>\n\t<scene1 public=\"1\"><c path=\"kumite.scene.DefaultScene\"/></scene1>\n\t<startPrepare public=\"1\" set=\"method\" line=\"151\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></startPrepare>\n\t<complete public=\"1\" set=\"method\" line=\"163\"><f a=\"\"><e path=\"Void\"/></f></complete>\n\t<createBlock set=\"method\" line=\"190\"><f a=\"x:y:scale\">\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<e path=\"Void\"/>\n</f></createBlock>\n\t<new public=\"1\" set=\"method\" line=\"57\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.eyes.Config.EYE = GLTextureConfig.create("data/image/eyes/EyesBG.png",9729);
 kumite.eyes.Config.SHADOW = GLTextureConfig.create("data/image/eyes/EyesShadow.png",9729);
 kumite.eyes.Config.REFLECTION = GLTextureConfig.create("data/image/eyes/Reflection.png",9729);
@@ -9213,7 +9456,7 @@ GL.INVALID_FRAMEBUFFER_OPERATION = 1286;
 kumite.layer.TextureLayer.__meta__ = { fields : { time : { Inject : null}, textureRegistry : { Inject : null}, scale : { Param : null}, position : { Param : null}, textureConfig : { Param : null}}};
 kumite.layer.TextureLayer.__rtti = "<class path=\"kumite.layer.TextureLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<transitions public=\"1\"><c path=\"kumite.layer.LayerTransitions\"/></transitions>\n\t<cutTransition public=\"1\"><c path=\"kumite.layer.LayerTransition\"/></cutTransition>\n\t<moveTransition public=\"1\"><c path=\"kumite.layer.LayerTransition\"/></moveTransition>\n\t<alphaTransition public=\"1\"><c path=\"kumite.layer.LayerTransition\"/></alphaTransition>\n\t<scale public=\"1\"><c path=\"Float\"/></scale>\n\t<position public=\"1\"><c path=\"Vec3\"/></position>\n\t<textureConfig public=\"1\"><c path=\"GLTextureConfig\"/></textureConfig>\n\t<blend public=\"1\"><e path=\"Bool\"/></blend>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<worldViewMatrixUniform><c path=\"GLUniformLocation\"/></worldViewMatrixUniform>\n\t<textureUniform><c path=\"GLUniformLocation\"/></textureUniform>\n\t<alphaUniform><c path=\"GLUniformLocation\"/></alphaUniform>\n\t<init public=\"1\" set=\"method\" line=\"61\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"79\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"85\"><f a=\"renderContext\">\n\t<c path=\"kumite.scene.RenderContext\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"49\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.layer._TextureLayer.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 worldViewMatrix;\n\n\tvarying vec4 vertex;\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);\n\t\tvertex = vec4(vertexPosition, 0.0, 1.0);\n\t\ttextureCoord = vertexPosition.xy;\n\t}\n\n"]}};
-kumite.layer._TextureLayer.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform sampler2D texture;\n\tuniform float alpha;\n\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tvec4 color = texture2D(texture, vec2(textureCoord.x, textureCoord.y));\n\t\t//gl_FragColor = color * vec4(1.0, 1.0, 1.0, alpha);\n\t\tgl_FragColor = vec4(color.rgb, color.a);\n\t}\n\n"]}};
+kumite.layer._TextureLayer.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform sampler2D texture;\n\tuniform float alpha;\n\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tvec4 color = texture2D(texture, vec2(textureCoord.x, textureCoord.y));\n\t\tgl_FragColor = color * vec4(1.0, 1.0, 1.0, alpha);\n\t}\n\n"]}};
 shader.DisplayObjectFragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform sampler2D texture;\n\tuniform float alpha;\n\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tvec4 color = texture2D(texture, textureCoord);\n\t\tgl_FragColor = color * vec4(1.0, 1.0, 1.0, alpha);\n\t}\n\n"]}};
 kumite.scene.DefaultScene.__rtti = "<class path=\"kumite.scene.DefaultScene\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.SceneLifecycle\"/>\n\t<name public=\"1\"><c path=\"String\"/></name>\n\t<preconfiguredLifecycles><c path=\"Array\"><c path=\"kumite.scene._DefaultScene.LifecycleAndLayerId\"/></c></preconfiguredLifecycles>\n\t<addLayerLifecycle public=\"1\" set=\"method\" line=\"25\"><f a=\"lifecycle:?layerId\">\n\t<c path=\"kumite.scene.LayerLifecycle\"/>\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></addLayerLifecycle>\n\t<sceneInit public=\"1\" set=\"method\" line=\"36\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></sceneInit>\n\t<initTransition public=\"1\" set=\"method\" line=\"42\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></initTransition>\n\t<renderTransition public=\"1\" set=\"method\" line=\"46\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"50\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<addPreconfiguredLifecycles set=\"method\" line=\"54\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></addPreconfiguredLifecycles>\n\t<new public=\"1\" set=\"method\" line=\"19\"><f a=\"?name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></new>\n</class>";
 kumite.camera.Config.__rtti = "<class path=\"kumite.camera.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<cameraMouseMover public=\"1\"><c path=\"kumite.camera.CameraMouseMover\"/></cameraMouseMover>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
@@ -9223,6 +9466,12 @@ kumite.layer.effect.TestFilter.__rtti = "<class path=\"kumite.layer.effect.TestF
 kumite.layer.effect._TestFilter.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tvarying vec4 vertex;\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = vec4((vertexPosition - 0.5) * 2.0, 0.0, 1.0);\n\t\tvertex = vec4(vertexPosition, 0.0, 1.0);\n\t\ttextureCoord = vertexPosition.xy;\n\t}\n\n"]}};
 kumite.layer.effect._TestFilter.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform sampler2D texture;\n\tuniform float amount;\n\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tvec4 color = texture2D(texture, textureCoord);\n\t\tvec4 result = color * color.w + vec4(textureCoord.x, textureCoord.y, 0.0, 1.0);\n\t\tgl_FragColor = result * amount + color * (1.0 - amount);\n\t}\n\n"]}};
 kumite.mouse.Config.__rtti = "<class path=\"kumite.mouse.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<mouseController public=\"1\"><c path=\"kumite.mouse.MouseController\"/></mouseController>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.layer.TextureHSLLayer.__meta__ = { fields : { time : { Inject : null}, textureRegistry : { Inject : null}, scale : { Param : null}, mixSpeed : { Param : null}, mixChance : { Param : null}, position : { Param : null}, eyePosition : { Param : null}, textureConfig : { Param : null}}};
+kumite.layer.TextureHSLLayer.__rtti = "<class path=\"kumite.layer.TextureHSLLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<IDLE line=\"67\" static=\"1\"><c path=\"String\"/></IDLE>\n\t<MIX line=\"68\" static=\"1\"><c path=\"String\"/></MIX>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<transitions public=\"1\"><c path=\"kumite.layer.LayerTransitions\"/></transitions>\n\t<cutTransition public=\"1\"><c path=\"kumite.layer.LayerTransition\"/></cutTransition>\n\t<moveTransition public=\"1\"><c path=\"kumite.layer.LayerTransition\"/></moveTransition>\n\t<alphaTransition public=\"1\"><c path=\"kumite.layer.LayerTransition\"/></alphaTransition>\n\t<scale public=\"1\"><c path=\"Float\"/></scale>\n\t<mixSpeed public=\"1\"><c path=\"Float\"/></mixSpeed>\n\t<mixChance public=\"1\"><c path=\"Float\"/></mixChance>\n\t<position public=\"1\"><c path=\"Vec3\"/></position>\n\t<eyePosition public=\"1\"><c path=\"Vec2\"/></eyePosition>\n\t<textureConfig public=\"1\"><c path=\"GLTextureConfig\"/></textureConfig>\n\t<colors public=\"1\"><c path=\"Array\"><c path=\"Vec3\"/></c></colors>\n\t<blend public=\"1\"><e path=\"Bool\"/></blend>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<projectionMatrixUniform><c path=\"GLUniformLocation\"/></projectionMatrixUniform>\n\t<worldViewMatrixUniform><c path=\"GLUniformLocation\"/></worldViewMatrixUniform>\n\t<textureUniform><c path=\"GLUniformLocation\"/></textureUniform>\n\t<alphaUniform><c path=\"GLUniformLocation\"/></alphaUniform>\n\t<hsl0Uniform><c path=\"GLUniformLocation\"/></hsl0Uniform>\n\t<hsl1Uniform><c path=\"GLUniformLocation\"/></hsl1Uniform>\n\t<hslMixUniform><c path=\"GLUniformLocation\"/></hslMixUniform>\n\t<hsl0><c path=\"Vec3\"/></hsl0>\n\t<hsl1><c path=\"Vec3\"/></hsl1>\n\t<hslMix><c path=\"Float\"/></hslMix>\n\t<state><c path=\"String\"/></state>\n\t<init public=\"1\" set=\"method\" line=\"86\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"111\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"117\"><f a=\"renderContext\">\n\t<c path=\"kumite.scene.RenderContext\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"72\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.layer.TextureHSLLayer.IDLE = "IDLE";
+kumite.layer.TextureHSLLayer.MIX = "MIX";
+kumite.layer._TextureHSLLayer.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 worldViewMatrix;\n\n\tvarying vec4 vertex;\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);\n\t\tvertex = vec4(vertexPosition, 0.0, 1.0);\n\t\ttextureCoord = vertexPosition.xy;\n\t}\n\n"]}};
+kumite.layer._TextureHSLLayer.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform sampler2D texture;\n\tuniform float alpha;\n\tuniform vec3 hsl0;\n\tuniform vec3 hsl1;\n\tuniform float hslMix;\n\n\tvarying vec2 textureCoord;\n\n\tvec3 RGBToHSL(vec3 color)\n\t{\n\t\tvec3 hsl; // init to 0 to avoid warnings ? (and reverse if + remove first part)\n\t\t\n\t\tfloat fmin = min(min(color.r, color.g), color.b);    //Min. value of RGB\n\t\tfloat fmax = max(max(color.r, color.g), color.b);    //Max. value of RGB\n\t\tfloat delta = fmax - fmin;             //Delta RGB value\n\t\n\t\thsl.z = (fmax + fmin) / 2.0; // Luminance\n\t\n\t\tif (delta == 0.0)\t\t//This is a gray, no chroma...\n\t\t{\n\t\t\thsl.x = 0.0;\t// Hue\n\t\t\thsl.y = 0.0;\t// Saturation\n\t\t}\n\t\telse                                    //Chromatic data...\n\t\t{\n\t\t\tif (hsl.z < 0.5)\n\t\t\t\thsl.y = delta / (fmax + fmin); // Saturation\n\t\t\telse\n\t\t\t\thsl.y = delta / (2.0 - fmax - fmin); // Saturation\n\t\t\t\n\t\t\tfloat deltaR = (((fmax - color.r) / 6.0) + (delta / 2.0)) / delta;\n\t\t\tfloat deltaG = (((fmax - color.g) / 6.0) + (delta / 2.0)) / delta;\n\t\t\tfloat deltaB = (((fmax - color.b) / 6.0) + (delta / 2.0)) / delta;\n\t\n\t\t\tif (color.r == fmax )\n\t\t\t\thsl.x = deltaB - deltaG; // Hue\n\t\t\telse if (color.g == fmax)\n\t\t\t\thsl.x = (1.0 / 3.0) + deltaR - deltaB; // Hue\n\t\t\telse if (color.b == fmax)\n\t\t\t\thsl.x = (2.0 / 3.0) + deltaG - deltaR; // Hue\n\t\n\t\t\tif (hsl.x < 0.0)\n\t\t\t\thsl.x += 1.0; // Hue\n\t\t\telse if (hsl.x > 1.0)\n\t\t\t\thsl.x -= 1.0; // Hue\n\t\t}\n\t\n\t\treturn hsl;\n\t}\n\t\n\tfloat HueToRGB(float f1, float f2, float hue)\n\t{\n\t\tif (hue < 0.0)\n\t\t\thue += 1.0;\n\t\telse if (hue > 1.0)\n\t\t\thue -= 1.0;\n\t\tfloat res;\n\t\tif ((6.0 * hue) < 1.0)\n\t\t\tres = f1 + (f2 - f1) * 6.0 * hue;\n\t\telse if ((2.0 * hue) < 1.0)\n\t\t\tres = f2;\n\t\telse if ((3.0 * hue) < 2.0)\n\t\t\tres = f1 + (f2 - f1) * ((2.0 / 3.0) - hue) * 6.0;\n\t\telse\n\t\t\tres = f1;\n\t\treturn res;\n\t}\n\t\n\tvec3 HSLToRGB(vec3 hsl)\n\t{\n\t\tvec3 rgb;\n\t\t\n\t\tif (hsl.y == 0.0)\n\t\t\trgb = vec3(hsl.z); // Luminance\n\t\telse\n\t\t{\n\t\t\tfloat f2;\n\t\t\t\n\t\t\tif (hsl.z < 0.5)\n\t\t\t\tf2 = hsl.z * (1.0 + hsl.y);\n\t\t\telse\n\t\t\t\tf2 = (hsl.z + hsl.y) - (hsl.y * hsl.z);\n\t\t\t\t\n\t\t\tfloat f1 = 2.0 * hsl.z - f2;\n\t\t\t\n\t\t\trgb.r = HueToRGB(f1, f2, hsl.x + (1.0/3.0));\n\t\t\trgb.g = HueToRGB(f1, f2, hsl.x);\n\t\t\trgb.b= HueToRGB(f1, f2, hsl.x - (1.0/3.0));\n\t\t}\n\t\t\n\t\treturn rgb;\n\t}\n\tvoid main(void)\n\t{\n\t\tvec4 color = texture2D(texture, vec2(textureCoord.x, textureCoord.y));\n\n\t\tvec3 colorHSL = RGBToHSL(color.rgb);\n\t\t\n\t\tvec3 colorHSL0 = colorHSL + hsl0;\n\t\tcolorHSL0.g = clamp(colorHSL0.g, 0.0, 1.0);\n\t\tvec3 colorRGB0 = HSLToRGB(colorHSL0);\n\n\t\tvec3 colorHSL1 = colorHSL + hsl1;\n\t\tcolorHSL1.g = clamp(colorHSL1.g, 0.0, 1.0);\n\t\tvec3 colorRGB1 = HSLToRGB(colorHSL1);\n\n\t\tvec3 colorRGB = mix(colorRGB0, colorRGB1, hslMix);\n\n\t\tgl_FragColor = vec4(colorRGB, color.a) * vec4(1.0, 1.0, 1.0, alpha);\n\t}\n\n"]}};
 bpmjs.Stats.fps = 0;
 kumite.launch.Config.__rtti = "<class path=\"kumite.launch.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<launcher public=\"1\"><c path=\"kumite.launch.Launcher\"/></launcher>\n\t<preloadDisplay public=\"1\"><c path=\"kumite.launch.PreloadDisplay\"/></preloadDisplay>\n\t<new public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Xml.enode = new EReg("^<([a-zA-Z0-9:_-]+)","");

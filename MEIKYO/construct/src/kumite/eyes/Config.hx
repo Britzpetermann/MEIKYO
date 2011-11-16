@@ -8,6 +8,7 @@ import kumite.layer.ColorLayer;
 import kumite.layer.ClearLayer;
 import kumite.layer.TestLayer;
 import kumite.layer.TextureLayer;
+import kumite.layer.TextureHSLLayer;
 import kumite.layer.Texture3DLayer;
 import kumite.layer.FramebufferEnableLayer;
 import kumite.layer.FramebufferDisableLayer;
@@ -33,17 +34,20 @@ class Config implements Infos
 	
 	public var clearLayer : ClearLayer;
 	
-	public var eyeLayers : Array<TextureLayer>;
+	public var eyeLayers : Array<TextureHSLLayer>;
 	public var shadowLayer : TextureLayer;
 	public var reflectionLayer : TextureLayer;
 	
 	public var framebuffer1EnableLayer : FramebufferEnableLayer;
 	public var framebuffer1DisableLayer : FramebufferDisableLayer;
 	
+	public var framebufferPostproEnableLayer : FramebufferEnableLayer;
+	public var framebufferPostproDisableLayer : FramebufferDisableLayer;
+	public var postproFilters : Array<EyePostproFilter>;
+	
 	public var framebuffer2EnableLayer : FramebufferEnableLayer;
 	public var framebuffer2DisableLayer : FramebufferDisableLayer;
-	
-	public var framebuffer2RenderLayers : Array<EyeMaskLayer>;
+	public var eyeMaskLayers : Array<EyeMaskLayer>;
 	
 	public var eyeEffects : Array<EyeEffect>;
 	public var eyeBlocks : Array<EyeBlock>;
@@ -56,30 +60,34 @@ class Config implements Infos
 		clearLayer.color = new Color(0, 0, 0, 1);
 
 		shadowLayer = new TextureLayer();
-		shadowLayer.scale = 2.0;
+		shadowLayer.scale = 2.05;
 		shadowLayer.textureConfig = SHADOW;
 				
 		reflectionLayer = new TextureLayer();
-		reflectionLayer.scale = 2.0;
+		reflectionLayer.scale = 3.0;
 		reflectionLayer.textureConfig = REFLECTION;
 				
 		framebuffer1EnableLayer = new FramebufferEnableLayer(512, 512);
 		framebuffer1DisableLayer = new FramebufferDisableLayer();
-				
+		
+		framebufferPostproEnableLayer = new FramebufferEnableLayer(512, 512);
+		framebufferPostproDisableLayer = new FramebufferDisableLayer();
+		
 		framebuffer2EnableLayer = new FramebufferEnableLayer(512, 512);
 		framebuffer2DisableLayer = new FramebufferDisableLayer();
 		
 		eyeLayers = new Array();
-		framebuffer2RenderLayers = new Array();
+		eyeMaskLayers = new Array();
 		eyeEffects = new Array();
+		postproFilters = new Array();
 		
 		eyeBlocks = new Array();
 		createBlock(-437, 84, 0.445);
+		createBlock(289, 64, 0.36);
+		createBlock(-813, -470, 0.195);
 		createBlock(-743.5, -93.5, 0.355);
 		createBlock(-697.1, 155, 0.192);
-		createBlock(-813, -470, 0.195);
 		createBlock(-785.5, 308.5, 0.13);
-		createBlock(289, 64, 0.36);
 		createBlock(111.5, -63.5, 0.195);
 		createBlock(458, -203, 0.455);
 		createBlock(709, -384, 0.137);
@@ -90,27 +98,49 @@ class Config implements Infos
 		createBlock(-446, 390, 0.19);
 		createBlock(216, 338.5, 0.193);
 		createBlock(622, 283.5, 0.132);
+		/*
+		 */
+		
+		var colors : Array<Vec3> = new Array();
+		colors.push(new Vec3(0, 0, 0));
+		colors.push(new Vec3(0,-10, 0));
+		colors.push(new Vec3(0.2, 0, 0));
+		colors.push(new Vec3(-0.2, 0, 0));
+		colors.push(new Vec3(0.4, 0, 0));
+		colors.push(new Vec3(-0.4, 0, 0));
 		
 		for(eyeBlock in eyeBlocks)
 		{
-			var eyeLayer = new TextureLayer();
-			eyeLayer.scale = Rand.float(1.2, 3.0);
+			var postproFilter = new EyePostproFilter();
+			postproFilter.eyePosition.x = eyeBlock.position.x;
+			postproFilter.eyePosition.y = eyeBlock.position.y;
+			postproFilter.textureConfig = framebuffer1EnableLayer.textureConfig;
+			postproFilters.push(postproFilter);
+			
+			var eyeLayer = new TextureHSLLayer();
+			eyeLayer.colors = colors;
+			eyeLayer.eyePosition.x = eyeBlock.position.x;
+			eyeLayer.eyePosition.y = eyeBlock.position.y;
+			eyeLayer.mixChance = Rand.float(0.01, 0.001);
+			eyeLayer.mixSpeed = Rand.float(0.05, 0.05);
+			eyeLayer.scale = Rand.float(1.2, 2.0);
 			eyeLayer.textureConfig = EYE;
 			eyeLayers.push(eyeLayer);
 			
-			var framebuffer2RenderLayer = new EyeMaskLayer();
-			framebuffer2RenderLayer.scale = eyeBlock.scale;
-			framebuffer2RenderLayer.position.x = eyeBlock.position.x;
-			framebuffer2RenderLayer.position.y = eyeBlock.position.y;
-			framebuffer2RenderLayer.blend = false;
-			framebuffer2RenderLayer.textureConfig = framebuffer2EnableLayer.textureConfig;
-			framebuffer2RenderLayers.push(framebuffer2RenderLayer);
+			var eyeMaskLayer = new EyeMaskLayer();
+			eyeMaskLayer.scale = eyeBlock.scale;
+			eyeMaskLayer.position.x = eyeBlock.position.x;
+			eyeMaskLayer.position.y = eyeBlock.position.y;
+			eyeMaskLayer.blend = false;
+			eyeMaskLayer.textureConfig = framebuffer2EnableLayer.textureConfig;
+			eyeMaskLayers.push(eyeMaskLayer);
 			
 			var eyeEffect = new EyeEffect();
-			eyeEffect.position.x = framebuffer2RenderLayer.position.x;
-			eyeEffect.position.y = framebuffer2RenderLayer.position.y;
+			eyeEffect.position.x = eyeMaskLayer.position.x;
+			eyeEffect.position.y = eyeMaskLayer.position.y;
 			eyeEffect.offset = Rand.float(0, 6);
-			eyeEffect.textureConfig = framebuffer1EnableLayer.textureConfig;
+			//eyeEffect.textureConfig = framebuffer1EnableLayer.textureConfig;
+			eyeEffect.textureConfig = framebufferPostproEnableLayer.textureConfig;
 			eyeEffects.push(eyeEffect);
 		}
 				
@@ -140,13 +170,18 @@ class Config implements Infos
 			scene1.addLayerLifecycle(eyeLayers[i]);
 			scene1.addLayerLifecycle(framebuffer1DisableLayer);
 			
+			scene1.addLayerLifecycle(framebufferPostproEnableLayer);
+			scene1.addLayerLifecycle(postproFilters[i]);
+			scene1.addLayerLifecycle(framebufferPostproDisableLayer);
+			
 			scene1.addLayerLifecycle(framebuffer2EnableLayer);
 			scene1.addLayerLifecycle(clearLayer);
 			scene1.addLayerLifecycle(eyeEffects[i]);
 			scene1.addLayerLifecycle(shadowLayer);
 			scene1.addLayerLifecycle(reflectionLayer);		
 			scene1.addLayerLifecycle(framebuffer2DisableLayer);
-			scene1.addLayerLifecycle(framebuffer2RenderLayers[i]);
+			
+			scene1.addLayerLifecycle(eyeMaskLayers[i]);
 		}
 		
 		scene1.addLayerLifecycle(displayListLayer);

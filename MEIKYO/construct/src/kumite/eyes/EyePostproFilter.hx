@@ -1,6 +1,5 @@
-package kumite.layer.effect;
+package kumite.eyes;
 
-import kumite.stage.Stage;
 import kumite.time.Time;
 
 import kumite.scene.LayerLifecycle;
@@ -9,40 +8,32 @@ import kumite.scene.RenderContext;
 
 import haxe.rtti.Infos;
 
-class EyeEffect implements LayerLifecycle, implements Infos
+class EyePostproFilter implements LayerLifecycle, implements Infos
 {
 	@Inject
-	public var time : Time;
-	
-	@Inject
-	public var stage : Stage;
-	
-	@Inject
 	public var textureRegistry : GLTextureRegistry;
+	
+	@Inject
+	public var time : Time;
 	
 	@Param
 	public var textureConfig : GLTextureConfig;
 	
 	@Param
-	public var offset : Float;
-	
-	@Param
-	public var position : Vec2;
+	public var eyePosition : Vec2;
 	
 	var shaderProgram : WebGLProgram;
 	var vertexPositionAttribute : GLAttribLocation;
 	var vertexBuffer : WebGLBuffer;
 
-	var directionUniform : GLUniformLocation;
-	var timeUniform : GLUniformLocation;
 	var textureUniform : GLUniformLocation;
+	var resolutionUniform : GLUniformLocation;
+	var timeUniform : GLUniformLocation;
+	var amountUniform : GLUniformLocation;
 			
-	var mousePosition : Vec2;
-	
 	public function new()
 	{
-		position = new Vec2(0, 0);
-		mousePosition = new Vec2(0, 0);
+		eyePosition = new Vec2(0,0); 
 	}
 	
 	public function init()
@@ -57,11 +48,11 @@ class EyeEffect implements LayerLifecycle, implements Infos
 			1,  1,
 		]));
 
-		directionUniform = GL.getUniformLocation("direction");
-		timeUniform = GL.getUniformLocation("time");
 		textureUniform = GL.getUniformLocation("texture");
+		resolutionUniform = GL.getUniformLocation("resolution");
+		timeUniform = GL.getUniformLocation("time");
+		amountUniform = GL.getUniformLocation("amount");
 		
-		GLMouseRegistry.getInstance().mouseMoveSignaler.bind(updateMouse);
 	}
 	
 	public function renderTransition(transitionContext : TransitionContext)
@@ -80,23 +71,14 @@ class EyeEffect implements LayerLifecycle, implements Infos
 		vertexPositionAttribute.vertexAttribPointer();
 
 		var texture = textureRegistry.get(textureConfig);
-		textureUniform.setTexture(texture);
-
-		timeUniform.setFloat(time.ms / 1000);
-		directionUniform.setVec2(new Vec2((position.x - mousePosition.x) / 20000, -(position.y - mousePosition.y) / 20000));
 		
+		textureUniform.setTexture(texture);
+		timeUniform.setFloat(time.ms);
+		resolutionUniform.setVec2(new Vec2(renderContext.width, renderContext.height));
+		
+		amountUniform.setFloat(1 - (Math.pow(Math.abs(Math.sin(-eyePosition.getLength() * 0.0002 + time.ms / 4000)), 10) * 8.0 - 7.0));
 		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
-	}
-	
-	function updateMouse(position : Vec2)
-	{
-		mousePosition = position.clone();
-		mousePosition.x -= 0.5;
-		mousePosition.y -= 0.5;
-		mousePosition.x *= 4.0;
-		mousePosition.y *= 4.0;
-		mousePosition.x *= stage.width;
-		mousePosition.y *= stage.height;
+		
 	}
 }
 
@@ -104,12 +86,9 @@ class EyeEffect implements LayerLifecycle, implements Infos
 
 	attribute vec2 vertexPosition;
 
-	varying vec2 tc;
-
 	void main(void)
 	{
 		gl_Position = vec4(vertexPosition.x, vertexPosition.y, 0.0, 1.0);
-		tc = (vertexPosition.xy + 1.0) * 0.5;
 	}
 
 ") private class Vertex {}
@@ -120,26 +99,43 @@ class EyeEffect implements LayerLifecycle, implements Infos
 	precision highp float;
 	#endif
 	
-	varying vec2 tc;
-
-	uniform vec2 direction;
+	uniform vec2 resolution;
 	uniform float time;
+	uniform float amount;
 	uniform sampler2D texture;
 	
 	void main(void)
 	{
-		float zoom = 4.0;
-		vec2 p = (-1.0 + 2.0 * tc) * 0.5;
-		float r = dot(p,p) * zoom;
+	    vec2 q = gl_FragCoord.xy / resolution;
+		q.y = 1.0-q.y;
+	    vec3 oricol = texture2D(texture, vec2(q.x,1.0 - q.y)).xyz;
 
-		float f = pow((1.0 - sqrt(1.0 - r)) / r, 0.8);
+		vec2 uv = q;
 
-		vec2 uv;
-		uv.x = p.x * f + 0.5 + direction.x + sin(time * 14.0 + p.y * 10.0) * 0.0005;
-		uv.y = p.y * f + 0.5 + direction.y + cos(time * 14.0 + p.x * 10.0) * 0.0005;
+	    vec3 col;
 
-		vec4 pixel = texture2D(texture, uv);
-		gl_FragColor = pixel;
+		//aberation
+		float cax = 10.0;
+		float cay = -10.0;
+	    col.r = texture2D(texture,vec2(uv.x+cax / resolution.x,-uv.y)).x;
+	    col.g = texture2D(texture,vec2(uv.x+0.000,-uv.y)).y;
+	    col.b = texture2D(texture,vec2(uv.x+cay / resolution.x,-uv.y)).z;
+	
+	    col = clamp(col*0.5+0.5*col*col*1.2,0.0,1.0);
+	
+		//vignette
+	    col *= 0.3 + 0.7*16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y);
+	
+		//color
+	    col *= vec3(0.8,1.0,0.7);
+	
+		//v lines
+	    col *= 1.0+0.3*sin(0.01*time+gl_FragCoord.y*2.5);
+	
+		//flicker
+	    col *= 0.97+0.03*sin(0.11*time);
+	
+	    gl_FragColor = vec4(mix(col, oricol, clamp(amount, 0.0, 1.0)), 1.0);
 	}
 
 ") private class Fragment {}

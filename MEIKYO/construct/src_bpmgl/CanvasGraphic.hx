@@ -55,6 +55,11 @@ class CanvasGraphic
 		context.drawImage(image, dx, dy, dw, dh);
 	}
 
+	public function drawImage2(image : Image, dx, dy)
+	{
+		context.drawImage(image, dx, dy);
+	}
+
 	function setFont(value : String)
 	{
 		context.font = value;

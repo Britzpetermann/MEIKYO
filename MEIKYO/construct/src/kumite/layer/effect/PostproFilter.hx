@@ -26,10 +26,7 @@ class PostproFilter implements LayerLifecycle, implements Infos
 	var textureUniform : GLUniformLocation;
 	var resolutionUniform : GLUniformLocation;
 	var timeUniform : GLUniformLocation;
-	var amountUniform : GLUniformLocation;
 			
-	var amount : Float;
-		
 	public function new();
 	
 	public function init()
@@ -47,14 +44,10 @@ class PostproFilter implements LayerLifecycle, implements Infos
 		textureUniform = GL.getUniformLocation("texture");
 		resolutionUniform = GL.getUniformLocation("resolution");
 		timeUniform = GL.getUniformLocation("time");
-		
-		amountUniform = GL.getUniformLocation("amount");
-		amount = 1;
 	}
 	
 	public function renderTransition(transitionContext : TransitionContext)
 	{
-		amount = transitionContext.transition;
 		render(transitionContext);
 	}
 		
@@ -71,7 +64,6 @@ class PostproFilter implements LayerLifecycle, implements Infos
 		var texture = textureRegistry.get(textureConfig);
 		
 		textureUniform.setTexture(texture);
-		amountUniform.setFloat(amount);
 		timeUniform.setFloat(time.ms);
 		resolutionUniform.setVec2(new Vec2(renderContext.width, renderContext.height));
 		
@@ -111,8 +103,8 @@ class PostproFilter implements LayerLifecycle, implements Infos
 	    vec3 col;
 
 		//aberation
-		float cax = 5.0;
-		float cay = -5.0;
+		float cax = 7.0;
+		float cay = -7.0;
 	    col.r = texture2D(texture,vec2(uv.x+cax / resolution.x,-uv.y)).x;
 	    col.g = texture2D(texture,vec2(uv.x+0.000,-uv.y)).y;
 	    col.b = texture2D(texture,vec2(uv.x+cay / resolution.x,-uv.y)).z;

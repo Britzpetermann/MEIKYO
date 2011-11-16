@@ -59,6 +59,11 @@ class Vec3
 		return x * vec.x + y * vec.y + z * vec.z;
 	}
 
+	public function equals(vec : Vec3)
+	{
+		return x == vec.x && y == vec.y && z == vec.z;
+	}
+
 	public function transform(matrix : Matrix4)
 	{
 		var x1 = this.x, y1 = this.y, z1 = this.z;

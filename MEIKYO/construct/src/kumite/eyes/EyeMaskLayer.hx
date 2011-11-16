@@ -39,6 +39,8 @@ class EyeMaskLayer implements LayerLifecycle, implements Infos
 	var projectionMatrixUniform : GLUniformLocation;
 	var worldViewMatrixUniform : GLUniformLocation;
 	var textureUniform : GLUniformLocation;
+	var colorcube0Uniform : GLUniformLocation;
+	var colorcube1Uniform : GLUniformLocation;
 	var shutUniform : GLUniformLocation;
 	
 	static var STATE_IDLE : String = "STATE_IDLE";
@@ -47,7 +49,7 @@ class EyeMaskLayer implements LayerLifecycle, implements Infos
 	
 	static var OPENING_SPEED : Float = 0.2;
 	static var CLOSING_SPEED : Float = 0.1;
-	static var CLOSING_CHANCE : Float = 0.001;
+	static var CLOSING_CHANCE : Float = 0.0001;
 	
 	var state : String;
 	var shut : Float;
@@ -75,6 +77,8 @@ class EyeMaskLayer implements LayerLifecycle, implements Infos
 		projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
 		worldViewMatrixUniform = GL.getUniformLocation("worldViewMatrix");
 		textureUniform = GL.getUniformLocation("texture");
+		colorcube0Uniform = GL.getUniformLocation("colorcube0");
+		colorcube1Uniform = GL.getUniformLocation("colorcube1");
 		shutUniform = GL.getUniformLocation("shut");
 	}
 	
@@ -114,13 +118,15 @@ class EyeMaskLayer implements LayerLifecycle, implements Infos
 		worldViewMatrix.appendTranslation((renderContext.width - texture.width * scale) / 2, (renderContext.height - texture.height * scale) / 2, 0);
 		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
 		
-		textureUniform.setTexture(texture);
+		textureUniform.setTexture(texture, 0);
+		
+		var len = Math.sqrt(position.x * position.x + position.y * position.y);
 		
 		switch (state)
 		{
 			case STATE_IDLE:
 				shut = 0;
-				if (Rand.bool(CLOSING_CHANCE))
+				if (Math.sin(time.ms / 1000 / 2 + len * 0.0002) > 0.999 || Rand.bool(CLOSING_CHANCE))
 				{
 					state = STATE_CLOSING;
 				}
@@ -173,6 +179,7 @@ class EyeMaskLayer implements LayerLifecycle, implements Infos
 	#endif
 
 	uniform sampler2D texture;
+
 	uniform float shut;
 
 	varying vec2 tc;
@@ -203,7 +210,7 @@ class EyeMaskLayer implements LayerLifecycle, implements Infos
 		if (r > 1.0)
 			discard;
 
-		vec4 color = texture2D(texture, vec2(textureCoord.x, textureCoord.y));
+		vec4 color = texture2D(texture, vec2(textureCoord.x, 1.0 - textureCoord.y));
 		gl_FragColor = color;
 	}
 

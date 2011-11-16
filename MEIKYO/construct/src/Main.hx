@@ -15,6 +15,7 @@ class Main {
 		Log.addFilter(new ERegFilter(LogLevel.INFO, ~/.*/));
 		Log.addFilter(new ERegFilter(LogLevel.WARN, ~/.*FrontMessenger\.handleMessage.*/));
 		Log.addFilter(new ERegFilter(LogLevel.WARN, ~/.*FrontMessenger\.Receiver\.execute.*/));
+		Log.addFilter(new ERegFilter(LogLevel.WARN, ~/.*initAllLayers.*/));
 		//Log.addFilter(new ERegFilter(LogLevel.INFO, ~/bpmjs\.DefaultFrontController\.handle.*/));
 		
 		js.Lib.setErrorHandler(globalErrorHandler);
