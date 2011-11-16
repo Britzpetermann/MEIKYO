@@ -122,8 +122,8 @@ class Config implements Infos
 			eyeLayer.eyePosition.x = eyeBlock.position.x;
 			eyeLayer.eyePosition.y = eyeBlock.position.y;
 			eyeLayer.mixChance = Rand.float(0.01, 0.001);
-			eyeLayer.mixSpeed = Rand.float(0.05, 0.05);
-			eyeLayer.scale = Rand.float(1.2, 2.0);
+			eyeLayer.mixSpeed = Rand.float(0.05, 0.005);
+			eyeLayer.scale = Rand.float(1.2, 1.5);
 			eyeLayer.textureConfig = EYE;
 			eyeLayers.push(eyeLayer);
 			
@@ -187,10 +187,10 @@ class Config implements Infos
 		scene1.addLayerLifecycle(displayListLayer);
 	}
 	
-	function createBlock(x, y, scale)
+	function createBlock(x : Float, y : Float, scale)
 	{
 		var eyeBlock = new EyeBlock();
-		eyeBlock.position.x = x;
+		eyeBlock.position.x = x * -1;
 		eyeBlock.position.y = y;
 		eyeBlock.scale = scale;
 		

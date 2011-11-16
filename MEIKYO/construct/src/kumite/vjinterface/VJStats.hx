@@ -1,6 +1,7 @@
 package kumite.vjinterface;
 
 import kumite.stage.Stage;
+import kumite.blobs.Blobs;
 
 import bpmjs.Messenger;
 

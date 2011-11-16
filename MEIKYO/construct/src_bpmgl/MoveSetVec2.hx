@@ -18,11 +18,11 @@ class MoveSetVec2
 
 	public function move(?factor : Float = 1)
 	{
-		moveSetX.to = to.x;
+		moveSetX.target = to.x;
 		moveSetX.acceleration = acceleration.x;
 		moveSetX.move(factor);
 
-		moveSetY.to = to.y;
+		moveSetY.target = to.y;
 		moveSetY.acceleration = acceleration.y;
 		moveSetY.move(factor);
 

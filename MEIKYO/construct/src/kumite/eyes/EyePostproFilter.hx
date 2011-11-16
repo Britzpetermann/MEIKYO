@@ -76,9 +76,8 @@ class EyePostproFilter implements LayerLifecycle, implements Infos
 		timeUniform.setFloat(time.ms);
 		resolutionUniform.setVec2(new Vec2(renderContext.width, renderContext.height));
 		
-		amountUniform.setFloat(1 - (Math.pow(Math.abs(Math.sin(-eyePosition.getLength() * 0.0002 + time.ms / 4000)), 10) * 8.0 - 7.0));
+		amountUniform.setFloat(1 - (Math.pow(Math.abs(Math.sin(-eyePosition.getLength() * 0.0002 + time.ms / 4000)), 20) * 8.0 - 7.0));
 		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
-		
 	}
 }
 
@@ -114,9 +113,11 @@ class EyePostproFilter implements LayerLifecycle, implements Infos
 
 	    vec3 col;
 
+		float camount = pow(clamp(amount, 0.0, 1.0), 0.5);
+
 		//aberation
-		float cax = 10.0;
-		float cay = -10.0;
+		float cax = 30.0 + camount * 5.0;
+		float cay = -cax;
 	    col.r = texture2D(texture,vec2(uv.x+cax / resolution.x,-uv.y)).x;
 	    col.g = texture2D(texture,vec2(uv.x+0.000,-uv.y)).y;
 	    col.b = texture2D(texture,vec2(uv.x+cay / resolution.x,-uv.y)).z;
@@ -127,15 +128,15 @@ class EyePostproFilter implements LayerLifecycle, implements Infos
 	    col *= 0.3 + 0.7*16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y);
 	
 		//color
-	    col *= vec3(0.8,1.0,0.7);
+	    //col *= vec3(0.8,1.0,0.7);
 	
 		//v lines
-	    col *= 1.0+0.3*sin(0.01*time+gl_FragCoord.y*2.5);
+	    col *= (1.0 - camount * 0.5)+(0.3 + camount * 0.5)*sin(0.01*time+gl_FragCoord.y*2.5);
 	
 		//flicker
 	    col *= 0.97+0.03*sin(0.11*time);
 	
-	    gl_FragColor = vec4(mix(col, oricol, clamp(amount, 0.0, 1.0)), 1.0);
+	    gl_FragColor = vec4(mix(col, oricol, camount), 1.0);
 	}
 
 ") private class Fragment {}

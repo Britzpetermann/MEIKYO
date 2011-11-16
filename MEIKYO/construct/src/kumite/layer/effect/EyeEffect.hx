@@ -1,5 +1,7 @@
 package kumite.layer.effect;
 
+import kumite.blobs.Blobs;
+import kumite.blobs.Blob;
 import kumite.stage.Stage;
 import kumite.time.Time;
 
@@ -11,6 +13,9 @@ import haxe.rtti.Infos;
 
 class EyeEffect implements LayerLifecycle, implements Infos
 {
+	@Inject
+	public var blobs : Blobs;
+	
 	@Inject
 	public var time : Time;
 	
@@ -39,10 +44,13 @@ class EyeEffect implements LayerLifecycle, implements Infos
 			
 	var mousePosition : Vec2;
 	
+	var moveSet : MoveSetVec2;
+	
 	public function new()
 	{
 		position = new Vec2(0, 0);
 		mousePosition = new Vec2(0, 0);
+		moveSet = new MoveSetVec2(new Vec2(0,0), new Vec2(0,0), new Vec2(0.0015, 0.0005));
 	}
 	
 	public function init()
@@ -83,10 +91,58 @@ class EyeEffect implements LayerLifecycle, implements Infos
 		textureUniform.setTexture(texture);
 
 		timeUniform.setFloat(time.ms / 1000);
-		directionUniform.setVec2(new Vec2((position.x - mousePosition.x) / 20000, -(position.y - mousePosition.y) / 20000));
+		
+		if (blobs.blobs.length > 0)
+		{
+			var blobs2 = new Array();
+			blobs2 = blobs2.concat(blobs.blobs);
+			blobs2.sort(sortfunction);
+			
+			var blob = blobs2[0];
+			var s = (300000 / Math.pow(blob.z - 1000, 2));
+			
+			var v = new Vec2((position.x / stage.width * s - ((1 - blob.x) - 0.5) * 0.3), -position.y / stage.height * s - ((1 - blob.y) - 0.7) * 0.3);
+			if (v.x < -0.2)
+				v.x = -0.2;
+			if (v.x > 0.2)
+				v.x = 0.2;
+			if (v.y < -0.2)
+				v.y = -0.2;
+			if (v.y > 0.2)
+				v.y = 0.2;
+				
+			moveSet.to.x = v.x;
+			moveSet.to.y = v.y;
+		}
+		else
+		{
+			if (Rand.bool(0.005))
+			{
+				moveSet.to.x = Rand.float(-0.2, 0.2);
+				moveSet.to.y = Rand.float(-0.2, 0.2);
+			}
+		}
+
+		moveSet.move();
+		directionUniform.setVec2(moveSet.current);
 		
 		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
 	}
+	
+	function sortfunction(a : Blob, b : Blob) : Int
+	{
+		var sx = position.x / stage.width;
+		
+		var adx = Math.abs(a.x - 0.5 - sx);
+		var bdx = Math.abs(b.x - 0.5 - sx);
+		
+		if (adx < bdx)
+			return 1;
+		else if (adx > bdx)
+			return -1;
+		else
+			return 0;
+	}	
 	
 	function updateMouse(position : Vec2)
 	{
