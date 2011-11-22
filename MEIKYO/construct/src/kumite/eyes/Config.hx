@@ -15,6 +15,8 @@ import kumite.layer.FramebufferDisableLayer;
 
 import kumite.layer.effect.EyeEffect;
 
+import kumite.layer.effect.PlasmaEffect;
+
 import kumite.scene.LayerLifecycle;
 import kumite.scene.DefaultScene;
 
@@ -54,6 +56,11 @@ class Config implements Infos
 	
 	public var scene1 : DefaultScene;
 	
+	public var plasmaEnableLayer : FramebufferEnableLayer;
+	public var plasmaDisableLayer : FramebufferDisableLayer;
+	public var plasmaRenderLayer : TextureLayer;
+	public var plasmaEffect : PlasmaEffect;
+	
 	public function new()
 	{
 		clearLayer = new ClearLayer();
@@ -67,6 +74,13 @@ class Config implements Infos
 		reflectionLayer.scale = 3.0;
 		reflectionLayer.textureConfig = REFLECTION;
 				
+		plasmaEnableLayer = new FramebufferEnableLayer(512, 256);
+		plasmaDisableLayer = new FramebufferDisableLayer();
+		plasmaRenderLayer = new TextureLayer();
+		plasmaRenderLayer.textureConfig = plasmaEnableLayer.textureConfig;
+		plasmaRenderLayer.position.y = -500;
+		plasmaEffect = new PlasmaEffect();
+		
 		framebuffer1EnableLayer = new FramebufferEnableLayer(512, 512);
 		framebuffer1DisableLayer = new FramebufferDisableLayer();
 		
@@ -76,38 +90,44 @@ class Config implements Infos
 		framebuffer2EnableLayer = new FramebufferEnableLayer(512, 512);
 		framebuffer2DisableLayer = new FramebufferDisableLayer();
 		
+		
 		eyeLayers = new Array();
 		eyeMaskLayers = new Array();
 		eyeEffects = new Array();
 		postproFilters = new Array();
 		
 		eyeBlocks = new Array();
-		createBlock(-437, 84, 0.445);
-		createBlock(289, 64, 0.36);
-		createBlock(-813, -470, 0.195);
-		createBlock(-743.5, -93.5, 0.355);
-		createBlock(-697.1, 155, 0.192);
-		createBlock(-785.5, 308.5, 0.13);
+		
+		createBlock(621, 283.5, 0.133);
+		createBlock(-867, -482, 0.195);
+		createBlock(-663, -109, 0.355);
+		createBlock(-846, 308, 0.13);
+		createBlock(-698, 154.5, 0.192);
+		createBlock(-438, 84, 0.445);
+		createBlock(288, 63, 0.365);		
 		createBlock(111.5, -63.5, 0.195);
 		createBlock(458, -203, 0.455);
-		createBlock(709, -384, 0.137);
-		createBlock(-50.5, 127, 0.195);
-		createBlock(791, -15.8, 0.328);
+		createBlock(708, -384, 0.137);
+		createBlock(-51.5, 127, 0.195);
+		createBlock(790, -17, 0.328);
 		createBlock(-131, 257.5, 0.316);
-		createBlock(-568, 255.3, 0.13);
-		createBlock(-446, 390, 0.19);
-		createBlock(216, 338.5, 0.193);
-		createBlock(622, 283.5, 0.132);
+		createBlock(-569, 255.3, 0.13);
+		createBlock(-447, 390, 0.192);
+		createBlock(215, 338.5, 0.193);
+
 		/*
+		
 		 */
 		
 		var colors : Array<Vec3> = new Array();
-		colors.push(new Vec3(0, 0, 0));
+		//colors.push(new Vec3(0, 0, 0));
 		colors.push(new Vec3(0,-10, 0));
-		colors.push(new Vec3(0.2, 0, 0));
-		colors.push(new Vec3(-0.2, 0, 0));
-		colors.push(new Vec3(0.4, 0, 0));
-		colors.push(new Vec3(-0.4, 0, 0));
+		colors.push(new Vec3(-21 / 360, 0, 0));
+		colors.push(new Vec3(21 / 360, 0, 0));
+		colors.push(new Vec3(42 / 360, 0, 0));
+		colors.push(new Vec3(64 / 360, 0, 0));
+		colors.push(new Vec3(87 / 360, 0, 0));
+		colors.push(new Vec3(125 / 360, 0, 0));
 		
 		for(eyeBlock in eyeBlocks)
 		{
@@ -183,6 +203,11 @@ class Config implements Infos
 			
 			scene1.addLayerLifecycle(eyeMaskLayers[i]);
 		}
+		
+		// scene1.addLayerLifecycle(plasmaEnableLayer);
+		// scene1.addLayerLifecycle(plasmaEffect);
+		// scene1.addLayerLifecycle(plasmaDisableLayer);
+		// scene1.addLayerLifecycle(plasmaRenderLayer);
 		
 		scene1.addLayerLifecycle(displayListLayer);
 	}

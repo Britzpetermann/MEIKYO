@@ -9,7 +9,7 @@ class BlobReader implements Infos
 	
 	public function new();
 	
-	@Sequence("boot", "start")
+	@Sequence("boot", "finish")
 	public function start()
 	{
 		readBlobs();		
@@ -17,7 +17,7 @@ class BlobReader implements Infos
 	
 	function readBlobs()
 	{
-		var r = new haxe.Http("http://192.168.2.26/blobs.php");
+		var r = new haxe.Http("http://192.168.2.201/data/blobs.php");
 	    r.onError = onError;
     	r.onData = onData;
     	r.request(false);
@@ -52,7 +52,6 @@ class BlobReader implements Infos
 	
 	function onError(r)
 	{
-		Log.error(Std.string(r));
 		readBlobs();
 	}
 }

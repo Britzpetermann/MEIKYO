@@ -46,11 +46,30 @@ class EyeEffect implements LayerLifecycle, implements Infos
 	
 	var moveSet : MoveSetVec2;
 	
+	public var state : State;
+	public var STATE_IDLE : IdleState;
+	
+	var idleStateIndex : Int;
+	public var STATE_IDLE_1 : IdleState1;
+	public var STATE_IDLE_2 : IdleState2;
+	public var STATE_IDLE_3 : IdleState3;
+	
+	public var STATE_TARGET : TargetState;
+	
 	public function new()
 	{
+		STATE_IDLE = new IdleState(this);
+		
+		idleStateIndex = 0;
+		STATE_IDLE_1 = new IdleState1(this);
+		STATE_IDLE_2 = new IdleState2(this);
+		STATE_IDLE_3 = new IdleState3(this);
+		
+		STATE_TARGET = new TargetState(this);
+		
 		position = new Vec2(0, 0);
 		mousePosition = new Vec2(0, 0);
-		moveSet = new MoveSetVec2(new Vec2(0,0), new Vec2(0,0), new Vec2(0.0015, 0.0005));
+		moveSet = new MoveSetVec2(new Vec2(0,0), new Vec2(0,0), new Vec2(0.0015, 0.001));
 	}
 	
 	public function init()
@@ -69,7 +88,29 @@ class EyeEffect implements LayerLifecycle, implements Infos
 		timeUniform = GL.getUniformLocation("time");
 		textureUniform = GL.getUniformLocation("texture");
 		
+		setState(STATE_IDLE);
+		
 		GLMouseRegistry.getInstance().mouseMoveSignaler.bind(updateMouse);
+	}
+	
+	public function setState(state : State)
+	{
+		if (this.state != null)
+		{
+			this.state.exit();
+		}
+		
+		this.state = state;
+		state.enterMs = time.ms;
+		state.ms = time.ms;
+		state.enter();
+	}
+	
+	public function setRandomIdleState()
+	{
+		var idleStates = [STATE_IDLE_1, STATE_IDLE_2, STATE_IDLE_3];
+		setState(idleStates[idleStateIndex % idleStates.length]);
+		idleStateIndex++;
 	}
 	
 	public function renderTransition(transitionContext : TransitionContext)
@@ -92,11 +133,20 @@ class EyeEffect implements LayerLifecycle, implements Infos
 
 		timeUniform.setFloat(time.ms / 1000);
 		
+		var blobs2 = new Array();
+		blobs2 = blobs2.concat(blobs.blobs);
+		blobs2.sort(sortfunction);
+		
+		state.blobs = blobs2;
+		state.moveSet = moveSet;
+		state.ms = time.ms;
+		state.stage = stage;
+		state.position = position;
+		state.execute();
+		
+		/*
 		if (blobs.blobs.length > 0)
 		{
-			var blobs2 = new Array();
-			blobs2 = blobs2.concat(blobs.blobs);
-			blobs2.sort(sortfunction);
 			
 			var blob = blobs2[0];
 			var s = (300000 / Math.pow(blob.z - 1000, 2));
@@ -122,6 +172,7 @@ class EyeEffect implements LayerLifecycle, implements Infos
 				moveSet.to.y = Rand.float(-0.2, 0.2);
 			}
 		}
+		 */
 
 		moveSet.move();
 		directionUniform.setVec2(moveSet.current);
@@ -199,3 +250,149 @@ class EyeEffect implements LayerLifecycle, implements Infos
 	}
 
 ") private class Fragment {}
+
+private class State
+{
+	public var parent : EyeEffect;
+	
+	public var enterMs : Float;
+	public var ms : Float;
+	
+	public var stage : Stage;
+	public var position : Vec2;
+	public var blobs : Array<Blob>;
+	public var moveSet : MoveSetVec2;
+	
+	public function new(parent : EyeEffect)
+	{
+		this.parent = parent;
+	}
+	
+	function getDist()
+	{
+		try
+		{
+			var a = blobs[0];
+			var sx = position.x / stage.width;
+			var adx = Math.abs(-(a.x - 0.5) - sx);
+			return adx;
+		}
+		catch(e : Dynamic)
+		{
+			return 1;		
+		}
+	}
+	
+	public function enter()
+	{
+		
+	}
+	
+	public function execute()
+	{
+		
+	}
+	
+	public function exit()
+	{
+		
+	}
+}
+
+private class IdleState extends State
+{
+	override function execute()
+	{
+		if (blobs.length > 0)
+		{
+			parent.setState(parent.STATE_TARGET);
+		}
+		else
+		{
+			if (Rand.bool(0.005))
+			{
+				moveSet.to.x = Rand.float(-0.2, 0.2);
+				moveSet.to.y = Rand.float(-0.2, 0.2);
+			}
+			
+			if (ms - enterMs > 10000)
+				parent.setRandomIdleState();
+		}
+	}
+}
+
+private class IdleState1 extends State
+{
+	override function execute()
+	{
+		if (Rand.bool(0.3) && getDist() > 0.2)
+		{
+			moveSet.to.x = Math.sin(ms / 400 + position.x * 0.002) * 0.2;
+			moveSet.to.y = Math.cos(ms / 400 + position.y * 0.002) * 0.2;
+		}
+		
+		if (ms - enterMs > 2000)
+			parent.setState(parent.STATE_IDLE);
+	}
+}
+
+private class IdleState2 extends State
+{
+	override function execute()
+	{
+		if (Rand.bool(0.3) && getDist() > 0.2)
+		{
+			moveSet.to.y = Math.cos(ms / 100 + position.x * 0.003) * 0.2;
+		}
+		
+		if (ms - enterMs > 2000)
+			parent.setState(parent.STATE_IDLE);
+	}
+}
+
+private class IdleState3 extends State
+{
+	override function execute()
+	{
+		if (Rand.bool(0.1) && getDist() > 0.2)
+		{
+			moveSet.to.x = Math.sin(ms / 600 + position.x * 0.002) * 0.2;
+			moveSet.to.y = 0;
+		}
+		
+		if (ms - enterMs > 3000)
+			parent.setState(parent.STATE_IDLE);
+	}
+}
+
+private class TargetState extends State
+{
+	override function execute()
+	{
+		if (blobs.length == 0)
+		{
+			parent.setState(parent.STATE_IDLE);
+			return;	
+		}
+		
+		var blob = blobs[0];
+		var s = (300000 / Math.pow(blob.z - 1000, 2));
+		
+		var v = new Vec2((position.x / stage.width * s - ((1 - blob.x) - 0.5) * 0.3), -position.y / stage.height * s - ((1 - blob.y) - 0.7) * 0.3);
+		if (v.x < -0.2)
+			v.x = -0.2;
+		if (v.x > 0.2)
+			v.x = 0.2;
+		if (v.y < -0.2)
+			v.y = -0.2;
+		if (v.y > 0.2)
+			v.y = 0.2;
+			
+		moveSet.to.x = v.x;
+		moveSet.to.y = v.y;
+		
+		if (ms - enterMs > 5000)
+			parent.setRandomIdleState();
+		
+	}
+}
