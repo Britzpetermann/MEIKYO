@@ -64,11 +64,11 @@ class GLTextureRegistry
 			throw "Canvas size must be a valid texture size!";
 
 		var texture = GL.createTexture();
+		GL.bindTexture(GL.TEXTURE_2D, texture);
 		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, filter != null ? filter : GL.NEAREST);
 		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, filter != null ? filter : GL.NEAREST);
 		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
     	GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
-		GL.bindTexture(GL.TEXTURE_2D, texture);
 		GL.texImage2DCanvas(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, canvas);
 
 		if (

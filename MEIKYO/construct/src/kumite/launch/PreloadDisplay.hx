@@ -29,10 +29,14 @@ class PreloadDisplay implements Infos
 		{
 			var from = i / count;
 			var to = (i + 1) / count;
-			var diff = Map.linear(monitor.current, from, to, 0, 1);
+			var diff = Map.linear(monitor.current, from, to, 0, 1.001);
 			if (diff < 0) diff = 0;
 			if (diff > 1) diff = 1;
 			var chars = "▁▂▃▄▅▆▇";
+			var chars = ".oO";
+			var chars = "Oo.";
+			var chars = "-=";
+			var chars = ":. ";
 			bar += chars.charAt(Std.int(diff * (chars.length - 1)));
 		}
 		preloaderDiv.innerHTML = "" + bar;

@@ -38,7 +38,7 @@ class VJStats implements Infos
 	function updateMouse(position : Vec2)
 	{
 		mouseLabel.x = (position.x) * stage.width - 30; 
-		mouseLabel.y = (position.y) * stage.height - 20;
+		mouseLabel.y = (position.y) * stage.height - 25;
 		var x = (position.x - 0.5) * stage.width;
 		var y = (position.y - 0.5) * stage.height;
 		mouseLabel.text = Std.int(x) + ", " + Std.int(y); 

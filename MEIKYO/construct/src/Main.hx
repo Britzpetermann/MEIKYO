@@ -45,7 +45,8 @@ class Main {
 					//kumite.framebuffereffect.Config,
 					//kumite.spritemesh.Config,
 					//kumite.effects.Config,
-					kumite.eyes.Config,
+					//kumite.eyes.Config,
+					kumite.windowlines.Config,
 				]);
 		}
 		catch(e : Dynamic)

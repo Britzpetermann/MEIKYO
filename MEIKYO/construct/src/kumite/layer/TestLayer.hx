@@ -16,7 +16,6 @@ class TestLayer implements LayerLifecycle, implements Infos
 	@Inject
 	public var time : Time;
 	
-	
 	@Inject
 	public var camera : Camera;
 	
