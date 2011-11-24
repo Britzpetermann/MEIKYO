@@ -32,7 +32,7 @@ class VJStats implements Infos
 		mouseLabel.text = "1000x1000";
 		mouseLabel.width = 60;
 		mouseLabel.height = 20;
-		stage.addChild(mouseLabel);
+		//stage.addChild(mouseLabel);
 	}
 	
 	function updateMouse(position : Vec2)

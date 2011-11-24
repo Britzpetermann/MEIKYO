@@ -1,4 +1,6 @@
-class Color
+import haxe.rtti.Infos;
+
+class Color implements Infos
 {
 	public var r : Float;
 	public var g : Float;

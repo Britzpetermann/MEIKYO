@@ -11,21 +11,21 @@ import kumite.time.Time;
 import kumite.projection.Projection;
 import kumite.camera.Camera;
 
+import kumite.blobs.Blobs;
+import kumite.blobs.Blob;
+
 import haxe.rtti.Infos;
 
 class LinesLayer implements LayerLifecycle, implements Infos
 {
 	@Inject
+	public var blobs : Blobs;
+	
+	@Inject
 	public var time : Time;
 	
 	@Inject
 	public var textureRegistry : GLTextureRegistry;
-	
-	@Param
-	public var scale : Float;
-	
-	@Param
-	public var position : Vec3;
 	
 	var lines : Array<Line>;
 	var mousePosition : Vec2;
@@ -48,9 +48,6 @@ class LinesLayer implements LayerLifecycle, implements Infos
 		
 	public function new()
 	{
-		scale = 1;
-		position = new Vec3(0, 0, 0);
-		
 		projectionMatrix = new Matrix4();
 		
 		cameraMatrix = new Matrix4();
@@ -98,12 +95,10 @@ class LinesLayer implements LayerLifecycle, implements Infos
 		
 	public function render(renderContext : RenderContext)
 	{
-		
 		GL.useProgram(shaderProgram);
 		GL.viewport(0, 0, renderContext.width, renderContext.height);
 		
 		GL.disable(GL.DEPTH_TEST);
-		//GL.disable(GL.BLEND);
 		GL.enable(GL.BLEND);
 		GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 
@@ -146,6 +141,49 @@ class LinesLayer implements LayerLifecycle, implements Infos
 	
 	function updateLines()
 	{
+		for(line in lines)
+		{
+			//var dx = line.position.x - mouseX;
+			var dx = getNearestBlob(line.position);
+			var dx2 = 1.7 - Math.abs(dx);
+			
+			if (dx2 < 0)
+			{
+				line.comeup = false;
+				line.angle.acceleration = 0.001;
+				dx2 = line.defaultAngle;
+			}
+			else
+			{
+				line.comeup = true;
+				line.angle.acceleration = 0.005;
+				dx2 += line.randomTarget;
+			}
+			
+			line.angle.target = Math.abs(dx2) * 0.9;
+			if (line.angle.target < line.defaultAngle)
+			{
+				line.angle.target = line.defaultAngle;
+			}
+			line.tick();
+		}		
+	}
+	
+	function getNearestBlob(position : Vec3)
+	{
+		var mouseX = 10.0;
+		for(blob in blobs.blobs)
+		{
+			var result = position.x - Map.linear(1 - blob.x, 0, 1, -5, 5);
+			if (Math.abs(result) < Math.abs(mouseX))
+				mouseX = result;
+		}
+		
+		return mouseX;
+	}
+	
+	function updateLinesFromMouse()
+	{
 		var mouseX = Map.linear(mousePosition.x, 0, 1, -5, 5);
 		if (Math.isNaN(mouseX))
 			mouseX = 0;
@@ -162,16 +200,22 @@ class LinesLayer implements LayerLifecycle, implements Infos
 			
 			if (dx2 < 0)
 			{
-				line.angle.acceleration = 0.004;
+				line.comeup = false;
+				line.angle.acceleration = 0.001;
 				dx2 = line.defaultAngle;
 			}
 			else
 			{
+				line.comeup = true;
 				line.angle.acceleration = 0.01;
 				dx2 += line.randomTarget;
 			}
 			
 			line.angle.target = Math.abs(dx2) * 0.9;
+			if (line.angle.target < line.defaultAngle)
+			{
+				line.angle.target = line.defaultAngle;
+			}
 			line.tick();
 		}
 	}
@@ -190,7 +234,7 @@ class LinesLayer implements LayerLifecycle, implements Infos
 		vertexUVAttribute.updateBuffer3(vertexUVBuffer);
 		
 		var worldViewMatrix = new Matrix4();
-		worldViewMatrix.appendScale(line.scale.x, line.scale.y, line.scale.z);
+		worldViewMatrix.appendScale(line.scale.x, line.scale.y * 1.5, line.scale.z);
 		worldViewMatrix.appendRotation(line.rotationZ, new Vec3(0, 0, 1));
 		worldViewMatrix.appendRotation(Math.PI / 2, new Vec3(1, 0, 0));
 		worldViewMatrix.appendRotation(line.angle.current + Math.sin(line.defaultAngle + line.position.x + time.ms / 400) * 0.02, new Vec3(1, 0, 0));
@@ -236,7 +280,6 @@ class LinesLayer implements LayerLifecycle, implements Infos
 	void main(void)
 	{
 		vec4 mask = texture2D(texture, uv);
-		//gl_FragColor = vec4(color.rgb, 0.5) + mask;
 		gl_FragColor = vec4(color.rgb, mask.a);
 	}
 

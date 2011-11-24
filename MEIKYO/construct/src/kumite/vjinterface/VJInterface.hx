@@ -50,11 +50,12 @@ class VJInterface implements Infos
 		sceneContainer.x = 10;
 		stage.addChild(sceneContainer);
 		
-		var currentX = 0;
-		var currentY = 0;
+		var currentX = 0.0;
+		var currentY = 0.0;
 		for (sceneAndLifecycle in scenes.all)
 		{
 			var sceneButton = new GLLabel();
+			sceneButton.mouseEnabled = true;
 			sceneButton.x = currentX;
 			sceneButton.y = currentY;
 			sceneButton.text = sceneAndLifecycle.scene.name;

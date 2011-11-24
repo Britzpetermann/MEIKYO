@@ -24,7 +24,7 @@ class GLHitareaPicker
 			if (Std.is(displayObject, GLInteractiveObject))
 			{
 				var interactiveObject = cast(displayObject, GLInteractiveObject);
-				if (interactiveObject.hitarea.isUnder(matrix, stageMousePosition))
+				if (interactiveObject.mouseEnabled && interactiveObject.hitarea.isUnder(matrix, stageMousePosition))
 					result = interactiveObject;
 			}
 

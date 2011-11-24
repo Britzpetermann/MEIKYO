@@ -46,6 +46,7 @@ class ClassInfoTest extends TestCase2
 		
 		assertEquals(reflect.model.ClassA, ci.type);
 		assertEquals("reflect.model.ClassA", ci.name);
+		assertEquals("ClassA", ci.shortName);
 		assertTrue(ci.hasRtti);
 	}
 	
@@ -58,6 +59,13 @@ class ClassInfoTest extends TestCase2
 		assertEquals(ci, ci.getProperty("a").owner);
 		assertEquals(ClassInfo.forClass(Int), ci.getProperty("a").type);
 		assertEquals(Int, ci.getProperty("a").clazz);
+	}
+	
+	public function testEnum()
+	{
+		var ci = ClassInfo.forClass(reflect.model.ClassA);
+		
+		assertEquals("Bool", ci.getProperty("b").type.name);
 	}
 	
 	public function testMethods()

@@ -111,19 +111,19 @@ class Config implements Infos
 		image3Layer = new TextureLayer();
 		image3Layer.textureConfig = IMAGE_3;
 				
-		framebufferEnableLayer = new FramebufferEnableLayer(2048, 2048);
+		framebufferEnableLayer = new FramebufferEnableLayer(512, 512);
 		framebufferDisableLayer = new FramebufferDisableLayer();
 		framebufferRenderLayer = new TextureLayer();
 		framebufferRenderLayer.scale = 1.0;
 		framebufferRenderLayer.textureConfig = framebufferEnableLayer.textureConfig;
 				
-		framebuffer2EnableLayer = new FramebufferEnableLayer(2048, 2048);
+		framebuffer2EnableLayer = new FramebufferEnableLayer(512, 512);
 		framebuffer2DisableLayer = new FramebufferDisableLayer();
 		framebuffer2RenderLayer = new TextureLayer();
 		framebuffer2RenderLayer.scale = 1.0;
 		framebuffer2RenderLayer.textureConfig = framebuffer2EnableLayer.textureConfig;
 				
-		framebuffer3EnableLayer = new FramebufferEnableLayer(1024, 1024);
+		framebuffer3EnableLayer = new FramebufferEnableLayer(512, 512);
 		framebuffer3DisableLayer = new FramebufferDisableLayer();
 		framebuffer3RenderLayer = new TextureLayer();
 		framebuffer3RenderLayer.scale = 1.0;

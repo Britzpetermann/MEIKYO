@@ -15,6 +15,7 @@ class GLMouseRegistry
 	}
 
 	public var mouseDownSignaler(default, null):Signaler<Vec2>;
+	public var mouseUpSignaler(default, null):Signaler<Vec2>;
 	public var mouseMoveSignaler(default, null):Signaler<Vec2>;
 
 	var canvas : Canvas;
@@ -26,8 +27,10 @@ class GLMouseRegistry
 		this.canvas = canvas;
 
 		mouseDownSignaler = new DirectSignaler(this);
+		mouseUpSignaler = new DirectSignaler(this);
 		mouseMoveSignaler = new DirectSignaler(this);
 
+		canvas.onmouseup = onMouseUp;
 		canvas.onmousedown = onMouseDown;
 		canvas.onmousemove = onMouseMove;
 	}
@@ -48,6 +51,18 @@ class GLMouseRegistry
 		try
 		{
 			mouseDownSignaler.dispatch(new Vec2(e.layerX / canvas.clientWidth, e.layerY / canvas.clientHeight));
+		}
+		catch (e : Dynamic)
+		{
+			trace(e);
+		}
+	}
+
+	function onMouseUp (e : Dynamic)
+	{
+		try
+		{
+			mouseUpSignaler.dispatch(new Vec2(e.layerX / canvas.clientWidth, e.layerY / canvas.clientHeight));
 		}
 		catch (e : Dynamic)
 		{

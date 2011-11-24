@@ -36,10 +36,23 @@ class Config implements Infos
 	public var clearLayer : ClearLayer;
 	public var linesLayer : LinesLayer;
 	
+	public var linesEnableLayer : FramebufferEnableLayer;
+	public var linesDisableLayer : FramebufferDisableLayer;
+	public var linesRenderLayer : TextureLayer;
+	
+	
 	public function new()
 	{
 		clearLayer = new ClearLayer();
 		clearLayer.color = new Color(0, 0, 0, 1);
+		
+		linesEnableLayer = new FramebufferEnableLayer(2048 * 2, 1024 * 2);
+		linesDisableLayer = new FramebufferDisableLayer();
+		linesRenderLayer = new TextureLayer();
+		linesRenderLayer.blend = false;
+		linesRenderLayer.scale = 0.5;
+		linesRenderLayer.flipY = true;
+		linesRenderLayer.textureConfig = linesEnableLayer.textureConfig;
 		
 		linesLayer = new LinesLayer();
 
@@ -49,8 +62,11 @@ class Config implements Infos
 	@Complete
 	public function complete()
 	{
+		scene1.addLayerLifecycle(linesEnableLayer);
 		scene1.addLayerLifecycle(clearLayer, kumite.layer.LayerId.CLEAR);
 		scene1.addLayerLifecycle(linesLayer);
+		scene1.addLayerLifecycle(linesDisableLayer);
+		scene1.addLayerLifecycle(linesRenderLayer);
 		scene1.addLayerLifecycle(displayListLayer);
 	}
 	

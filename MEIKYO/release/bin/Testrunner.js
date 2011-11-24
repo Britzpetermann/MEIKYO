@@ -3629,8 +3629,10 @@ reflect.ClassInfo.forClass = function(type) {
 reflect.ClassInfo.forName = function(name) {
 	if(name == null) throw "Missing name";
 	var type = Type.resolveClass(name);
-	if(type == null) throw "Cannot resolve type for name: " + name;
-	return reflect.ClassInfo.getClassInfo(name,type);
+	if(type != null) return reflect.ClassInfo.getClassInfo(name,type);
+	var enumm = Type.resolveEnum(name);
+	if(enumm != null) return reflect.ClassInfo.getClassInfo(name,enumm);
+	throw "Cannot resolve type or enum for name: " + name;
 }
 reflect.ClassInfo.forCType = function(t) {
 	if(t == null) throw "Missing CType";
@@ -3642,6 +3644,11 @@ reflect.ClassInfo.forCType = function(t) {
 		return reflect.ClassInfo.forCType(ret);
 	}break;
 	case 2:
+	var params = $e[3], name = $e[2];
+	{
+		return reflect.ClassInfo.forName(name);
+	}break;
+	case 1:
 	var params = $e[3], name = $e[2];
 	{
 		return reflect.ClassInfo.forName(name);
@@ -3667,6 +3674,7 @@ reflect.ClassInfo.getHash = function(name,type) {
 }
 reflect.ClassInfo.prototype.type = null;
 reflect.ClassInfo.prototype.name = null;
+reflect.ClassInfo.prototype.shortName = null;
 reflect.ClassInfo.prototype.hasRtti = null;
 reflect.ClassInfo.prototype.properties = null;
 reflect.ClassInfo.prototype.methods = null;
@@ -3694,6 +3702,9 @@ reflect.ClassInfo.prototype.getMethod = function(name) {
 }
 reflect.ClassInfo.prototype.toString = function() {
 	return "[ClassInfo for class: " + this.name + "]";
+}
+reflect.ClassInfo.prototype.getShortName = function() {
+	return this.name.substr(this.name.lastIndexOf(".") + 1);
 }
 reflect.ClassInfo.prototype.getProperties = function() {
 	if(this.properties != null) return this.properties;
@@ -3753,7 +3764,7 @@ reflect.ClassInfo.prototype.scanFields = function(classDef) {
 		}break;
 		default:{
 			{
-				Log.posInfo = { fileName : "ClassInfo.hx", lineNumber : 179, className : "reflect.ClassInfo", methodName : "scanFields"};
+				Log.posInfo = { fileName : "ClassInfo.hx", lineNumber : 190, className : "reflect.ClassInfo", methodName : "scanFields"};
 				if(Log.filter(LogLevel.WARN)) {
 					Log.fetchInput("Unknown type:",Reflect.field(field,"type"),"in type:",Reflect.field(classDef,"path"),"found in:" + this.name,null,null);
 					console.warn(Log.createMessage());
@@ -5525,24 +5536,29 @@ reflect.ClassInfoTest.prototype.testType = function() {
 	var ci = reflect.ClassInfo.forClass(reflect.model.ClassA);
 	this.assertEquals(reflect.model.ClassA,ci.type,{ fileName : "ClassInfoTest.hx", lineNumber : 47, className : "reflect.ClassInfoTest", methodName : "testType"});
 	this.assertEquals("reflect.model.ClassA",ci.name,{ fileName : "ClassInfoTest.hx", lineNumber : 48, className : "reflect.ClassInfoTest", methodName : "testType"});
-	this.assertTrue(ci.hasRtti,{ fileName : "ClassInfoTest.hx", lineNumber : 49, className : "reflect.ClassInfoTest", methodName : "testType"});
+	this.assertEquals("ClassA",ci.getShortName(),{ fileName : "ClassInfoTest.hx", lineNumber : 49, className : "reflect.ClassInfoTest", methodName : "testType"});
+	this.assertTrue(ci.hasRtti,{ fileName : "ClassInfoTest.hx", lineNumber : 50, className : "reflect.ClassInfoTest", methodName : "testType"});
 }
 reflect.ClassInfoTest.prototype.testProperties = function() {
 	var ci = reflect.ClassInfo.forClass(reflect.model.ClassA);
-	this.assertEquals(3,ci.getProperties().length,{ fileName : "ClassInfoTest.hx", lineNumber : 56, className : "reflect.ClassInfoTest", methodName : "testProperties"});
-	this.assertEquals("a",ci.getProperty("a").field.name,{ fileName : "ClassInfoTest.hx", lineNumber : 57, className : "reflect.ClassInfoTest", methodName : "testProperties"});
-	this.assertEquals(ci,ci.getProperty("a").owner,{ fileName : "ClassInfoTest.hx", lineNumber : 58, className : "reflect.ClassInfoTest", methodName : "testProperties"});
-	this.assertEquals(reflect.ClassInfo.forClass(Int),reflect.ClassInfo.forCType(ci.getProperty("a").field.type),{ fileName : "ClassInfoTest.hx", lineNumber : 59, className : "reflect.ClassInfoTest", methodName : "testProperties"});
-	this.assertEquals(Int,ci.getProperty("a").getClass(),{ fileName : "ClassInfoTest.hx", lineNumber : 60, className : "reflect.ClassInfoTest", methodName : "testProperties"});
+	this.assertEquals(3,ci.getProperties().length,{ fileName : "ClassInfoTest.hx", lineNumber : 57, className : "reflect.ClassInfoTest", methodName : "testProperties"});
+	this.assertEquals("a",ci.getProperty("a").field.name,{ fileName : "ClassInfoTest.hx", lineNumber : 58, className : "reflect.ClassInfoTest", methodName : "testProperties"});
+	this.assertEquals(ci,ci.getProperty("a").owner,{ fileName : "ClassInfoTest.hx", lineNumber : 59, className : "reflect.ClassInfoTest", methodName : "testProperties"});
+	this.assertEquals(reflect.ClassInfo.forClass(Int),reflect.ClassInfo.forCType(ci.getProperty("a").field.type),{ fileName : "ClassInfoTest.hx", lineNumber : 60, className : "reflect.ClassInfoTest", methodName : "testProperties"});
+	this.assertEquals(Int,ci.getProperty("a").getClass(),{ fileName : "ClassInfoTest.hx", lineNumber : 61, className : "reflect.ClassInfoTest", methodName : "testProperties"});
+}
+reflect.ClassInfoTest.prototype.testEnum = function() {
+	var ci = reflect.ClassInfo.forClass(reflect.model.ClassA);
+	this.assertEquals("Bool",reflect.ClassInfo.forCType(ci.getProperty("b").field.type).name,{ fileName : "ClassInfoTest.hx", lineNumber : 68, className : "reflect.ClassInfoTest", methodName : "testEnum"});
 }
 reflect.ClassInfoTest.prototype.testMethods = function() {
 	var ci = reflect.ClassInfo.forClass(reflect.model.ClassA);
-	this.assertEquals(4,ci.getMethods().length,{ fileName : "ClassInfoTest.hx", lineNumber : 67, className : "reflect.ClassInfoTest", methodName : "testMethods"});
-	this.assertEquals("f1",ci.getMethod("f1").field.name,{ fileName : "ClassInfoTest.hx", lineNumber : 68, className : "reflect.ClassInfoTest", methodName : "testMethods"});
-	this.assertEquals(reflect.ClassInfo.forClass(Float),reflect.ClassInfo.forCType(ci.getMethod("f1").field.type),{ fileName : "ClassInfoTest.hx", lineNumber : 69, className : "reflect.ClassInfoTest", methodName : "testMethods"});
-	this.assertEquals(Float,ci.getMethod("f1").getClass(),{ fileName : "ClassInfoTest.hx", lineNumber : 70, className : "reflect.ClassInfoTest", methodName : "testMethods"});
-	this.assertEquals(1,ci.getMethod("f1").getParameters().length,{ fileName : "ClassInfoTest.hx", lineNumber : 71, className : "reflect.ClassInfoTest", methodName : "testMethods"});
-	this.assertEquals(reflect.ClassInfo.forClass(Int),reflect.ClassInfo.forCType(ci.getMethod("f1").getParameters()[0].def.t),{ fileName : "ClassInfoTest.hx", lineNumber : 72, className : "reflect.ClassInfoTest", methodName : "testMethods"});
+	this.assertEquals(4,ci.getMethods().length,{ fileName : "ClassInfoTest.hx", lineNumber : 75, className : "reflect.ClassInfoTest", methodName : "testMethods"});
+	this.assertEquals("f1",ci.getMethod("f1").field.name,{ fileName : "ClassInfoTest.hx", lineNumber : 76, className : "reflect.ClassInfoTest", methodName : "testMethods"});
+	this.assertEquals(reflect.ClassInfo.forClass(Float),reflect.ClassInfo.forCType(ci.getMethod("f1").field.type),{ fileName : "ClassInfoTest.hx", lineNumber : 77, className : "reflect.ClassInfoTest", methodName : "testMethods"});
+	this.assertEquals(Float,ci.getMethod("f1").getClass(),{ fileName : "ClassInfoTest.hx", lineNumber : 78, className : "reflect.ClassInfoTest", methodName : "testMethods"});
+	this.assertEquals(1,ci.getMethod("f1").getParameters().length,{ fileName : "ClassInfoTest.hx", lineNumber : 79, className : "reflect.ClassInfoTest", methodName : "testMethods"});
+	this.assertEquals(reflect.ClassInfo.forClass(Int),reflect.ClassInfo.forCType(ci.getMethod("f1").getParameters()[0].def.t),{ fileName : "ClassInfoTest.hx", lineNumber : 80, className : "reflect.ClassInfoTest", methodName : "testMethods"});
 }
 reflect.ClassInfoTest.prototype.getCClassInt = function() {
 	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(reflect.CClassInt.__rtti).firstElement());

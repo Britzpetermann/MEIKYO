@@ -1,5 +1,6 @@
 package kumite.scene;
 
+import reflect.Binding;
 import reflect.Property;
 
 class LayerParam
@@ -16,5 +17,10 @@ class LayerParam
 	public function getName()
 	{
 		return property.name;
+	}
+	
+	public function getBinding()
+	{
+		return new Binding(object, property);
 	}
 }

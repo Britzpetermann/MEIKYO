@@ -27,6 +27,8 @@ class TextureLayer implements LayerLifecycle, implements Infos
 	public var alphaTransition : LayerTransition;
 	
 	@Param
+	@ParamMin(-10)
+	@ParamMax(10)
 	public var scale : Float;
 	
 	@Param
@@ -35,7 +37,11 @@ class TextureLayer implements LayerLifecycle, implements Infos
 	@Param
 	public var textureConfig : GLTextureConfig;
 	
+	@Param
 	public var blend : Bool;
+	
+	@Param
+	public var flipY : Bool;
 	
 	var shaderProgram : WebGLProgram;
 	var vertexPositionAttribute : GLAttribLocation;
@@ -45,6 +51,7 @@ class TextureLayer implements LayerLifecycle, implements Infos
 	var worldViewMatrixUniform : GLUniformLocation;
 	var textureUniform : GLUniformLocation;
 	var alphaUniform : GLUniformLocation;
+	var flipYUniform : GLUniformLocation;
 		
 	public function new()
 	{
@@ -74,6 +81,7 @@ class TextureLayer implements LayerLifecycle, implements Infos
 		worldViewMatrixUniform = GL.getUniformLocation("worldViewMatrix");
 		textureUniform = GL.getUniformLocation("texture");
 		alphaUniform = GL.getUniformLocation("alpha");
+		flipYUniform = GL.getUniformLocation("flipY");
 	}
 	
 	public function renderTransition(transitionContext : TransitionContext)
@@ -114,7 +122,8 @@ class TextureLayer implements LayerLifecycle, implements Infos
 		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
 		
 		textureUniform.setTexture(texture);
-		alphaUniform.uniform1f(alphaTransition.transition);
+		alphaUniform.setFloat(alphaTransition.transition);
+		flipYUniform.setFloat(flipY ? 1 : 0);
 		
 		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
 	}
@@ -126,6 +135,7 @@ class TextureLayer implements LayerLifecycle, implements Infos
 
 	uniform mat4 projectionMatrix;
 	uniform mat4 worldViewMatrix;
+	uniform float flipY;
 
 	varying vec4 vertex;
 	varying vec2 textureCoord;
@@ -134,7 +144,16 @@ class TextureLayer implements LayerLifecycle, implements Infos
 	{
 		gl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);
 		vertex = vec4(vertexPosition, 0.0, 1.0);
-		textureCoord = vertexPosition.xy;
+
+		if (flipY == 1.0)
+		{
+			textureCoord = vertexPosition.xy;
+			textureCoord.y = 1.0 - textureCoord.y;
+		} 
+		else
+		{
+			textureCoord = vertexPosition.xy;
+		}
 	}
 
 ") private class Vertex {}

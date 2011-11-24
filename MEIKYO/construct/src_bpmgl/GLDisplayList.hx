@@ -34,6 +34,7 @@ class GLDisplayList
 		enterFrameSignaler = new DirectSignaler(this);
 
 		hitareaPicker = new GLHitareaPicker();
+		GLMouseRegistry.getInstance().mouseUpSignaler.bind(handleMouseUp);
 		GLMouseRegistry.getInstance().mouseDownSignaler.bind(handleMouseDown);
 		GLMouseRegistry.getInstance().mouseMoveSignaler.bind(handleMouseMove);
 		cursorClient = GLMouseRegistry.getInstance().createCursorClient();
@@ -47,6 +48,7 @@ class GLDisplayList
 
 	public function initInteractiveObject(interactiveObject : GLInteractiveObject)
 	{
+		interactiveObject.mouseUpSignaler = new DirectSignaler(this);
 		interactiveObject.mouseDownSignaler = new DirectSignaler(this);
 	}
 
@@ -75,6 +77,15 @@ class GLDisplayList
 		if (result != null)
 		{
 			result.mouseDownSignaler.dispatch(result);
+		}
+	}
+
+	function handleMouseUp(position : Vec2)
+	{
+		var result : GLInteractiveObject = hitareaPicker.pick(stage, position);
+		if (result != null)
+		{
+			result.mouseUpSignaler.dispatch(result);
 		}
 	}
 

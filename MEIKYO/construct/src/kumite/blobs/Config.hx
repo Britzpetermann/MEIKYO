@@ -10,6 +10,6 @@ class Config implements Infos
 	public function new()
 	{
 		blobs = new Blobs();
-		blobReader = new BlobReader();
+		//blobReader = new BlobReader();
 	}
 }

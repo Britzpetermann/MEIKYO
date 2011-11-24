@@ -2,8 +2,8 @@ import js.Lib;
 
 class CanvasGraphic
 {
-	public var width(default, setWidth) : Int;
-	public var height(default, setHeight) : Int;
+	public var width(default, setWidth) : Float;
+	public var height(default, setHeight) : Float;
 	
 	public var fillStyle(default, setFillStyle) : Dynamic;
 	public var font(default, setFont) : String;
@@ -73,7 +73,7 @@ class CanvasGraphic
 		return value;
 	}
 	
-	function setWidth(width : Int) : Int
+	function setWidth(width)
 	{
 		if (this.width == width)
 			return width;
@@ -83,7 +83,7 @@ class CanvasGraphic
 		return width;
 	}
 	
-	function setHeight(height : Int) : Int
+	function setHeight(height)
 	{
 		if (this.height == height)
 			return height;

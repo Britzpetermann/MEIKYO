@@ -34,11 +34,14 @@ class ClassInfo
 			throw "Missing name";
 			
 		var type = Type.resolveClass(name);
-		
-		if (type == null)
-			throw "Cannot resolve type for name: " + name;
-		
-		return getClassInfo(name, type);
+		if (type != null)
+			return getClassInfo(name, type);
+			
+		var enumm = Type.resolveEnum(name);
+		if (enumm != null)
+			return getClassInfo(name, enumm);
+			
+		throw "Cannot resolve type or enum for name: " + name;
 	}
 	
 	public static function forCType(t : CType) : ClassInfo
@@ -52,13 +55,15 @@ class ClassInfo
 				return ClassInfo.forCType(ret);
 			case CClass(name, params):
 				return ClassInfo.forName(name);
+			case CEnum(name, params):
+				return ClassInfo.forName(name);
 			default:
 		}
 			
 		throw "Could not resolve CType: " + t;
 	}
 	
-	private static function getClassInfo(name : String, type : Class<Dynamic>) : ClassInfo
+	private static function getClassInfo(name : String, type : Dynamic) : ClassInfo
 	{
 		var hash = getHash(name, type);
 		if (cache.exists(hash))
@@ -81,6 +86,7 @@ class ClassInfo
 	
 	public var type(default, null) : Class<Dynamic>;
 	public var name(default, null) : String;
+	public var shortName(getShortName, null) : String;
 	public var hasRtti(default, null) : Bool;
 	public var properties(getProperties, null) : Array<Property>;
 	public var methods(getMethods, null) : Array<Method>;
@@ -113,6 +119,11 @@ class ClassInfo
 	public function toString() : String
 	{
 		return "[ClassInfo for class: " + name + "]";
+	}
+	
+	function getShortName()
+	{
+		return name.substr(name.lastIndexOf(".") + 1);
 	}
 	
 	function getProperties()

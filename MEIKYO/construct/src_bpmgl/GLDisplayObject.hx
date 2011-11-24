@@ -16,8 +16,8 @@ class GLDisplayObject
 	public var alpha : Float;
 	public var x(default, setX) : Float;
 	public var y(default, setY) : Float;
-	public var width(default, setWidth) : Int;
-	public var height(default, setHeight) : Int;
+	public var width(default, setWidth) : Float;
+	public var height(default, setHeight) : Float;
 	public var scaleX(default, setScaleX) : Float;
 	public var scaleY(default, setScaleY) : Float;
 
@@ -123,7 +123,7 @@ class GLDisplayObject
 		return value;
 	}
 
-	function setWidth(?value : Int)
+	function setWidth(?value)
 	{
 		if (width != value)
 		{
@@ -134,7 +134,7 @@ class GLDisplayObject
 		return value;
 	}
 
-	function setHeight(?value : Int)
+	function setHeight(?value)
 	{
 		if (height != value)
 		{
