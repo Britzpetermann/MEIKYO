@@ -38,17 +38,17 @@ class Config implements Infos
 	
 	public var linesEnableLayer : FramebufferEnableLayer;
 	public var linesDisableLayer : FramebufferDisableLayer;
-	public var linesRenderLayer : TextureLayer;
+	public var linesRenderLayer : LinesTextureLayer;
 	
 	
 	public function new()
 	{
 		clearLayer = new ClearLayer();
-		clearLayer.color = new Color(0, 0, 0, 1);
+		clearLayer.color = new Color(0.3, 0, 0, 1);
 		
 		linesEnableLayer = new FramebufferEnableLayer(2048 * 2, 1024 * 2);
 		linesDisableLayer = new FramebufferDisableLayer();
-		linesRenderLayer = new TextureLayer();
+		linesRenderLayer = new LinesTextureLayer();
 		linesRenderLayer.blend = false;
 		linesRenderLayer.scale = 0.5;
 		linesRenderLayer.flipY = true;

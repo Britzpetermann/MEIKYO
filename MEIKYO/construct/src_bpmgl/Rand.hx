@@ -15,4 +15,8 @@ class Rand
 		return Math.random() < chance;
 	}
 
+	public static function list<T>(list : Array<T>) : T
+	{
+		return list[int(0, list.length)];
+	}
 }

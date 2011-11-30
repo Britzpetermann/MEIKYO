@@ -69,7 +69,7 @@ class EyeEffect implements LayerLifecycle, implements Infos
 		
 		position = new Vec2(0, 0);
 		mousePosition = new Vec2(0, 0);
-		moveSet = new MoveSetVec2(new Vec2(0,0), new Vec2(0,0), new Vec2(0.0015, 0.001));
+		moveSet = new MoveSetVec2(new Vec2(0,0), new Vec2(0,0), new Vec2(0.0008, 0.0008));
 	}
 	
 	public function init()
@@ -331,7 +331,7 @@ private class IdleState1 extends State
 			moveSet.to.y = Math.cos(ms / 400 + position.y * 0.002) * 0.2;
 		}
 		
-		if (ms - enterMs > 2000)
+		if (ms - enterMs > 1500)
 			parent.setState(parent.STATE_IDLE);
 	}
 }
@@ -345,7 +345,7 @@ private class IdleState2 extends State
 			moveSet.to.y = Math.cos(ms / 100 + position.x * 0.003) * 0.2;
 		}
 		
-		if (ms - enterMs > 2000)
+		if (ms - enterMs > 1500)
 			parent.setState(parent.STATE_IDLE);
 	}
 }
@@ -360,7 +360,7 @@ private class IdleState3 extends State
 			moveSet.to.y = 0;
 		}
 		
-		if (ms - enterMs > 3000)
+		if (ms - enterMs > 2000)
 			parent.setState(parent.STATE_IDLE);
 	}
 }

@@ -298,20 +298,38 @@ class TextureHSLLayer implements LayerLifecycle, implements Infos
 	void main(void)
 	{
 		vec4 color = texture2D(texture, vec2(textureCoord.x, textureCoord.y));
-
 		vec3 colorHSL = RGBToHSL(color.rgb);
-		
-		vec3 colorHSL0 = colorHSL + hsl0;
-		colorHSL0.g = clamp(colorHSL0.g, 0.0, 1.0);
-		vec3 colorRGB0 = HSLToRGB(colorHSL0);
 
-		vec3 colorHSL1 = colorHSL + hsl1;
-		colorHSL1.g = clamp(colorHSL1.g, 0.0, 1.0);
-		vec3 colorRGB1 = HSLToRGB(colorHSL1);
+		if (hslMix == 1.0)
+		{
+			vec3 colorHSL1 = colorHSL + hsl1;
+			colorHSL1.g = clamp(colorHSL1.g, 0.0, 1.0);
+			vec3 colorRGB1 = HSLToRGB(colorHSL1);
 
-		vec3 colorRGB = mix(colorRGB0, colorRGB1, hslMix);
+			gl_FragColor = vec4(colorRGB1, color.a) * vec4(1.0, 1.0, 1.0, alpha);
+		}
+		else if(hslMix == 0.0)
+		{
+			vec3 colorHSL0 = colorHSL + hsl0;
+			colorHSL0.g = clamp(colorHSL0.g, 0.0, 1.0);
+			vec3 colorRGB0 = HSLToRGB(colorHSL0);
 
-		gl_FragColor = vec4(colorRGB, color.a) * vec4(1.0, 1.0, 1.0, alpha);
+			gl_FragColor = vec4(colorRGB0, color.a) * vec4(1.0, 1.0, 1.0, alpha);
+		}
+		else
+		{
+			vec3 colorHSL0 = colorHSL + hsl0;
+			colorHSL0.g = clamp(colorHSL0.g, 0.0, 1.0);
+			vec3 colorRGB0 = HSLToRGB(colorHSL0);
+	
+			vec3 colorHSL1 = colorHSL + hsl1;
+			colorHSL1.g = clamp(colorHSL1.g, 0.0, 1.0);
+			vec3 colorRGB1 = HSLToRGB(colorHSL1);
+	
+			vec3 colorRGB = mix(colorRGB0, colorRGB1, hslMix);
+	
+			gl_FragColor = vec4(colorRGB, color.a) * vec4(1.0, 1.0, 1.0, alpha);
+		}
 	}
 
 ") private class Fragment {}

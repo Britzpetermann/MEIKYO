@@ -13,4 +13,5 @@ class Config implements Infos
 		vjinterface = new VJInterface();
 		vjlayers = new VJLayers();
 	}
+	
 }

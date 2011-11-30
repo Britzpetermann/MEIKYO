@@ -109,34 +109,41 @@ class EyePostproFilter implements LayerLifecycle, implements Infos
 		q.y = 1.0-q.y;
 	    vec3 oricol = texture2D(texture, vec2(q.x,1.0 - q.y)).xyz;
 
-		vec2 uv = q;
-
-	    vec3 col;
-
-		float camount = pow(clamp(amount, 0.0, 1.0), 0.5);
-
-		//aberation
-		float cax = 30.0 + camount * 5.0;
-		float cay = -cax;
-	    col.r = texture2D(texture,vec2(uv.x+cax / resolution.x,-uv.y)).x;
-	    col.g = texture2D(texture,vec2(uv.x+0.000,-uv.y)).y;
-	    col.b = texture2D(texture,vec2(uv.x+cay / resolution.x,-uv.y)).z;
+		if (amount >= 1.0)
+		{
+			gl_FragColor = vec4(oricol, 1.0);
+		}
+		else
+		{
+			vec2 uv = q;
 	
-	    col = clamp(col*0.5+0.5*col*col*1.2,0.0,1.0);
+		    vec3 col;
 	
-		//vignette
-	    col *= 0.3 + 0.7*16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y);
+			float camount = pow(clamp(amount, 0.0, 1.0), 0.5);
 	
-		//color
-	    //col *= vec3(0.8,1.0,0.7);
-	
-		//v lines
-	    col *= (1.0 - camount * 0.5)+(0.3 + camount * 0.5)*sin(0.01*time+gl_FragCoord.y*2.5);
-	
-		//flicker
-	    col *= 0.97+0.03*sin(0.11*time);
-	
-	    gl_FragColor = vec4(mix(col, oricol, camount), 1.0);
+			//aberation
+			float cax = 30.0 + camount * 5.0;
+			float cay = -cax;
+		    col.r = texture2D(texture,vec2(uv.x+cax / resolution.x,-uv.y)).x;
+		    col.g = texture2D(texture,vec2(uv.x+0.000,-uv.y)).y;
+		    col.b = texture2D(texture,vec2(uv.x+cay / resolution.x,-uv.y)).z;
+		
+		    col = clamp(col*0.5+0.5*col*col*1.2,0.0,1.0);
+		
+			//vignette
+		    col *= 0.3 + 0.7*16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y);
+		
+			//color
+		    //col *= vec3(0.8,1.0,0.7);
+		
+			//v lines
+		    col *= (1.0 - camount * 0.5)+(0.3 + camount * 0.5)*sin(0.01*time+gl_FragCoord.y*2.5);
+		
+			//flicker
+		    col *= 0.97+0.03*sin(0.11*time);
+		
+		    gl_FragColor = vec4(mix(col, oricol, camount), 1.0);
+		}
 	}
 
 ") private class Fragment {}

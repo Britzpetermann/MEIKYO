@@ -1,10 +1,12 @@
-package kumite.eyes;
+package kumite.windowlines;
 
 import kumite.scene.LayerLifecycle;
 import kumite.scene.Layer;
 import kumite.scene.TransitionContext;
 import kumite.scene.LayerState;
 import kumite.scene.RenderContext;
+import kumite.layer.LayerTransitions;
+import kumite.layer.LayerTransition;
 
 import kumite.stage.Stage;
 import kumite.time.Time;
@@ -13,7 +15,7 @@ import kumite.camera.Camera;
 
 import haxe.rtti.Infos;
 
-class EyeMaskLayer implements LayerLifecycle, implements Infos
+class LinesTextureLayer implements LayerLifecycle, implements Infos
 {
 	@Inject
 	public var time : Time;
@@ -21,7 +23,14 @@ class EyeMaskLayer implements LayerLifecycle, implements Infos
 	@Inject
 	public var textureRegistry : GLTextureRegistry;
 	
+	public var transitions : LayerTransitions;
+	public var cutTransition : LayerTransition;
+	public var moveTransition : LayerTransition;
+	public var alphaTransition : LayerTransition;
+	
 	@Param
+	@ParamMin(-10)
+	@ParamMax(10)
 	public var scale : Float;
 	
 	@Param
@@ -30,7 +39,11 @@ class EyeMaskLayer implements LayerLifecycle, implements Infos
 	@Param
 	public var textureConfig : GLTextureConfig;
 	
+	@Param
 	public var blend : Bool;
+	
+	@Param
+	public var flipY : Bool;
 	
 	var shaderProgram : WebGLProgram;
 	var vertexPositionAttribute : GLAttribLocation;
@@ -39,51 +52,83 @@ class EyeMaskLayer implements LayerLifecycle, implements Infos
 	var projectionMatrixUniform : GLUniformLocation;
 	var worldViewMatrixUniform : GLUniformLocation;
 	var textureUniform : GLUniformLocation;
-	var colorcube0Uniform : GLUniformLocation;
-	var colorcube1Uniform : GLUniformLocation;
-	var shutUniform : GLUniformLocation;
-	
-	static var STATE_IDLE : String = "STATE_IDLE";
-	static var STATE_OPENING : String = "STATE_OPENING";
-	static var STATE_CLOSING : String = "STATE_CLOSING";
-	
-	static var OPENING_SPEED : Float = 0.2;
-	static var CLOSING_SPEED : Float = 0.1;
-	static var CLOSING_CHANCE : Float = 0.0001;
-	
-	var state : String;
-	var shut : Float;
+	var alphaUniform : GLUniformLocation;
+	var flipYUniform : GLUniformLocation;
 		
 	public function new()
 	{
 		blend = true;
 		scale = 1;
 		position = new Vec3(0, 0, 0);
-		state = STATE_IDLE;
+		transitions = new LayerTransitions();
+		transitions.add(cutTransition = new LayerTransition("cut"));
+		transitions.add(moveTransition = new LayerTransition("move"));
+		transitions.add(alphaTransition = new LayerTransition("alpha"));
+		transitions.enableChild("alpha");
 	}
 	
 	public function init()
 	{
 		shaderProgram = GL.createProgram(Vertex, Fragment);
 
-		vertexPositionAttribute = GL.getAttribLocation2("vertexPosition", 2, GL.BYTE);
-		vertexPositionAttribute.updateBuffer(new Int8Array([
-			0,  0,
-			1,  0,
-			0,  1,
-			1,  1,
-		]));
+		vertexPositionAttribute = GL.getAttribLocation2("vertexPosition", 2, GL.FLOAT);
+		
+		var vertexes = new Float32Array(12 * 3);
+		
+		addShape(vertexes, 0, 
+			0.0, 	0.2,
+			0.3, 	0.2,
+			0.0, 	0.99,
+			0.3, 	0.99
+			);
+		
+		addShape(vertexes, 1, 
+			0.31, 	0.2,
+			0.6, 	0.2,
+			0.31, 	0.99,
+			0.6, 	0.99
+			);
+		
+		addShape(vertexes, 2, 
+			0.61, 	0.2,
+			1.0, 	0.2,
+			0.61, 	0.99,
+			1.0, 	0.99
+			);
+		
+		vertexPositionAttribute.updateBuffer(vertexes);
 
 		projectionMatrixUniform = GL.getUniformLocation("projectionMatrix");
 		worldViewMatrixUniform = GL.getUniformLocation("worldViewMatrix");
 		textureUniform = GL.getUniformLocation("texture");
-		colorcube0Uniform = GL.getUniformLocation("colorcube0");
-		colorcube1Uniform = GL.getUniformLocation("colorcube1");
-		shutUniform = GL.getUniformLocation("shut");
+		alphaUniform = GL.getUniformLocation("alpha");
+		flipYUniform = GL.getUniformLocation("flipY");
+	}
+	
+	function addShape(vertexes : Float32Array, offset, x0, y0, x1, y1, x2, y2, x3, y3)
+	{
+		vertexes[offset * 12 + 0] = x0;
+		vertexes[offset * 12 + 1] = y0;
+		
+		vertexes[offset * 12 + 2] = x1;
+		vertexes[offset * 12 + 3] = y1;
+		
+		vertexes[offset * 12 + 4] = x2;
+		vertexes[offset * 12 + 5] = y2;
+		
+		vertexes[offset * 12 + 6] = x2;
+		vertexes[offset * 12 + 7] = y2;
+		
+		vertexes[offset * 12 + 8] = x1;
+		vertexes[offset * 12 + 9] = y1;
+		
+		vertexes[offset * 12 + 10] = x3;
+		vertexes[offset * 12 + 11] = y3;
 	}
 	
 	public function renderTransition(transitionContext : TransitionContext)
 	{
+		transitions.transition = transitionContext.transition;
 		render(transitionContext);
 	}
 		
@@ -118,36 +163,11 @@ class EyeMaskLayer implements LayerLifecycle, implements Infos
 		worldViewMatrix.appendTranslation((renderContext.width - texture.width * scale) / 2, (renderContext.height - texture.height * scale) / 2, 0);
 		worldViewMatrixUniform.setMatrix4(worldViewMatrix);
 		
-		textureUniform.setTexture(texture, 0);
+		textureUniform.setTexture(texture);
+		alphaUniform.setFloat(alphaTransition.transition);
+		flipYUniform.setFloat(flipY ? 1 : 0);
 		
-		var len = Math.sqrt(position.x * position.x + position.y * position.y);
-		
-		switch (state)
-		{
-			case STATE_IDLE:
-				shut = 0;
-				if (Math.sin(time.ms / 1000 / 2 + len * 0.0002) > 0.999 || Rand.bool(CLOSING_CHANCE))
-				{
-					state = STATE_CLOSING;
-				}
-			case STATE_CLOSING:
-				shut += OPENING_SPEED;
-				if (shut > 0.8)
-				{
-					state = STATE_OPENING;
-				}
-			case STATE_OPENING:
-				shut -= CLOSING_SPEED;
-				if (shut < 0)
-				{
-					shut = 0;
-					state = STATE_IDLE;
-				}
-		}
-		
-		shutUniform.setFloat(shut);
-		
-		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
+		vertexPositionAttribute.drawArrays(GL.TRIANGLES);
 	}
 }
 
@@ -157,17 +177,25 @@ class EyeMaskLayer implements LayerLifecycle, implements Infos
 
 	uniform mat4 projectionMatrix;
 	uniform mat4 worldViewMatrix;
+	uniform float flipY;
 
 	varying vec4 vertex;
 	varying vec2 textureCoord;
-	varying vec2 tc;
 
 	void main(void)
 	{
 		gl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);
 		vertex = vec4(vertexPosition, 0.0, 1.0);
-		textureCoord = vertexPosition.xy;
-		tc = vertexPosition;
+
+		if (flipY == 1.0)
+		{
+			textureCoord = vertexPosition.xy;
+			textureCoord.y = 1.0 - textureCoord.y;
+		} 
+		else
+		{
+			textureCoord = vertexPosition.xy;
+		}
 	}
 
 ") private class Vertex {}
@@ -179,39 +207,14 @@ class EyeMaskLayer implements LayerLifecycle, implements Infos
 	#endif
 
 	uniform sampler2D texture;
+	uniform float alpha;
 
-	uniform float shut;
-
-	varying vec2 tc;
 	varying vec2 textureCoord;
 
 	void main(void)
 	{
-		float zoom = 4.0;
-		vec2 p = (-1.0 + 2.0 * tc) * 0.5;
-		float r = dot(p,p) * zoom;
-
-		float v = shut;
-
-		float zoom2 = 4.0 - v * 3.0;
-
-		vec2 pTop = -0.5 + vec2(tc.x, tc.y + v);
-		float rTop = dot(pTop,pTop) * zoom2;
-
-		vec2 pBottom = -0.5 + vec2(tc.x, tc.y - v);
-		float rBottom = dot(pBottom,pBottom) * zoom2;
-
-		if (rTop > 1.0)
-			discard;
-
-		if (rBottom > 1.0)
-			discard;
-
-		if (r > 1.0)
-			discard;
-
-		vec4 color = texture2D(texture, vec2(textureCoord.x, 1.0 - textureCoord.y));
-		gl_FragColor = color;
+		vec4 color = texture2D(texture, vec2(textureCoord.x, textureCoord.y));
+		gl_FragColor = color * vec4(1.0, 1.0, 1.0, alpha);
 	}
 
 ") private class Fragment {}

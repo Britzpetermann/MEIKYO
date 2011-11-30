@@ -56,40 +56,27 @@ class Config implements Infos
 	
 	public var scene1 : DefaultScene;
 	
-	public var plasmaEnableLayer : FramebufferEnableLayer;
-	public var plasmaDisableLayer : FramebufferDisableLayer;
-	public var plasmaRenderLayer : TextureLayer;
-	public var plasmaEffect : PlasmaEffect;
-	
 	public function new()
 	{
 		clearLayer = new ClearLayer();
 		clearLayer.color = new Color(0, 0, 0, 1);
 
 		shadowLayer = new TextureLayer();
-		shadowLayer.scale = 2.05;
+		shadowLayer.scale = 2.05 * 0.5;
 		shadowLayer.textureConfig = SHADOW;
 				
 		reflectionLayer = new TextureLayer();
-		reflectionLayer.scale = 3.0;
+		reflectionLayer.scale = 3.0 * 0.5;
 		reflectionLayer.textureConfig = REFLECTION;
 				
-		plasmaEnableLayer = new FramebufferEnableLayer(512, 256);
-		plasmaDisableLayer = new FramebufferDisableLayer();
-		plasmaRenderLayer = new TextureLayer();
-		plasmaRenderLayer.textureConfig = plasmaEnableLayer.textureConfig;
-		plasmaRenderLayer.position.y = -500;
-		plasmaEffect = new PlasmaEffect();
-		
 		framebuffer1EnableLayer = new FramebufferEnableLayer(512, 512);
 		framebuffer1DisableLayer = new FramebufferDisableLayer();
 		
 		framebufferPostproEnableLayer = new FramebufferEnableLayer(512, 512);
 		framebufferPostproDisableLayer = new FramebufferDisableLayer();
 		
-		framebuffer2EnableLayer = new FramebufferEnableLayer(512, 512);
+		framebuffer2EnableLayer = new FramebufferEnableLayer(256, 256);
 		framebuffer2DisableLayer = new FramebufferDisableLayer();
-		
 		
 		eyeLayers = new Array();
 		eyeMaskLayers = new Array();
@@ -114,13 +101,12 @@ class Config implements Infos
 		createBlock(-569, 255.3, 0.13);
 		createBlock(-447, 390, 0.192);
 		createBlock(215, 338.5, 0.193);
-
-		/*
 		
+		/*
 		 */
 		
 		var colors : Array<Vec3> = new Array();
-		//colors.push(new Vec3(0, 0, 0));
+		colors.push(new Vec3(0, 0, 0));
 		colors.push(new Vec3(0,-10, 0));
 		colors.push(new Vec3(-21 / 360, 0, 0));
 		colors.push(new Vec3(21 / 360, 0, 0));
@@ -143,12 +129,12 @@ class Config implements Infos
 			eyeLayer.eyePosition.y = eyeBlock.position.y;
 			eyeLayer.mixChance = Rand.float(0.01, 0.001);
 			eyeLayer.mixSpeed = Rand.float(0.05, 0.005);
-			eyeLayer.scale = Rand.float(1.2, 1.5);
+			eyeLayer.scale = Rand.float(1.2, 1.5) * 1.0;
 			eyeLayer.textureConfig = EYE;
 			eyeLayers.push(eyeLayer);
 			
 			var eyeMaskLayer = new EyeMaskLayer();
-			eyeMaskLayer.scale = eyeBlock.scale;
+			eyeMaskLayer.scale = eyeBlock.scale * 2;
 			eyeMaskLayer.position.x = eyeBlock.position.x;
 			eyeMaskLayer.position.y = eyeBlock.position.y;
 			eyeMaskLayer.blend = false;
@@ -159,7 +145,6 @@ class Config implements Infos
 			eyeEffect.position.x = eyeMaskLayer.position.x;
 			eyeEffect.position.y = eyeMaskLayer.position.y;
 			eyeEffect.offset = Rand.float(0, 6);
-			//eyeEffect.textureConfig = framebuffer1EnableLayer.textureConfig;
 			eyeEffect.textureConfig = framebufferPostproEnableLayer.textureConfig;
 			eyeEffects.push(eyeEffect);
 		}
@@ -203,11 +188,6 @@ class Config implements Infos
 			
 			scene1.addLayerLifecycle(eyeMaskLayers[i]);
 		}
-		
-		// scene1.addLayerLifecycle(plasmaEnableLayer);
-		// scene1.addLayerLifecycle(plasmaEffect);
-		// scene1.addLayerLifecycle(plasmaDisableLayer);
-		// scene1.addLayerLifecycle(plasmaRenderLayer);
 		
 		scene1.addLayerLifecycle(displayListLayer);
 	}

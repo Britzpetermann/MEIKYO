@@ -2,7 +2,7 @@ package kumite.blobs;
 
 import haxe.rtti.Infos;
 
-class BlobReader implements Infos
+class BlobReaderHTTP implements Infos
 {
 	@Inject
 	public var blobs : Blobs;
