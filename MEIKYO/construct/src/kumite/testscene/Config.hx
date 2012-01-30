@@ -5,7 +5,7 @@ import haxe.rtti.Infos;
 class Config implements Infos
 {
 	public static var TEST1 : GLTextureConfig = GLTextureConfig.create("data/image/along-the-line.png"); 
-	public static var TEST2 : GLTextureConfig = GLTextureConfig.create("data/image/beware-of-the-dog.jpg"); 
+	public static var TEST2 : GLTextureConfig = GLTextureConfig.create("data/image/beware-of-the-dog.jpg");
 
 	@Inject
 	public var textureRegistry : GLTextureRegistry;

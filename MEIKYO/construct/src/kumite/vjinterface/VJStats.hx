@@ -2,6 +2,7 @@ package kumite.vjinterface;
 
 import kumite.stage.Stage;
 import kumite.blobs.Blobs;
+import kumite.time.Tick;
 
 import bpmjs.Messenger;
 
@@ -14,7 +15,11 @@ class VJStats implements Infos
 	@Inject
 	var stage : Stage;
 	
+	@Inject
+	var blobs : Blobs;
+	
 	var mouseLabel : GLLabel;
+	var debugLabel : GLLabel;
 	
 	public function new();
 	
@@ -33,6 +38,27 @@ class VJStats implements Infos
 		mouseLabel.width = 60;
 		mouseLabel.height = 20;
 		//stage.addChild(mouseLabel);
+		
+		debugLabel = new GLLabel();
+		debugLabel.center = false;
+		debugLabel.x = 100;
+		debugLabel.y = 100;
+		debugLabel.text = "DEBUG";
+		debugLabel.width = 200;
+		debugLabel.height = 200;
+		
+		//stage.addChild(debugLabel);
+	}
+	
+	@Message
+	function tick(tick : Tick)
+	{
+		var result = new Array<String>();
+		for(i in 0...blobs.blobs.length)
+		{
+			result.push("" + Math.round(blobs.blobs[i].speed * 100000) / 100000);
+		}
+		debugLabel.text = result.join(", ");
 	}
 	
 	function updateMouse(position : Vec2)

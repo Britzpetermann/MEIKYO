@@ -53,21 +53,15 @@ class LinesLayer implements LayerLifecycle, implements Infos
 	var colorUniform : GLUniformLocation;
 	var textureUniform : GLUniformLocation;
 	
-	var context : Dynamic;
-	var source : Dynamic;
-	var toneBuffer : Dynamic;
-		
 	public function new()
 	{
 		projectionMatrix = new Matrix4();
 		
 		cameraMatrix = new Matrix4();
 		cameraMatrix.setIdentity();
-		cameraMatrix.setLookAt(new Vec3(0, 0, 10), new Vec3(0, 0, 0), new Vec3(0, 1, 0));
+		cameraMatrix.setLookAt(new Vec3(0, 0, 10.4), new Vec3(-0.1, 0, 0), new Vec3(0, 1, 0));
 		
 		mousePosition = new Vec2();
-	
- 		context = untyped __js__("new webkitAudioContext()");
 	}
 	
 	public function init()
@@ -110,7 +104,6 @@ class LinesLayer implements LayerLifecycle, implements Infos
 		GL.useProgram(shaderProgram);
 		GL.viewport(0, 0, renderContext.width, renderContext.height);
 		
-		//GL.disable(GL.DEPTH_TEST);
 		GL.enable(GL.DEPTH_TEST);
 		GL.depthFunc(GL.LESS);
 		GL.enable(GL.BLEND);
@@ -136,45 +129,12 @@ class LinesLayer implements LayerLifecycle, implements Infos
 		lines = new Array();
 		var count = 80;
 		var t = 80.0;
-		var xx = 0;
 		for(i in 0...count)
 		{
-			
-			if (i % 2 == 0)
-	        {
-	          //t += 2;
-	        }
-	        
-	        if (i % 3 == 0)
-	        {
-	          //t -= 3;
-	        }        
-	        
-	        if (i % 6 == 0)
-	        {
-	          //t -= 4;
-	        }
-	        
-	        if (i % 12 == 0)
-	        {
-	          //t += 5;
-	        }
-			
-	        if (i % 5 == 0)
-	        {
-	         // t-= 12;
-	        }
-			
-			//t+= 0.5;
+			t+=0.6;
 			t+= Math.sin(i * Math.PI / (count / 28)) * 5;
 			t+= Math.sin(i * Math.PI / (count / 48)) * 3;
-			//t+=0.5;
-			//t+= xx / 3;
 			
-			xx += 1;
-			if (xx == 5)
-				xx = -5;
-		
 			var cosMiddle = Math.cos(i * Math.PI / (count / 2));
 			
 			var line = new Line();
@@ -194,14 +154,7 @@ class LinesLayer implements LayerLifecycle, implements Infos
 			line.scale.y = scale / (line.texture.width / line.texture.height);
 			line.position.x = Map.linear(i, 0, count, -5, 5) + Rand.float(0, 0.0);
 			line.position.y = -Math.sin(i * 0.9) * 0.1 + Rand.float (-0.1, 0.1);
-			line.initSound(context);
 			lines.push(line);
-			
-	        if (i % 5 == 0)
-	        {
-	         // t+= 12;
-	        }
-			
 		}		
 	}
 	
@@ -217,11 +170,9 @@ class LinesLayer implements LayerLifecycle, implements Infos
 		{
 			var dx = getNearestBlob(line.position);
 			var dx2 = 1.2 - Math.abs(dx.dx);
-			var znorm = 0.0;
 			if (dx2 >= 0)
 			{
-				znorm = Map.linear(dx.blob.z - 1500, 0, 1500, 0, 1);
-				dx2 = Map.linear(znorm, 0, 1, 1.3, 0.2) - Math.abs(dx.dx);
+				dx2 = Map.linear(dx.blob.z, 0, 1, 1.3, 0.2) - Math.abs(dx.dx);
 			}
 			
 			if (dx2 < 0)
@@ -235,9 +186,9 @@ class LinesLayer implements LayerLifecycle, implements Infos
 			else
 			{
 				line.comeup = true;
-				line.angle.acceleration = 0.005 * (1 + znorm * 0.5);
-				//dx2 += line.randomTarget;
-				dx2 = (1.2 - Math.abs(dx.dx)) * (1 + znorm);
+				line.angle.acceleration = 0.0001 + Map.linear(dx.blob.speed, 0, 1, 0, 0.02);
+				dx2 += line.randomTarget;
+				dx2 = (1.2 - Math.abs(dx.dx)) * (1 + dx.blob.z);
 				line.blob = dx.blob;
 			}
 			
@@ -262,30 +213,30 @@ class LinesLayer implements LayerLifecycle, implements Infos
 					
 				var line = lines[index];
 
-				var repeat = Map.linear(blob.area, 0, 0.1, 2000, 200);
-				if (repeat < 200)
-					repeat = 200;
-				if (repeat > 1500)
-					repeat = 1500;
-				if  (time.ms - line.played > repeat)
+				if  (time.ms - line.played > 1000)
 				{				
 					if (lastPlayed != line)
 					{
 						lastPlayed = line;
 						line.played = time.ms;
-						var note = line.doPlay(blob);
 						
-							
+						var note = new Note();
+						note.note = Std.int(line.pitch);
 						note.note -= 20;
 						
-						var depth = Std.int(Map.linear(blob.z - 1500, 0, 5000, -20, 300));
+						var depth = Clamp.int(Std.int(Map.linear(blob.z, 0, 1, -30, 60)), -30, 60);
 						note.note += depth;
-						note.note -= 30;
+						note.note -= 25;
+						
+						//note.note += Clamp.int(Std.int(Map.linear(blob.speed, 0, 1, -80, 80)), -80, 80);
 						
 						while (isNotHarmonic(note))
 						{
 							note.note += 1;
 						}
+
+						note.velocity = blob.speed;
+						note.duration = 1 - blob.speed;
 						messenger.send(note);
 					}
 				}
@@ -487,7 +438,7 @@ class LinesLayer implements LayerLifecycle, implements Infos
 		float specular = clamp(pow(clamp(dot(normal, h), 0.0, 1.0), 10.0), 0.0, 1.0);
 
 		vec3 hsl = RGBToHSL(color.rgb);
-		hsl.z += specular * 0.1 + diffuse * 0.1;
+		hsl.z += specular * 0.0 + diffuse * 0.0;
 		vec3 rgb = HSLToRGB(hsl);
 		
 		gl_FragColor = vec4(rgb.rgb, mask.a);

@@ -76,24 +76,24 @@ class LinesTextureLayer implements LayerLifecycle, implements Infos
 		var vertexes = new Float32Array(12 * 3);
 		
 		addShape(vertexes, 0, 
-			0.0, 	0.2,
-			0.3, 	0.2,
-			0.0, 	0.99,
-			0.3, 	0.99
+			0.125,		0.45,
+			0.3745, 	0.422,
+			0.143, 		0.911,
+			0.3715,		0.913
 			);
 		
 		addShape(vertexes, 1, 
-			0.31, 	0.2,
-			0.6, 	0.2,
-			0.31, 	0.99,
-			0.6, 	0.99
+			0.3825, 	0.46,
+			0.639, 		0.431,
+			0.3805,		0.932,
+			0.669, 		0.937
 			);
 		
 		addShape(vertexes, 2, 
-			0.61, 	0.2,
-			1.0, 	0.2,
-			0.61, 	0.99,
-			1.0, 	0.99
+			0.647, 	0.441,
+			0.887, 	0.413,
+			0.674, 	0.913,
+			0.876, 	0.894
 			);
 		
 		vertexPositionAttribute.updateBuffer(vertexes);

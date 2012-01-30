@@ -9,6 +9,9 @@ class BlobReaderMouse implements Infos
 	@Inject
 	public var blobs : Blobs;
 	
+	@Inject
+	public var time : Time;
+	
 	var mouse : Vec2;
 	
 	public function new()
@@ -30,7 +33,9 @@ class BlobReaderMouse implements Infos
 		var blob = new Blob();
 		blob.x = mouse.x;
 		blob.y = 0;
-		blob.z = 1400;
+		//blob.z = 1500 + Math.abs(Math.sin(time.ms / 2000) * 1500);
+		blob.z = 2500;
+		blob.speed = 0.4;
 		blob.area = 0.3;		
 		blobs.blobs.push(blob);				
 	}

@@ -39,16 +39,17 @@ class Main {
 					kumite.socketsound.Config,
 					//kumite.helloworldgl.Config,
 					kumite.displaylist.ConfigAsLayer,
-					//kumite.vjinterface.Config,
+					kumite.vjinterface.Config,
 					//kumite.uicomponents.Config,
 					kumite.scene.Config,
 					//kumite.testscene.Config,
 					//kumite.flyingman.Config,
 					//kumite.framebuffereffect.Config,
 					//kumite.spritemesh.Config,
-					//kumite.effects.Config,
+					kumite.effects.Config,
 					//kumite.eyes.Config,
-					kumite.windowlines.Config,
+					//kumite.windowlines.Config,
+					//kumite.touchtest.Config,
 				]);
 		}
 		catch(e : Dynamic)

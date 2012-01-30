@@ -38,6 +38,9 @@ class TextureLayer implements LayerLifecycle, implements Infos
 	public var textureConfig : GLTextureConfig;
 	
 	@Param
+	public var texture : GLTexture;
+	
+	@Param
 	public var blend : Bool;
 	
 	@Param
@@ -113,7 +116,8 @@ class TextureLayer implements LayerLifecycle, implements Infos
 		
 		vertexPositionAttribute.vertexAttribPointer();
 
-		var texture = textureRegistry.get(textureConfig);
+		if (texture == null)		
+			texture = textureRegistry.get(textureConfig);
 
 		var worldViewMatrix = new Matrix4();
 		worldViewMatrix.appendScale(texture.width * scale, texture.height * scale, 1);

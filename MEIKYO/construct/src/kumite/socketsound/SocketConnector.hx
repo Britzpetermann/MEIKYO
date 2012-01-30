@@ -26,13 +26,12 @@ class SocketConnector implements Infos
 	function handleNote(note : Note)
 	{
 		//Log.info("Note: " + Std.string(note));
-		
 		socket.send(getNotePackage(note));
 	}
 	
 	function getNotePackage(note : Note)
 	{
-		return note.note + ".";
+		return note.note + ":" + note.velocity + ":" + note.duration + ";";
 	}
 	
 	function handleOpen(event)

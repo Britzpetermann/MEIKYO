@@ -96,6 +96,7 @@ class MetaTunnelEffect implements LayerLifecycle, implements Infos
 	    f*=distance(q,vec3(-cos(time*.7),.3,2.+sin(time*.5)));
 	    f*=distance(q,vec3(-sin(time*.2)*.5,sin(time),2.));
 	    f*=cos(q.y)*cos(q.x)-.1-cos(q.z*7.+time*7.)*cos(q.x*3.)*cos(q.y*4.)*.1;
+	    return 1.0 / length(q);
 	    return f;
 	}
 	
@@ -114,7 +115,7 @@ class MetaTunnelEffect implements LayerLifecycle, implements Infos
 	            for(int j=0;j<5;j++)
 	            {
 	                if(h(o+d*t)<.4)
-	                    break;
+	                   break;
 	                t+=1.;
 	            }
 	            vec3 e=vec3(.01,.0,.0);
