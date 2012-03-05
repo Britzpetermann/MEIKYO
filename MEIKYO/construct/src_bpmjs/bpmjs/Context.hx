@@ -91,7 +91,9 @@ class Observer
 	public var methodName : String;
 	public var type : ClassInfo;
 	
-	public function new();
+	public function new()
+	{
+	}
 	
 	public function observe(objectToObserve : ContextObject)
 	{

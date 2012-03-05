@@ -81,10 +81,10 @@ private class CustomReceivingObject
 
 private class Message1
 {
-	public function new();
+	public function new() {}
 }
 
 private class Message2
 {
-	public function new();
+	public function new() {}
 }

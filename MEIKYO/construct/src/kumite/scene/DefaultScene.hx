@@ -65,5 +65,7 @@ private class LifecycleAndLayerId
 	public var lifecycle : LayerLifecycle;
 	public var layerId : String;
 	
-	public function new();	
+	public function new()
+	{
+	}
 }

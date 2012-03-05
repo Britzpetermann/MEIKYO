@@ -16,7 +16,7 @@ class TestComponents implements Infos
 	
 	var container : GLDisplayObjectContainer;
 	
-	public function new();
+	public function new() {}
 	
 	@Sequence("boot", "startComplete")	
 	public function start()

@@ -147,7 +147,7 @@ private class AWithMessenger implements Infos
 	@Messenger
 	public var messenger : Messenger;
 	
-	public function new();
+	public function new() {}
 	
 	@Complete
 	public function handleComplete()
@@ -172,5 +172,5 @@ private class B implements Infos
 
 class Message
 {
-	public function new();
+	public function new() {}
 }

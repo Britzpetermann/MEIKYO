@@ -8,9 +8,9 @@ import haxe.rtti.Infos;
 
 class FramebufferDisableLayer implements LayerLifecycle, implements Infos
 {
-	public function new();
+	public function new() {}
 	
-	public function init();
+	public function init() {}
 	
 	public function renderTransition(transitionContext : TransitionContext)
 	{

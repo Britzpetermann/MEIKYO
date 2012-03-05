@@ -20,7 +20,7 @@ class GLTextureAtlasPartConfig
 	public var u1 : Float;
 	public var v1 : Float;
 	
-	public function new();
+	public function new() {}
 	
 	public function toString()
 	{

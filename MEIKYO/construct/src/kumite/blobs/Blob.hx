@@ -10,5 +10,5 @@ class Blob
 	public var area : Float;
 	public var speed : Float;
 	
-	public function new();
+	public function new() {}
 }

@@ -16,7 +16,7 @@ class DisplayListLayer implements Infos, implements LayerLifecycle
 	
 	private var renderer : GLDisplayListRenderer;
 	
-	public function new();
+	public function new() {}
 
 	public function init()
 	{

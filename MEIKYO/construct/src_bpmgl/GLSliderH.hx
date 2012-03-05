@@ -49,7 +49,16 @@ class GLSliderH extends GLDisplayObjectContainer
 	
 	public function bind(binding : Binding)
 	{
+		this.binding.change.unbind(handleBindChange);
 		this.binding = binding;
+		this.binding.change.bind(handleBindChange);
+	}
+	
+	function handleBindChange(binding:Binding)
+	{
+		value = binding.getValue();
+		updateDragValue();
+		updateLabel();
 	}
 	
 	override function setWidth(?value)

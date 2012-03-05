@@ -15,7 +15,7 @@ class StageResizeAction implements Infos
 	@Inject
 	public var stage : Stage;
 	
-	public function new();
+	public function new() {}
 	
 	@Sequence("boot", "initPrepare")
 	public function initPrepare()

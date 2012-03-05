@@ -27,7 +27,7 @@ class TestScene2 implements SceneLifecycle, implements Infos
 	@Inject
 	public var displayListLayer : DisplayListLayer;
 	
-	public function new();
+	public function new() {}
 	
 	public function sceneInit(scene : Scene)
 	{

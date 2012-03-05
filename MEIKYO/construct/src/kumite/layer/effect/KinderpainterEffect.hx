@@ -23,7 +23,7 @@ class KinderpainterEffect implements LayerLifecycle, implements Infos
 			
 	var amount : Float;
 		
-	public function new();
+	public function new() {}
 	
 	public function init()
 	{

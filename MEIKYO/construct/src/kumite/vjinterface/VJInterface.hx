@@ -25,7 +25,7 @@ class VJInterface implements Infos
 	
 	var sceneContainer : GLDisplayObjectContainer;
 	
-	public function new();
+	public function new() {}
 	
 	@Sequence("boot", "startComplete")	
 	public function start()

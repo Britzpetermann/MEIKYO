@@ -42,8 +42,13 @@ class Vec3
 		x /= length;
 		y /= length;
 		z /= length;
-		
+
 		return this;
+	}
+
+	public function getLength()
+	{
+		return Math.sqrt(x * x + y * y + z * z);
 	}
 
 	public function cross(vec : Vec3)
@@ -93,7 +98,7 @@ class Vec3
 	{
 		return new Vec3(x, y, z);
 	}
-	
+
 	public function toString() : String
 	{
 		return "[Vec3 " + " x: " + x  + " y: " + y  + " z: " + z + "]";

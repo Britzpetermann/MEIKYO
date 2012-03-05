@@ -9,7 +9,7 @@ class Sequencer implements haxe.rtti.Infos
 	@Inject
 	public var context : Context;
 	
-	public function new();
+	public function new() {}
 	
 	public function start(name : String)
 	{

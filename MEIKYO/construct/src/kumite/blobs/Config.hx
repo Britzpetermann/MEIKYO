@@ -8,7 +8,7 @@ class Config implements Infos
 	public var blobReaderHTTP : BlobReaderHTTP;
 	public var blobReaderWS : BlobReaderWS;
 	public var blobReaderMouse : BlobReaderMouse;
-	
+
 	public function new()
 	{
 		blobs = new Blobs();

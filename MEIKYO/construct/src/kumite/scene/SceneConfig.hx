@@ -1,7 +1,7 @@
 package kumite.scene;
 import haxe.rtti.Infos;
 
-class Config implements Infos
+class SceneConfig implements Infos
 {
 	public var scenes : Scenes;
 	public var sceneNavigator : SceneNavigator;
@@ -10,5 +10,6 @@ class Config implements Infos
 	{
 		scenes = new Scenes();
 		sceneNavigator = new SceneNavigator();
+		sceneNavigator.transitionTime = 1000;
 	}
 }

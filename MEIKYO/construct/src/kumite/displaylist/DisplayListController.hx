@@ -14,7 +14,7 @@ class DisplayListController implements Infos
 	
 	private var renderer : GLDisplayListRenderer;
 	
-	public function new();
+	public function new() {}
 
 	@Sequence("boot", "start")	
 	public function start()

@@ -56,5 +56,5 @@ private class Viewport
 {
 	public var width : Int;
 	public var height : Int;
-	public function new();
+	public function new() {}
 }

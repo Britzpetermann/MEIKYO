@@ -27,7 +27,7 @@ class PostproFilter implements LayerLifecycle, implements Infos
 	var resolutionUniform : GLUniformLocation;
 	var timeUniform : GLUniformLocation;
 			
-	public function new();
+	public function new() {}
 	
 	public function init()
 	{

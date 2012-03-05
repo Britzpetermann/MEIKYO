@@ -10,7 +10,7 @@ class PreloadDisplay implements Infos
 {
 	var preloaderDiv : HtmlDom;
 	
-	public function new();
+	public function new() {}
 	
 	@Complete
 	public function complete()

@@ -21,7 +21,7 @@ class TestScene1 implements SceneLifecycle, implements Infos
 	@Inject
 	public var colorLayer1 : kumite.layer.ColorLayer;
 	
-	public function new();
+	public function new() {}
 	
 	public function sceneInit(scene : Scene)
 	{

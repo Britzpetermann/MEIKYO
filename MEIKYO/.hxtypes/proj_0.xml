@@ -111,36 +111,6 @@
 	<e path="Void"/>
 </f></new>
 	</class>
-	<class path="haxe.rtti.Infos" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/rtti/Infos.hx" interface="1"><haxe_doc>
-	This is a magic interface. When a class implements [haxe.rtti.Infos], this class and all its
-	subclass will get an additional static field [__rtti] storing the class type informations.
-</haxe_doc></class>
-	<class path="kumite.layer.effect.NautilusEffect" params="" file="construct/src/kumite/layer/effect/NautilusEffect.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<implements path="kumite.scene.LayerLifecycle"/>
-		<__meta__ public="1" line="11" static="1"><d/></__meta__>
-		<__rtti public="1" line="11" static="1"><c path="String"/></__rtti>
-		<time public="1"><c path="kumite.time.Time"/></time>
-		<shaderProgram><c path="WebGLProgram"/></shaderProgram>
-		<vertexPositionAttribute><c path="GLAttribLocation"/></vertexPositionAttribute>
-		<vertexBuffer><c path="WebGLBuffer"/></vertexBuffer>
-		<resolutionUniform><c path="GLUniformLocation"/></resolutionUniform>
-		<timeUniform><c path="GLUniformLocation"/></timeUniform>
-		<amountUniform><c path="GLUniformLocation"/></amountUniform>
-		<amount><c path="Float"/></amount>
-		<init public="1" set="method" line="28"><f a=""><e path="Void"/></f></init>
-		<renderTransition public="1" set="method" line="47"><f a="transitionContext">
-	<c path="kumite.scene.TransitionContext"/>
-	<e path="Void"/>
-</f></renderTransition>
-		<render public="1" set="method" line="53"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></render>
-		<new public="1" set="method" line="26"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="kumite.layer.effect._NautilusEffect.Vertex" params="" file="construct/src/kumite/layer/effect/NautilusEffect.hx" private="1" module="kumite.layer.effect.NautilusEffect"><__meta__ public="1" line="80" static="1"><d/></__meta__></class>
-	<class path="kumite.layer.effect._NautilusEffect.Fragment" params="" file="construct/src/kumite/layer/effect/NautilusEffect.hx" private="1" module="kumite.layer.effect.NautilusEffect"><__meta__ public="1" line="127" static="1"><d/></__meta__></class>
 	<class path="GLDisplayObject" params="" file="construct/src_bpmgl/GLDisplayObject.hx">
 		<nextId static="1"><c path="Int"/></nextId>
 		<id public="1"><c path="Int"/></id>
@@ -208,7 +178,7 @@
 </f></setHeight>
 		<new public="1" set="method" line="12"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="haxe.rtti.XmlParser" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/rtti/XmlParser.hx">
+	<class path="haxe.rtti.XmlParser" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/rtti/XmlParser.hx">
 		<root public="1"><t path="haxe.rtti.TypeRoot"/></root>
 		<curplatform><c path="String"/></curplatform>
 		<sort public="1" set="method" line="38"><f a="?l">
@@ -253,83 +223,66 @@
 	<e path="haxe.rtti.TypeTree"/>
 	<e path="Void"/>
 </f></merge>
-		<mkPath set="method" line="233"><f a="p">
+		<mkPath set="method" line="242"><f a="p">
 	<c path="String"/>
 	<t path="haxe.rtti.Path"/>
 </f></mkPath>
-		<mkTypeParams set="method" line="237"><f a="p">
+		<mkTypeParams set="method" line="246"><f a="p">
 	<c path="String"/>
 	<t path="haxe.rtti.TypeParams"/>
 </f></mkTypeParams>
-		<mkRights set="method" line="244"><f a="r">
+		<mkRights set="method" line="253"><f a="r">
 	<c path="String"/>
 	<e path="haxe.rtti.Rights"/>
 </f></mkRights>
-		<xerror set="method" line="254"><f a="c">
+		<xerror set="method" line="263"><f a="c">
 	<c path="haxe.xml.Fast"/>
 	<d/>
 </f></xerror>
-		<xroot set="method" line="258"><f a="x">
+		<xroot set="method" line="267"><f a="x">
 	<c path="haxe.xml.Fast"/>
 	<e path="Void"/>
 </f></xroot>
-		<processElement public="1" set="method" line="264"><f a="x">
+		<processElement public="1" set="method" line="273"><f a="x">
 	<c path="Xml"/>
 	<e path="haxe.rtti.TypeTree"/>
 </f></processElement>
-		<xpath set="method" line="274"><f a="x">
+		<xpath set="method" line="283"><f a="x">
 	<c path="haxe.xml.Fast"/>
 	<t path="haxe.rtti.PathParams"/>
 </f></xpath>
-		<xclass set="method" line="285"><f a="x">
+		<xclass set="method" line="294"><f a="x">
 	<c path="haxe.xml.Fast"/>
 	<t path="haxe.rtti.Classdef"/>
 </f></xclass>
-		<xclassfield set="method" line="321"><f a="x">
+		<xclassfield set="method" line="330"><f a="x">
 	<c path="haxe.xml.Fast"/>
 	<t path="haxe.rtti.ClassField"/>
 </f></xclassfield>
-		<xenum set="method" line="343"><f a="x">
+		<xenum set="method" line="352"><f a="x">
 	<c path="haxe.xml.Fast"/>
 	<t path="haxe.rtti.Enumdef"/>
 </f></xenum>
-		<xenumfield set="method" line="363"><f a="x">
+		<xenumfield set="method" line="372"><f a="x">
 	<c path="haxe.xml.Fast"/>
 	<t path="haxe.rtti.EnumField"/>
 </f></xenumfield>
-		<xtypedef set="method" line="391"><f a="x">
+		<xtypedef set="method" line="400"><f a="x">
 	<c path="haxe.xml.Fast"/>
 	<t path="haxe.rtti.Typedef"/>
 </f></xtypedef>
-		<xtype set="method" line="414"><f a="x">
+		<xtype set="method" line="423"><f a="x">
 	<c path="haxe.xml.Fast"/>
 	<e path="haxe.rtti.CType"/>
 </f></xtype>
-		<xtypeparams set="method" line="465"><f a="x">
+		<xtypeparams set="method" line="474"><f a="x">
 	<c path="haxe.xml.Fast"/>
 	<c path="List"><e path="haxe.rtti.CType"/></c>
 </f></xtypeparams>
-		<defplat set="method" line="472"><f a=""><c path="List"><c path="String"/></c></f></defplat>
+		<defplat set="method" line="481"><f a=""><c path="List"><c path="String"/></c></f></defplat>
 		<new public="1" set="method" line="34"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="kumite.blobs.BlobReaderHTTP" params="" file="construct/src/kumite/blobs/BlobReaderHTTP.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<__meta__ public="1" line="5" static="1"><d/></__meta__>
-		<__rtti public="1" line="5" static="1"><c path="String"/></__rtti>
-		<blobs public="1"><c path="kumite.blobs.Blobs"/></blobs>
-		<start public="1" set="method" line="13"><f a=""><e path="Void"/></f></start>
-		<readBlobs set="method" line="18"><f a=""><e path="Void"/></f></readBlobs>
-		<onData set="method" line="26"><f a="r">
-	<c path="String"/>
-	<e path="Void"/>
-</f></onData>
-		<onError set="method" line="53"><f a="r">
-	<c path="String"/>
-	<e path="Void"/>
-</f></onError>
-		<new public="1" set="method" line="10"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="Array" params="T" file="/Applications/FDT/haXe/haxe-2.07-osx/std/Array.hx" extern="1">
+	<class path="Array" params="T" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/Array.hx" extern="1">
 		<length public="1" set="null">
 			<c path="Int"/>
 			<haxe_doc>
@@ -585,32 +538,6 @@
 </f></displayError>
 		<errorFilter set="method" line="168"><f a=""><e path="Void"/></f></errorFilter>
 	</class>
-	<class path="kumite.layer.effect.E704Effect" params="" file="construct/src/kumite/layer/effect/E704Effect.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<implements path="kumite.scene.LayerLifecycle"/>
-		<__meta__ public="1" line="11" static="1"><d/></__meta__>
-		<__rtti public="1" line="11" static="1"><c path="String"/></__rtti>
-		<time public="1"><c path="kumite.time.Time"/></time>
-		<shaderProgram><c path="WebGLProgram"/></shaderProgram>
-		<vertexPositionAttribute><c path="GLAttribLocation"/></vertexPositionAttribute>
-		<vertexBuffer><c path="WebGLBuffer"/></vertexBuffer>
-		<resolutionUniform><c path="GLUniformLocation"/></resolutionUniform>
-		<timeUniform><c path="GLUniformLocation"/></timeUniform>
-		<amountUniform><c path="GLUniformLocation"/></amountUniform>
-		<amount><c path="Float"/></amount>
-		<init public="1" set="method" line="28"><f a=""><e path="Void"/></f></init>
-		<renderTransition public="1" set="method" line="47"><f a="transitionContext">
-	<c path="kumite.scene.TransitionContext"/>
-	<e path="Void"/>
-</f></renderTransition>
-		<render public="1" set="method" line="53"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></render>
-		<new public="1" set="method" line="26"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="kumite.layer.effect._E704Effect.Vertex" params="" file="construct/src/kumite/layer/effect/E704Effect.hx" private="1" module="kumite.layer.effect.E704Effect"><__meta__ public="1" line="80" static="1"><d/></__meta__></class>
-	<class path="kumite.layer.effect._E704Effect.Fragment" params="" file="construct/src/kumite/layer/effect/E704Effect.hx" private="1" module="kumite.layer.effect.E704Effect"><__meta__ public="1" line="169" static="1"><d/></__meta__></class>
 	<class path="GLDisplayListRenderer" params="" file="construct/src_bpmgl/GLDisplayListRenderer.hx">
 		<shaderProgram><c path="WebGLProgram"/></shaderProgram>
 		<vertexPositionAttribute><c path="Float"/></vertexPositionAttribute>
@@ -647,6 +574,10 @@
 		<error public="1"><c path="String"/></error>
 		<new public="1" set="method" line="8"><f a=""><e path="Void"/></f></new>
 	</class>
+	<class path="haxe.rtti.Infos" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/rtti/Infos.hx" interface="1"><haxe_doc>
+	This is a magic interface. When a class implements [haxe.rtti.Infos], this class and all its
+	subclass will get an additional static field [__rtti] storing the class type informations.
+</haxe_doc></class>
 	<class path="Color" params="" file="construct/src_bpmgl/Color.hx">
 		<implements path="haxe.rtti.Infos"/>
 		<__rtti public="1" line="3" static="1"><c path="String"/></__rtti>
@@ -707,38 +638,36 @@
 	<c path="reflect.Binding"/>
 	<e path="Void"/>
 </f></bind>
-		<setWidth set="method" line="55" override="1"><f a="?value">
+		<handleBindChange set="method" line="57"><f a="binding">
+	<c path="reflect.Binding"/>
+	<e path="Void"/>
+</f></handleBindChange>
+		<setWidth set="method" line="64" override="1"><f a="?value">
 	<c path="Float"/>
 	<c path="Float"/>
 </f></setWidth>
-		<setMin set="method" line="66"><f a="value">
+		<setMin set="method" line="75"><f a="value">
 	<c path="Float"/>
 	<c path="Float"/>
 </f></setMin>
-		<setMax set="method" line="78"><f a="value">
+		<setMax set="method" line="87"><f a="value">
 	<c path="Float"/>
 	<c path="Float"/>
 </f></setMax>
-		<dragChanged set="method" line="90"><f a="value">
+		<dragChanged set="method" line="99"><f a="value">
 	<c path="Float"/>
 	<e path="Void"/>
 </f></dragChanged>
-		<updateChildren set="method" line="96"><f a=""><e path="Void"/></f></updateChildren>
-		<updateLabel set="method" line="104"><f a=""><e path="Void"/></f></updateLabel>
-		<updateDragValue set="method" line="109"><f a=""><e path="Void"/></f></updateDragValue>
+		<updateChildren set="method" line="105"><f a=""><e path="Void"/></f></updateChildren>
+		<updateLabel set="method" line="113"><f a=""><e path="Void"/></f></updateLabel>
+		<updateDragValue set="method" line="118"><f a=""><e path="Void"/></f></updateDragValue>
 		<new public="1" set="method" line="20"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="kumite.socketsound.Config" params="" file="construct/src/kumite/socketsound/Config.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<__rtti public="1" line="5" static="1"><c path="String"/></__rtti>
-		<socketConnector public="1"><c path="kumite.socketsound.SocketConnector"/></socketConnector>
-		<new public="1" set="method" line="9"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="Enum" params="T" file="/Applications/FDT/haXe/haxe-2.07-osx/std/Enum.hx" extern="1"><haxe_doc>
+	<class path="Enum" params="T" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/Enum.hx" extern="1"><haxe_doc>
 	An abstract type that represents an Enum.
 	See [Type] for the haXe Reflection API.
 </haxe_doc></class>
-	<class path="List" params="T" file="/Applications/FDT/haXe/haxe-2.07-osx/std/List.hx">
+	<class path="List" params="T" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/List.hx">
 		<h><c path="Array"><d/></c></h>
 		<q><c path="Array"><d/></c></q>
 		<length public="1" set="null">
@@ -868,21 +797,6 @@
 	element doesn't imply to copy the whole array content everytime.
 </haxe_doc>
 	</class>
-	<class path="ArrayBuffer" params="" file="construct/src_extern/ArrayBuffer.hx" extern="1">
-		<byteLength public="1"><c path="Float"/></byteLength>
-		<set public="1" set="method"><f a="buffer:?offset">
-	<c path="ArrayBuffer"/>
-	<c path="Int"/>
-	<e path="Void"/>
-</f></set>
-	</class>
-	<class path="Uint32Array" params="" file="construct/src_extern/Uint32Array.hx" extern="1">
-		<extends path="ArrayBuffer"/>
-		<new public="1" set="method"><f a="arrayOrLength">
-	<d/>
-	<e path="Void"/>
-</f></new>
-	</class>
 	<class path="GLAttribLocation" params="" file="construct/src_bpmgl/GLAttribLocation.hx">
 		<location public="1"><c path="Float"/></location>
 		<size public="1"><t path="GLint"/></size>
@@ -921,14 +835,7 @@
 		<speed public="1"><c path="Float"/></speed>
 		<new public="1" set="method" line="13"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="kumite.scene.Config" params="" file="construct/src/kumite/scene/Config.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<__rtti public="1" line="4" static="1"><c path="String"/></__rtti>
-		<scenes public="1"><c path="kumite.scene.Scenes"/></scenes>
-		<sceneNavigator public="1"><c path="kumite.scene.SceneNavigator"/></sceneNavigator>
-		<new public="1" set="method" line="9"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="IntIter" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/IntIter.hx">
+	<class path="IntIter" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/IntIter.hx">
 		<min><c path="Int"/></min>
 		<max><c path="Int"/></max>
 		<hasNext public="1" set="method" line="46">
@@ -962,6 +869,13 @@
 		<itself public="1"><c path="Canvas"/></itself>
 		<new public="1" set="method" line="7"><f a=""><e path="Void"/></f></new>
 	</class>
+	<class path="kumite.lgl.Command" params="" file="construct/src/kumite/lgl/Command.hx">
+		<type public="1"><c path="String"/></type>
+		<new public="1" set="method" line="7"><f a="type">
+	<c path="String"/>
+	<e path="Void"/>
+</f></new>
+	</class>
 	<class path="kumite.stage.Config" params="" file="construct/src/kumite/stage/Config.hx">
 		<implements path="haxe.rtti.Infos"/>
 		<__rtti public="1" line="5" static="1"><c path="String"/></__rtti>
@@ -969,7 +883,7 @@
 		<stageResizeAction public="1"><c path="kumite.stage.StageResizeAction"/></stageResizeAction>
 		<new public="1" set="method" line="10"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="String" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/String.hx" extern="1">
+	<class path="String" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/String.hx" extern="1">
 		<fromCharCode public="1" set="method" static="1"><f a="code">
 	<c path="Int"/>
 	<c path="String"/>
@@ -1074,32 +988,14 @@
 	The basic String class.
 </haxe_doc>
 	</class>
-	<class path="kumite.layer.effect.MetaTunnelEffect" params="" file="construct/src/kumite/layer/effect/MetaTunnelEffect.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<implements path="kumite.scene.LayerLifecycle"/>
-		<__meta__ public="1" line="11" static="1"><d/></__meta__>
-		<__rtti public="1" line="11" static="1"><c path="String"/></__rtti>
-		<time public="1"><c path="kumite.time.Time"/></time>
-		<shaderProgram><c path="WebGLProgram"/></shaderProgram>
-		<vertexPositionAttribute><c path="GLAttribLocation"/></vertexPositionAttribute>
-		<vertexBuffer><c path="WebGLBuffer"/></vertexBuffer>
-		<resolutionUniform><c path="GLUniformLocation"/></resolutionUniform>
-		<timeUniform><c path="GLUniformLocation"/></timeUniform>
-		<amountUniform><c path="GLUniformLocation"/></amountUniform>
-		<amount><c path="Float"/></amount>
-		<init public="1" set="method" line="28"><f a=""><e path="Void"/></f></init>
-		<renderTransition public="1" set="method" line="47"><f a="transitionContext">
-	<c path="kumite.scene.TransitionContext"/>
+	<class path="ArrayBuffer" params="" file="construct/src_extern/ArrayBuffer.hx" extern="1">
+		<byteLength public="1"><c path="Float"/></byteLength>
+		<set public="1" set="method"><f a="buffer:?offset">
+	<c path="ArrayBuffer"/>
+	<c path="Int"/>
 	<e path="Void"/>
-</f></renderTransition>
-		<render public="1" set="method" line="53"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></render>
-		<new public="1" set="method" line="26"><f a=""><e path="Void"/></f></new>
+</f></set>
 	</class>
-	<class path="kumite.layer.effect._MetaTunnelEffect.Vertex" params="" file="construct/src/kumite/layer/effect/MetaTunnelEffect.hx" private="1" module="kumite.layer.effect.MetaTunnelEffect"><__meta__ public="1" line="80" static="1"><d/></__meta__></class>
-	<class path="kumite.layer.effect._MetaTunnelEffect.Fragment" params="" file="construct/src/kumite/layer/effect/MetaTunnelEffect.hx" private="1" module="kumite.layer.effect.MetaTunnelEffect"><__meta__ public="1" line="135" static="1"><d/></__meta__></class>
 	<class path="Float32Array" params="" file="construct/src_extern/Float32Array.hx" extern="1">
 		<extends path="ArrayBuffer"/>
 		<new public="1" set="method"><f a="arrayOrLength">
@@ -1362,7 +1258,7 @@
 </f></set44>
 		<new public="1" set="method" line="55"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="Hash" params="T" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/_std/Hash.hx">
+	<class path="Hash" params="T" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/_std/Hash.hx">
 		<h><d/></h>
 		<set public="1" set="method" line="40">
 			<f a="key:value">
@@ -1394,7 +1290,7 @@
 		a [null] value versus no value.
 	</haxe_doc>
 		</exists>
-		<remove public="1" set="method" line="61">
+		<remove public="1" set="method" line="58">
 			<f a="key">
 				<c path="String"/>
 				<e path="Bool"/>
@@ -1404,19 +1300,19 @@
 		there was such entry.
 	</haxe_doc>
 		</remove>
-		<keys public="1" set="method" line="68">
+		<keys public="1" set="method" line="65">
 			<f a=""><t path="Iterator"><c path="String"/></t></f>
 			<haxe_doc>
 		Returns an iterator of all keys in the hashtable.
 	</haxe_doc>
 		</keys>
-		<iterator public="1" set="method" line="77">
+		<iterator public="1" set="method" line="71">
 			<f a=""><t path="Iterator"><c path="Hash.T"/></t></f>
 			<haxe_doc>
 		Returns an iterator of all values in the hashtable.
 	</haxe_doc>
 		</iterator>
-		<toString public="1" set="method" line="86">
+		<toString public="1" set="method" line="80">
 			<f a=""><c path="String"/></f>
 			<haxe_doc>
 		Returns an displayable representation of the hashtable content.
@@ -1429,37 +1325,14 @@
 	can't always be implemented efficiently.
 </haxe_doc>
 	</class>
-	<class path="kumite.layer.FramebufferEnableLayer" params="" file="construct/src/kumite/layer/FramebufferEnableLayer.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<implements path="kumite.scene.LayerLifecycle"/>
-		<__meta__ public="1" line="9" static="1"><d/></__meta__>
-		<__rtti public="1" line="9" static="1"><c path="String"/></__rtti>
-		<textureRegistry public="1"><c path="GLTextureRegistry"/></textureRegistry>
-		<framebuffer public="1"><c path="GLFramebuffer"/></framebuffer>
-		<textureConfig public="1"><c path="GLTextureConfig"/></textureConfig>
-		<init public="1" set="method" line="26"><f a=""><e path="Void"/></f></init>
-		<renderTransition public="1" set="method" line="46"><f a="transitionContext">
-	<c path="kumite.scene.TransitionContext"/>
-	<e path="Void"/>
-</f></renderTransition>
-		<render public="1" set="method" line="51"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></render>
-		<new public="1" set="method" line="18"><f a="width:height">
-	<c path="Int"/>
-	<c path="Int"/>
-	<e path="Void"/>
-</f></new>
-	</class>
+	<class path="ImageData" params="" file="construct/src_extern/ImageData.hx" extern="1" interface="1"/>
 	<class path="GLStage" params="" file="construct/src_bpmgl/GLStage.hx">
 		<extends path="GLDisplayObjectContainer"/>
 		<stageWidth public="1"><c path="Float"/></stageWidth>
 		<stageHeight public="1"><c path="Float"/></stageHeight>
 		<new public="1" set="method" line="1"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="ImageData" params="" file="construct/src_extern/ImageData.hx" extern="1" interface="1"/>
-	<class path="IntHash" params="T" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/_std/IntHash.hx">
+	<class path="IntHash" params="T" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/_std/IntHash.hx">
 		<h><d/></h>
 		<set public="1" set="method" line="38">
 			<f a="key:value">
@@ -1507,13 +1380,13 @@
 		Returns an iterator of all keys in the hashtable.
 	</haxe_doc>
 		</keys>
-		<iterator public="1" set="method" line="65">
+		<iterator public="1" set="method" line="62">
 			<f a=""><t path="Iterator"><c path="IntHash.T"/></t></f>
 			<haxe_doc>
 		Returns an iterator of all values in the hashtable.
 	</haxe_doc>
 		</iterator>
-		<toString public="1" set="method" line="74">
+		<toString public="1" set="method" line="71">
 			<f a=""><c path="String"/></f>
 			<haxe_doc>
 		Returns an displayable representation of the hashtable content.
@@ -1525,38 +1398,6 @@
 	On Flash and Javascript, the underlying structure is an Object.
 </haxe_doc>
 	</class>
-	<class path="kumite.layer.TestLayer" params="" file="construct/src/kumite/layer/TestLayer.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<implements path="kumite.scene.LayerLifecycle"/>
-		<__meta__ public="1" line="14" static="1"><d/></__meta__>
-		<__rtti public="1" line="14" static="1"><c path="String"/></__rtti>
-		<time public="1"><c path="kumite.time.Time"/></time>
-		<camera public="1"><c path="kumite.camera.Camera"/></camera>
-		<transitions public="1"><c path="kumite.layer.LayerTransitions"/></transitions>
-		<alphaTransition public="1"><c path="kumite.layer.LayerTransition"/></alphaTransition>
-		<color public="1"><c path="Color"/></color>
-		<scale public="1"><c path="Float"/></scale>
-		<position public="1"><c path="Vec3"/></position>
-		<projectionMatrix><c path="Matrix4"/></projectionMatrix>
-		<shaderProgram><c path="WebGLProgram"/></shaderProgram>
-		<vertexPositionAttribute><c path="GLAttribLocation"/></vertexPositionAttribute>
-		<vertexBuffer><c path="WebGLBuffer"/></vertexBuffer>
-		<projectionMatrixUniform><c path="GLUniformLocation"/></projectionMatrixUniform>
-		<worldViewMatrixUniform><c path="GLUniformLocation"/></worldViewMatrixUniform>
-		<colorUniform><c path="GLUniformLocation"/></colorUniform>
-		<init public="1" set="method" line="57"><f a=""><e path="Void"/></f></init>
-		<renderTransition public="1" set="method" line="74"><f a="transitionContext">
-	<c path="kumite.scene.TransitionContext"/>
-	<e path="Void"/>
-</f></renderTransition>
-		<render public="1" set="method" line="80"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></render>
-		<new public="1" set="method" line="43"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="kumite.layer._TestLayer.Vertex" params="" file="construct/src/kumite/layer/TestLayer.hx" private="1" module="kumite.layer.TestLayer"><__meta__ public="1" line="122" static="1"><d/></__meta__></class>
-	<class path="kumite.layer._TestLayer.Fragment" params="" file="construct/src/kumite/layer/TestLayer.hx" private="1" module="kumite.layer.TestLayer"><__meta__ public="1" line="137" static="1"><d/></__meta__></class>
 	<class path="kumite.scene.LayerState" params="" file="construct/src/kumite/scene/LayerState.hx">
 		<OUT public="1" line="5" static="1"><c path="kumite.scene.LayerState"/></OUT>
 		<IN public="1" line="6" static="1"><c path="kumite.scene.LayerState"/></IN>
@@ -1575,7 +1416,7 @@
 		<start public="1" set="method" line="15"><f a=""><e path="Void"/></f></start>
 		<new public="1" set="method" line="12"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="StringTools" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/StringTools.hx">
+	<class path="StringTools" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/StringTools.hx">
 		<urlEncode public="1" set="method" line="38" static="1">
 			<f a="s">
 				<c path="String"/>
@@ -1734,11 +1575,65 @@
 	each application using it.
 </haxe_doc>
 	</class>
-	<class path="js.HtmlCollection" params="T" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom" extern="1">
+	<class path="haxe.io.Bytes" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/io/Bytes.hx">
+		<alloc public="1" set="method" line="225" static="1"><f a="length">
+	<c path="Int"/>
+	<c path="haxe.io.Bytes"/>
+</f></alloc>
+		<ofString public="1" set="method" line="253" static="1"><f a="s">
+	<c path="String"/>
+	<c path="haxe.io.Bytes"/>
+</f></ofString>
+		<ofData public="1" set="method" line="292" static="1"><f a="b">
+	<t path="haxe.io.BytesData"/>
+	<c path="haxe.io.Bytes"/>
+</f></ofData>
+		<length public="1" set="null"><c path="Int"/></length>
+		<b><t path="haxe.io.BytesData"/></b>
+		<get public="1" get="inline" set="null" line="37"><f a="pos">
+	<c path="Int"/>
+	<c path="Int"/>
+</f></get>
+		<set public="1" get="inline" set="null" line="51"><f a="pos:v">
+	<c path="Int"/>
+	<c path="Int"/>
+	<e path="Void"/>
+</f></set>
+		<blit public="1" set="method" line="65"><f a="pos:src:srcpos:len">
+	<c path="Int"/>
+	<c path="haxe.io.Bytes"/>
+	<c path="Int"/>
+	<c path="Int"/>
+	<e path="Void"/>
+</f></blit>
+		<sub public="1" set="method" line="93"><f a="pos:len">
+	<c path="Int"/>
+	<c path="Int"/>
+	<c path="haxe.io.Bytes"/>
+</f></sub>
+		<compare public="1" set="method" line="112"><f a="other">
+	<c path="haxe.io.Bytes"/>
+	<c path="Int"/>
+</f></compare>
+		<readString public="1" set="method" line="148"><f a="pos:len">
+	<c path="Int"/>
+	<c path="Int"/>
+	<c path="String"/>
+</f></readString>
+		<toString public="1" set="method" line="192"><f a=""><c path="String"/></f></toString>
+		<toHex public="1" set="method" line="207"><f a=""><c path="String"/></f></toHex>
+		<getData public="1" get="inline" set="null" line="221"><f a=""><t path="haxe.io.BytesData"/></f></getData>
+		<new set="method" line="32"><f a="length:b">
+	<c path="Int"/>
+	<t path="haxe.io.BytesData"/>
+	<e path="Void"/>
+</f></new>
+	</class>
+	<class path="js.HtmlCollection" params="T" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom" extern="1">
 		<length public="1" set="null"><c path="Int"/></length>
 		<haxe_dynamic><c path="js.HtmlCollection.T"/></haxe_dynamic>
 	</class>
-	<typedef path="js.MetaDom" params="T" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.MetaDom" params="T" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<setAttribute set="method"><f a="attr:val">
 	<c path="String"/>
 	<c path="String"/>
@@ -1781,8 +1676,8 @@
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Dom" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx"><t path="js.MetaDom"><t path="js.Dom"/></t></typedef>
-	<typedef path="js.HtmlDom" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Dom" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx"><t path="js.MetaDom"><t path="js.Dom"/></t></typedef>
+	<typedef path="js.HtmlDom" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<title><c path="String"/></title>
 	<style><t path="js.Style"/></style>
 	<setAttribute set="method"><f a="attr:val">
@@ -1906,7 +1801,7 @@
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.FormElement" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.FormElement" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -2044,7 +1939,7 @@
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Anchor" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Anchor" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<title><c path="String"/></title>
 	<target><c path="String"/></target>
 	<tabIndex><c path="Int"/></tabIndex>
@@ -2175,7 +2070,7 @@
 </f></appendChild>
 	<accessKey><c path="String"/></accessKey>
 </a></typedef>
-	<typedef path="js.Body" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Body" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<vLink><c path="String"/></vLink>
 	<title><c path="String"/></title>
 	<text><c path="String"/></text>
@@ -2305,7 +2200,7 @@
 </f></appendChild>
 	<aLink><c path="String"/></aLink>
 </a></typedef>
-	<typedef path="js.Button" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Button" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -2443,7 +2338,7 @@
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Checkbox" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Checkbox" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -2583,7 +2478,7 @@
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Document" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Document" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<writeln set="method"><f a="str">
 	<c path="String"/>
 	<e path="Void"/>
@@ -2746,7 +2641,7 @@
 </f></appendChild>
 	<anchors><c path="js.HtmlCollection"><t path="js.Anchor"/></c></anchors>
 </a></typedef>
-	<typedef path="js.Event" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Event" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<type><c path="String"/></type>
 	<target><t path="js.HtmlDom"/></target>
 	<stopPropagation set="method"><f a=""><e path="Void"/></f></stopPropagation>
@@ -2761,7 +2656,7 @@
 	<button><c path="Int"/></button>
 	<altKey><e path="Bool"/></altKey>
 </a></typedef>
-	<typedef path="js.FileUpload" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.FileUpload" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -2900,7 +2795,7 @@
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Form" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Form" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<title><c path="String"/></title>
 	<target><c path="String"/></target>
 	<tabIndex><c path="Int"/></tabIndex>
@@ -3044,7 +2939,7 @@
 	<action><c path="String"/></action>
 	<acceptCharset><c path="String"/></acceptCharset>
 </a></typedef>
-	<typedef path="js.Frame" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Frame" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<title><c path="String"/></title>
 	<style><t path="js.Style"/></style>
 	<src><c path="String"/></src>
@@ -3176,7 +3071,7 @@
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Frameset" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Frameset" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<title><c path="String"/></title>
 	<style><t path="js.Style"/></style>
 	<setAttribute set="method"><f a="attr:val">
@@ -3302,7 +3197,7 @@
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Hidden" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Hidden" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -3441,7 +3336,7 @@
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.History" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.History" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<length><c path="Int"/></length>
 	<go set="method"><f a="p">
 	<d/>
@@ -3450,7 +3345,7 @@
 	<forward set="method"><f a=""><e path="Void"/></f></forward>
 	<back set="method"><f a=""><e path="Void"/></f></back>
 </a></typedef>
-	<typedef path="js.IFrame" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.IFrame" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<width><c path="Int"/></width>
 	<title><c path="String"/></title>
 	<style><t path="js.Style"/></style>
@@ -3583,7 +3478,7 @@
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Image" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Image" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<width><c path="Int"/></width>
 	<vspace><c path="Int"/></vspace>
 	<useMap><c path="String"/></useMap>
@@ -3732,7 +3627,7 @@
 	<alt><c path="String"/></alt>
 	<align><c path="String"/></align>
 </a></typedef>
-	<typedef path="js.Link" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Link" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
 	<target><c path="String"/></target>
@@ -3870,7 +3765,7 @@
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Location" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Location" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<search><c path="String"/></search>
 	<replace set="method"><f a="url">
 	<c path="String"/>
@@ -3892,7 +3787,7 @@
 	<e path="Void"/>
 </f></assign>
 </a></typedef>
-	<typedef path="js.Navigator" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Navigator" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<userAgent><c path="String"/></userAgent>
 	<taintEnabled set="method"><f a=""><e path="Bool"/></f></taintEnabled>
 	<platform><c path="String"/></platform>
@@ -3902,7 +3797,7 @@
 	<appName><c path="String"/></appName>
 	<appCodeName><c path="String"/></appCodeName>
 </a></typedef>
-	<typedef path="js.Option" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Option" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -4043,7 +3938,7 @@
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Password" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Password" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -4185,7 +4080,7 @@
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Radio" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Radio" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -4326,7 +4221,7 @@
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Reset" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Reset" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -4464,14 +4359,14 @@
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Screen" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Screen" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<width><c path="Int"/></width>
 	<height><c path="Int"/></height>
 	<colorDepth><c path="Int"/></colorDepth>
 	<availWidth><c path="Int"/></availWidth>
 	<availHeight><c path="Int"/></availHeight>
 </a></typedef>
-	<typedef path="js.Select" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Select" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -4618,7 +4513,7 @@
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Style" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Style" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<zoom><d/></zoom>
 	<zIndex><c path="Int"/></zIndex>
 	<writingMode><d/></writingMode>
@@ -4738,13 +4633,13 @@
 	<backgroundAttachment><d/></backgroundAttachment>
 	<background><d/></background>
 </a></typedef>
-	<typedef path="js.StyleSheet" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.StyleSheet" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
 	<href><c path="String"/></href>
 	<disabled><e path="Bool"/></disabled>
 </a></typedef>
-	<typedef path="js.Submit" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Submit" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -4886,7 +4781,7 @@
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Text" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Text" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -5028,7 +4923,7 @@
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Textarea" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Textarea" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<value><c path="String"/></value>
 	<type><c path="String"/></type>
 	<title><c path="String"/></title>
@@ -5170,7 +5065,7 @@
 	<e path="Void"/>
 </f></appendChild>
 </a></typedef>
-	<typedef path="js.Window" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Dom.hx" module="js.Dom"><a>
+	<typedef path="js.Window" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Dom.hx" module="js.Dom"><a>
 	<top><t path="js.Window"/></top>
 	<status><c path="String"/></status>
 	<self><t path="js.Window"/></self>
@@ -5302,39 +5197,6 @@
 	<e path="Void"/>
 </f></handleMouseMove2>
 		<new public="1" set="method" line="16"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="bpmjs.Task" params="T" file="construct/src_bpmjs/bpmjs/Task.hx">
-		<startSignaler public="1"><c path="hsl.haxe.Signaler"><c path="bpmjs.Task.T"/></c></startSignaler>
-		<completeSignaler public="1"><c path="hsl.haxe.Signaler"><c path="bpmjs.Task.T"/></c></completeSignaler>
-		<errorSignaler public="1"><c path="hsl.haxe.Signaler"><c path="bpmjs.TaskError"><c path="bpmjs.Task.T"/></c></c></errorSignaler>
-		<monitor public="1" get="getMonitor" set="setMonitor"><c path="bpmjs.ProgressMonitor"/></monitor>
-		<start public="1" set="method" line="24"><f a=""><e path="Void"/></f></start>
-		<doStart public="1" set="method" line="38"><f a=""><e path="Void"/></f></doStart>
-		<complete public="1" set="method" line="42"><f a=""><e path="Void"/></f></complete>
-		<error public="1" set="method" line="49"><f a="result:error">
-	<c path="bpmjs.Task.T"/>
-	<c path="String"/>
-	<e path="Void"/>
-</f></error>
-		<getMonitor set="method" line="57"><f a=""><c path="bpmjs.ProgressMonitor"/></f></getMonitor>
-		<setMonitor set="method" line="62"><f a="monitor">
-	<c path="bpmjs.ProgressMonitor"/>
-	<c path="bpmjs.ProgressMonitor"/>
-</f></setMonitor>
-		<new public="1" set="method" line="15"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="bpmjs.ImageLoaderTask" params="" file="construct/src_bpmjs/bpmjs/ImageLoaderTask.hx">
-		<extends path="bpmjs.Task"><c path="bpmjs.ImageLoaderTask"/></extends>
-		<location public="1"><c path="String"/></location>
-		<image public="1"><c path="Image"/></image>
-		<timer><c path="haxe.Timer"/></timer>
-		<doStart public="1" set="method" line="21" override="1"><f a=""><e path="Void"/></f></doStart>
-		<handleImageLoaded set="method" line="30"><f a=""><e path="Void"/></f></handleImageLoaded>
-		<doComplete set="method" line="38"><f a=""><e path="Void"/></f></doComplete>
-		<new public="1" set="method" line="14"><f a="?location">
-	<c path="String"/>
-	<e path="Void"/>
-</f></new>
 	</class>
 	<class path="hsl.haxe.Signaler" params="Datatype" file="/usr/lib/haxe/lib/hsl-pico-1/1,6/hsl/haxe/Signaler.hx" interface="1">
 		<isListenedTo public="1" get="getIsListenedTo" set="null">
@@ -5909,185 +5771,6 @@
 		<STOPPED public="1" get="inline" set="null" line="429" static="1"><c path="Int"/></STOPPED>
 		<UNDISTURBED public="1" get="inline" set="null" line="430" static="1"><c path="Int"/></UNDISTURBED>
 	</class>
-	<class path="kumite.layer.effect.PostproFilter" params="" file="construct/src/kumite/layer/effect/PostproFilter.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<implements path="kumite.scene.LayerLifecycle"/>
-		<__meta__ public="1" line="11" static="1"><d/></__meta__>
-		<__rtti public="1" line="11" static="1"><c path="String"/></__rtti>
-		<textureRegistry public="1"><c path="GLTextureRegistry"/></textureRegistry>
-		<time public="1"><c path="kumite.time.Time"/></time>
-		<textureConfig public="1"><c path="GLTextureConfig"/></textureConfig>
-		<shaderProgram><c path="WebGLProgram"/></shaderProgram>
-		<vertexPositionAttribute><c path="GLAttribLocation"/></vertexPositionAttribute>
-		<vertexBuffer><c path="WebGLBuffer"/></vertexBuffer>
-		<textureUniform><c path="GLUniformLocation"/></textureUniform>
-		<resolutionUniform><c path="GLUniformLocation"/></resolutionUniform>
-		<timeUniform><c path="GLUniformLocation"/></timeUniform>
-		<init public="1" set="method" line="32"><f a=""><e path="Void"/></f></init>
-		<renderTransition public="1" set="method" line="49"><f a="transitionContext">
-	<c path="kumite.scene.TransitionContext"/>
-	<e path="Void"/>
-</f></renderTransition>
-		<render public="1" set="method" line="54"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></render>
-		<new public="1" set="method" line="30"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="kumite.layer.effect._PostproFilter.Vertex" params="" file="construct/src/kumite/layer/effect/PostproFilter.hx" private="1" module="kumite.layer.effect.PostproFilter"><__meta__ public="1" line="83" static="1"><d/></__meta__></class>
-	<class path="kumite.layer.effect._PostproFilter.Fragment" params="" file="construct/src/kumite/layer/effect/PostproFilter.hx" private="1" module="kumite.layer.effect.PostproFilter"><__meta__ public="1" line="129" static="1"><d/></__meta__></class>
-	<class path="Vec3" params="" file="construct/src_bpmgl/Vec3.hx">
-		<x public="1"><c path="Float"/></x>
-		<y public="1"><c path="Float"/></y>
-		<z public="1"><c path="Float"/></z>
-		<scale public="1" set="method" line="16"><f a="factor">
-	<c path="Float"/>
-	<e path="Void"/>
-</f></scale>
-		<multiply public="1" set="method" line="23"><f a="x:y:z">
-	<c path="Float"/>
-	<c path="Float"/>
-	<c path="Float"/>
-	<e path="Void"/>
-</f></multiply>
-		<subtract public="1" set="method" line="30"><f a="x:y:z">
-	<c path="Float"/>
-	<c path="Float"/>
-	<c path="Float"/>
-	<c path="Vec3"/>
-</f></subtract>
-		<normalize public="1" set="method" line="39"><f a=""><c path="Vec3"/></f></normalize>
-		<cross public="1" set="method" line="49"><f a="vec">
-	<c path="Vec3"/>
-	<c path="Vec3"/>
-</f></cross>
-		<dot public="1" set="method" line="57"><f a="vec">
-	<c path="Vec3"/>
-	<c path="Float"/>
-</f></dot>
-		<equals public="1" set="method" line="62"><f a="vec">
-	<c path="Vec3"/>
-	<e path="Bool"/>
-</f></equals>
-		<transform public="1" set="method" line="67"><f a="matrix">
-	<c path="Matrix4"/>
-	<e path="Void"/>
-</f></transform>
-		<setFrom public="1" set="method" line="76"><f a="?value:?vec3">
-	<c path="Float"/>
-	<t path="Vec3Components"/>
-	<e path="Void"/>
-</f></setFrom>
-		<clone public="1" set="method" line="92"><f a=""><c path="Vec3"/></f></clone>
-		<toString public="1" set="method" line="97"><f a=""><c path="String"/></f></toString>
-		<new public="1" set="method" line="9"><f a="?x:?y:?z">
-	<c path="Float"/>
-	<c path="Float"/>
-	<c path="Float"/>
-	<e path="Void"/>
-</f></new>
-	</class>
-	<class path="kumite.spritemesh.SpriteMeshLayer" params="" file="construct/src/kumite/spritemesh/SpriteMeshLayer.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<implements path="kumite.scene.LayerLifecycle"/>
-		<__meta__ public="1" line="16" static="1"><d/></__meta__>
-		<__rtti public="1" line="16" static="1"><c path="String"/></__rtti>
-		<max public="1" line="18" static="1"><c path="Int"/></max>
-		<axis line="128" static="1"><c path="Vec3"/></axis>
-		<zAxis line="129" static="1"><c path="Vec3"/></zAxis>
-		<time public="1"><c path="kumite.time.Time"/></time>
-		<textureRegistry public="1"><c path="GLTextureRegistry"/></textureRegistry>
-		<transitions public="1"><c path="kumite.layer.LayerTransitions"/></transitions>
-		<alphaTransition public="1"><c path="kumite.layer.LayerTransition"/></alphaTransition>
-		<offset public="1"><c path="Float"/></offset>
-		<textureFrequenceParam public="1"><c path="Float"/></textureFrequenceParam>
-		<textureAmpParam public="1"><c path="Float"/></textureAmpParam>
-		<sprites><c path="Array"><c path="kumite.spritemesh.Sprite"/></c></sprites>
-		<projectionMatrix><c path="Matrix4"/></projectionMatrix>
-		<cameraMatrix><c path="Matrix4"/></cameraMatrix>
-		<cameraMatrix2><c path="Matrix4"/></cameraMatrix2>
-		<shaderProgram><c path="WebGLProgram"/></shaderProgram>
-		<vertexBuffer><c path="Float32Array"/></vertexBuffer>
-		<vertexPositionAttribute><c path="GLAttribLocation"/></vertexPositionAttribute>
-		<vertexUVBuffer><c path="Float32Array"/></vertexUVBuffer>
-		<vertexUVAttribute><c path="GLAttribLocation"/></vertexUVAttribute>
-		<vertexNormalBuffer><c path="Float32Array"/></vertexNormalBuffer>
-		<vertexNormalAttribute><c path="GLAttribLocation"/></vertexNormalAttribute>
-		<cubeVerticesIndexBuffer><c path="WebGLBuffer"/></cubeVerticesIndexBuffer>
-		<projectionMatrixUniform><c path="GLUniformLocation"/></projectionMatrixUniform>
-		<alphaUniform><c path="GLUniformLocation"/></alphaUniform>
-		<textureUniform><c path="GLUniformLocation"/></textureUniform>
-		<spriteRenderIndexes><c path="Uint32Array"/></spriteRenderIndexes>
-		<spriteRenderIndexesCount><c path="Int"/></spriteRenderIndexesCount>
-		<init public="1" set="method" line="82"><f a=""><e path="Void"/></f></init>
-		<renderTransition public="1" set="method" line="95"><f a="transitionContext">
-	<c path="kumite.scene.TransitionContext"/>
-	<e path="Void"/>
-</f></renderTransition>
-		<timems><c path="Float"/></timems>
-		<render public="1" set="method" line="103"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></render>
-		<renderGLInit set="method" line="117"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></renderGLInit>
-		<updateModel set="method" line="131"><f a=""><e path="Void"/></f></updateModel>
-		<updateIndexes set="method" line="165"><f a=""><e path="Void"/></f></updateIndexes>
-		<sortIndexes set="method" line="191"><f a=""><e path="Void"/></f></sortIndexes>
-		<quicksort set="method" line="196"><f a="lo:hi">
-	<c path="Int"/>
-	<c path="Int"/>
-	<e path="Void"/>
-</f></quicksort>
-		<updateBuffer set="method" line="214"><f a=""><e path="Void"/></f></updateBuffer>
-		<renderGL set="method" line="261"><f a=""><e path="Void"/></f></renderGL>
-		<initGl set="method" line="283"><f a=""><e path="Void"/></f></initGl>
-		<new public="1" set="method" line="65"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="kumite.spritemesh._SpriteMeshLayer.Vertex" params="" file="construct/src/kumite/spritemesh/SpriteMeshLayer.hx" private="1" module="kumite.spritemesh.SpriteMeshLayer"><__meta__ public="1" line="414" static="1"><d/></__meta__></class>
-	<class path="kumite.spritemesh._SpriteMeshLayer.Fragment" params="" file="construct/src/kumite/spritemesh/SpriteMeshLayer.hx" private="1" module="kumite.spritemesh.SpriteMeshLayer"><__meta__ public="1" line="436" static="1"><d/></__meta__></class>
-	<class path="kumite.layer.effect.RippleFilter" params="" file="construct/src/kumite/layer/effect/RippleFilter.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<implements path="kumite.scene.LayerLifecycle"/>
-		<__meta__ public="1" line="11" static="1"><d/></__meta__>
-		<__rtti public="1" line="11" static="1"><c path="String"/></__rtti>
-		<time public="1"><c path="kumite.time.Time"/></time>
-		<textureRegistry public="1"><c path="GLTextureRegistry"/></textureRegistry>
-		<textureConfig public="1"><c path="GLTextureConfig"/></textureConfig>
-		<shaderProgram><c path="WebGLProgram"/></shaderProgram>
-		<vertexPositionAttribute><c path="GLAttribLocation"/></vertexPositionAttribute>
-		<vertexBuffer><c path="WebGLBuffer"/></vertexBuffer>
-		<resolutionUniform><c path="GLUniformLocation"/></resolutionUniform>
-		<timeUniform><c path="GLUniformLocation"/></timeUniform>
-		<amountUniform><c path="GLUniformLocation"/></amountUniform>
-		<textureUniform><c path="GLUniformLocation"/></textureUniform>
-		<amount><c path="Float"/></amount>
-		<init public="1" set="method" line="35"><f a=""><e path="Void"/></f></init>
-		<renderTransition public="1" set="method" line="55"><f a="transitionContext">
-	<c path="kumite.scene.TransitionContext"/>
-	<e path="Void"/>
-</f></renderTransition>
-		<render public="1" set="method" line="61"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></render>
-		<new public="1" set="method" line="33"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="kumite.layer.effect._RippleFilter.Vertex" params="" file="construct/src/kumite/layer/effect/RippleFilter.hx" private="1" module="kumite.layer.effect.RippleFilter"><__meta__ public="1" line="94" static="1"><d/></__meta__></class>
-	<class path="kumite.layer.effect._RippleFilter.Fragment" params="" file="construct/src/kumite/layer/effect/RippleFilter.hx" private="1" module="kumite.layer.effect.RippleFilter"><__meta__ public="1" line="124" static="1"><d/></__meta__></class>
-	<class path="GLTexture" params="" file="construct/src_bpmgl/GLTexture.hx">
-		<width public="1"><c path="Int"/></width>
-		<height public="1"><c path="Int"/></height>
-		<texture public="1"><c path="WebGLTexture"/></texture>
-		<new public="1" set="method" line="7"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="GLFramebuffer" params="" file="construct/src_bpmgl/GLFramebuffer.hx">
-		<extends path="GLTexture"/>
-		<framebuffer public="1"><c path="WebGLFramebuffer"/></framebuffer>
-		<new public="1" set="method" line="5"><f a=""><e path="Void"/></f></new>
-	</class>
 	<class path="hsl.haxe.Signal" params="Datatype" file="/usr/lib/haxe/lib/hsl-pico-1/1,6/hsl/haxe/Signal.hx">
 		<currentBond public="1" set="null">
 			<c path="hsl.haxe.Bond"/>
@@ -6298,10 +5981,19 @@
  * method can access the actual Signal instances.
  </haxe_doc>
 	</class>
-	<class path="Class" params="T" file="/Applications/FDT/haXe/haxe-2.07-osx/std/Class.hx" extern="1"><haxe_doc>
+	<class path="Class" params="T" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/Class.hx" extern="1"><haxe_doc>
 	An abstract type that represents a Class.
 	See [Type] for the haXe Reflection API.
 </haxe_doc></class>
+	<class path="kumite.lgl.LGLWorkerHandler" params="" file="construct/src/kumite/lgl/LGLWorkerHandler.hx">
+		<implements path="haxe.rtti.Infos"/>
+		<__meta__ public="1" line="4" static="1"><d/></__meta__>
+		<__rtti public="1" line="4" static="1"><c path="String"/></__rtti>
+		<lgl public="1"><c path="kumite.lgl.LGL"/></lgl>
+		<lglLayer public="1"><c path="kumite.lgl.LGLLayer"/></lglLayer>
+		<start public="1" set="method" line="16"><f a=""><e path="Void"/></f></start>
+		<new public="1" set="method" line="12"><f a=""><e path="Void"/></f></new>
+	</class>
 	<class path="WebGLFramebuffer" params="" file="construct/src_extern/WebGLFramebuffer.hx" extern="1"/>
 	<class path="bpmjs.Sequencer" params="" file="construct/src_bpmjs/bpmjs/Sequencer.hx">
 		<implements path="haxe.rtti.Infos"/>
@@ -6313,6 +6005,26 @@
 	<e path="Void"/>
 </f></start>
 		<new public="1" set="method" line="12"><f a=""><e path="Void"/></f></new>
+	</class>
+	<class path="bpmjs.Task" params="T" file="construct/src_bpmjs/bpmjs/Task.hx">
+		<startSignaler public="1"><c path="hsl.haxe.Signaler"><c path="bpmjs.Task.T"/></c></startSignaler>
+		<completeSignaler public="1"><c path="hsl.haxe.Signaler"><c path="bpmjs.Task.T"/></c></completeSignaler>
+		<errorSignaler public="1"><c path="hsl.haxe.Signaler"><c path="bpmjs.TaskError"><c path="bpmjs.Task.T"/></c></c></errorSignaler>
+		<monitor public="1" get="getMonitor" set="setMonitor"><c path="bpmjs.ProgressMonitor"/></monitor>
+		<start public="1" set="method" line="24"><f a=""><e path="Void"/></f></start>
+		<doStart public="1" set="method" line="38"><f a=""><e path="Void"/></f></doStart>
+		<complete public="1" set="method" line="42"><f a=""><e path="Void"/></f></complete>
+		<error public="1" set="method" line="49"><f a="result:error">
+	<c path="bpmjs.Task.T"/>
+	<c path="String"/>
+	<e path="Void"/>
+</f></error>
+		<getMonitor set="method" line="57"><f a=""><c path="bpmjs.ProgressMonitor"/></f></getMonitor>
+		<setMonitor set="method" line="62"><f a="monitor">
+	<c path="bpmjs.ProgressMonitor"/>
+	<c path="bpmjs.ProgressMonitor"/>
+</f></setMonitor>
+		<new public="1" set="method" line="15"><f a=""><e path="Void"/></f></new>
 	</class>
 	<class path="bpmjs.TaskGroup" params="" file="construct/src_bpmjs/bpmjs/TaskGroup.hx">
 		<extends path="bpmjs.Task"><c path="bpmjs.TaskGroup"/></extends>
@@ -6426,6 +6138,11 @@
 	<c path="Float"/>
 </f></signum>
 	</class>
+	<class path="kumite.lgl.LGL" params="" file="construct/src/kumite/lgl/LGL.hx">
+		<vertexes public="1"><c path="Array"><c path="kumite.lgl.Vertex"/></c></vertexes>
+		<edges public="1"><c path="Array"><c path="kumite.lgl.Edge"/></c></edges>
+		<new public="1" set="method" line="8"><f a=""><e path="Void"/></f></new>
+	</class>
 	<typedef path="hsl.haxe.Subject" params="" file="/usr/lib/haxe/lib/hsl-pico-1/1,6/hsl/haxe/Subject.hx">
 		<a/>
 		<haxe_doc><![CDATA[
@@ -6466,32 +6183,6 @@
  ]]></haxe_doc>
 	</typedef>
 	<class path="Video" params="" file="construct/src_extern/Video.hx" extern="1"/>
-	<class path="kumite.layer.effect.KinderpainterEffect" params="" file="construct/src/kumite/layer/effect/KinderpainterEffect.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<implements path="kumite.scene.LayerLifecycle"/>
-		<__meta__ public="1" line="11" static="1"><d/></__meta__>
-		<__rtti public="1" line="11" static="1"><c path="String"/></__rtti>
-		<time public="1"><c path="kumite.time.Time"/></time>
-		<shaderProgram><c path="WebGLProgram"/></shaderProgram>
-		<vertexPositionAttribute><c path="GLAttribLocation"/></vertexPositionAttribute>
-		<vertexBuffer><c path="WebGLBuffer"/></vertexBuffer>
-		<resolutionUniform><c path="GLUniformLocation"/></resolutionUniform>
-		<timeUniform><c path="GLUniformLocation"/></timeUniform>
-		<amountUniform><c path="GLUniformLocation"/></amountUniform>
-		<amount><c path="Float"/></amount>
-		<init public="1" set="method" line="28"><f a=""><e path="Void"/></f></init>
-		<renderTransition public="1" set="method" line="47"><f a="transitionContext">
-	<c path="kumite.scene.TransitionContext"/>
-	<e path="Void"/>
-</f></renderTransition>
-		<render public="1" set="method" line="53"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></render>
-		<new public="1" set="method" line="26"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="kumite.layer.effect._KinderpainterEffect.Vertex" params="" file="construct/src/kumite/layer/effect/KinderpainterEffect.hx" private="1" module="kumite.layer.effect.KinderpainterEffect"><__meta__ public="1" line="80" static="1"><d/></__meta__></class>
-	<class path="kumite.layer.effect._KinderpainterEffect.Fragment" params="" file="construct/src/kumite/layer/effect/KinderpainterEffect.hx" private="1" module="kumite.layer.effect.KinderpainterEffect"><__meta__ public="1" line="380" static="1"><d/></__meta__></class>
 	<class path="LogLevel" params="" file="construct/src_bpmjs/LogLevel.hx">
 		<INFO public="1" line="3" static="1"><c path="LogLevel"/></INFO>
 		<WARN public="1" line="4" static="1"><c path="LogLevel"/></WARN>
@@ -6507,51 +6198,6 @@
 	<e path="Void"/>
 </f></new>
 	</class>
-	<class path="GLTextureConfig" params="" file="construct/src_bpmgl/GLTextureConfig.hx">
-		<CROP public="1" set="method" line="3" static="1"><f a="width:height">
-	<c path="Int"/>
-	<c path="Int"/>
-	<c path="_GLTextureConfig.TextureManipulation"/>
-</f></CROP>
-		<create public="1" set="method" line="8" static="1"><f a="location:?filter:?textureManipulation">
-	<c path="String"/>
-	<c path="Int"/>
-	<c path="_GLTextureConfig.TextureManipulation"/>
-	<c path="GLTextureConfig"/>
-</f></create>
-		<FRAMEBUFFER_ID public="1" line="18" static="1"><c path="Int"/></FRAMEBUFFER_ID>
-		<createForFrameBuffer public="1" set="method" line="20" static="1"><f a=""><c path="GLTextureConfig"/></f></createForFrameBuffer>
-		<location public="1"><c path="String"/></location>
-		<textureId public="1"><c path="String"/></textureId>
-		<filter public="1"><c path="Int"/></filter>
-		<textureManipulation public="1"><c path="_GLTextureConfig.TextureManipulation"/></textureManipulation>
-		<toString public="1" set="method" line="38"><f a=""><c path="String"/></f></toString>
-		<new public="1" set="method" line="36"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="GLTextureAtlasConfig" params="" file="construct/src_bpmgl/GLTextureAtlasConfig.hx">
-		<extends path="GLTextureConfig"/>
-		<instanceCount line="3" static="1"><c path="Int"/></instanceCount>
-		<create public="1" set="method" line="5" static="1"><f a="width:height:?filter">
-	<c path="Int"/>
-	<c path="Int"/>
-	<c path="Int"/>
-	<c path="GLTextureAtlasConfig"/>
-</f></create>
-		<width public="1"><c path="Int"/></width>
-		<height public="1"><c path="Int"/></height>
-		<parts public="1"><c path="Array"><c path="GLTextureAtlasPartConfig"/></c></parts>
-		<add public="1" set="method" line="28"><f a="part">
-	<c path="GLTextureAtlasPartConfig"/>
-	<e path="Void"/>
-</f></add>
-		<toString public="1" set="method" line="33" override="1"><f a=""><c path="String"/></f></toString>
-		<new public="1" set="method" line="22"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="CanvasGradient" params="" file="construct/src_extern/CanvasGradient.hx" extern="1"><addColorStop public="1" set="method"><f a="offset:color">
-	<c path="Float"/>
-	<c path="String"/>
-	<e path="Void"/>
-</f></addColorStop></class>
 	<class path="kumite.canvas.Config" params="" file="construct/src/kumite/canvas/Config.hx">
 		<implements path="haxe.rtti.Infos"/>
 		<__rtti public="1" line="5" static="1"><c path="String"/></__rtti>
@@ -6583,6 +6229,11 @@
 	<d/>
 </f></getContext>
 	</class>
+	<class path="CanvasGradient" params="" file="construct/src_extern/CanvasGradient.hx" extern="1"><addColorStop public="1" set="method"><f a="offset:color">
+	<c path="Float"/>
+	<c path="String"/>
+	<e path="Void"/>
+</f></addColorStop></class>
 	<class path="bpmjs.Messenger" params="" file="construct/src_bpmjs/bpmjs/Messenger.hx">
 		<receivers><c path="Array"><c path="bpmjs._Messenger.ReceiverForType"/></c></receivers>
 		<addReceiver public="1" set="method" line="12"><f a="type:listener">
@@ -6673,7 +6324,7 @@
 		<timeController public="1"><c path="kumite.time.TimeController"/></timeController>
 		<new public="1" set="method" line="10"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="js.Boot" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Boot.hx">
+	<class path="js.Boot" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Boot.hx">
 		<__unhtml set="method" line="29" static="1"><f a="s">
 	<c path="String"/>
 	<c path="String"/>
@@ -6802,35 +6453,35 @@
 	<c path="bpmjs.ContextObject"/>
 	<e path="Void"/>
 </f></wireContextObject>
-		<findObservers set="method" line="167"><f a="contextObject">
+		<findObservers set="method" line="171"><f a="contextObject">
 	<c path="bpmjs.ContextObject"/>
 	<e path="Void"/>
 </f></findObservers>
-		<registerMessengerByObjectType set="method" line="181"><f a="contextObject">
+		<registerMessengerByObjectType set="method" line="185"><f a="contextObject">
 	<c path="bpmjs.ContextObject"/>
 	<e path="Void"/>
 </f></registerMessengerByObjectType>
-		<registerMessengers set="method" line="189"><f a="contextObject">
+		<registerMessengers set="method" line="193"><f a="contextObject">
 	<c path="bpmjs.ContextObject"/>
 	<e path="Void"/>
 </f></registerMessengers>
-		<registerReceivers set="method" line="202"><f a="contextObject">
+		<registerReceivers set="method" line="206"><f a="contextObject">
 	<c path="bpmjs.ContextObject"/>
 	<e path="Void"/>
 </f></registerReceivers>
-		<doObserve set="method" line="216"><f a="contextObject">
+		<doObserve set="method" line="220"><f a="contextObject">
 	<c path="bpmjs.ContextObject"/>
 	<e path="Void"/>
 </f></doObserve>
-		<doCompleteCall set="method" line="222"><f a="contextObject">
+		<doCompleteCall set="method" line="226"><f a="contextObject">
 	<c path="bpmjs.ContextObject"/>
 	<e path="Void"/>
 </f></doCompleteCall>
-		<doPostCompleteCall set="method" line="227"><f a="contextObject">
+		<doPostCompleteCall set="method" line="231"><f a="contextObject">
 	<c path="bpmjs.ContextObject"/>
 	<e path="Void"/>
 </f></doPostCompleteCall>
-		<createError set="method" line="232"><f a="message">
+		<createError set="method" line="236"><f a="message">
 	<c path="String"/>
 	<c path="String"/>
 </f></createError>
@@ -6887,6 +6538,21 @@
 	<e path="Void"/>
 </f></new>
 	</class>
+	<class path="kumite.scene.SceneMixer" params="" file="construct/src/kumite/scene/SceneMixer.hx">
+		<from><c path="kumite.scene.Scene"/></from>
+		<to><c path="kumite.scene.Scene"/></to>
+		<mix public="1" set="method" line="10"><f a="from:to">
+	<c path="kumite.scene.Scene"/>
+	<c path="kumite.scene.Scene"/>
+	<c path="kumite.scene.Scene"/>
+</f></mix>
+		<sorter set="method" line="40"><f a="a:b">
+	<c path="kumite.scene.Layer"/>
+	<c path="kumite.scene.Layer"/>
+	<c path="Int"/>
+</f></sorter>
+		<new public="1" set="method" line="8"><f a=""><e path="Void"/></f></new>
+	</class>
 	<class path="GLDisplayList" params="" file="construct/src_bpmgl/GLDisplayList.hx">
 		<instance static="1"><c path="GLDisplayList"/></instance>
 		<getDefault public="1" set="method" line="15" static="1"><f a=""><c path="GLDisplayList"/></f></getDefault>
@@ -6924,21 +6590,6 @@
 </f></handleMouseMove>
 		<new set="method" line="30"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="kumite.scene.SceneMixer" params="" file="construct/src/kumite/scene/SceneMixer.hx">
-		<from><c path="kumite.scene.Scene"/></from>
-		<to><c path="kumite.scene.Scene"/></to>
-		<mix public="1" set="method" line="10"><f a="from:to">
-	<c path="kumite.scene.Scene"/>
-	<c path="kumite.scene.Scene"/>
-	<c path="kumite.scene.Scene"/>
-</f></mix>
-		<sorter set="method" line="40"><f a="a:b">
-	<c path="kumite.scene.Layer"/>
-	<c path="kumite.scene.Layer"/>
-	<c path="Int"/>
-</f></sorter>
-		<new public="1" set="method" line="8"><f a=""><e path="Void"/></f></new>
-	</class>
 	<class path="GLAnimationFrame" params="" file="construct/src_bpmgl/GLAnimationFrame.hx"><run public="1" set="method" line="6" static="1"><f a="method:?ms">
 	<f a=""><e path="Void"/></f>
 	<c path="Float"/>
@@ -6947,12 +6598,14 @@
 	<class path="reflect.Binding" params="" file="construct/src_reflect/reflect/Binding.hx">
 		<object public="1"><d/></object>
 		<property public="1"><c path="reflect.Property"/></property>
-		<getValue public="1" set="method" line="14"><f a=""><d/></f></getValue>
-		<setValue public="1" set="method" line="19"><f a="value">
+		<change public="1"><c path="hsl.haxe.Signaler"><c path="reflect.Binding"/></c></change>
+		<getValue public="1" set="method" line="21"><f a=""><d/></f></getValue>
+		<setValue public="1" set="method" line="26"><f a="value">
 	<d/>
 	<e path="Void"/>
 </f></setValue>
-		<new public="1" set="method" line="8"><f a="object:property">
+		<watch public="1" set="method" line="31"><f a=""><e path="Void"/></f></watch>
+		<new public="1" set="method" line="13"><f a="object:property">
 	<d/>
 	<c path="reflect.Property"/>
 	<e path="Void"/>
@@ -6968,47 +6621,6 @@
 		<new public="1" set="method" line="5"><f a=""><e path="Void"/></f></new>
 	</class>
 	<class path="CanvasPattern" params="" file="construct/src_extern/CanvasPattern.hx" extern="1"/>
-	<class path="kumite.blobs.BlobReaderWS" params="" file="construct/src/kumite/blobs/BlobReaderWS.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<__meta__ public="1" line="6" static="1"><d/></__meta__>
-		<__rtti public="1" line="6" static="1"><c path="String"/></__rtti>
-		<BLOB_ID public="1" line="8" static="1"><c path="Int"/></BLOB_ID>
-		<blobs public="1"><c path="kumite.blobs.Blobs"/></blobs>
-		<time public="1"><c path="kumite.time.Time"/></time>
-		<host><c path="String"/></host>
-		<socket><c path="WebSocket"/></socket>
-		<lastParse><c path="Float"/></lastParse>
-		<start public="1" set="method" line="27"><f a=""><e path="Void"/></f></start>
-		<handleOpen set="method" line="35"><f a="event">
-	<unknown/>
-	<e path="Void"/>
-</f></handleOpen>
-		<handleMessage set="method" line="40"><f a="event">
-	<a><data set="null"><c path="String"/></data></a>
-	<e path="Void"/>
-</f></handleMessage>
-		<handleClose set="method" line="45"><f a="event">
-	<unknown/>
-	<e path="Void"/>
-</f></handleClose>
-		<onData set="method" line="51"><f a="r">
-	<c path="String"/>
-	<e path="Void"/>
-</f></onData>
-		<mergeBlobs set="method" line="83"><f a="newBlobs">
-	<c path="Array"><c path="kumite.blobs.Blob"/></c>
-	<e path="Void"/>
-</f></mergeBlobs>
-		<getDist set="method" line="122"><f a="newBlob:oldBlob">
-	<c path="kumite.blobs.Blob"/>
-	<c path="kumite.blobs.Blob"/>
-	<c path="Float"/>
-</f></getDist>
-		<new public="1" set="method" line="20"><f a="host">
-	<c path="String"/>
-	<e path="Void"/>
-</f></new>
-	</class>
 	<class path="kumite.projection.ProjectionController" params="" file="construct/src/kumite/projection/ProjectionController.hx">
 		<implements path="haxe.rtti.Infos"/>
 		<__meta__ public="1" line="8" static="1"><d/></__meta__>
@@ -7040,21 +6652,20 @@
 		<__meta__ public="1" line="13" static="1"><d/></__meta__>
 		<__rtti public="1" line="13" static="1"><c path="String"/></__rtti>
 		<stage><c path="kumite.stage.Stage"/></stage>
-		<blobs><c path="kumite.blobs.Blobs"/></blobs>
 		<mouseLabel><c path="GLLabel"/></mouseLabel>
 		<debugLabel><c path="GLLabel"/></debugLabel>
-		<start public="1" set="method" line="27"><f a=""><e path="Void"/></f></start>
-		<tick set="method" line="54"><f a="tick">
+		<start public="1" set="method" line="24"><f a=""><e path="Void"/></f></start>
+		<tick set="method" line="51"><f a="tick">
 	<c path="kumite.time.Tick"/>
 	<e path="Void"/>
 </f></tick>
-		<updateMouse set="method" line="64"><f a="position">
+		<updateMouse set="method" line="57"><f a="position">
 	<c path="Vec2"/>
 	<e path="Void"/>
 </f></updateMouse>
-		<new public="1" set="method" line="24"><f a=""><e path="Void"/></f></new>
+		<new public="1" set="method" line="21"><f a=""><e path="Void"/></f></new>
 	</class>
-	<enum path="haxe.StackItem" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/Stack.hx" module="haxe.Stack">
+	<enum path="haxe.StackItem" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/Stack.hx" module="haxe.Stack">
 		<Module a="m"><c path="String"/></Module>
 		<Method a="classname:method">
 			<c path="String"/>
@@ -7071,7 +6682,7 @@
 	Elements return by [Stack] methods.
 </haxe_doc>
 	</enum>
-	<class path="haxe.Stack" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/Stack.hx">
+	<class path="haxe.Stack" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/Stack.hx">
 		<callStack public="1" set="method" line="46" static="1">
 			<f a=""><c path="Array"><e path="haxe.StackItem"/></c></f>
 			<haxe_doc>
@@ -7116,6 +6727,7 @@
 		<scenes public="1"><c path="kumite.scene.Scenes"/></scenes>
 		<time public="1"><c path="kumite.time.Time"/></time>
 		<stage public="1"><c path="kumite.stage.Stage"/></stage>
+		<transitionTime public="1"><c path="Float"/></transitionTime>
 		<transitionContext public="1"><c path="kumite.scene.TransitionContext"/></transitionContext>
 		<renderContext public="1"><c path="kumite.scene.RenderContext"/></renderContext>
 		<initState public="1"><c path="kumite.scene.InitState"/></initState>
@@ -7124,60 +6736,60 @@
 		<currentScene public="1"><c path="kumite.scene.SceneAndLifecycle"/></currentScene>
 		<lastScene public="1"><c path="kumite.scene.SceneAndLifecycle"/></lastScene>
 		<state><c path="kumite.scene.State"/></state>
-		<init public="1" set="method" line="41"><f a=""><e path="Void"/></f></init>
-		<handleSceneLifecycleAdded public="1" set="method" line="60"><f a="lifecycle">
+		<init public="1" set="method" line="46"><f a=""><e path="Void"/></f></init>
+		<handleSceneLifecycleAdded public="1" set="method" line="65"><f a="lifecycle">
 	<c path="kumite.scene.SceneLifecycle"/>
 	<e path="Void"/>
 </f></handleSceneLifecycleAdded>
-		<start public="1" set="method" line="72"><f a=""><e path="Void"/></f></start>
-		<handleSceneChangeRequest public="1" set="method" line="86"><f a="message">
+		<start public="1" set="method" line="77"><f a=""><e path="Void"/></f></start>
+		<handleSceneChangeRequest public="1" set="method" line="91"><f a="message">
 	<c path="kumite.scene.SceneChangeRequest"/>
 	<e path="Void"/>
 </f></handleSceneChangeRequest>
-		<render public="1" set="method" line="92"><f a="tick">
+		<render public="1" set="method" line="97"><f a="tick">
 	<c path="kumite.time.Tick"/>
 	<e path="Void"/>
 </f></render>
-		<renderTransition public="1" set="method" line="97"><f a=""><e path="Void"/></f></renderTransition>
-		<initTransition public="1" set="method" line="122"><f a=""><e path="Void"/></f></initTransition>
-		<renderNormal public="1" set="method" line="128"><f a=""><e path="Void"/></f></renderNormal>
-		<enterScene set="method" line="139"><f a="newScene">
+		<renderTransition public="1" set="method" line="102"><f a=""><e path="Void"/></f></renderTransition>
+		<initTransition public="1" set="method" line="127"><f a=""><e path="Void"/></f></initTransition>
+		<renderNormal public="1" set="method" line="133"><f a=""><e path="Void"/></f></renderNormal>
+		<enterScene set="method" line="144"><f a="newScene">
 	<c path="kumite.scene.SceneAndLifecycle"/>
 	<e path="Void"/>
 </f></enterScene>
-		<setState public="1" set="method" line="150"><f a="state">
+		<setState public="1" set="method" line="155"><f a="state">
 	<c path="kumite.scene.State"/>
 	<e path="Void"/>
 </f></setState>
-		<initAllLayers set="method" line="156"><f a=""><e path="Void"/></f></initAllLayers>
-		<new public="1" set="method" line="38"><f a=""><e path="Void"/></f></new>
+		<initAllLayers set="method" line="161"><f a=""><e path="Void"/></f></initAllLayers>
+		<new public="1" set="method" line="40"><f a=""><e path="Void"/></f></new>
 	</class>
 	<class path="kumite.scene.State" params="" file="construct/src/kumite/scene/SceneNavigator.hx" module="kumite.scene.SceneNavigator">
 		<allowsScreenChange public="1"><e path="Bool"/></allowsScreenChange>
 		<transitionContext><c path="kumite.scene.TransitionContext"/></transitionContext>
 		<navigator><c path="kumite.scene.SceneNavigator"/></navigator>
 		<time><c path="kumite.time.Time"/></time>
-		<enter public="1" set="method" line="233"><f a=""><e path="Void"/></f></enter>
-		<render public="1" set="method" line="238"><f a=""><e path="Void"/></f></render>
-		<configure set="method" line="243"><f a=""><e path="Void"/></f></configure>
-		<new public="1" set="method" line="225"><f a="navigator">
+		<enter public="1" set="method" line="238"><f a=""><e path="Void"/></f></enter>
+		<render public="1" set="method" line="243"><f a=""><e path="Void"/></f></render>
+		<configure set="method" line="248"><f a=""><e path="Void"/></f></configure>
+		<new public="1" set="method" line="230"><f a="navigator">
 	<c path="kumite.scene.SceneNavigator"/>
 	<e path="Void"/>
 </f></new>
 	</class>
 	<class path="kumite.scene.InitState" params="" file="construct/src/kumite/scene/SceneNavigator.hx" module="kumite.scene.SceneNavigator">
 		<extends path="kumite.scene.State"/>
-		<configure set="method" line="251" override="1"><f a=""><e path="Void"/></f></configure>
-		<new public="1" set="method" line="249"><f a="navigator">
+		<configure set="method" line="256" override="1"><f a=""><e path="Void"/></f></configure>
+		<new public="1" set="method" line="254"><f a="navigator">
 	<c path="kumite.scene.SceneNavigator"/>
 	<e path="Void"/>
 </f></new>
 	</class>
 	<class path="kumite.scene.IdleState" params="" file="construct/src/kumite/scene/SceneNavigator.hx" module="kumite.scene.SceneNavigator">
 		<extends path="kumite.scene.State"/>
-		<configure set="method" line="259" override="1"><f a=""><e path="Void"/></f></configure>
-		<render public="1" set="method" line="264" override="1"><f a=""><e path="Void"/></f></render>
-		<new public="1" set="method" line="257"><f a="navigator">
+		<configure set="method" line="264" override="1"><f a=""><e path="Void"/></f></configure>
+		<render public="1" set="method" line="269" override="1"><f a=""><e path="Void"/></f></render>
+		<new public="1" set="method" line="262"><f a="navigator">
 	<c path="kumite.scene.SceneNavigator"/>
 	<e path="Void"/>
 </f></new>
@@ -7186,9 +6798,9 @@
 		<extends path="kumite.scene.State"/>
 		<enterTime><c path="Float"/></enterTime>
 		<exitTime><c path="Float"/></exitTime>
-		<enter public="1" set="method" line="275" override="1"><f a=""><e path="Void"/></f></enter>
-		<render public="1" set="method" line="286" override="1"><f a=""><e path="Void"/></f></render>
-		<new public="1" set="method" line="270"><f a="navigator">
+		<enter public="1" set="method" line="280" override="1"><f a=""><e path="Void"/></f></enter>
+		<render public="1" set="method" line="291" override="1"><f a=""><e path="Void"/></f></render>
+		<new public="1" set="method" line="275"><f a="navigator">
 	<c path="kumite.scene.SceneNavigator"/>
 	<e path="Void"/>
 </f></new>
@@ -7210,23 +6822,23 @@
 	</class>
 	<class path="kumite.scene.NullSceneLifecycle" params="" file="construct/src/kumite/scene/SceneNavigator.hx" module="kumite.scene.SceneNavigator">
 		<implements path="kumite.scene.SceneLifecycle"/>
-		<sceneInit public="1" set="method" line="303"><f a="scene">
+		<sceneInit public="1" set="method" line="308"><f a="scene">
 	<c path="kumite.scene.Scene"/>
 	<e path="Void"/>
 </f></sceneInit>
-		<initTransition public="1" set="method" line="305"><f a="transitionContext">
+		<initTransition public="1" set="method" line="310"><f a="transitionContext">
 	<c path="kumite.scene.TransitionContext"/>
 	<e path="Void"/>
 </f></initTransition>
-		<renderTransition public="1" set="method" line="307"><f a="transitionContext">
+		<renderTransition public="1" set="method" line="312"><f a="transitionContext">
 	<c path="kumite.scene.TransitionContext"/>
 	<e path="Void"/>
 </f></renderTransition>
-		<render public="1" set="method" line="309"><f a=""><e path="Void"/></f></render>
-		<new public="1" set="method" line="301"><f a=""><e path="Void"/></f></new>
+		<render public="1" set="method" line="314"><f a=""><e path="Void"/></f></render>
+		<new public="1" set="method" line="306"><f a=""><e path="Void"/></f></new>
 	</class>
 	<class path="kumite.time.Tick" params="" file="construct/src/kumite/time/Tick.hx"><new public="1" set="method" line="5"><f a=""><e path="Void"/></f></new></class>
-	<class path="js.Lib" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/Lib.hx">
+	<class path="js.Lib" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/Lib.hx">
 		<isIE public="1" static="1"><e path="Bool"/></isIE>
 		<isOpera public="1" static="1"><e path="Bool"/></isOpera>
 		<document public="1" static="1"><t path="js.Document"/></document>
@@ -7253,7 +6865,7 @@
 	<e path="Void"/>
 </f></setErrorHandler>
 	</class>
-	<enum path="ValueType" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/_std/Type.hx" module="Type">
+	<enum path="ValueType" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/_std/Type.hx" module="Type">
 		<TUnknown/>
 		<TObject/>
 		<TNull/>
@@ -7264,7 +6876,7 @@
 		<TClass a="c"><c path="Class"><d/></c></TClass>
 		<TBool/>
 	</enum>
-	<class path="Type" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/_std/Type.hx">
+	<class path="Type" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/_std/Type.hx">
 		<getClass public="1" params="T" set="method" line="40" static="1">
 			<f a="o">
 				<c path="getClass.T"/>
@@ -7399,7 +7011,7 @@
 		Returns all the available constructor names for an enum.
 	</haxe_doc>
 		</getEnumConstructs>
-		<typeof public="1" set="method" line="158" static="1">
+		<typeof public="1" set="method" line="159" static="1">
 			<f a="v">
 				<d/>
 				<e path="ValueType"/>
@@ -7408,7 +7020,7 @@
 		Returns the runtime type of a value.
 	</haxe_doc>
 		</typeof>
-		<enumEq public="1" params="T" set="method" line="188" static="1">
+		<enumEq public="1" params="T" set="method" line="189" static="1">
 			<f a="a:b">
 				<c path="enumEq.T"/>
 				<c path="enumEq.T"/>
@@ -7418,7 +7030,7 @@
 		Recursively compare two enums constructors and parameters.
 	</haxe_doc>
 		</enumEq>
-		<enumConstructor public="1" get="inline" set="null" line="206" static="1">
+		<enumConstructor public="1" get="inline" set="null" line="207" static="1">
 			<f a="e">
 				<d/>
 				<c path="String"/>
@@ -7427,7 +7039,7 @@
 		Returns the constructor of an enum
 	</haxe_doc>
 		</enumConstructor>
-		<enumParameters public="1" get="inline" set="null" line="210" static="1">
+		<enumParameters public="1" get="inline" set="null" line="211" static="1">
 			<f a="e">
 				<d/>
 				<c path="Array"><d/></c>
@@ -7436,7 +7048,7 @@
 		Returns the parameters of an enum
 	</haxe_doc>
 		</enumParameters>
-		<enumIndex public="1" get="inline" set="null" line="214" static="1">
+		<enumIndex public="1" get="inline" set="null" line="215" static="1">
 			<f a="e">
 				<d/>
 				<c path="Int"/>
@@ -7451,32 +7063,6 @@
 </haxe_doc>
 	</class>
 	<class path="WebGLActiveInfo" params="" file="construct/src_extern/WebGLActiveInfo.hx" extern="1"/>
-	<class path="kumite.layer.effect.CrosshatchFilter" params="" file="construct/src/kumite/layer/effect/CrosshatchFilter.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<implements path="kumite.scene.LayerLifecycle"/>
-		<__meta__ public="1" line="9" static="1"><d/></__meta__>
-		<__rtti public="1" line="9" static="1"><c path="String"/></__rtti>
-		<textureRegistry public="1"><c path="GLTextureRegistry"/></textureRegistry>
-		<textureConfig public="1"><c path="GLTextureConfig"/></textureConfig>
-		<shaderProgram><c path="WebGLProgram"/></shaderProgram>
-		<vertexPositionAttribute><c path="GLAttribLocation"/></vertexPositionAttribute>
-		<vertexBuffer><c path="WebGLBuffer"/></vertexBuffer>
-		<textureUniform><c path="GLUniformLocation"/></textureUniform>
-		<amountUniform><c path="GLUniformLocation"/></amountUniform>
-		<amount><c path="Float"/></amount>
-		<init public="1" set="method" line="28"><f a=""><e path="Void"/></f></init>
-		<renderTransition public="1" set="method" line="46"><f a="transitionContext">
-	<c path="kumite.scene.TransitionContext"/>
-	<e path="Void"/>
-</f></renderTransition>
-		<render public="1" set="method" line="52"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></render>
-		<new public="1" set="method" line="26"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="kumite.layer.effect._CrosshatchFilter.Vertex" params="" file="construct/src/kumite/layer/effect/CrosshatchFilter.hx" private="1" module="kumite.layer.effect.CrosshatchFilter"><__meta__ public="1" line="84" static="1"><d/></__meta__></class>
-	<class path="kumite.layer.effect._CrosshatchFilter.Fragment" params="" file="construct/src/kumite/layer/effect/CrosshatchFilter.hx" private="1" module="kumite.layer.effect.CrosshatchFilter"><__meta__ public="1" line="140" static="1"><d/></__meta__></class>
 	<class path="kumite.canvas.CanvasController" params="" file="construct/src/kumite/canvas/CanvasController.hx">
 		<implements path="haxe.rtti.Infos"/>
 		<__meta__ public="1" line="10" static="1"><d/></__meta__>
@@ -7491,38 +7077,6 @@
 </f></updateCanvasSizeFromStage>
 		<new public="1" set="method" line="18"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="kumite.socketsound.SocketConnector" params="" file="construct/src/kumite/socketsound/SocketConnector.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<__meta__ public="1" line="6" static="1"><d/></__meta__>
-		<__rtti public="1" line="6" static="1"><c path="String"/></__rtti>
-		<host><c path="String"/></host>
-		<socket><c path="WebSocket"/></socket>
-		<start public="1" set="method" line="17"><f a=""><e path="Void"/></f></start>
-		<handleNote set="method" line="26"><f a="note">
-	<c path="kumite.socketsound.Note"/>
-	<e path="Void"/>
-</f></handleNote>
-		<getNotePackage set="method" line="32"><f a="note">
-	<c path="kumite.socketsound.Note"/>
-	<c path="String"/>
-</f></getNotePackage>
-		<handleOpen set="method" line="37"><f a="event">
-	<unknown/>
-	<e path="Void"/>
-</f></handleOpen>
-		<handleMessage set="method" line="42"><f a="event">
-	<unknown/>
-	<e path="Void"/>
-</f></handleMessage>
-		<handleClose set="method" line="46"><f a="event">
-	<unknown/>
-	<e path="Void"/>
-</f></handleClose>
-		<new public="1" set="method" line="11"><f a="host">
-	<c path="String"/>
-	<e path="Void"/>
-</f></new>
-	</class>
 	<class path="kumite.launch.Launcher" params="" file="construct/src/kumite/launch/Launcher.hx">
 		<implements path="haxe.rtti.Infos"/>
 		<__meta__ public="1" line="9" static="1"><d/></__meta__>
@@ -7536,32 +7090,6 @@
 		<handleFinish public="1" set="method" line="30"><f a=""><e path="Void"/></f></handleFinish>
 		<new public="1" set="method" line="14"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="kumite.layer.effect.RoadOfRibbonEffect" params="" file="construct/src/kumite/layer/effect/RoadOfRibbonEffect.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<implements path="kumite.scene.LayerLifecycle"/>
-		<__meta__ public="1" line="11" static="1"><d/></__meta__>
-		<__rtti public="1" line="11" static="1"><c path="String"/></__rtti>
-		<time public="1"><c path="kumite.time.Time"/></time>
-		<shaderProgram><c path="WebGLProgram"/></shaderProgram>
-		<vertexPositionAttribute><c path="GLAttribLocation"/></vertexPositionAttribute>
-		<vertexBuffer><c path="WebGLBuffer"/></vertexBuffer>
-		<resolutionUniform><c path="GLUniformLocation"/></resolutionUniform>
-		<timeUniform><c path="GLUniformLocation"/></timeUniform>
-		<amountUniform><c path="GLUniformLocation"/></amountUniform>
-		<amount><c path="Float"/></amount>
-		<init public="1" set="method" line="28"><f a=""><e path="Void"/></f></init>
-		<renderTransition public="1" set="method" line="47"><f a="transitionContext">
-	<c path="kumite.scene.TransitionContext"/>
-	<e path="Void"/>
-</f></renderTransition>
-		<render public="1" set="method" line="53"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></render>
-		<new public="1" set="method" line="26"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="kumite.layer.effect._RoadOfRibbonEffect.Vertex" params="" file="construct/src/kumite/layer/effect/RoadOfRibbonEffect.hx" private="1" module="kumite.layer.effect.RoadOfRibbonEffect"><__meta__ public="1" line="80" static="1"><d/></__meta__></class>
-	<class path="kumite.layer.effect._RoadOfRibbonEffect.Fragment" params="" file="construct/src/kumite/layer/effect/RoadOfRibbonEffect.hx" private="1" module="kumite.layer.effect.RoadOfRibbonEffect"><__meta__ public="1" line="154" static="1"><d/></__meta__></class>
 	<class path="kumite.layer.LayerTransition" params="" file="construct/src/kumite/layer/LayerTransition.hx">
 		<name public="1"><c path="String"/></name>
 		<enabled public="1"><e path="Bool"/></enabled>
@@ -7588,16 +7116,30 @@
 	<e path="Void"/>
 </f></new>
 	</class>
-	<class path="kumite.spritemesh.Sprite" params="" file="construct/src/kumite/spritemesh/Sprite.hx">
-		<matrix public="1"><c path="Matrix4"/></matrix>
-		<image public="1"><c path="GLTextureAtlasPartConfig"/></image>
-		<vertexes public="1"><c path="Float32Array"/></vertexes>
-		<normals public="1"><c path="Float32Array"/></normals>
-		<getZ public="1" get="inline" set="null" line="19"><f a=""><c path="Float"/></f></getZ>
-		<transform public="1" get="inline" set="null" line="24"><f a=""><e path="Void"/></f></transform>
-		<new public="1" set="method" line="11"><f a=""><e path="Void"/></f></new>
+	<class path="kumite.lgl.LGLBuilder" params="" file="construct/src/kumite/lgl/LGLBuilder.hx">
+		<lgl public="1"><c path="kumite.lgl.LGL"/></lgl>
+		<currentVertex public="1"><c path="kumite.lgl.Vertex"/></currentVertex>
+		<addedVertexes><c path="Int"/></addedVertexes>
+		<reusedVertexes><c path="Int"/></reusedVertexes>
+		<maxWeightVertex><c path="kumite.lgl.Vertex"/></maxWeightVertex>
+		<edgeCount><c path="Int"/></edgeCount>
+		<ipToVertex><c path="Hash"><c path="kumite.lgl.Vertex"/></c></ipToVertex>
+		<addVertex public="1" set="method" line="24"><f a="ip">
+	<c path="String"/>
+	<e path="Void"/>
+</f></addVertex>
+		<addChild public="1" set="method" line="32"><f a="ip">
+	<c path="String"/>
+	<e path="Void"/>
+</f></addChild>
+		<findOrCreateVertex public="1" set="method" line="53"><f a="ip">
+	<c path="String"/>
+	<t path="Null"><c path="kumite.lgl.Vertex"/></t>
+</f></findOrCreateVertex>
+		<precalculate public="1" set="method" line="76"><f a=""><e path="Void"/></f></precalculate>
+		<new public="1" set="method" line="16"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="Reflect" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/_std/Reflect.hx">
+	<class path="Reflect" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/_std/Reflect.hx">
 		<hasField public="1" set="method" line="28" static="1">
 			<f a="o:field">
 				<d/>
@@ -7649,7 +7191,7 @@
 		Returns the list of fields of an object, excluding its prototype (class methods).
 	</haxe_doc>
 		</fields>
-		<isFunction public="1" set="method" line="79" static="1">
+		<isFunction public="1" set="method" line="71" static="1">
 			<f a="f">
 				<d/>
 				<e path="Bool"/>
@@ -7658,7 +7200,7 @@
 		Tells if a value is a function or not.
 	</haxe_doc>
 		</isFunction>
-		<compare public="1" params="T" set="method" line="83" static="1">
+		<compare public="1" params="T" set="method" line="75" static="1">
 			<f a="a:b">
 				<c path="compare.T"/>
 				<c path="compare.T"/>
@@ -7668,7 +7210,7 @@
 		Generic comparison function, does not work for methods, see [compareMethods]
 	</haxe_doc>
 		</compare>
-		<compareMethods public="1" set="method" line="87" static="1">
+		<compareMethods public="1" set="method" line="79" static="1">
 			<f a="f1:f2">
 				<d/>
 				<d/>
@@ -7676,10 +7218,9 @@
 			</f>
 			<haxe_doc>
 		Compare two methods closures. Returns true if it's the same method of the same instance.
-		Does not work on Neko platform.
 	</haxe_doc>
 		</compareMethods>
-		<isObject public="1" set="method" line="95" static="1">
+		<isObject public="1" set="method" line="87" static="1">
 			<f a="v">
 				<d/>
 				<e path="Bool"/>
@@ -7689,7 +7230,7 @@
 
 	</haxe_doc>
 		</isObject>
-		<deleteField public="1" set="method" line="102" static="1">
+		<deleteField public="1" set="method" line="94" static="1">
 			<f a="o:f">
 				<d/>
 				<c path="String"/>
@@ -7699,7 +7240,7 @@
 		Delete an object field.
 	</haxe_doc>
 		</deleteField>
-		<copy public="1" params="T" set="method" line="108" static="1">
+		<copy public="1" params="T" set="method" line="100" static="1">
 			<f a="o">
 				<c path="copy.T"/>
 				<c path="copy.T"/>
@@ -7708,7 +7249,7 @@
 		Make a copy of the fields of an object.
 	</haxe_doc>
 		</copy>
-		<makeVarArgs public="1" set="method" line="115" static="1">
+		<makeVarArgs public="1" set="method" line="107" static="1">
 			<f a="f">
 				<f a="">
 					<c path="Array"><d/></c>
@@ -7740,35 +7281,6 @@
 	<e path="Void"/>
 </f></new>
 	</class>
-	<class path="kumite.layer.effect.RadialBlurFilter" params="" file="construct/src/kumite/layer/effect/RadialBlurFilter.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<implements path="kumite.scene.LayerLifecycle"/>
-		<__meta__ public="1" line="11" static="1"><d/></__meta__>
-		<__rtti public="1" line="11" static="1"><c path="String"/></__rtti>
-		<time public="1"><c path="kumite.time.Time"/></time>
-		<textureRegistry public="1"><c path="GLTextureRegistry"/></textureRegistry>
-		<textureConfig public="1"><c path="GLTextureConfig"/></textureConfig>
-		<shaderProgram><c path="WebGLProgram"/></shaderProgram>
-		<vertexPositionAttribute><c path="GLAttribLocation"/></vertexPositionAttribute>
-		<vertexBuffer><c path="WebGLBuffer"/></vertexBuffer>
-		<resolutionUniform><c path="GLUniformLocation"/></resolutionUniform>
-		<timeUniform><c path="GLUniformLocation"/></timeUniform>
-		<amountUniform><c path="GLUniformLocation"/></amountUniform>
-		<textureUniform><c path="GLUniformLocation"/></textureUniform>
-		<amount><c path="Float"/></amount>
-		<init public="1" set="method" line="35"><f a=""><e path="Void"/></f></init>
-		<renderTransition public="1" set="method" line="55"><f a="transitionContext">
-	<c path="kumite.scene.TransitionContext"/>
-	<e path="Void"/>
-</f></renderTransition>
-		<render public="1" set="method" line="61"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></render>
-		<new public="1" set="method" line="33"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="kumite.layer.effect._RadialBlurFilter.Vertex" params="" file="construct/src/kumite/layer/effect/RadialBlurFilter.hx" private="1" module="kumite.layer.effect.RadialBlurFilter"><__meta__ public="1" line="94" static="1"><d/></__meta__></class>
-	<class path="kumite.layer.effect._RadialBlurFilter.Fragment" params="" file="construct/src/kumite/layer/effect/RadialBlurFilter.hx" private="1" module="kumite.layer.effect.RadialBlurFilter"><__meta__ public="1" line="142" static="1"><d/></__meta__></class>
 	<class path="kumite.scene.SceneChangeRequest" params="" file="construct/src/kumite/scene/SceneChangeRequest.hx">
 		<sceneId public="1"><c path="String"/></sceneId>
 		<new public="1" set="method" line="7"><f a="sceneId">
@@ -7791,90 +7303,66 @@
 	<e path="Void"/>
 </f></new>
 	</class>
-	<class path="GLTextureAtlasLoadingTask" params="" file="construct/src_bpmgl/GLTextureAtlasLoadingTask.hx">
-		<extends path="bpmjs.Task"><c path="GLTextureAtlasLoadingTask"/></extends>
-		<textureRegistry><c path="GLTextureRegistry"/></textureRegistry>
-		<atlas><c path="GLTextureAtlasConfig"/></atlas>
-		<partLoaderGroup><c path="bpmjs.TaskGroup"/></partLoaderGroup>
-		<graphics><c path="CanvasGraphic"/></graphics>
-		<currentOffsetX><c path="Int"/></currentOffsetX>
-		<currentOffsetY><c path="Int"/></currentOffsetY>
-		<nextOffsetX><c path="Int"/></nextOffsetX>
-		<nextOffsetY><c path="Int"/></nextOffsetY>
-		<currentMaxY><c path="Int"/></currentMaxY>
-		<doStart public="1" set="method" line="36" override="1"><f a=""><e path="Void"/></f></doStart>
-		<addPart set="method" line="57"><f a="part">
-	<c path="GLTextureAtlasPartConfig"/>
+	<class path="Worker" params="" file="construct/src_extern/Worker.hx" extern="1">
+		<onmessage public="1"><f a="">
+	<d/>
 	<e path="Void"/>
-</f></addPart>
-		<addImageToAtlas set="method" line="64"><f a="task">
-	<c path="bpmjs.ObjectProxyTask">
-		<c path="GLTextureAtlasPartConfig"/>
-		<c path="bpmjs.ImageLoaderTask"/>
-	</c>
+</f></onmessage>
+		<postMessage public="1" set="method"><f a="message">
+	<d/>
 	<e path="Void"/>
-</f></addImageToAtlas>
-		<advancePosition set="method" line="79"><f a="image">
-	<c path="Image"/>
-	<e path="Void"/>
-</f></advancePosition>
-		<handleComplete set="method" line="101"><f a="group">
-	<c path="bpmjs.TaskGroup"/>
-	<e path="Void"/>
-</f></handleComplete>
-		<handleError set="method" line="107"><f a="taskError">
-	<a><error set="null"><c path="String"/></error></a>
-	<e path="Void"/>
-</f></handleError>
-		<new public="1" set="method" line="20"><f a="textureRegistry:atlas">
-	<c path="GLTextureRegistry"/>
-	<c path="GLTextureAtlasConfig"/>
+</f></postMessage>
+		<new public="1" set="method"><f a="jsScriptLocation">
+	<c path="String"/>
 	<e path="Void"/>
 </f></new>
 	</class>
 	<class path="kumite.vjinterface.VJLayers" params="" file="construct/src/kumite/vjinterface/VJLayers.hx">
 		<implements path="haxe.rtti.Infos"/>
-		<__meta__ public="1" line="18" static="1"><d/></__meta__>
-		<__rtti public="1" line="18" static="1"><c path="String"/></__rtti>
-		<WIDTH line="20" static="1"><c path="Float"/></WIDTH>
+		<__meta__ public="1" line="19" static="1"><d/></__meta__>
+		<__rtti public="1" line="19" static="1"><c path="String"/></__rtti>
+		<WIDTH line="21" static="1"><c path="Float"/></WIDTH>
+		<bindings><c path="Array"><c path="reflect.Binding"/></c></bindings>
 		<layersContainer><c path="GLDisplayObjectContainer"/></layersContainer>
 		<layerContainer><c path="GLDisplayObjectContainer"/></layerContainer>
 		<stage><c path="GLStage"/></stage>
-		<start public="1" set="method" line="30"><f a=""><e path="Void"/></f></start>
-		<render public="1" set="method" line="43"><f a="tick">
+		<currentLayer><c path="kumite.scene.DelegateLayer"/></currentLayer>
+		<start public="1" set="method" line="35"><f a=""><e path="Void"/></f></start>
+		<render public="1" set="method" line="48"><f a="tick">
 	<c path="kumite.time.Tick"/>
 	<e path="Void"/>
 </f></render>
-		<handleSceneEnter public="1" set="method" line="50"><f a="event">
+		<handleSceneEnter public="1" set="method" line="60"><f a="event">
 	<c path="kumite.scene.SceneEnter"/>
 	<e path="Void"/>
 </f></handleSceneEnter>
-		<registerLifecycleButton set="method" line="83"><f a="button:layer">
+		<registerLifecycleButton set="method" line="93"><f a="button:layer">
 	<c path="GLInteractiveObject"/>
 	<c path="kumite.scene.DelegateLayer"/>
 	<e path="Void"/>
 </f></registerLifecycleButton>
-		<createLayerMouseDownHandler set="method" line="88"><f a="layer">
+		<createLayerMouseDownHandler set="method" line="98"><f a="layer">
 	<c path="kumite.scene.DelegateLayer"/>
 	<f a="button">
 		<c path="GLInteractiveObject"/>
 		<e path="Void"/>
 	</f>
 </f></createLayerMouseDownHandler>
-		<inspectLifecycle set="method" line="97"><f a="layer">
+		<inspectLifecycle set="method" line="107"><f a="layer">
 	<c path="kumite.scene.DelegateLayer"/>
 	<e path="Void"/>
 </f></inspectLifecycle>
-		<removeInspectionPanel set="method" line="103"><f a=""><e path="Void"/></f></removeInspectionPanel>
-		<createInspectionPanel set="method" line="108"><f a="layer">
+		<removeInspectionPanel set="method" line="114"><f a=""><e path="Void"/></f></removeInspectionPanel>
+		<createInspectionPanel set="method" line="119"><f a="layer">
 	<c path="kumite.scene.DelegateLayer"/>
 	<e path="Void"/>
 </f></createInspectionPanel>
-		<new public="1" set="method" line="27"><f a=""><e path="Void"/></f></new>
+		<updateBindings set="method" line="214"><f a=""><e path="Void"/></f></updateBindings>
+		<new public="1" set="method" line="32"><f a=""><e path="Void"/></f></new>
 	</class>
-	<typedef path="haxe.rtti.Path" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><c path="String"/></typedef>
-	<typedef path="haxe.rtti.Platforms" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><c path="List"><c path="String"/></c></typedef>
-	<enum path="haxe.rtti.CType" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/rtti/CType.hx">
+	<typedef path="haxe.rtti.Path" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><c path="String"/></typedef>
+	<typedef path="haxe.rtti.Platforms" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><c path="List"><c path="String"/></c></typedef>
+	<enum path="haxe.rtti.CType" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/rtti/CType.hx">
 		<CUnknown/>
 		<CTypedef a="name:params">
 			<t path="haxe.rtti.Path"/>
@@ -7902,12 +7390,12 @@
 	<name><c path="String"/></name>
 </a></c></CAnonymous>
 	</enum>
-	<typedef path="haxe.rtti.PathParams" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><a>
+	<typedef path="haxe.rtti.PathParams" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><a>
 	<path><t path="haxe.rtti.Path"/></path>
 	<params><c path="List"><e path="haxe.rtti.CType"/></c></params>
 </a></typedef>
-	<typedef path="haxe.rtti.TypeParams" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><c path="Array"><c path="String"/></c></typedef>
-	<enum path="haxe.rtti.Rights" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType">
+	<typedef path="haxe.rtti.TypeParams" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><c path="Array"><c path="String"/></c></typedef>
+	<enum path="haxe.rtti.Rights" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType">
 		<RNormal/>
 		<RNo/>
 		<RMethod/>
@@ -7915,7 +7403,7 @@
 		<RDynamic/>
 		<RCall a="m"><c path="String"/></RCall>
 	</enum>
-	<typedef path="haxe.rtti.ClassField" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><a>
+	<typedef path="haxe.rtti.ClassField" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><a>
 	<type><e path="haxe.rtti.CType"/></type>
 	<set><e path="haxe.rtti.Rights"/></set>
 	<platforms><t path="haxe.rtti.Platforms"/></platforms>
@@ -7926,7 +7414,7 @@
 	<get><e path="haxe.rtti.Rights"/></get>
 	<doc><c path="String"/></doc>
 </a></typedef>
-	<typedef path="haxe.rtti.TypeInfos" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><a>
+	<typedef path="haxe.rtti.TypeInfos" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><a>
 	<platforms><t path="haxe.rtti.Platforms"/></platforms>
 	<path><t path="haxe.rtti.Path"/></path>
 	<params><t path="haxe.rtti.TypeParams"/></params>
@@ -7934,7 +7422,7 @@
 	<isPrivate><e path="Bool"/></isPrivate>
 	<doc><c path="String"/></doc>
 </a></typedef>
-	<typedef path="haxe.rtti.Classdef" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><a>
+	<typedef path="haxe.rtti.Classdef" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><a>
 	<tdynamic><t path="Null"><e path="haxe.rtti.CType"/></t></tdynamic>
 	<superClass><t path="haxe.rtti.PathParams"/></superClass>
 	<statics><c path="List"><t path="haxe.rtti.ClassField"/></c></statics>
@@ -7949,7 +7437,7 @@
 	<fields><c path="List"><t path="haxe.rtti.ClassField"/></c></fields>
 	<doc><c path="String"/></doc>
 </a></typedef>
-	<typedef path="haxe.rtti.EnumField" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><a>
+	<typedef path="haxe.rtti.EnumField" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><a>
 	<platforms><t path="haxe.rtti.Platforms"/></platforms>
 	<name><c path="String"/></name>
 	<doc><c path="String"/></doc>
@@ -7959,7 +7447,7 @@
 	<name><c path="String"/></name>
 </a></c></t></args>
 </a></typedef>
-	<typedef path="haxe.rtti.Enumdef" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><a>
+	<typedef path="haxe.rtti.Enumdef" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><a>
 	<platforms><t path="haxe.rtti.Platforms"/></platforms>
 	<path><t path="haxe.rtti.Path"/></path>
 	<params><t path="haxe.rtti.TypeParams"/></params>
@@ -7969,7 +7457,7 @@
 	<doc><c path="String"/></doc>
 	<constructors><c path="List"><t path="haxe.rtti.EnumField"/></c></constructors>
 </a></typedef>
-	<typedef path="haxe.rtti.Typedef" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><a>
+	<typedef path="haxe.rtti.Typedef" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><a>
 	<types><c path="Hash"><e path="haxe.rtti.CType"/></c></types>
 	<type><e path="haxe.rtti.CType"/></type>
 	<platforms><t path="haxe.rtti.Platforms"/></platforms>
@@ -7979,7 +7467,7 @@
 	<isPrivate><e path="Bool"/></isPrivate>
 	<doc><c path="String"/></doc>
 </a></typedef>
-	<enum path="haxe.rtti.TypeTree" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType">
+	<enum path="haxe.rtti.TypeTree" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType">
 		<TTypedecl a="t"><t path="haxe.rtti.Typedef"/></TTypedecl>
 		<TPackage a="name:full:subs">
 			<c path="String"/>
@@ -7989,8 +7477,8 @@
 		<TEnumdecl a="e"><t path="haxe.rtti.Enumdef"/></TEnumdecl>
 		<TClassdecl a="c"><t path="haxe.rtti.Classdef"/></TClassdecl>
 	</enum>
-	<typedef path="haxe.rtti.TypeRoot" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><c path="Array"><e path="haxe.rtti.TypeTree"/></c></typedef>
-	<class path="haxe.rtti.TypeApi" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType">
+	<typedef path="haxe.rtti.TypeRoot" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType"><c path="Array"><e path="haxe.rtti.TypeTree"/></c></typedef>
+	<class path="haxe.rtti.TypeApi" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/rtti/CType.hx" module="haxe.rtti.CType">
 		<typeInfos public="1" set="method" line="116" static="1"><f a="t">
 	<e path="haxe.rtti.TypeTree"/>
 	<t path="haxe.rtti.TypeInfos"/>
@@ -8029,6 +7517,22 @@
 	<t path="haxe.rtti.EnumField"/>
 	<e path="Bool"/>
 </f></constructorEq>
+	</class>
+	<class path="kumite.lgl.Vertex" params="" file="construct/src/kumite/lgl/Vertex.hx">
+		<index public="1"><c path="Int"/></index>
+		<weight public="1"><c path="Float"/></weight>
+		<energy public="1"><c path="Float"/></energy>
+		<positionX public="1"><c path="Float"/></positionX>
+		<positionY public="1"><c path="Float"/></positionY>
+		<positionZ public="1"><c path="Float"/></positionZ>
+		<forceX public="1"><c path="Float"/></forceX>
+		<forceY public="1"><c path="Float"/></forceY>
+		<forceZ public="1"><c path="Float"/></forceZ>
+		<velocityX public="1"><c path="Float"/></velocityX>
+		<velocityY public="1"><c path="Float"/></velocityY>
+		<velocityZ public="1"><c path="Float"/></velocityZ>
+		<toString public="1" set="method" line="39"><f a=""><c path="String"/></f></toString>
+		<new public="1" set="method" line="21"><f a=""><e path="Void"/></f></new>
 	</class>
 	<class path="kumite.layer.ClearLayer" params="" file="construct/src/kumite/layer/ClearLayer.hx">
 		<implements path="haxe.rtti.Infos"/>
@@ -8075,23 +7579,13 @@
 	<d/>
 	<e path="Void"/>
 </f></onMouseMove>
+		<getMousePosition set="method" line="85"><f a="e">
+	<d/>
+	<c path="Vec2"/>
+</f></getMousePosition>
 		<new set="method" line="23"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="Clamp" params="" file="construct/src_bpmgl/Clamp.hx">
-		<float public="1" get="inline" set="null" line="3" static="1"><f a="value:from:to">
-	<c path="Float"/>
-	<c path="Float"/>
-	<c path="Float"/>
-	<c path="Float"/>
-</f></float>
-		<int public="1" get="inline" set="null" line="12" static="1"><f a="value:from:to">
-	<c path="Int"/>
-	<c path="Int"/>
-	<c path="Int"/>
-	<c path="Int"/>
-</f></int>
-	</class>
-	<class path="Date" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/Date.hx" extern="1">
+	<class path="Date" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/Date.hx" extern="1">
 		<now public="1" set="method" static="1">
 			<f a=""><c path="Date"/></f>
 			<haxe_doc>
@@ -8204,7 +7698,7 @@
 		<getBinding public="1" set="method" line="22"><f a=""><c path="reflect.Binding"/></f></getBinding>
 		<new public="1" set="method" line="12"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="Lambda" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/Lambda.hx">
+	<class path="Lambda" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/Lambda.hx">
 		<array public="1" params="A" set="method" line="35" static="1">
 			<f a="it">
 				<t path="Iterable"><c path="array.A"/></t>
@@ -8480,12 +7974,6 @@
 		<textureRegistry public="1"><c path="GLTextureRegistry"/></textureRegistry>
 		<new public="1" set="method" line="8"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="kumite.socketsound.Note" params="" file="construct/src/kumite/socketsound/Note.hx">
-		<note public="1"><c path="Int"/></note>
-		<velocity public="1"><c path="Float"/></velocity>
-		<duration public="1"><c path="Float"/></duration>
-		<new public="1" set="method" line="9"><f a=""><e path="Void"/></f></new>
-	</class>
 	<class path="kumite.camera.CameraMouseMover" params="" file="construct/src/kumite/camera/CameraMouseMover.hx">
 		<implements path="haxe.rtti.Infos"/>
 		<__meta__ public="1" line="4" static="1"><d/></__meta__>
@@ -8510,6 +7998,12 @@
 		<startComplete public="1" set="method" line="18"><f a=""><e path="Void"/></f></startComplete>
 		<timerUpdate set="method" line="24"><f a=""><e path="Void"/></f></timerUpdate>
 		<new public="1" set="method" line="15"><f a=""><e path="Void"/></f></new>
+	</class>
+	<class path="GLTexture" params="" file="construct/src_bpmgl/GLTexture.hx">
+		<width public="1"><c path="Int"/></width>
+		<height public="1"><c path="Int"/></height>
+		<texture public="1"><c path="WebGLTexture"/></texture>
+		<new public="1" set="method" line="7"><f a=""><e path="Void"/></f></new>
 	</class>
 	<class path="haxe.TypeTools" params="" file="/usr/lib/haxe/lib/hsl-pico-1/1,6/haxe/TypeTools.hx">
 		<getClassNames public="1" set="method" line="40" static="1">
@@ -8655,9 +8149,9 @@
 		<init public="1" set="method" line="16"><f a=""><e path="Void"/></f></init>
 		<new public="1" set="method" line="13"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="StringBuf" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/StringBuf.hx">
+	<class path="StringBuf" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/StringBuf.hx">
 		<add public="1" get="inline" set="null" line="46">
-			<f a="?x">
+			<f a="x">
 				<d/>
 				<e path="Void"/>
 			</f>
@@ -8665,7 +8159,7 @@
 		Adds the representation of any value to the string buffer.
 	</haxe_doc>
 		</add>
-		<addSub public="1" get="inline" set="null" line="57">
+		<addSub public="1" get="inline" set="null" line="59">
 			<f a="s:pos:?len">
 				<c path="String"/>
 				<c path="Int"/>
@@ -8676,7 +8170,7 @@
 		Adds a part of a string to the string buffer.
 	</haxe_doc>
 		</addSub>
-		<addChar public="1" get="inline" set="null" line="73">
+		<addChar public="1" get="inline" set="null" line="75">
 			<f a="c">
 				<c path="Int"/>
 				<e path="Void"/>
@@ -8685,7 +8179,7 @@
 		Adds a character to the string buffer.
 	</haxe_doc>
 		</addChar>
-		<toString public="1" get="inline" set="null" line="87">
+		<toString public="1" get="inline" set="null" line="89">
 			<f a=""><c path="String"/></f>
 			<haxe_doc>
 		Returns the content of the string buffer.
@@ -8709,6 +8203,49 @@
 		<extends path="bpmjs.TaskGroup"/>
 		<new public="1" set="method" line="5"><f a=""><e path="Void"/></f></new>
 	</class>
+	<class path="kumite.lgl.LGLLayer" params="" file="construct/src/kumite/lgl/LGLLayer.hx">
+		<implements path="haxe.rtti.Infos"/>
+		<implements path="kumite.scene.LayerLifecycle"/>
+		<__meta__ public="1" line="19" static="1"><d/></__meta__>
+		<__rtti public="1" line="19" static="1"><c path="String"/></__rtti>
+		<time public="1"><c path="kumite.time.Time"/></time>
+		<stage public="1"><c path="kumite.stage.Stage"/></stage>
+		<projection public="1"><c path="kumite.projection.Projection"/></projection>
+		<camera public="1"><c path="kumite.camera.Camera"/></camera>
+		<lgl public="1"><c path="kumite.lgl.LGL"/></lgl>
+		<scale public="1"><c path="Float"/></scale>
+		<rotationX public="1"><c path="Float"/></rotationX>
+		<rotationY public="1"><c path="Float"/></rotationY>
+		<rotationZ public="1"><c path="Float"/></rotationZ>
+		<alpha public="1"><c path="Float"/></alpha>
+		<viewMatrix public="1"><c path="Matrix4"/></viewMatrix>
+		<transitions public="1"><c path="kumite.layer.LayerTransitions"/></transitions>
+		<alphaTransition public="1"><c path="kumite.layer.LayerTransition"/></alphaTransition>
+		<shaderProgram><c path="WebGLProgram"/></shaderProgram>
+		<vertexPositionAttribute><c path="GLAttribLocation"/></vertexPositionAttribute>
+		<vertexBuffer><c path="Float32Array"/></vertexBuffer>
+		<targetBuffer><c path="Float32Array"/></targetBuffer>
+		<projectionMatrixUniform><c path="GLUniformLocation"/></projectionMatrixUniform>
+		<worldViewMatrixUniform><c path="GLUniformLocation"/></worldViewMatrixUniform>
+		<alphaUniform><c path="GLUniformLocation"/></alphaUniform>
+		<label><c path="GLLabel"/></label>
+		<init public="1" set="method" line="82"><f a=""><e path="Void"/></f></init>
+		<updateModel public="1" set="method" line="105"><f a="targetBuffer">
+	<c path="Float32Array"/>
+	<e path="Void"/>
+</f></updateModel>
+		<renderTransition public="1" set="method" line="110"><f a="transitionContext">
+	<c path="kumite.scene.TransitionContext"/>
+	<e path="Void"/>
+</f></renderTransition>
+		<render public="1" set="method" line="117"><f a="renderContext">
+	<c path="kumite.scene.RenderContext"/>
+	<e path="Void"/>
+</f></render>
+		<new public="1" set="method" line="68"><f a=""><e path="Void"/></f></new>
+	</class>
+	<class path="kumite.lgl._LGLLayer.Vertex" params="" file="construct/src/kumite/lgl/LGLLayer.hx" private="1" module="kumite.lgl.LGLLayer"><__meta__ public="1" line="164" static="1"><d/></__meta__></class>
+	<class path="kumite.lgl._LGLLayer.Fragment" params="" file="construct/src/kumite/lgl/LGLLayer.hx" private="1" module="kumite.lgl.LGLLayer"><__meta__ public="1" line="179" static="1"><d/></__meta__></class>
 	<class path="Main" params="" file="construct/src/Main.hx">
 		<globalErrorHandler set="method" line="3" static="1"><f a="msg:stack">
 	<c path="String"/>
@@ -8721,7 +8258,7 @@
 	<e path="Void"/>
 </f></new>
 	</class>
-	<class path="haxe.Log" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/Log.hx">
+	<class path="haxe.Log" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/Log.hx">
 		<trace public="1" set="dynamic" line="29" static="1"><f a="v:?infos">
 	<d/>
 	<t path="haxe.PosInfos"/>
@@ -8729,64 +8266,6 @@
 </f></trace>
 		<clear public="1" set="dynamic" line="43" static="1"><f a=""><e path="Void"/></f></clear>
 	</class>
-	<class path="kumite.spritemesh.Config" params="" file="construct/src/kumite/spritemesh/Config.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<__meta__ public="1" line="18" static="1"><d/></__meta__>
-		<__rtti public="1" line="18" static="1"><c path="String"/></__rtti>
-		<TEST_ATLAS public="1" line="20" static="1"><c path="GLTextureAtlasConfig"/></TEST_ATLAS>
-		<textureRegistry public="1"><c path="GLTextureRegistry"/></textureRegistry>
-		<displayListLayer public="1"><c path="kumite.displaylist.DisplayListLayer"/></displayListLayer>
-		<clearLayer public="1"><c path="kumite.layer.ClearLayer"/></clearLayer>
-		<colorLayer public="1"><c path="kumite.layer.ColorLayer"/></colorLayer>
-		<layer1 public="1"><c path="kumite.spritemesh.SpriteMeshLayer"/></layer1>
-		<layer2 public="1"><c path="kumite.spritemesh.SpriteMeshLayer"/></layer2>
-		<layer3 public="1"><c path="kumite.spritemesh.SpriteMeshLayer"/></layer3>
-		<scene1 public="1"><c path="kumite.scene.DefaultScene"/></scene1>
-		<scene2 public="1"><c path="kumite.scene.DefaultScene"/></scene2>
-		<scene3 public="1"><c path="kumite.scene.DefaultScene"/></scene3>
-		<scene4 public="1"><c path="kumite.scene.DefaultScene"/></scene4>
-		<scene5 public="1"><c path="kumite.scene.DefaultScene"/></scene5>
-		<framebufferEnableLayer1 public="1"><c path="kumite.layer.FramebufferEnableLayer"/></framebufferEnableLayer1>
-		<framebufferDisableLayer1 public="1"><c path="kumite.layer.FramebufferDisableLayer"/></framebufferDisableLayer1>
-		<clearLayer1 public="1"><c path="kumite.layer.ClearLayer"/></clearLayer1>
-		<textureLayer1 public="1"><c path="kumite.layer.TextureLayer"/></textureLayer1>
-		<testFilter public="1"><c path="kumite.layer.effect.TestFilter"/></testFilter>
-		<postproFilter public="1"><c path="kumite.layer.effect.PostproFilter"/></postproFilter>
-		<crosshatchFilter public="1"><c path="kumite.layer.effect.CrosshatchFilter"/></crosshatchFilter>
-		<complete public="1" set="method" line="99"><f a=""><e path="Void"/></f></complete>
-		<startPrepare public="1" set="method" line="142"><f a=""><c path="bpmjs.SequencerTaskGroup"/></f></startPrepare>
-		<new public="1" set="method" line="51"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="kumite.layer.ColorLayer" params="" file="construct/src/kumite/layer/ColorLayer.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<implements path="kumite.scene.LayerLifecycle"/>
-		<__meta__ public="1" line="14" static="1"><d/></__meta__>
-		<__rtti public="1" line="14" static="1"><c path="String"/></__rtti>
-		<time public="1"><c path="kumite.time.Time"/></time>
-		<transitions public="1"><c path="kumite.layer.LayerTransitions"/></transitions>
-		<cutTransition public="1"><c path="kumite.layer.LayerTransition"/></cutTransition>
-		<moveTransition public="1"><c path="kumite.layer.LayerTransition"/></moveTransition>
-		<alphaTransition public="1"><c path="kumite.layer.LayerTransition"/></alphaTransition>
-		<color public="1"><c path="Color"/></color>
-		<shaderProgram><c path="WebGLProgram"/></shaderProgram>
-		<vertexPositionAttribute><c path="GLAttribLocation"/></vertexPositionAttribute>
-		<vertexBuffer><c path="WebGLBuffer"/></vertexBuffer>
-		<projectionMatrixUniform><c path="GLUniformLocation"/></projectionMatrixUniform>
-		<worldViewMatrixUniform><c path="GLUniformLocation"/></worldViewMatrixUniform>
-		<colorUniform><c path="GLUniformLocation"/></colorUniform>
-		<init public="1" set="method" line="45"><f a=""><e path="Void"/></f></init>
-		<renderTransition public="1" set="method" line="62"><f a="transitionContext">
-	<c path="kumite.scene.TransitionContext"/>
-	<e path="Void"/>
-</f></renderTransition>
-		<render public="1" set="method" line="68"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></render>
-		<new public="1" set="method" line="35"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="kumite.layer._ColorLayer.Vertex" params="" file="construct/src/kumite/layer/ColorLayer.hx" private="1" module="kumite.layer.ColorLayer"><__meta__ public="1" line="110" static="1"><d/></__meta__></class>
-	<class path="kumite.layer._ColorLayer.Fragment" params="" file="construct/src/kumite/layer/ColorLayer.hx" private="1" module="kumite.layer.ColorLayer"><__meta__ public="1" line="125" static="1"><d/></__meta__></class>
 	<class path="GLUniformLocation" params="" file="construct/src_bpmgl/GLUniformLocation.hx">
 		<location public="1"><c path="WebGLUniformLocation"/></location>
 		<uniform1f public="1" get="inline" set="null" line="9"><f a="v">
@@ -8922,8 +8401,96 @@
 		<projectionController public="1"><c path="kumite.projection.ProjectionController"/></projectionController>
 		<new public="1" set="method" line="10"><f a=""><e path="Void"/></f></new>
 	</class>
+	<class path="haxe.Serializer" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/Serializer.hx">
+		<USE_CACHE public="1" line="34" static="1">
+			<e path="Bool"/>
+			<haxe_doc>
+		If the values you are serializing can contain
+		circular references or objects repetitions, you should
+		set USE_CACHE to true to prevent infinite loops.
+	</haxe_doc>
+		</USE_CACHE>
+		<USE_ENUM_INDEX public="1" line="40" static="1">
+			<e path="Bool"/>
+			<haxe_doc>
+		Use constructor indexes for enums instead of names.
+		This is less reliable but more compact.
+	</haxe_doc>
+		</USE_ENUM_INDEX>
+		<BASE64 line="42" static="1"><c path="String"/></BASE64>
+		<run public="1" set="method" line="416" static="1">
+			<f a="v">
+				<d/>
+				<c path="String"/>
+			</f>
+			<haxe_doc>
+		Serialize a single value and return the string.
+	</haxe_doc>
+		</run>
+		<buf><c path="StringBuf"/></buf>
+		<cache><c path="Array"><d/></c></cache>
+		<shash><c path="Hash"><c path="Int"/></c></shash>
+		<scount><c path="Int"/></scount>
+		<useCache public="1"><e path="Bool"/></useCache>
+		<useEnumIndex public="1"><e path="Bool"/></useEnumIndex>
+		<toString public="1" set="method" line="60"><f a=""><c path="String"/></f></toString>
+		<serializeString set="method" line="94"><f a="s">
+	<c path="String"/>
+	<e path="Void"/>
+</f></serializeString>
+		<serializeRef set="method" line="113"><f a="v">
+	<unknown/>
+	<e path="Bool"/>
+</f></serializeRef>
+		<serializeFields set="method" line="150"><f a="v">
+	<unknown/>
+	<e path="Void"/>
+</f></serializeFields>
+		<serialize public="1" set="method" line="158"><f a="v">
+	<d/>
+	<e path="Void"/>
+</f></serialize>
+		<serializeException public="1" set="method" line="397"><f a="e">
+	<d/>
+	<e path="Void"/>
+</f></serializeException>
+		<new public="1" set="method" line="51"><f a=""><e path="Void"/></f></new>
+	</class>
+	<class path="kumite.lgl.HTTPTask" params="" file="construct/src/kumite/lgl/HTTPTask.hx">
+		<extends path="bpmjs.Task"><c path="kumite.lgl.HTTPTask"/></extends>
+		<location public="1"><c path="String"/></location>
+		<data public="1"><c path="String"/></data>
+		<doStart public="1" set="method" line="11" override="1"><f a=""><e path="Void"/></f></doStart>
+		<onError set="method" line="19"><f a="errorData">
+	<c path="String"/>
+	<e path="Void"/>
+</f></onError>
+		<onData set="method" line="24"><f a="data">
+	<c path="String"/>
+	<e path="Void"/>
+</f></onData>
+		<new public="1" set="method" line="6"><f a=""><e path="Void"/></f></new>
+	</class>
 	<class path="WebGLUniformLocation" params="" file="construct/src_extern/WebGLUniformLocation.hx" extern="1"/>
-	<typedef path="haxe.PosInfos" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/PosInfos.hx"><a>
+	<typedef path="haxe.io.BytesData" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/io/BytesData.hx"><c path="Array"><c path="Int"/></c></typedef>
+	<class path="kumite.lgl.LGLConfig" params="" file="construct/src/kumite/lgl/LGLConfig.hx">
+		<implements path="haxe.rtti.Infos"/>
+		<__meta__ public="1" line="9" static="1"><d/></__meta__>
+		<__rtti public="1" line="9" static="1"><c path="String"/></__rtti>
+		<displayListLayer public="1"><c path="kumite.displaylist.DisplayListLayer"/></displayListLayer>
+		<clearLayer public="1"><c path="kumite.layer.ClearLayer"/></clearLayer>
+		<lglBundle public="1"><c path="kumite.lgl.LGLBundle"/></lglBundle>
+		<scene2 public="1"><c path="kumite.scene.DefaultScene"/></scene2>
+		<lglReader2 public="1"><c path="kumite.lgl.LGLReader"/></lglReader2>
+		<lglWorkerHandler2 public="1"><c path="kumite.lgl.LGLWorkerHandler"/></lglWorkerHandler2>
+		<lgl2 public="1"><c path="kumite.lgl.LGL"/></lgl2>
+		<lglLayer2 public="1"><c path="kumite.lgl.LGLLayer"/></lglLayer2>
+		<startPrepare public="1" set="method" line="52"><f a=""><c path="bpmjs.SequencerTaskGroup"/></f></startPrepare>
+		<start public="1" set="method" line="66"><f a=""><e path="Void"/></f></start>
+		<complete public="1" set="method" line="73"><f a=""><e path="Void"/></f></complete>
+		<new public="1" set="method" line="24"><f a=""><e path="Void"/></f></new>
+	</class>
+	<typedef path="haxe.PosInfos" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/PosInfos.hx"><a>
 	<methodName><c path="String"/></methodName>
 	<lineNumber><c path="Int"/></lineNumber>
 	<fileName><c path="String"/></fileName>
@@ -8981,37 +8548,27 @@
 	<e path="Void"/>
 </f></new>
 	</class>
-	<class path="GLTextureLoadingTask" params="" file="construct/src_bpmgl/GLTextureLoadingTask.hx">
-		<extends path="bpmjs.ImageLoaderTask"/>
-		<textureRegistry><c path="GLTextureRegistry"/></textureRegistry>
-		<textureConfig><c path="GLTextureConfig"/></textureConfig>
-		<doStart public="1" set="method" line="17" override="1"><f a=""><e path="Void"/></f></doStart>
-		<handleImageLoaded set="method" line="23" override="1"><f a=""><e path="Void"/></f></handleImageLoaded>
-		<new public="1" set="method" line="6"><f a="textureRegistry:textureConfig">
-	<c path="GLTextureRegistry"/>
-	<c path="GLTextureConfig"/>
-	<e path="Void"/>
-</f></new>
-	</class>
-	<class path="WebGLShader" params="" file="construct/src_extern/WebGLShader.hx" extern="1"/>
 	<class path="kumite.blobs.Blobs" params="" file="construct/src/kumite/blobs/Blobs.hx">
 		<blobs public="1"><c path="Array"><c path="kumite.blobs.Blob"/></c></blobs>
 		<new public="1" set="method" line="7"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="kumite.layer.FramebufferDisableLayer" params="" file="construct/src/kumite/layer/FramebufferDisableLayer.hx">
+	<class path="WebGLShader" params="" file="construct/src_extern/WebGLShader.hx" extern="1"/>
+	<class path="kumite.lgl.LGLReader" params="" file="construct/src/kumite/lgl/LGLReader.hx">
 		<implements path="haxe.rtti.Infos"/>
-		<implements path="kumite.scene.LayerLifecycle"/>
-		<__rtti public="1" line="9" static="1"><c path="String"/></__rtti>
-		<init public="1" set="method" line="13"><f a=""><e path="Void"/></f></init>
-		<renderTransition public="1" set="method" line="15"><f a="transitionContext">
-	<c path="kumite.scene.TransitionContext"/>
+		<__meta__ public="1" line="4" static="1"><d/></__meta__>
+		<__rtti public="1" line="4" static="1"><c path="String"/></__rtti>
+		<lgl public="1"><c path="kumite.lgl.LGL"/></lgl>
+		<limit public="1"><c path="Int"/></limit>
+		<location><c path="String"/></location>
+		<read public="1" set="method" line="17"><f a="location">
+	<c path="String"/>
+	<c path="kumite.lgl.HTTPTask"/>
+</f></read>
+		<handleHTTPComplete set="method" line="28"><f a="task">
+	<c path="kumite.lgl.HTTPTask"/>
 	<e path="Void"/>
-</f></renderTransition>
-		<render public="1" set="method" line="20"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></render>
-		<new public="1" set="method" line="11"><f a=""><e path="Void"/></f></new>
+</f></handleHTTPComplete>
+		<new public="1" set="method" line="12"><f a=""><e path="Void"/></f></new>
 	</class>
 	<class path="GLHitarea" params="" file="construct/src_bpmgl/GLHitarea.hx">
 		<position public="1"><c path="Vec2"/></position>
@@ -9033,32 +8590,6 @@
 		<naturalHeight public="1"><c path="Int"/></naturalHeight>
 		<new public="1" set="method"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="kumite.layer.effect.PlasmaEffect" params="" file="construct/src/kumite/layer/effect/PlasmaEffect.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<implements path="kumite.scene.LayerLifecycle"/>
-		<__meta__ public="1" line="11" static="1"><d/></__meta__>
-		<__rtti public="1" line="11" static="1"><c path="String"/></__rtti>
-		<time public="1"><c path="kumite.time.Time"/></time>
-		<shaderProgram><c path="WebGLProgram"/></shaderProgram>
-		<vertexPositionAttribute><c path="GLAttribLocation"/></vertexPositionAttribute>
-		<vertexBuffer><c path="WebGLBuffer"/></vertexBuffer>
-		<resolutionUniform><c path="GLUniformLocation"/></resolutionUniform>
-		<timeUniform><c path="GLUniformLocation"/></timeUniform>
-		<amountUniform><c path="GLUniformLocation"/></amountUniform>
-		<amount><c path="Float"/></amount>
-		<init public="1" set="method" line="28"><f a=""><e path="Void"/></f></init>
-		<renderTransition public="1" set="method" line="47"><f a="transitionContext">
-	<c path="kumite.scene.TransitionContext"/>
-	<e path="Void"/>
-</f></renderTransition>
-		<render public="1" set="method" line="53"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></render>
-		<new public="1" set="method" line="26"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="kumite.layer.effect._PlasmaEffect.Vertex" params="" file="construct/src/kumite/layer/effect/PlasmaEffect.hx" private="1" module="kumite.layer.effect.PlasmaEffect"><__meta__ public="1" line="80" static="1"><d/></__meta__></class>
-	<class path="kumite.layer.effect._PlasmaEffect.Fragment" params="" file="construct/src/kumite/layer/effect/PlasmaEffect.hx" private="1" module="kumite.layer.effect.PlasmaEffect"><__meta__ public="1" line="104" static="1"><d/></__meta__></class>
 	<class path="ease.Quad" params="" file="construct/src_bpmgl/ease/Quad.hx">
 		<easeIn public="1" set="method" line="5" static="1"><f a="t:b:c:d">
 	<c path="Float"/>
@@ -9082,7 +8613,7 @@
 	<c path="Float"/>
 </f></easeInOut>
 	</class>
-	<class path="Math" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/Math.hx" extern="1">
+	<class path="Math" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/Math.hx" extern="1">
 		<PI public="1" set="null" static="1"><c path="Float"/></PI>
 		<NaN public="1" set="null" static="1"><c path="Float"/></NaN>
 		<NEGATIVE_INFINITY public="1" set="null" static="1"><c path="Float"/></NEGATIVE_INFINITY>
@@ -9172,34 +8703,8 @@
 	This class defines mathematical functions and constants.
 </haxe_doc>
 	</class>
-	<class path="kumite.layer.effect.RoadOfRibbon2Effect" params="" file="construct/src/kumite/layer/effect/RoadOfRibbon2Effect.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<implements path="kumite.scene.LayerLifecycle"/>
-		<__meta__ public="1" line="11" static="1"><d/></__meta__>
-		<__rtti public="1" line="11" static="1"><c path="String"/></__rtti>
-		<time public="1"><c path="kumite.time.Time"/></time>
-		<shaderProgram><c path="WebGLProgram"/></shaderProgram>
-		<vertexPositionAttribute><c path="GLAttribLocation"/></vertexPositionAttribute>
-		<vertexBuffer><c path="WebGLBuffer"/></vertexBuffer>
-		<resolutionUniform><c path="GLUniformLocation"/></resolutionUniform>
-		<timeUniform><c path="GLUniformLocation"/></timeUniform>
-		<amountUniform><c path="GLUniformLocation"/></amountUniform>
-		<amount><c path="Float"/></amount>
-		<init public="1" set="method" line="28"><f a=""><e path="Void"/></f></init>
-		<renderTransition public="1" set="method" line="47"><f a="transitionContext">
-	<c path="kumite.scene.TransitionContext"/>
-	<e path="Void"/>
-</f></renderTransition>
-		<render public="1" set="method" line="53"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></render>
-		<new public="1" set="method" line="26"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="kumite.layer.effect._RoadOfRibbon2Effect.Vertex" params="" file="construct/src/kumite/layer/effect/RoadOfRibbon2Effect.hx" private="1" module="kumite.layer.effect.RoadOfRibbon2Effect"><__meta__ public="1" line="80" static="1"><d/></__meta__></class>
-	<class path="kumite.layer.effect._RoadOfRibbon2Effect.Fragment" params="" file="construct/src/kumite/layer/effect/RoadOfRibbon2Effect.hx" private="1" module="kumite.layer.effect.RoadOfRibbon2Effect"><__meta__ public="1" line="208" static="1"><d/></__meta__></class>
 	<class path="WebGLProgram" params="" file="construct/src_extern/WebGLProgram.hx" extern="1"/>
-	<class path="js.XMLHttpRequest" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/XMLHttpRequest.hx" extern="1">
+	<class path="js.XMLHttpRequest" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/XMLHttpRequest.hx" extern="1">
 		<onreadystatechange public="1"><f a=""><e path="Void"/></f></onreadystatechange>
 		<readyState public="1"><c path="Int"/></readyState>
 		<responseText public="1"><c path="String"/></responseText>
@@ -9245,30 +8750,30 @@
 </f></render>
 		<new public="1" set="method" line="19"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="Float" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/StdTypes.hx" module="StdTypes" extern="1"><haxe_doc>
+	<class path="Float" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/StdTypes.hx" module="StdTypes" extern="1"><haxe_doc>
 	The standard Float type, this is a double-precision IEEE 64bit float.
 </haxe_doc></class>
-	<class path="Int" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/StdTypes.hx" module="StdTypes" extern="1">
+	<class path="Int" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/StdTypes.hx" module="StdTypes" extern="1">
 		<extends path="Float"/>
 		<haxe_doc>
 	The standard Int type. Its precision depends on the platform.
 </haxe_doc>
 	</class>
-	<class path="Dynamic" params="T" file="/Applications/FDT/haXe/haxe-2.07-osx/std/StdTypes.hx" module="StdTypes" extern="1"><haxe_doc>
+	<class path="Dynamic" params="T" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/StdTypes.hx" module="StdTypes" extern="1"><haxe_doc>
 	Dynamic is an internal compiler type which has special behavior.
 	See the haXe language reference for more informations.
 </haxe_doc></class>
-	<enum path="Bool" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/StdTypes.hx" module="StdTypes">
+	<enum path="Bool" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/StdTypes.hx" module="StdTypes">
 		<true/>
 		<false/>
 		<haxe_doc>
 	The standard Boolean type is represented as an enum with two choices.
 </haxe_doc>
 	</enum>
-	<enum path="Void" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/StdTypes.hx" module="StdTypes"><haxe_doc>
+	<enum path="Void" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/StdTypes.hx" module="StdTypes"><haxe_doc>
 	The standard Void type. Only [null] values can be of the type [Void].
 </haxe_doc></enum>
-	<class path="Std" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/_std/Std.hx">
+	<class path="Std" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/_std/Std.hx">
 		<is public="1" set="method" line="28" static="1">
 			<f a="v:t">
 				<d/>
@@ -9328,40 +8833,6 @@
 	The Std class provides standard methods for manipulating basic types.
 </haxe_doc>
 	</class>
-	<class path="kumite.layer.Texture3DLayer" params="" file="construct/src/kumite/layer/Texture3DLayer.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<implements path="kumite.scene.LayerLifecycle"/>
-		<__meta__ public="1" line="16" static="1"><d/></__meta__>
-		<__rtti public="1" line="16" static="1"><c path="String"/></__rtti>
-		<time public="1"><c path="kumite.time.Time"/></time>
-		<textureRegistry public="1"><c path="GLTextureRegistry"/></textureRegistry>
-		<transitions public="1"><c path="kumite.layer.LayerTransitions"/></transitions>
-		<cutTransition public="1"><c path="kumite.layer.LayerTransition"/></cutTransition>
-		<moveTransition public="1"><c path="kumite.layer.LayerTransition"/></moveTransition>
-		<alphaTransition public="1"><c path="kumite.layer.LayerTransition"/></alphaTransition>
-		<scale public="1"><c path="Float"/></scale>
-		<position public="1"><c path="Vec3"/></position>
-		<textureConfig public="1"><c path="GLTextureConfig"/></textureConfig>
-		<shaderProgram><c path="WebGLProgram"/></shaderProgram>
-		<vertexPositionAttribute><c path="GLAttribLocation"/></vertexPositionAttribute>
-		<vertexBuffer><c path="WebGLBuffer"/></vertexBuffer>
-		<projectionMatrixUniform><c path="GLUniformLocation"/></projectionMatrixUniform>
-		<worldViewMatrixUniform><c path="GLUniformLocation"/></worldViewMatrixUniform>
-		<textureUniform><c path="GLUniformLocation"/></textureUniform>
-		<alphaUniform><c path="GLUniformLocation"/></alphaUniform>
-		<init public="1" set="method" line="58"><f a=""><e path="Void"/></f></init>
-		<renderTransition public="1" set="method" line="76"><f a="transitionContext">
-	<c path="kumite.scene.TransitionContext"/>
-	<e path="Void"/>
-</f></renderTransition>
-		<render public="1" set="method" line="82"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></render>
-		<new public="1" set="method" line="47"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="kumite.layer._Texture3DLayer.Vertex" params="" file="construct/src/kumite/layer/Texture3DLayer.hx" private="1" module="kumite.layer.Texture3DLayer"><__meta__ public="1" line="131" static="1"><d/></__meta__></class>
-	<class path="kumite.layer._Texture3DLayer.Fragment" params="" file="construct/src/kumite/layer/Texture3DLayer.hx" private="1" module="kumite.layer.Texture3DLayer"><__meta__ public="1" line="150" static="1"><d/></__meta__></class>
 	<enum path="kumite.scene.TransitionDirection" params="" file="construct/src/kumite/scene/TransitionDirection.hx">
 		<OUT/>
 		<IN/>
@@ -9443,19 +8914,18 @@
  * General base class for exceptions.
  </haxe_doc>
 	</class>
-	<class path="haxe.Timer" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/Timer.hx">
-		<arr line="34" static="1"><c path="Array"><c path="haxe.Timer"/></c></arr>
-		<delay public="1" set="method" line="76" static="1"><f a="f:time_ms">
+	<class path="haxe.Timer" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/Timer.hx">
+		<delay public="1" set="method" line="77" static="1"><f a="f:time_ms">
 	<f a=""><e path="Void"/></f>
 	<c path="Int"/>
 	<c path="haxe.Timer"/>
 </f></delay>
-		<measure public="1" params="T" set="method" line="87" static="1"><f a="f:?pos">
+		<measure public="1" params="T" set="method" line="88" static="1"><f a="f:?pos">
 	<f a=""><c path="measure.T"/></f>
 	<t path="haxe.PosInfos"/>
 	<c path="measure.T"/>
 </f></measure>
-		<stamp public="1" set="method" line="97" static="1">
+		<stamp public="1" set="method" line="98" static="1">
 			<f a=""><c path="Float"/></f>
 			<haxe_doc>
 		Returns a timestamp, in seconds
@@ -9464,142 +8934,70 @@
 		<id><t path="Null"><c path="Int"/></t></id>
 		<timerId><c path="Int"/></timerId>
 		<stop public="1" set="method" line="52"><f a=""><e path="Void"/></f></stop>
-		<run public="1" set="dynamic" line="73"><f a=""><e path="Void"/></f></run>
-		<new public="1" set="method" line="38"><f a="time_ms">
+		<run public="1" set="dynamic" line="74"><f a=""><e path="Void"/></f></run>
+		<new public="1" set="method" line="37"><f a="time_ms">
 	<c path="Int"/>
 	<e path="Void"/>
 </f></new>
-	</class>
-	<class path="bpmjs.ObjectProxyTask" params="T:T2" file="construct/src_bpmjs/bpmjs/ObjectProxyTask.hx">
-		<extends path="bpmjs.Task"><c path="bpmjs.ObjectProxyTask">
-	<c path="bpmjs.ObjectProxyTask.T"/>
-	<c path="bpmjs.ObjectProxyTask.T2"/>
-</c></extends>
-		<object public="1"><c path="bpmjs.ObjectProxyTask.T"/></object>
-		<child public="1"><c path="bpmjs.ObjectProxyTask.T2"/></child>
-		<start public="1" set="method" line="19" override="1"><f a=""><e path="Void"/></f></start>
-		<setMonitor set="method" line="25" override="1"><f a="value">
-	<c path="bpmjs.ProgressMonitor"/>
-	<c path="bpmjs.ProgressMonitor"/>
-</f></setMonitor>
-		<getMonitor set="method" line="31" override="1"><f a=""><c path="bpmjs.ProgressMonitor"/></f></getMonitor>
-		<handleComplete set="method" line="36"><f a="v">
-	<c path="bpmjs.ObjectProxyTask.T2"/>
-	<e path="Void"/>
-</f></handleComplete>
-		<handleError set="method" line="41"><f a="v">
-	<c path="bpmjs.TaskError"><c path="bpmjs.ObjectProxyTask.T2"/></c>
-	<e path="Void"/>
-</f></handleError>
-		<new public="1" set="method" line="8"><f a="object:child">
-	<c path="bpmjs.ObjectProxyTask.T"/>
-	<c path="bpmjs.ObjectProxyTask.T2"/>
-	<e path="Void"/>
-</f></new>
-	</class>
-	<class path="kumite.effects.Config" params="" file="construct/src/kumite/effects/Config.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<__meta__ public="1" line="34" static="1"><d/></__meta__>
-		<__rtti public="1" line="34" static="1"><c path="String"/></__rtti>
-		<IMAGE_1 public="1" line="36" static="1"><c path="GLTextureConfig"/></IMAGE_1>
-		<IMAGE_2 public="1" line="37" static="1"><c path="GLTextureConfig"/></IMAGE_2>
-		<IMAGE_3 public="1" line="38" static="1"><c path="GLTextureConfig"/></IMAGE_3>
-		<textureRegistry public="1"><c path="GLTextureRegistry"/></textureRegistry>
-		<displayListLayer public="1"><c path="kumite.displaylist.DisplayListLayer"/></displayListLayer>
-		<clearLayer public="1"><c path="kumite.layer.ClearLayer"/></clearLayer>
-		<greyColorLayer public="1"><c path="kumite.layer.ColorLayer"/></greyColorLayer>
-		<image1Layer public="1"><c path="kumite.layer.TextureLayer"/></image1Layer>
-		<image2Layer public="1"><c path="kumite.layer.TextureLayer"/></image2Layer>
-		<image3Layer public="1"><c path="kumite.layer.TextureLayer"/></image3Layer>
-		<framebufferClearLayer public="1"><c path="kumite.layer.ClearLayer"/></framebufferClearLayer>
-		<framebufferEnableLayer public="1"><c path="kumite.layer.FramebufferEnableLayer"/></framebufferEnableLayer>
-		<framebufferDisableLayer public="1"><c path="kumite.layer.FramebufferDisableLayer"/></framebufferDisableLayer>
-		<framebufferRenderLayer public="1"><c path="kumite.layer.TextureLayer"/></framebufferRenderLayer>
-		<framebuffer2EnableLayer public="1"><c path="kumite.layer.FramebufferEnableLayer"/></framebuffer2EnableLayer>
-		<framebuffer2DisableLayer public="1"><c path="kumite.layer.FramebufferDisableLayer"/></framebuffer2DisableLayer>
-		<framebuffer2RenderLayer public="1"><c path="kumite.layer.TextureLayer"/></framebuffer2RenderLayer>
-		<framebuffer3EnableLayer public="1"><c path="kumite.layer.FramebufferEnableLayer"/></framebuffer3EnableLayer>
-		<framebuffer3DisableLayer public="1"><c path="kumite.layer.FramebufferDisableLayer"/></framebuffer3DisableLayer>
-		<framebuffer3RenderLayer public="1"><c path="kumite.layer.TextureLayer"/></framebuffer3RenderLayer>
-		<testFilter public="1"><c path="kumite.layer.effect.TestFilter"/></testFilter>
-		<postproFilter public="1"><c path="kumite.layer.effect.PostproFilter"/></postproFilter>
-		<postpro2Filter public="1"><c path="kumite.layer.effect.PostproFilter"/></postpro2Filter>
-		<crosshatchFilter public="1"><c path="kumite.layer.effect.CrosshatchFilter"/></crosshatchFilter>
-		<plasmaEffect public="1"><c path="kumite.layer.effect.PlasmaEffect"/></plasmaEffect>
-		<juliaEffect public="1"><c path="kumite.layer.effect.JuliaEffect"/></juliaEffect>
-		<metaTunnelEffect public="1"><c path="kumite.layer.effect.MetaTunnelEffect"/></metaTunnelEffect>
-		<nautilusEffect public="1"><c path="kumite.layer.effect.NautilusEffect"/></nautilusEffect>
-		<kinderpainterEffect public="1"><c path="kumite.layer.effect.KinderpainterEffect"/></kinderpainterEffect>
-		<roadOfRibbonEffect public="1"><c path="kumite.layer.effect.RoadOfRibbonEffect"/></roadOfRibbonEffect>
-		<roadOfRibbon2Effect public="1"><c path="kumite.layer.effect.RoadOfRibbon2Effect"/></roadOfRibbon2Effect>
-		<e704Effect public="1"><c path="kumite.layer.effect.E704Effect"/></e704Effect>
-		<rippleFilter public="1"><c path="kumite.layer.effect.RippleFilter"/></rippleFilter>
-		<radialBlurFilter public="1"><c path="kumite.layer.effect.RadialBlurFilter"/></radialBlurFilter>
-		<scene13 public="1"><c path="kumite.scene.DefaultScene"/></scene13>
-		<scene12 public="1"><c path="kumite.scene.DefaultScene"/></scene12>
-		<scene11 public="1"><c path="kumite.scene.DefaultScene"/></scene11>
-		<scene10 public="1"><c path="kumite.scene.DefaultScene"/></scene10>
-		<scene9 public="1"><c path="kumite.scene.DefaultScene"/></scene9>
-		<scene8 public="1"><c path="kumite.scene.DefaultScene"/></scene8>
-		<scene7 public="1"><c path="kumite.scene.DefaultScene"/></scene7>
-		<scene6 public="1"><c path="kumite.scene.DefaultScene"/></scene6>
-		<scene5 public="1"><c path="kumite.scene.DefaultScene"/></scene5>
-		<scene4 public="1"><c path="kumite.scene.DefaultScene"/></scene4>
-		<scene3 public="1"><c path="kumite.scene.DefaultScene"/></scene3>
-		<scene2 public="1"><c path="kumite.scene.DefaultScene"/></scene2>
-		<scene1 public="1"><c path="kumite.scene.DefaultScene"/></scene1>
-		<startPrepare public="1" set="method" line="175"><f a=""><c path="bpmjs.SequencerTaskGroup"/></f></startPrepare>
-		<complete public="1" set="method" line="187"><f a=""><e path="Void"/></f></complete>
-		<addFilter set="method" line="204"><f a="scene:layer:textureLayer">
-	<c path="kumite.scene.DefaultScene"/>
-	<c path="kumite.scene.LayerLifecycle"/>
-	<c path="kumite.scene.LayerLifecycle"/>
-	<e path="Void"/>
-</f></addFilter>
-		<addFilter2 set="method" line="217"><f a="scene:layer:textureLayer">
-	<c path="kumite.scene.DefaultScene"/>
-	<c path="kumite.scene.LayerLifecycle"/>
-	<c path="kumite.scene.LayerLifecycle"/>
-	<e path="Void"/>
-</f></addFilter2>
-		<addFilter3 set="method" line="233"><f a="scene:layer:layer2:textureLayer">
-	<c path="kumite.scene.DefaultScene"/>
-	<c path="kumite.scene.LayerLifecycle"/>
-	<c path="kumite.scene.LayerLifecycle"/>
-	<c path="kumite.scene.LayerLifecycle"/>
-	<e path="Void"/>
-</f></addFilter3>
-		<addEffect set="method" line="255"><f a="scene:layer">
-	<c path="kumite.scene.DefaultScene"/>
-	<c path="kumite.scene.LayerLifecycle"/>
-	<e path="Void"/>
-</f></addEffect>
-		<new public="1" set="method" line="96"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="kumite.blobs.BlobReaderMouse" params="" file="construct/src/kumite/blobs/BlobReaderMouse.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<__meta__ public="1" line="7" static="1"><d/></__meta__>
-		<__rtti public="1" line="7" static="1"><c path="String"/></__rtti>
-		<blobs public="1"><c path="kumite.blobs.Blobs"/></blobs>
-		<time public="1"><c path="kumite.time.Time"/></time>
-		<mouse><c path="Vec2"/></mouse>
-		<init public="1" set="method" line="23"><f a=""><e path="Void"/></f></init>
-		<tick public="1" set="method" line="29"><f a="tick">
-	<c path="kumite.time.Tick"/>
-	<e path="Void"/>
-</f></tick>
-		<mouseMove set="method" line="43"><f a="position">
-	<c path="Vec2"/>
-	<e path="Void"/>
-</f></mouseMove>
-		<new public="1" set="method" line="17"><f a=""><e path="Void"/></f></new>
 	</class>
 	<typedef path="Vec3Components" params="" file="construct/src_bpmgl/Vec3.hx" module="Vec3"><a>
 	<z><c path="Float"/></z>
 	<y><c path="Float"/></y>
 	<x><c path="Float"/></x>
 </a></typedef>
-	<class path="haxe.xml._Fast.NodeAccess" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/xml/Fast.hx" private="1" module="haxe.xml.Fast">
+	<class path="Vec3" params="" file="construct/src_bpmgl/Vec3.hx">
+		<x public="1"><c path="Float"/></x>
+		<y public="1"><c path="Float"/></y>
+		<z public="1"><c path="Float"/></z>
+		<scale public="1" set="method" line="16"><f a="factor">
+	<c path="Float"/>
+	<e path="Void"/>
+</f></scale>
+		<multiply public="1" set="method" line="23"><f a="x:y:z">
+	<c path="Float"/>
+	<c path="Float"/>
+	<c path="Float"/>
+	<e path="Void"/>
+</f></multiply>
+		<subtract public="1" set="method" line="30"><f a="x:y:z">
+	<c path="Float"/>
+	<c path="Float"/>
+	<c path="Float"/>
+	<c path="Vec3"/>
+</f></subtract>
+		<normalize public="1" set="method" line="39"><f a=""><c path="Vec3"/></f></normalize>
+		<getLength public="1" set="method" line="49"><f a=""><c path="Float"/></f></getLength>
+		<cross public="1" set="method" line="54"><f a="vec">
+	<c path="Vec3"/>
+	<c path="Vec3"/>
+</f></cross>
+		<dot public="1" set="method" line="62"><f a="vec">
+	<c path="Vec3"/>
+	<c path="Float"/>
+</f></dot>
+		<equals public="1" set="method" line="67"><f a="vec">
+	<c path="Vec3"/>
+	<e path="Bool"/>
+</f></equals>
+		<transform public="1" set="method" line="72"><f a="matrix">
+	<c path="Matrix4"/>
+	<e path="Void"/>
+</f></transform>
+		<setFrom public="1" set="method" line="81"><f a="?value:?vec3">
+	<c path="Float"/>
+	<t path="Vec3Components"/>
+	<e path="Void"/>
+</f></setFrom>
+		<clone public="1" set="method" line="97"><f a=""><c path="Vec3"/></f></clone>
+		<toString public="1" set="method" line="102"><f a=""><c path="String"/></f></toString>
+		<new public="1" set="method" line="9"><f a="?x:?y:?z">
+	<c path="Float"/>
+	<c path="Float"/>
+	<c path="Float"/>
+	<e path="Void"/>
+</f></new>
+	</class>
+	<class path="haxe.xml._Fast.NodeAccess" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/xml/Fast.hx" private="1" module="haxe.xml.Fast">
 		<__x><c path="Xml"/></__x>
 		<resolve public="1" set="method" line="35"><f a="name">
 	<c path="String"/>
@@ -9611,7 +9009,7 @@
 </f></new>
 		<haxe_dynamic><c path="haxe.xml.Fast"/></haxe_dynamic>
 	</class>
-	<class path="haxe.xml._Fast.AttribAccess" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/xml/Fast.hx" private="1" module="haxe.xml.Fast">
+	<class path="haxe.xml._Fast.AttribAccess" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/xml/Fast.hx" private="1" module="haxe.xml.Fast">
 		<__x><c path="Xml"/></__x>
 		<resolve public="1" set="method" line="54"><f a="name">
 	<c path="String"/>
@@ -9623,7 +9021,7 @@
 </f></new>
 		<haxe_dynamic><c path="String"/></haxe_dynamic>
 	</class>
-	<class path="haxe.xml._Fast.HasAttribAccess" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/xml/Fast.hx" private="1" module="haxe.xml.Fast">
+	<class path="haxe.xml._Fast.HasAttribAccess" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/xml/Fast.hx" private="1" module="haxe.xml.Fast">
 		<__x><c path="Xml"/></__x>
 		<resolve public="1" set="method" line="73"><f a="name">
 	<c path="String"/>
@@ -9635,7 +9033,7 @@
 </f></new>
 		<haxe_dynamic><e path="Bool"/></haxe_dynamic>
 	</class>
-	<class path="haxe.xml._Fast.HasNodeAccess" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/xml/Fast.hx" private="1" module="haxe.xml.Fast">
+	<class path="haxe.xml._Fast.HasNodeAccess" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/xml/Fast.hx" private="1" module="haxe.xml.Fast">
 		<__x><c path="Xml"/></__x>
 		<resolve public="1" set="method" line="89"><f a="name">
 	<c path="String"/>
@@ -9647,7 +9045,7 @@
 </f></new>
 		<haxe_dynamic><e path="Bool"/></haxe_dynamic>
 	</class>
-	<class path="haxe.xml._Fast.NodeListAccess" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/xml/Fast.hx" private="1" module="haxe.xml.Fast">
+	<class path="haxe.xml._Fast.NodeListAccess" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/xml/Fast.hx" private="1" module="haxe.xml.Fast">
 		<__x><c path="Xml"/></__x>
 		<resolve public="1" set="method" line="103"><f a="name">
 	<c path="String"/>
@@ -9659,7 +9057,7 @@
 </f></new>
 		<haxe_dynamic><c path="List"><c path="haxe.xml.Fast"/></c></haxe_dynamic>
 	</class>
-	<class path="haxe.xml.Fast" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/xml/Fast.hx">
+	<class path="haxe.xml.Fast" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/xml/Fast.hx">
 		<x public="1" set="null"><c path="Xml"/></x>
 		<name public="1" get="getName" set="null"><c path="String"/></name>
 		<innerData public="1" get="getInnerData" set="null"><c path="String"/></innerData>
@@ -9683,7 +9081,7 @@
 </f></new>
 	</class>
 	<class path="shader.DisplayObjectVertex" params="" file="construct/src_bpmgl/shader/DisplayObjectVertex.hx"><__meta__ public="1" line="18" static="1"><d/></__meta__></class>
-	<class path="haxe.rtti.Meta" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/rtti/Meta.hx">
+	<class path="haxe.rtti.Meta" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/rtti/Meta.hx">
 		<getType public="1" set="method" line="35" static="1">
 			<f a="t">
 				<d/>
@@ -10305,44 +9703,6 @@
 </f></handleEnterFrame>
 		<new public="1" set="method" line="8"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="kumite.layer.TextureLayer" params="" file="construct/src/kumite/layer/TextureLayer.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<implements path="kumite.scene.LayerLifecycle"/>
-		<__meta__ public="1" line="16" static="1"><d/></__meta__>
-		<__rtti public="1" line="16" static="1"><c path="String"/></__rtti>
-		<time public="1"><c path="kumite.time.Time"/></time>
-		<textureRegistry public="1"><c path="GLTextureRegistry"/></textureRegistry>
-		<transitions public="1"><c path="kumite.layer.LayerTransitions"/></transitions>
-		<cutTransition public="1"><c path="kumite.layer.LayerTransition"/></cutTransition>
-		<moveTransition public="1"><c path="kumite.layer.LayerTransition"/></moveTransition>
-		<alphaTransition public="1"><c path="kumite.layer.LayerTransition"/></alphaTransition>
-		<scale public="1"><c path="Float"/></scale>
-		<position public="1"><c path="Vec3"/></position>
-		<textureConfig public="1"><c path="GLTextureConfig"/></textureConfig>
-		<texture public="1"><c path="GLTexture"/></texture>
-		<blend public="1"><e path="Bool"/></blend>
-		<flipY public="1"><e path="Bool"/></flipY>
-		<shaderProgram><c path="WebGLProgram"/></shaderProgram>
-		<vertexPositionAttribute><c path="GLAttribLocation"/></vertexPositionAttribute>
-		<vertexBuffer><c path="WebGLBuffer"/></vertexBuffer>
-		<projectionMatrixUniform><c path="GLUniformLocation"/></projectionMatrixUniform>
-		<worldViewMatrixUniform><c path="GLUniformLocation"/></worldViewMatrixUniform>
-		<textureUniform><c path="GLUniformLocation"/></textureUniform>
-		<alphaUniform><c path="GLUniformLocation"/></alphaUniform>
-		<flipYUniform><c path="GLUniformLocation"/></flipYUniform>
-		<init public="1" set="method" line="71"><f a=""><e path="Void"/></f></init>
-		<renderTransition public="1" set="method" line="90"><f a="transitionContext">
-	<c path="kumite.scene.TransitionContext"/>
-	<e path="Void"/>
-</f></renderTransition>
-		<render public="1" set="method" line="96"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></render>
-		<new public="1" set="method" line="59"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="kumite.layer._TextureLayer.Vertex" params="" file="construct/src/kumite/layer/TextureLayer.hx" private="1" module="kumite.layer.TextureLayer"><__meta__ public="1" line="163" static="1"><d/></__meta__></class>
-	<class path="kumite.layer._TextureLayer.Fragment" params="" file="construct/src/kumite/layer/TextureLayer.hx" private="1" module="kumite.layer.TextureLayer"><__meta__ public="1" line="182" static="1"><d/></__meta__></class>
 	<class path="CanvasRenderingContext2D" params="" file="construct/src_extern/CanvasRenderingContext2D.hx" extern="1">
 		<canvas public="1" set="null"><c path="Canvas"/></canvas>
 		<save public="1" set="method"><f a=""><e path="Void"/></f></save>
@@ -10569,25 +9929,7 @@
 </f></pickDisplayObject>
 		<new public="1" set="method" line="6"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="_GLTextureConfig.TextureManipulation" params="" file="construct/src_bpmgl/GLTextureConfig.hx" private="1" module="GLTextureConfig"><create public="1" set="method" line="46"><f a="image">
-	<c path="Image"/>
-	<c path="Canvas"/>
-</f></create></class>
-	<class path="_GLTextureConfig.CropManipulation" params="" file="construct/src_bpmgl/GLTextureConfig.hx" private="1" module="GLTextureConfig">
-		<extends path="_GLTextureConfig.TextureManipulation"/>
-		<width><c path="Int"/></width>
-		<height><c path="Int"/></height>
-		<create public="1" set="method" line="63" override="1"><f a="image">
-	<c path="Image"/>
-	<c path="Canvas"/>
-</f></create>
-		<new public="1" set="method" line="57"><f a="width:height">
-	<c path="Int"/>
-	<c path="Int"/>
-	<e path="Void"/>
-</f></new>
-	</class>
-	<typedef path="Null" params="T" file="/Applications/FDT/haXe/haxe-2.07-osx/std/StdTypes.hx" module="StdTypes">
+	<typedef path="Null" params="T" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/StdTypes.hx" module="StdTypes">
 		<c path="Null.T"/>
 		<haxe_doc>
 	[Null] can be useful in two cases. In order to document some methods
@@ -10596,7 +9938,7 @@
 	can't.
 </haxe_doc>
 	</typedef>
-	<typedef path="Iterator" params="T" file="/Applications/FDT/haXe/haxe-2.07-osx/std/StdTypes.hx" module="StdTypes">
+	<typedef path="Iterator" params="T" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/StdTypes.hx" module="StdTypes">
 		<a>
 			<next set="method"><f a=""><c path="Iterator.T"/></f></next>
 			<hasNext set="method"><f a=""><e path="Bool"/></f></hasNext>
@@ -10607,25 +9949,22 @@
 	documentation for more informations.
 </haxe_doc>
 	</typedef>
-	<typedef path="Iterable" params="T" file="/Applications/FDT/haXe/haxe-2.07-osx/std/StdTypes.hx" module="StdTypes">
+	<typedef path="Iterable" params="T" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/StdTypes.hx" module="StdTypes">
 		<a><iterator set="method"><f a=""><t path="Iterator"><c path="Iterable.T"/></t></f></iterator></a>
 		<haxe_doc>
 	An Iterable is a data structure which has an iterator() method.
 	See [Lambda] for generic functions on iterable structures.
 </haxe_doc>
 	</typedef>
-	<class path="ArrayAccess" params="T" file="/Applications/FDT/haXe/haxe-2.07-osx/std/StdTypes.hx" module="StdTypes" extern="1" interface="1"><haxe_doc>
+	<class path="ArrayAccess" params="T" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/StdTypes.hx" module="StdTypes" extern="1" interface="1"><haxe_doc>
 	ArrayAccess is used to indicate a class that can be accessed using brackets.
 	The type parameter represent the type of the elements stored.
 </haxe_doc></class>
-	<class path="kumite.blobs.Config" params="" file="construct/src/kumite/blobs/Config.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<__rtti public="1" line="5" static="1"><c path="String"/></__rtti>
-		<blobs public="1"><c path="kumite.blobs.Blobs"/></blobs>
-		<blobReaderHTTP public="1"><c path="kumite.blobs.BlobReaderHTTP"/></blobReaderHTTP>
-		<blobReaderWS public="1"><c path="kumite.blobs.BlobReaderWS"/></blobReaderWS>
-		<blobReaderMouse public="1"><c path="kumite.blobs.BlobReaderMouse"/></blobReaderMouse>
-		<new public="1" set="method" line="12"><f a=""><e path="Void"/></f></new>
+	<class path="kumite.lgl.Edge" params="" file="construct/src/kumite/lgl/Edge.hx">
+		<v1Index public="1"><c path="Int"/></v1Index>
+		<v2Index public="1"><c path="Int"/></v2Index>
+		<visible public="1"><e path="Bool"/></visible>
+		<new public="1" set="method" line="10"><f a=""><e path="Void"/></f></new>
 	</class>
 	<class path="shader.DisplayObjectFragment" params="" file="construct/src_bpmgl/shader/DisplayObjectFragment.hx"><__meta__ public="1" line="19" static="1"><d/></__meta__></class>
 	<class path="kumite.scene.DefaultScene" params="" file="construct/src/kumite/scene/DefaultScene.hx">
@@ -10666,40 +10005,7 @@
 		<layerId public="1"><c path="String"/></layerId>
 		<new public="1" set="method" line="68"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="kumite.layer.effect.JuliaEffect" params="" file="construct/src/kumite/layer/effect/JuliaEffect.hx">
-		<implements path="haxe.rtti.Infos"/>
-		<implements path="kumite.scene.LayerLifecycle"/>
-		<__meta__ public="1" line="11" static="1"><d/></__meta__>
-		<__rtti public="1" line="11" static="1"><c path="String"/></__rtti>
-		<time public="1"><c path="kumite.time.Time"/></time>
-		<shaderProgram><c path="WebGLProgram"/></shaderProgram>
-		<vertexPositionAttribute><c path="GLAttribLocation"/></vertexPositionAttribute>
-		<vertexBuffer><c path="WebGLBuffer"/></vertexBuffer>
-		<resolutionUniform><c path="GLUniformLocation"/></resolutionUniform>
-		<timeUniform><c path="GLUniformLocation"/></timeUniform>
-		<amountUniform><c path="GLUniformLocation"/></amountUniform>
-		<amount><c path="Float"/></amount>
-		<init public="1" set="method" line="28"><f a=""><e path="Void"/></f></init>
-		<renderTransition public="1" set="method" line="47"><f a="transitionContext">
-	<c path="kumite.scene.TransitionContext"/>
-	<e path="Void"/>
-</f></renderTransition>
-		<render public="1" set="method" line="53"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></render>
-		<new public="1" set="method" line="26"><f a=""><e path="Void"/></f></new>
-	</class>
-	<class path="kumite.layer.effect._JuliaEffect.Vertex" params="" file="construct/src/kumite/layer/effect/JuliaEffect.hx" private="1" module="kumite.layer.effect.JuliaEffect"><__meta__ public="1" line="80" static="1"><d/></__meta__></class>
-	<class path="kumite.layer.effect._JuliaEffect.Fragment" params="" file="construct/src/kumite/layer/effect/JuliaEffect.hx" private="1" module="kumite.layer.effect.JuliaEffect"><__meta__ public="1" line="110" static="1"><d/></__meta__></class>
 	<class path="TextMetrics" params="" file="construct/src_extern/TextMetrics.hx" extern="1"><width public="1" set="null"><c path="Float"/></width></class>
-	<class path="Uint16Array" params="" file="construct/src_extern/Uint16Array.hx" extern="1">
-		<extends path="ArrayBuffer"/>
-		<new public="1" set="method"><f a="arrayOrLength">
-	<d/>
-	<e path="Void"/>
-</f></new>
-	</class>
 	<class path="kumite.camera.Config" params="" file="construct/src/kumite/camera/Config.hx">
 		<implements path="haxe.rtti.Infos"/>
 		<__rtti public="1" line="4" static="1"><c path="String"/></__rtti>
@@ -10715,11 +10021,92 @@
 		<vjlayers public="1"><c path="kumite.vjinterface.VJLayers"/></vjlayers>
 		<new public="1" set="method" line="10"><f a=""><e path="Void"/></f></new>
 	</class>
+	<enum path="haxe.io.Error" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/io/Error.hx">
+		<Overflow><haxe_doc> An integer value is outside its allowed range </haxe_doc></Overflow>
+		<OutsideBounds><haxe_doc> An operation on Bytes is outside of its valid range </haxe_doc></OutsideBounds>
+		<Custom a="e">
+			<d/>
+			<haxe_doc> Other errors </haxe_doc>
+		</Custom>
+		<Blocked><haxe_doc> The IO is set into nonblocking mode and some data cannot be read or written </haxe_doc></Blocked>
+		<haxe_doc>
+	The possible IO errors that can occur
+</haxe_doc>
+	</enum>
 	<class path="Timeout" params="" file="construct/src_bpmgl/Timeout.hx"><execute public="1" set="method" line="5" static="1"><f a="ms:method">
 	<c path="Int"/>
 	<f a=""><e path="Void"/></f>
 	<e path="Void"/>
 </f></execute></class>
+	<typedef path="haxe.TypeResolver" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/Unserializer.hx" module="haxe.Unserializer"><a>
+	<resolveEnum set="method"><f a="name">
+	<c path="String"/>
+	<c path="Enum"><d/></c>
+</f></resolveEnum>
+	<resolveClass set="method"><f a="name">
+	<c path="String"/>
+	<c path="Class"><d/></c>
+</f></resolveClass>
+</a></typedef>
+	<class path="haxe.Unserializer" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/Unserializer.hx">
+		<DEFAULT_RESOLVER public="1" line="34" static="1"><t path="haxe.TypeResolver"/></DEFAULT_RESOLVER>
+		<BASE64 line="36" static="1"><c path="String"/></BASE64>
+		<CODES line="39" static="1"><c path="Array"><c path="Int"/></c></CODES>
+		<initCodes set="method" line="41" static="1"><f a=""><c path="Array"><c path="Int"/></c></f></initCodes>
+		<run public="1" set="method" line="356" static="1">
+			<f a="v">
+				<c path="String"/>
+				<d/>
+			</f>
+			<haxe_doc>
+		Unserialize a single value and return it.
+	</haxe_doc>
+		</run>
+		<buf><c path="String"/></buf>
+		<pos><c path="Int"/></pos>
+		<length><c path="Int"/></length>
+		<cache><c path="Array"><d/></c></cache>
+		<scache><c path="Array"><c path="String"/></c></scache>
+		<resolver><t path="haxe.TypeResolver"/></resolver>
+		<setResolver public="1" set="method" line="81"><f a="r">
+	<t path="haxe.TypeResolver"/>
+	<e path="Void"/>
+</f></setResolver>
+		<getResolver public="1" set="method" line="91"><f a=""><t path="haxe.TypeResolver"/></f></getResolver>
+		<get get="inline" set="null" line="95"><f a="p">
+	<c path="Int"/>
+	<c path="Int"/>
+</f></get>
+		<readDigits set="method" line="99"><f a=""><c path="Int"/></f></readDigits>
+		<unserializeObject set="method" line="124"><f a="o">
+	<a/>
+	<e path="Void"/>
+</f></unserializeObject>
+		<unserializeEnum set="method" line="139"><f a="edecl:tag">
+	<c path="Enum"><d/></c>
+	<c path="String"/>
+	<unknown/>
+</f></unserializeEnum>
+		<unserialize public="1" set="method" line="160"><f a=""><d/></f></unserialize>
+		<new public="1" set="method" line="64"><f a="buf">
+	<c path="String"/>
+	<e path="Void"/>
+</f></new>
+	</class>
+	<class path="kumite.lgl.LGLBundle" params="" file="construct/src/kumite/lgl/LGLBundle.hx">
+		<implements path="haxe.rtti.Infos"/>
+		<__meta__ public="1" line="10" static="1"><d/></__meta__>
+		<__rtti public="1" line="10" static="1"><c path="String"/></__rtti>
+		<scene1 public="1"><c path="kumite.scene.DefaultScene"/></scene1>
+		<lglReader1 public="1"><c path="kumite.lgl.LGLReader"/></lglReader1>
+		<lgl1 public="1"><c path="kumite.lgl.LGL"/></lgl1>
+		<lglWorkerHandler1 public="1"><c path="kumite.lgl.LGLWorkerHandler"/></lglWorkerHandler1>
+		<lglLayer1 public="1"><c path="kumite.lgl.LGLLayer"/></lglLayer1>
+		<clearLayer public="1"><c path="kumite.layer.ClearLayer"/></clearLayer>
+		<displayListLayer public="1"><c path="kumite.displaylist.DisplayListLayer"/></displayListLayer>
+		<complete public="1" set="method" line="51"><f a=""><e path="Void"/></f></complete>
+		<new public="1" set="method" line="24"><f a=""><e path="Void"/></f></new>
+	</class>
 	<class path="bpmjs.ReflectUtil" params="" file="construct/src_bpmjs/bpmjs/ReflectUtil.hx">
 		<callMethodWithMetadata public="1" set="method" line="8" static="1"><f a="object:type:metadata:args">
 	<d/>
@@ -10749,32 +10136,13 @@
  * An exception that can be thown when an argument is null, while a non-null value is expected.
  </haxe_doc>
 	</class>
-	<class path="kumite.layer.effect.TestFilter" params="" file="construct/src/kumite/layer/effect/TestFilter.hx">
+	<class path="kumite.scene.SceneConfig" params="" file="construct/src/kumite/scene/SceneConfig.hx">
 		<implements path="haxe.rtti.Infos"/>
-		<implements path="kumite.scene.LayerLifecycle"/>
-		<__meta__ public="1" line="9" static="1"><d/></__meta__>
-		<__rtti public="1" line="9" static="1"><c path="String"/></__rtti>
-		<textureRegistry public="1"><c path="GLTextureRegistry"/></textureRegistry>
-		<textureConfig public="1"><c path="GLTextureConfig"/></textureConfig>
-		<shaderProgram><c path="WebGLProgram"/></shaderProgram>
-		<vertexPositionAttribute><c path="GLAttribLocation"/></vertexPositionAttribute>
-		<vertexBuffer><c path="WebGLBuffer"/></vertexBuffer>
-		<textureUniform><c path="GLUniformLocation"/></textureUniform>
-		<amountUniform><c path="GLUniformLocation"/></amountUniform>
-		<amount><c path="Float"/></amount>
-		<init public="1" set="method" line="28"><f a=""><e path="Void"/></f></init>
-		<renderTransition public="1" set="method" line="46"><f a="transitionContext">
-	<c path="kumite.scene.TransitionContext"/>
-	<e path="Void"/>
-</f></renderTransition>
-		<render public="1" set="method" line="52"><f a="renderContext">
-	<c path="kumite.scene.RenderContext"/>
-	<e path="Void"/>
-</f></render>
-		<new public="1" set="method" line="26"><f a=""><e path="Void"/></f></new>
+		<__rtti public="1" line="4" static="1"><c path="String"/></__rtti>
+		<scenes public="1"><c path="kumite.scene.Scenes"/></scenes>
+		<sceneNavigator public="1"><c path="kumite.scene.SceneNavigator"/></sceneNavigator>
+		<new public="1" set="method" line="9"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="kumite.layer.effect._TestFilter.Vertex" params="" file="construct/src/kumite/layer/effect/TestFilter.hx" private="1" module="kumite.layer.effect.TestFilter"><__meta__ public="1" line="84" static="1"><d/></__meta__></class>
-	<class path="kumite.layer.effect._TestFilter.Fragment" params="" file="construct/src/kumite/layer/effect/TestFilter.hx" private="1" module="kumite.layer.effect.TestFilter"><__meta__ public="1" line="104" static="1"><d/></__meta__></class>
 	<class path="bpmjs.Context" params="" file="construct/src_bpmjs/bpmjs/Context.hx">
 		<contextConfig public="1"><c path="bpmjs.ContextConfig"/></contextConfig>
 		<objects public="1"><c path="Array"><c path="bpmjs.ContextObject"/></c></objects>
@@ -10828,7 +10196,7 @@
 		<object public="1"><c path="bpmjs.ContextObject"/></object>
 		<methodName public="1"><c path="String"/></methodName>
 		<type public="1"><c path="reflect.ClassInfo"/></type>
-		<observe public="1" set="method" line="96"><f a="objectToObserve">
+		<observe public="1" set="method" line="98"><f a="objectToObserve">
 	<c path="bpmjs.ContextObject"/>
 	<e path="Void"/>
 </f></observe>
@@ -10840,8 +10208,8 @@
 		<mouseController public="1"><c path="kumite.mouse.MouseController"/></mouseController>
 		<new public="1" set="method" line="8"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="haxe.Http" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/haxe/Http.hx">
-		<requestUrl public="1" set="method" line="634" static="1"><f a="url">
+	<class path="haxe.Http" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/haxe/Http.hx">
+		<requestUrl public="1" set="method" line="630" static="1"><f a="url">
 	<c path="String"/>
 	<c path="String"/>
 </f></requestUrl>
@@ -10868,15 +10236,15 @@
 	<e path="Bool"/>
 	<e path="Void"/>
 </f></request>
-		<onData public="1" set="dynamic" line="624"><f a="data">
+		<onData public="1" set="dynamic" line="620"><f a="data">
 	<c path="String"/>
 	<e path="Void"/>
 </f></onData>
-		<onError public="1" set="dynamic" line="627"><f a="msg">
+		<onError public="1" set="dynamic" line="623"><f a="msg">
 	<c path="String"/>
 	<e path="Void"/>
 </f></onError>
-		<onStatus public="1" set="dynamic" line="630"><f a="status">
+		<onStatus public="1" set="dynamic" line="626"><f a="status">
 	<c path="Int"/>
 	<e path="Void"/>
 </f></onStatus>
@@ -11423,23 +10791,6 @@
 </f></ease>
 		<new public="1" set="method" line="87"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="GLTextureAtlasPartConfig" params="" file="construct/src_bpmgl/GLTextureAtlasPartConfig.hx">
-		<create public="1" set="method" line="3" static="1"><f a="atlas:location">
-	<c path="GLTextureAtlasConfig"/>
-	<c path="String"/>
-	<c path="GLTextureAtlasPartConfig"/>
-</f></create>
-		<location public="1"><c path="String"/></location>
-		<atlas public="1"><c path="GLTextureAtlasConfig"/></atlas>
-		<width public="1"><c path="Int"/></width>
-		<height public="1"><c path="Int"/></height>
-		<u0 public="1"><c path="Float"/></u0>
-		<v0 public="1"><c path="Float"/></v0>
-		<u1 public="1"><c path="Float"/></u1>
-		<v1 public="1"><c path="Float"/></v1>
-		<toString public="1" set="method" line="25"><f a=""><c path="String"/></f></toString>
-		<new public="1" set="method" line="23"><f a=""><e path="Void"/></f></new>
-	</class>
 	<class path="bpmjs.Stats" params="" file="construct/src_bpmjs/bpmjs/Stats.hx">
 		<initialized static="1"><e path="Bool"/></initialized>
 		<lastTime static="1"><c path="Float"/></lastTime>
@@ -11486,28 +10837,6 @@
 	<e path="Void"/>
 </f></new>
 	</class>
-	<class path="WebSocket" params="" file="construct/src_extern/WebSocket.hx" extern="1">
-		<onopen public="1"><f a="">
-	<d/>
-	<e path="Void"/>
-</f></onopen>
-		<onmessage public="1"><f a="">
-	<d/>
-	<e path="Void"/>
-</f></onmessage>
-		<onclose public="1"><f a="">
-	<d/>
-	<e path="Void"/>
-</f></onclose>
-		<send public="1"><f a="">
-	<d/>
-	<e path="Void"/>
-</f></send>
-		<new public="1" set="method"><f a="host">
-	<c path="String"/>
-	<e path="Void"/>
-</f></new>
-	</class>
 	<class path="kumite.launch.Config" params="" file="construct/src/kumite/launch/Config.hx">
 		<implements path="haxe.rtti.Infos"/>
 		<__rtti public="1" line="7" static="1"><c path="String"/></__rtti>
@@ -11516,8 +10845,8 @@
 		<preloadDisplay public="1"><c path="kumite.launch.PreloadDisplay"/></preloadDisplay>
 		<new public="1" set="method" line="13"><f a=""><e path="Void"/></f></new>
 	</class>
-	<enum path="XmlType" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/_std/Xml.hx" module="Xml"/>
-	<class path="EReg" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/_std/EReg.hx">
+	<enum path="XmlType" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/_std/Xml.hx" module="Xml"/>
+	<class path="EReg" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/_std/EReg.hx">
 		<r><d/></r>
 		<match public="1" set="method" line="35">
 			<f a="s">
@@ -11612,7 +10941,7 @@
 	how to use them.
 </haxe_doc>
 	</class>
-	<class path="Xml" params="" file="/Applications/FDT/haXe/haxe-2.07-osx/std/js/_std/Xml.hx">
+	<class path="Xml" params="" file="/Users/Shared/Tools/haXe/haxe-2.08-osx/std/js/_std/Xml.hx">
 		<Element public="1" set="null" static="1">
 			<e path="XmlType"/>
 			<haxe_doc>

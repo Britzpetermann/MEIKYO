@@ -156,8 +156,12 @@ class ContextBuilder
 								break;				
 							}
 						}
-						if (!found)
-							throw "Multiple selection for type: " + property.type.name + " and no name match for: " + property.name;
+						
+						if (!found && property.getValue(contextObject.object) == null)
+						{
+							Log.info("value: " + property.getValue(contextObject.object));
+							throw "Multiple selection for type: " + property.type.name + " and no name match for: " + property.name + " in " + contextObject.classInfo.name;
+						}
 					}
 				}
 			}

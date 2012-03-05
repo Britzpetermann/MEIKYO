@@ -1,5 +1,8 @@
 package kumite.helloworldgl;
 
+import kumite.layer.LayerTransition;
+import kumite.layer.LayerTransitions;
+
 import kumite.stage.Stage;
 import kumite.camera.Camera;
 import kumite.projection.Projection;
@@ -21,6 +24,9 @@ class HelloWorld implements Infos
 	
 	@Inject
 	public var camera : Camera;
+
+	public var transitions : LayerTransitions;
+	public var alphaTransition : LayerTransition;
 	
 	var shaderProgram : WebGLProgram;
 	var vertexPositionAttribute : GLAttribLocation;
@@ -32,7 +38,7 @@ class HelloWorld implements Infos
 	
 	var colorUniform : GLUniformLocation;
 		
-	public function new();
+	public function new() {}
 	
 	@Sequence("boot", "start")
 	public function start()

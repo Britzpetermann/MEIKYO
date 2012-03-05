@@ -9,7 +9,7 @@ class MouseController implements Infos
 	@Inject
 	public var canvas : CanvasCase;
 	
-	public function new();
+	public function new() {}
 	
 	@Sequence("boot", "init")	
 	public function start()

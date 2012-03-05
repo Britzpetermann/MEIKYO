@@ -8,7 +8,7 @@ class Component
 	
 	public var time : Time;
 	
-	public function new();
+	public function new() {}
 	
 	public function init();
 	

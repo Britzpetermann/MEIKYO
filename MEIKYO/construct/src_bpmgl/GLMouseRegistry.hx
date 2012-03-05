@@ -50,11 +50,11 @@ class GLMouseRegistry
 	{
 		try
 		{
-			mouseDownSignaler.dispatch(new Vec2(e.layerX / canvas.clientWidth, e.layerY / canvas.clientHeight));
+			mouseDownSignaler.dispatch(getMousePosition(e));
 		}
 		catch (e : Dynamic)
 		{
-			trace(e);
+			Log.warn(e);
 		}
 	}
 
@@ -62,11 +62,11 @@ class GLMouseRegistry
 	{
 		try
 		{
-			mouseUpSignaler.dispatch(new Vec2(e.layerX / canvas.clientWidth, e.layerY / canvas.clientHeight));
+			mouseUpSignaler.dispatch(getMousePosition(e));
 		}
 		catch (e : Dynamic)
 		{
-			trace(e);
+			Log.warn(e);
 		}
 	}
 
@@ -74,11 +74,18 @@ class GLMouseRegistry
 	{
 		try
 		{
-			mouseMoveSignaler.dispatch(new Vec2(e.layerX / canvas.clientWidth, e.layerY / canvas.clientHeight));
+			mouseMoveSignaler.dispatch(getMousePosition(e));
 		}
 		catch (e : Dynamic)
 		{
-			trace(e);
+			Log.warn(e);
 		}
+	}
+	
+	function getMousePosition(e : Dynamic)
+	{
+		var mouseX = untyped (e.pageX);
+		var mouseY = untyped (e.pageY);
+		return new Vec2(mouseX / canvas.clientWidth, mouseY / canvas.clientHeight);	
 	}
 }

@@ -7,7 +7,7 @@ class Stage
 	
 	public var aspect(getAspect, null) : Float;
 	
-	public function new();
+	public function new() {}
 	
 	private function getAspect() : Float
 	{

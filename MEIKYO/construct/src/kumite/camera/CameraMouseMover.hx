@@ -6,7 +6,7 @@ class CameraMouseMover implements Infos
 	@Inject
 	public var camera : Camera;
 	
-	public function new();
+	public function new() {}
 	
 	@Sequence("boot", "init")
 	public function init()

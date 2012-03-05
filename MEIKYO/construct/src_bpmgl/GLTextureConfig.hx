@@ -33,7 +33,7 @@ class GLTextureConfig
 	public var filter : Int;
 	public var textureManipulation : TextureManipulation;
 	
-	public function new();
+	public function new() {}
 	
 	public function toString()
 	{

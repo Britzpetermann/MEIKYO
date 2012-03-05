@@ -7,7 +7,7 @@ class BlobReaderHTTP implements Infos
 	@Inject
 	public var blobs : Blobs;
 	
-	public function new();
+	public function new() {}
 	
 	@Sequence("boot", "finish")
 	public function start()

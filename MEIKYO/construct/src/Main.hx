@@ -17,7 +17,7 @@ class Main {
 		Log.addFilter(new ERegFilter(LogLevel.WARN, ~/.*FrontMessenger\.Receiver\.execute.*/));
 		Log.addFilter(new ERegFilter(LogLevel.WARN, ~/.*initAllLayers.*/));
 		//Log.addFilter(new ERegFilter(LogLevel.INFO, ~/bpmjs\.DefaultFrontController\.handle.*/));
-		
+
 		js.Lib.setErrorHandler(globalErrorHandler);
 	}
 
@@ -35,21 +35,23 @@ class Main {
 					kumite.projection.Config,
 					kumite.camera.Config,
 					kumite.mouse.Config,
-					kumite.blobs.Config,
-					kumite.socketsound.Config,
+					//kumite.blobs.Config,
+					//kumite.socketsound.Config,
 					//kumite.helloworldgl.Config,
 					kumite.displaylist.ConfigAsLayer,
 					kumite.vjinterface.Config,
 					//kumite.uicomponents.Config,
-					kumite.scene.Config,
+					kumite.scene.SceneConfig,
 					//kumite.testscene.Config,
 					//kumite.flyingman.Config,
 					//kumite.framebuffereffect.Config,
 					//kumite.spritemesh.Config,
-					kumite.effects.Config,
+					//kumite.effects.Config,
 					//kumite.eyes.Config,
 					//kumite.windowlines.Config,
 					//kumite.touchtest.Config,
+					kumite.lgl.LGLConfig,
+					//kumite.webworker.WebworkerConfig,
 				]);
 		}
 		catch(e : Dynamic)

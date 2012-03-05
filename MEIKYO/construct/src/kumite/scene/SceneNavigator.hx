@@ -23,6 +23,8 @@ class SceneNavigator implements Infos
 	@Inject
 	public var stage : Stage;
 	
+	public var transitionTime : Float;
+	
 	public var transitionContext : TransitionContext;
 	public var renderContext : RenderContext;
 	
@@ -35,7 +37,10 @@ class SceneNavigator implements Infos
 	
 	private var state : State;
 	
-	public function new();
+	public function new()
+	{
+		transitionTime = 1000;
+	}
 	
 	@Complete
 	public function init()
@@ -275,7 +280,7 @@ class TransitionState extends State
 	override function enter()
 	{
 		enterTime = time.ms;
-		exitTime = time.ms + 10;
+		exitTime = time.ms + navigator.transitionTime;
 		
 		transitionContext.transition = 0;
 		transitionContext.outScene = navigator.lastScene;
@@ -298,7 +303,7 @@ class TransitionState extends State
 
 class NullSceneLifecycle implements SceneLifecycle
 {
-	public function new();
+	public function new() {}
 	
 	public function sceneInit(scene : Scene) : Void {}
 	
