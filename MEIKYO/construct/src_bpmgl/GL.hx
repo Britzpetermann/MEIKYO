@@ -665,7 +665,7 @@ class GL
 		gl.shaderSource(shader, source);
 	}
 
-	public static inline function texImage2DArrayBufferView(target : GLenum, level : GLint, internalformat : GLenum, width : GLsizei, height : GLsizei, border : GLint, format : GLenum, type : GLenum, pixels : ArrayBufferView) : Void
+	public static inline function texImage2DArrayBufferView(target : GLenum, level : GLint, internalformat : GLenum, width : GLsizei, height : GLsizei, border : GLint, format : GLenum, type : GLenum, pixels : ArrayBuffer) : Void
 	{
 		untyped gl.texImage2D(target, level, internalformat, width, height, border, format, type, pixels);
 	}

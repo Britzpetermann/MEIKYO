@@ -102,5 +102,46 @@ class GLTextureRegistry
 		texture.width = canvas.width;
 		texture.height = canvas.height;
 	}
+	public function createGLArrayTexture(width:Int, height:Int, ?filter : Int = null)
+	{
+		var testPowerOfTwoWidth = Std.int(Math2.nextPowerOf2(width));
+		var testPowerOfTwoHeight = Std.int(Math2.nextPowerOf2(height));
+		if (testPowerOfTwoWidth != width || testPowerOfTwoHeight != height)
+			throw "Canvas size must be a valid texture size!";
+
+		var array = new Uint8Array(width * height * 4);
+
+		var texture = GL.createTexture();
+		GL.bindTexture(GL.TEXTURE_2D, texture);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, filter != null ? filter : GL.NEAREST);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, filter != null ? filter : GL.NEAREST);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
+    	GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
+		GL.texImage2DArrayBufferView(GL.TEXTURE_2D, 0, GL.RGBA, 16, 16, 0, GL.RGBA, GL.UNSIGNED_BYTE, array);
+
+		if (
+			filter == GL.NEAREST_MIPMAP_NEAREST ||
+			filter == GL.NEAREST_MIPMAP_LINEAR ||
+			filter == GL.LINEAR_MIPMAP_NEAREST ||
+			filter == GL.LINEAR_MIPMAP_LINEAR
+			)
+		{
+			GL.generateMipmap(GL.TEXTURE_2D);
+		}
+		
+		var result = new GLArrayTexture();
+		result.width = width;
+		result.height = height;
+		result.texture = texture;
+		result.array = array;
+
+		return result;
+	}
+
+	public function updateGLArrayTexture(texture : GLArrayTexture)
+	{
+		GL.bindTexture(GL.TEXTURE_2D, texture.texture);
+		GL.texImage2DArrayBufferView(GL.TEXTURE_2D, 0, GL.RGBA, 16, 16, 0, GL.RGBA, GL.UNSIGNED_BYTE, texture.array);
+	}
 
 }

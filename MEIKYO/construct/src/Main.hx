@@ -50,8 +50,9 @@ class Main {
 					//kumite.eyes.Config,
 					//kumite.windowlines.Config,
 					//kumite.touchtest.Config,
-					kumite.lgl.LGLConfig,
+					//kumite.lgl.LGLConfig,
 					//kumite.webworker.WebworkerConfig,
+					kumite.musicdraw.MusicDrawConfig,
 				]);
 		}
 		catch(e : Dynamic)
