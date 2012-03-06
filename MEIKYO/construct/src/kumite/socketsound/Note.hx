@@ -6,5 +6,5 @@ class Note
 	public var velocity : Float;
 	public var duration : Float;
 	
-	public function new ();
+	public function new (){}
 }
