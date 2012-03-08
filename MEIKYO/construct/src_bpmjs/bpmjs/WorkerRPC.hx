@@ -5,67 +5,126 @@ import reflect.ClassInfo;
 class WorkerRPC
 {
 	public var receiver:Dynamic;
-	public var sender:Dynamic;
+	public var postMessage:Dynamic;
 	
-	var lastMessage:Float;
+	var isWorker:Bool;
 	var command:WorkerCommand;
-	var logs:Hash<String>;
 	var receiverClassInfo:ClassInfo;
 	
-	public function new()
+	public static function initForHandler(receiver:Dynamic, workerUrl:String)
+	{
+		var worker = new Worker(workerUrl + "?cache=" + Date.now().getTime());
+		var workerRPC = new WorkerRPC();
+		workerRPC.isWorker = false;
+		workerRPC.postMessage = worker.webkitPostMessage;
+		workerRPC.receiver = receiver;
+		workerRPC.init();
+		worker.onmessage = function(e:WorkerMessageEvent)
+		{
+			workerRPC.processMessageEvent(e);
+		}
+		
+		return workerRPC;
+	}
+	
+	public static function initForWorker(receiver:Dynamic)
+	{
+		var workerRPC = new WorkerRPC();
+		workerRPC.isWorker = true;
+		workerRPC.receiver = receiver;
+		workerRPC.init();
+		
+		untyped __js__("
+			onmessage = function(event)
+			{
+				var f = function(data)
+				{
+					webkitPostMessage(data);
+				}
+				workerRPC.postMessage = f;
+				workerRPC.processMessageEvent(event);
+			}
+		");
+
+		untyped
+		{
+			console = {};
+			
+			console.info = function(message:Dynamic)
+			{
+				workerRPC.sendCommand("Log.info", message);
+			};
+			
+			console.warn = function(message:Dynamic)
+			{
+				workerRPC.sendCommand("Log.warn", message);
+			};
+			
+			console.error = function(message:Dynamic)
+			{
+				workerRPC.sendCommand("Log.error", message);
+			};
+		}
+		
+		return workerRPC; 
+	}
+	
+	private function new()
 	{
 	}
 	
 	public function init()
 	{
-		lastMessage = Date.now().getTime();
 		command = null;
-		logs = new Hash<String>();
 		receiverClassInfo = ClassInfo.forInstance(receiver);
 	}
 
-	public function startDebugTimer()
+	public function sendCommand(type:String, ?param:Dynamic = null)
 	{
-		var t = new haxe.Timer(1000);
-		t.run = function()
-		{
-			var messages = ["Info:"];
-			for(logKey in logs.keys())
-			{
-				messages.push(logKey + ": " + logs.get(logKey));
-			}
-			logs = new Hash();
-			
-			Log.info(messages.join("\n\t"));
-		}
+		postMessage(new WorkerCommand(type));
+		postMessage(param);
 	}
 	
-	public function sendCommand(type:String, param:Dynamic)
+	public function sendTransferableCommand(type:String, param:ArrayBuffer)
 	{
-		sender.postMessage(new WorkerCommand(type));
-		sender.postMessage(param);
+		postMessage(new WorkerCommand(type));
+		postMessage(param, [param]);
 	}
 	
 	public function processMessageEvent(event:WorkerMessageEvent)
 	{
 		var data:Dynamic = event.data;
+		
 		if (command == null)
 		{
-			command = haxe.Unserializer.run(data);
+			command = new WorkerCommand(data.type);
 		}
 		else
 		{
-			var method = receiverClassInfo.getMethod(command.type);
-			
+			var method = Reflect.field(receiver, command.type);
 			if (method != null)
-				method.call(receiver, [data]);
+			{
+				Reflect.callMethod(receiver, method, [data]);
+			}
 			else
-				logs.set(command.type, Std.string(data));
+			{
+				var staticMethod:Dynamic = null;
+				try
+				{
+					staticMethod = js.Lib.eval(command.type);
+					
+					if (staticMethod == null)
+						throw "";
+						
+					staticMethod(data);
+				}
+				catch (e:Dynamic)
+				{
+					Log.error("No method: " + command.type + " exists in object: " + receiver + " of class: " + receiverClassInfo.name);
+				}
 				
-			var now = Date.now().getTime();
-			logs.set(command.type, Std.string(now - lastMessage));
-			lastMessage = now;
+			}
 			command = null;
-		}		
+		}	
 	}
 }

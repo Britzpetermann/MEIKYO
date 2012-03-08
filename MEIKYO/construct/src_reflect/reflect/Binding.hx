@@ -10,6 +10,12 @@ class Binding
 	
 	public var change:Signaler<Binding>;
 	
+	public static function createForInstanceAndName(instance:Dynamic, name:String):Binding
+	{
+		var classInfo = ClassInfo.forInstance(instance);
+		return new Binding(instance, classInfo.getProperty(name));
+	}
+	
 	public function new(object : Dynamic, property : Property)
 	{
 		this.object = object;

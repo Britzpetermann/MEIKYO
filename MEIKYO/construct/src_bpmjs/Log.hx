@@ -120,18 +120,27 @@ class Log
 	
 	static function createMessage()
 	{
+		if (posInfo == null)
+			return args.join(" ");
+			
 		var from = posInfo.className + "." + posInfo.methodName;
 		return "[" + from + "] " + args.join(" ");
 	}
 		
 	static function createErrorMessage()
 	{
+		if (posInfo == null)
+			return args.join(" ");
+			
 		var from = posInfo.className + "." + posInfo.methodName;
 		return "[" + from + "]\n" + args.join(" ");
 	}
 		
 	static function filter(level : LogLevel)
 	{
+		if (posInfo == null)
+			return true;
+			
 		var result = true;
 		
 		for (filter in filters)
@@ -149,6 +158,9 @@ class Log
 	
 	static function displayError(message : String)
 	{
+		if (Lib.document.createElement == null)
+			return;
+			
 		if (errorDiv == null)
 		{
 			errorDiv = Lib.document.createElement("div");

@@ -1,40 +1,4 @@
 $estr = function() { return js.Boot.__string_rec(this,''); }
-if(typeof haxe=='undefined') haxe = {}
-if(!haxe.rtti) haxe.rtti = {}
-haxe.rtti.Infos = function() { }
-haxe.rtti.Infos.__name__ = ["haxe","rtti","Infos"];
-haxe.rtti.Infos.prototype.__class__ = haxe.rtti.Infos;
-if(typeof kumite=='undefined') kumite = {}
-if(!kumite.musicdraw) kumite.musicdraw = {}
-kumite.musicdraw.TestWorkerHandler = function(p) {
-}
-kumite.musicdraw.TestWorkerHandler.__name__ = ["kumite","musicdraw","TestWorkerHandler"];
-kumite.musicdraw.TestWorkerHandler.prototype.analyzer = null;
-kumite.musicdraw.TestWorkerHandler.prototype.config = null;
-kumite.musicdraw.TestWorkerHandler.prototype.texture = null;
-kumite.musicdraw.TestWorkerHandler.prototype.textureRegistry = null;
-kumite.musicdraw.TestWorkerHandler.prototype.worker = null;
-kumite.musicdraw.TestWorkerHandler.prototype.workerRPC = null;
-kumite.musicdraw.TestWorkerHandler.prototype.start = function() {
-	var me = this;
-	this.worker = new Worker("bin/kumite.musicdraw.TestWorker.js?cache=" + Date.now().getTime());
-	this.workerRPC = new bpmjs.WorkerRPC();
-	this.workerRPC.sender = this.worker;
-	this.workerRPC.receiver = this;
-	this.workerRPC.init();
-	this.workerRPC.startDebugTimer();
-	this.worker.onmessage = function(e) {
-		me.workerRPC.processMessageEvent(e);
-	};
-	this.worker.postMessage(haxe.Serializer.run(this.analyzer));
-}
-kumite.musicdraw.TestWorkerHandler.prototype.setResult = function(data) {
-	this.texture.array.set(new Uint8Array(data));
-	this.texture.isDirty = true;
-	this.worker.webkitPostMessage(data,[data]);
-}
-kumite.musicdraw.TestWorkerHandler.prototype.__class__ = kumite.musicdraw.TestWorkerHandler;
-kumite.musicdraw.TestWorkerHandler.__interfaces__ = [haxe.rtti.Infos];
 if(typeof reflect=='undefined') reflect = {}
 reflect.MetadataAware = function() { }
 reflect.MetadataAware.__name__ = ["reflect","MetadataAware"];
@@ -111,6 +75,7 @@ Rand.list = function(list) {
 	return list[Std["int"](Math.random() * list.length)];
 }
 Rand.prototype.__class__ = Rand;
+if(typeof kumite=='undefined') kumite = {}
 if(!kumite.scene) kumite.scene = {}
 kumite.scene.LayerLifecycle = function() { }
 kumite.scene.LayerLifecycle.__name__ = ["kumite","scene","LayerLifecycle"];
@@ -336,6 +301,8 @@ GLInteractiveObject.prototype.setHeight = function(value) {
 	return result;
 }
 GLInteractiveObject.prototype.__class__ = GLInteractiveObject;
+if(typeof haxe=='undefined') haxe = {}
+if(!haxe.rtti) haxe.rtti = {}
 haxe.rtti.XmlParser = function(p) {
 	if( p === $_ ) return;
 	this.root = new Array();
@@ -912,14 +879,17 @@ Log.fetchInput = function(m0,m1,m2,m3,m4,m5,m6) {
 	if(m6 != null) Log.args.push(m6);
 }
 Log.createMessage = function() {
+	if(Log.posInfo == null) return Log.args.join(" ");
 	var from = Log.posInfo.className + "." + Log.posInfo.methodName;
 	return "[" + from + "] " + Log.args.join(" ");
 }
 Log.createErrorMessage = function() {
+	if(Log.posInfo == null) return Log.args.join(" ");
 	var from = Log.posInfo.className + "." + Log.posInfo.methodName;
 	return "[" + from + "]\n" + Log.args.join(" ");
 }
 Log.filter = function(level) {
+	if(Log.posInfo == null) return true;
 	var result = true;
 	var _g = 0, _g1 = Log.filters;
 	while(_g < _g1.length) {
@@ -935,6 +905,7 @@ Log.infoConsole = function(v,i) {
 	console.log("" + Log.createMessage() + " (trace)");
 }
 Log.displayError = function(message) {
+	if($closure(js.Lib.document,"createElement") == null) return;
 	if(Log.errorDiv == null) {
 		Log.errorDiv = js.Lib.document.createElement("div");
 		Log.errorDiv.className = "Error";
@@ -1044,6 +1015,9 @@ bpmjs.TaskError.__name__ = ["bpmjs","TaskError"];
 bpmjs.TaskError.prototype.task = null;
 bpmjs.TaskError.prototype.error = null;
 bpmjs.TaskError.prototype.__class__ = bpmjs.TaskError;
+haxe.rtti.Infos = function() { }
+haxe.rtti.Infos.__name__ = ["haxe","rtti","Infos"];
+haxe.rtti.Infos.prototype.__class__ = haxe.rtti.Infos;
 Color = function(r,g,b,a) {
 	if( r === $_ ) return;
 	if(a == null) a = 1.0;
@@ -1884,6 +1858,45 @@ Hash.prototype.toString = function() {
 	return s.b.join("");
 }
 Hash.prototype.__class__ = Hash;
+if(!kumite.musicdraw) kumite.musicdraw = {}
+kumite.musicdraw.SquareEffectWorkerHandler = function(p) {
+	if( p === $_ ) return;
+	this.rasterX = 0;
+}
+kumite.musicdraw.SquareEffectWorkerHandler.__name__ = ["kumite","musicdraw","SquareEffectWorkerHandler"];
+kumite.musicdraw.SquareEffectWorkerHandler.prototype.textureRegistry = null;
+kumite.musicdraw.SquareEffectWorkerHandler.prototype.analyzer = null;
+kumite.musicdraw.SquareEffectWorkerHandler.prototype.stage = null;
+kumite.musicdraw.SquareEffectWorkerHandler.prototype.texture = null;
+kumite.musicdraw.SquareEffectWorkerHandler.prototype.rasterX = null;
+kumite.musicdraw.SquareEffectWorkerHandler.prototype.workerRPC = null;
+kumite.musicdraw.SquareEffectWorkerHandler.prototype.createTexture = function() {
+	this.texture = this.textureRegistry.createGLArrayTexture(512,1024,9729);
+	return this.texture;
+}
+kumite.musicdraw.SquareEffectWorkerHandler.prototype.start = function() {
+	this.workerRPC = bpmjs.WorkerRPC.initForHandler(this,"bin/kumite.musicdraw.SquareEffectWorker.js");
+	this.workerRPC.sendCommand("init",this.analyzer);
+	var binding = reflect.Binding.createForInstanceAndName(this,"rasterX");
+	var sliderH = new GLSliderH();
+	sliderH.setMin(-200);
+	sliderH.setMax(200);
+	sliderH.value = binding.getValue();
+	sliderH.setX(10);
+	sliderH.setY(100);
+	sliderH.setWidth(200);
+	sliderH.bind(binding);
+	this.stage.addChild(sliderH);
+}
+kumite.musicdraw.SquareEffectWorkerHandler.prototype.setResult = function(data) {
+	this.texture.array.set(new Uint8Array(data));
+	this.textureRegistry.updateGLArrayTexture(this.texture);
+	this.workerRPC.sendTransferableCommand("returnBuffer",data);
+	this.workerRPC.sendCommand("setRasterX",this.rasterX);
+	this.workerRPC.sendCommand("render");
+}
+kumite.musicdraw.SquareEffectWorkerHandler.prototype.__class__ = kumite.musicdraw.SquareEffectWorkerHandler;
+kumite.musicdraw.SquareEffectWorkerHandler.__interfaces__ = [haxe.rtti.Infos];
 GLStage = function(p) {
 	if( p === $_ ) return;
 	GLDisplayObjectContainer.call(this);
@@ -1949,50 +1962,84 @@ IntHash.prototype.__class__ = IntHash;
 bpmjs.WorkerRPC = function(p) {
 }
 bpmjs.WorkerRPC.__name__ = ["bpmjs","WorkerRPC"];
+bpmjs.WorkerRPC.initForHandler = function(receiver,workerUrl) {
+	var worker = new Worker(workerUrl + "?cache=" + Date.now().getTime());
+	var workerRPC = new bpmjs.WorkerRPC();
+	workerRPC.isWorker = false;
+	workerRPC.postMessage = $closure(worker,"webkitPostMessage");
+	workerRPC.receiver = receiver;
+	workerRPC.init();
+	worker.onmessage = function(e) {
+		workerRPC.processMessageEvent(e);
+	};
+	return workerRPC;
+}
+bpmjs.WorkerRPC.initForWorker = function(receiver) {
+	var workerRPC = new bpmjs.WorkerRPC();
+	workerRPC.isWorker = true;
+	workerRPC.receiver = receiver;
+	workerRPC.init();
+	
+			onmessage = function(event)
+			{
+				var f = function(data)
+				{
+					webkitPostMessage(data);
+				}
+				workerRPC.postMessage = f;
+				workerRPC.processMessageEvent(event);
+			}
+		;
+	console = { };
+	console.info = function(message) {
+		workerRPC.sendCommand("Log.info",message);
+	};
+	console.warn = function(message) {
+		workerRPC.sendCommand("Log.warn",message);
+	};
+	console.error = function(message) {
+		workerRPC.sendCommand("Log.error",message);
+	};
+	return workerRPC;
+}
 bpmjs.WorkerRPC.prototype.receiver = null;
-bpmjs.WorkerRPC.prototype.sender = null;
-bpmjs.WorkerRPC.prototype.lastMessage = null;
+bpmjs.WorkerRPC.prototype.postMessage = null;
+bpmjs.WorkerRPC.prototype.isWorker = null;
 bpmjs.WorkerRPC.prototype.command = null;
-bpmjs.WorkerRPC.prototype.logs = null;
 bpmjs.WorkerRPC.prototype.receiverClassInfo = null;
 bpmjs.WorkerRPC.prototype.init = function() {
-	this.lastMessage = Date.now().getTime();
 	this.command = null;
-	this.logs = new Hash();
 	this.receiverClassInfo = reflect.ClassInfo.forInstance(this.receiver);
 }
-bpmjs.WorkerRPC.prototype.startDebugTimer = function() {
-	var me = this;
-	var t = new haxe.Timer(1000);
-	t.run = function() {
-		var messages = ["Info:"];
-		var $it0 = me.logs.keys();
-		while( $it0.hasNext() ) {
-			var logKey = $it0.next();
-			messages.push(logKey + ": " + me.logs.get(logKey));
-		}
-		me.logs = new Hash();
-		{
-			Log.posInfo = { fileName : "WorkerRPC.hx", lineNumber : 39, className : "bpmjs.WorkerRPC", methodName : "startDebugTimer"};
-			if(Log.filter(LogLevel.INFO)) {
-				Log.fetchInput(messages.join("\n\t"),null,null,null,null,null,null);
-				console.info(Log.createMessage());
-			}
-		}
-	};
-}
 bpmjs.WorkerRPC.prototype.sendCommand = function(type,param) {
-	this.sender.postMessage(new bpmjs.WorkerCommand(type));
-	this.sender.postMessage(param);
+	this.postMessage(new bpmjs.WorkerCommand(type));
+	this.postMessage(param);
+}
+bpmjs.WorkerRPC.prototype.sendTransferableCommand = function(type,param) {
+	this.postMessage(new bpmjs.WorkerCommand(type));
+	this.postMessage(param,[param]);
 }
 bpmjs.WorkerRPC.prototype.processMessageEvent = function(event) {
 	var data = event.data;
-	if(this.command == null) this.command = haxe.Unserializer.run(data); else {
-		var method = this.receiverClassInfo.getMethod(this.command.type);
-		if(method != null) method.call(this.receiver,[data]); else this.logs.set(this.command.type,Std.string(data));
-		var now = Date.now().getTime();
-		this.logs.set(this.command.type,Std.string(now - this.lastMessage));
-		this.lastMessage = now;
+	if(this.command == null) this.command = new bpmjs.WorkerCommand(data.type); else {
+		var method = Reflect.field(this.receiver,this.command.type);
+		if(method != null) method.apply(this.receiver,[data]); else {
+			var staticMethod = null;
+			try {
+				staticMethod = js.Lib.eval(this.command.type);
+				if(staticMethod == null) throw "";
+				staticMethod(data);
+			} catch( e ) {
+				{
+					Log.posInfo = { fileName : "WorkerRPC.hx", lineNumber : 123, className : "bpmjs.WorkerRPC", methodName : "processMessageEvent"};
+					if(Log.filter(LogLevel.ERROR)) {
+						Log.fetchInput("No method: " + this.command.type + " exists in object: " + this.receiver + " of class: " + this.receiverClassInfo.name,null,null,null,null,null,null);
+						console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
+						Log.displayError(Log.createErrorMessage());
+					}
+				}
+			}
+		}
 		this.command = null;
 	}
 }
@@ -2101,136 +2148,6 @@ StringTools.isEOF = function(c) {
 	return c != c;
 }
 StringTools.prototype.__class__ = StringTools;
-if(!haxe.io) haxe.io = {}
-haxe.io.Bytes = function(length,b) {
-	if( length === $_ ) return;
-	this.length = length;
-	this.b = b;
-}
-haxe.io.Bytes.__name__ = ["haxe","io","Bytes"];
-haxe.io.Bytes.alloc = function(length) {
-	var a = new Array();
-	var _g = 0;
-	while(_g < length) {
-		var i = _g++;
-		a.push(0);
-	}
-	return new haxe.io.Bytes(length,a);
-}
-haxe.io.Bytes.ofString = function(s) {
-	var a = new Array();
-	var _g1 = 0, _g = s.length;
-	while(_g1 < _g) {
-		var i = _g1++;
-		var c = s.cca(i);
-		if(c <= 127) a.push(c); else if(c <= 2047) {
-			a.push(192 | c >> 6);
-			a.push(128 | c & 63);
-		} else if(c <= 65535) {
-			a.push(224 | c >> 12);
-			a.push(128 | c >> 6 & 63);
-			a.push(128 | c & 63);
-		} else {
-			a.push(240 | c >> 18);
-			a.push(128 | c >> 12 & 63);
-			a.push(128 | c >> 6 & 63);
-			a.push(128 | c & 63);
-		}
-	}
-	return new haxe.io.Bytes(a.length,a);
-}
-haxe.io.Bytes.ofData = function(b) {
-	return new haxe.io.Bytes(b.length,b);
-}
-haxe.io.Bytes.prototype.length = null;
-haxe.io.Bytes.prototype.b = null;
-haxe.io.Bytes.prototype.get = function(pos) {
-	return this.b[pos];
-}
-haxe.io.Bytes.prototype.set = function(pos,v) {
-	this.b[pos] = v & 255;
-}
-haxe.io.Bytes.prototype.blit = function(pos,src,srcpos,len) {
-	if(pos < 0 || srcpos < 0 || len < 0 || pos + len > this.length || srcpos + len > src.length) throw haxe.io.Error.OutsideBounds;
-	var b1 = this.b;
-	var b2 = src.b;
-	if(b1 == b2 && pos > srcpos) {
-		var i = len;
-		while(i > 0) {
-			i--;
-			b1[i + pos] = b2[i + srcpos];
-		}
-		return;
-	}
-	var _g = 0;
-	while(_g < len) {
-		var i = _g++;
-		b1[i + pos] = b2[i + srcpos];
-	}
-}
-haxe.io.Bytes.prototype.sub = function(pos,len) {
-	if(pos < 0 || len < 0 || pos + len > this.length) throw haxe.io.Error.OutsideBounds;
-	return new haxe.io.Bytes(len,this.b.slice(pos,pos + len));
-}
-haxe.io.Bytes.prototype.compare = function(other) {
-	var b1 = this.b;
-	var b2 = other.b;
-	var len = this.length < other.length?this.length:other.length;
-	var _g = 0;
-	while(_g < len) {
-		var i = _g++;
-		if(b1[i] != b2[i]) return b1[i] - b2[i];
-	}
-	return this.length - other.length;
-}
-haxe.io.Bytes.prototype.readString = function(pos,len) {
-	if(pos < 0 || len < 0 || pos + len > this.length) throw haxe.io.Error.OutsideBounds;
-	var s = "";
-	var b = this.b;
-	var fcc = String.fromCharCode;
-	var i = pos;
-	var max = pos + len;
-	while(i < max) {
-		var c = b[i++];
-		if(c < 128) {
-			if(c == 0) break;
-			s += fcc(c);
-		} else if(c < 224) s += fcc((c & 63) << 6 | b[i++] & 127); else if(c < 240) {
-			var c2 = b[i++];
-			s += fcc((c & 31) << 12 | (c2 & 127) << 6 | b[i++] & 127);
-		} else {
-			var c2 = b[i++];
-			var c3 = b[i++];
-			s += fcc((c & 15) << 18 | (c2 & 127) << 12 | c3 << 6 & 127 | b[i++] & 127);
-		}
-	}
-	return s;
-}
-haxe.io.Bytes.prototype.toString = function() {
-	return this.readString(0,this.length);
-}
-haxe.io.Bytes.prototype.toHex = function() {
-	var s = new StringBuf();
-	var chars = [];
-	var str = "0123456789abcdef";
-	var _g1 = 0, _g = str.length;
-	while(_g1 < _g) {
-		var i = _g1++;
-		chars.push(str.charCodeAt(i));
-	}
-	var _g1 = 0, _g = this.length;
-	while(_g1 < _g) {
-		var i = _g1++;
-		var c = this.b[i];
-		s.b[s.b.length] = String.fromCharCode(chars[c >> 4]);
-		s.b[s.b.length] = String.fromCharCode(chars[c & 15]);
-	}
-	return s.b.join("");
-}
-haxe.io.Bytes.prototype.getData = function() {
-	return this.b;
-}
-haxe.io.Bytes.prototype.__class__ = haxe.io.Bytes;
 GLFrame = function(p) {
 }
 GLFrame.__name__ = ["GLFrame"];
@@ -3343,9 +3260,11 @@ if(!kumite.displaylist) kumite.displaylist = {}
 kumite.displaylist.ConfigAsLayer = function(p) {
 	if( p === $_ ) return;
 	this.displayListLayer = new kumite.displaylist.DisplayListLayer();
+	this.stage = GLDisplayList.getDefault().stage;
 }
 kumite.displaylist.ConfigAsLayer.__name__ = ["kumite","displaylist","ConfigAsLayer"];
 kumite.displaylist.ConfigAsLayer.prototype.displayListLayer = null;
+kumite.displaylist.ConfigAsLayer.prototype.stage = null;
 kumite.displaylist.ConfigAsLayer.prototype.__class__ = kumite.displaylist.ConfigAsLayer;
 kumite.displaylist.ConfigAsLayer.__interfaces__ = [haxe.rtti.Infos];
 if(!kumite.time) kumite.time = {}
@@ -4079,6 +3998,10 @@ reflect.Binding = function(object,property) {
 	this.change = new hsl.haxe.DirectSignaler(this);
 }
 reflect.Binding.__name__ = ["reflect","Binding"];
+reflect.Binding.createForInstanceAndName = function(instance,name) {
+	var classInfo = reflect.ClassInfo.forInstance(instance);
+	return new reflect.Binding(instance,classInfo.getProperty(name));
+}
 reflect.Binding.prototype.object = null;
 reflect.Binding.prototype.property = null;
 reflect.Binding.prototype.change = null;
@@ -4089,7 +4012,7 @@ reflect.Binding.prototype.setValue = function(value) {
 	this.object[this.property.field.name] = value;
 }
 reflect.Binding.prototype.watch = function() {
-	this.change.dispatch(this,null,{ fileName : "Binding.hx", lineNumber : 33, className : "reflect.Binding", methodName : "watch"});
+	this.change.dispatch(this,null,{ fileName : "Binding.hx", lineNumber : 39, className : "reflect.Binding", methodName : "watch"});
 }
 reflect.Binding.prototype.__class__ = reflect.Binding;
 reflect.NullBinding = function(p) {
@@ -5327,6 +5250,10 @@ kumite.layer.ClearLayer.prototype.render = function(renderContext) {
 kumite.layer.ClearLayer.prototype.__class__ = kumite.layer.ClearLayer;
 kumite.layer.ClearLayer.__interfaces__ = [haxe.rtti.Infos,kumite.scene.LayerLifecycle];
 GLMouseRegistry = function(p) {
+	if( p === $_ ) return;
+	this.mouseDownSignaler = new hsl.haxe.DirectSignaler(this);
+	this.mouseUpSignaler = new hsl.haxe.DirectSignaler(this);
+	this.mouseMoveSignaler = new hsl.haxe.DirectSignaler(this);
 }
 GLMouseRegistry.__name__ = ["GLMouseRegistry"];
 GLMouseRegistry.instance = null;
@@ -5340,9 +5267,6 @@ GLMouseRegistry.prototype.mouseMoveSignaler = null;
 GLMouseRegistry.prototype.canvas = null;
 GLMouseRegistry.prototype.init = function(canvas) {
 	this.canvas = canvas;
-	this.mouseDownSignaler = new hsl.haxe.DirectSignaler(this);
-	this.mouseUpSignaler = new hsl.haxe.DirectSignaler(this);
-	this.mouseMoveSignaler = new hsl.haxe.DirectSignaler(this);
 	canvas.onmouseup = $closure(this,"onMouseUp");
 	canvas.onmousedown = $closure(this,"onMouseDown");
 	canvas.onmousemove = $closure(this,"onMouseMove");
@@ -6225,242 +6149,6 @@ kumite.projection.Config.prototype.projection = null;
 kumite.projection.Config.prototype.projectionController = null;
 kumite.projection.Config.prototype.__class__ = kumite.projection.Config;
 kumite.projection.Config.__interfaces__ = [haxe.rtti.Infos];
-haxe.Serializer = function(p) {
-	if( p === $_ ) return;
-	this.buf = new StringBuf();
-	this.cache = new Array();
-	this.useCache = haxe.Serializer.USE_CACHE;
-	this.useEnumIndex = haxe.Serializer.USE_ENUM_INDEX;
-	this.shash = new Hash();
-	this.scount = 0;
-}
-haxe.Serializer.__name__ = ["haxe","Serializer"];
-haxe.Serializer.run = function(v) {
-	var s = new haxe.Serializer();
-	s.serialize(v);
-	return s.toString();
-}
-haxe.Serializer.prototype.buf = null;
-haxe.Serializer.prototype.cache = null;
-haxe.Serializer.prototype.shash = null;
-haxe.Serializer.prototype.scount = null;
-haxe.Serializer.prototype.useCache = null;
-haxe.Serializer.prototype.useEnumIndex = null;
-haxe.Serializer.prototype.toString = function() {
-	return this.buf.b.join("");
-}
-haxe.Serializer.prototype.serializeString = function(s) {
-	var x = this.shash.get(s);
-	if(x != null) {
-		this.buf.add("R");
-		this.buf.add(x);
-		return;
-	}
-	this.shash.set(s,this.scount++);
-	this.buf.add("y");
-	s = StringTools.urlEncode(s);
-	this.buf.add(s.length);
-	this.buf.add(":");
-	this.buf.add(s);
-}
-haxe.Serializer.prototype.serializeRef = function(v) {
-	var vt = typeof(v);
-	var _g1 = 0, _g = this.cache.length;
-	while(_g1 < _g) {
-		var i = _g1++;
-		var ci = this.cache[i];
-		if(typeof(ci) == vt && ci == v) {
-			this.buf.add("r");
-			this.buf.add(i);
-			return true;
-		}
-	}
-	this.cache.push(v);
-	return false;
-}
-haxe.Serializer.prototype.serializeFields = function(v) {
-	var _g = 0, _g1 = Reflect.fields(v);
-	while(_g < _g1.length) {
-		var f = _g1[_g];
-		++_g;
-		this.serializeString(f);
-		this.serialize(Reflect.field(v,f));
-	}
-	this.buf.add("g");
-}
-haxe.Serializer.prototype.serialize = function(v) {
-	var $e = (Type["typeof"](v));
-	switch( $e[1] ) {
-	case 0:
-		this.buf.add("n");
-		break;
-	case 1:
-		if(v == 0) {
-			this.buf.add("z");
-			return;
-		}
-		this.buf.add("i");
-		this.buf.add(v);
-		break;
-	case 2:
-		if(Math.isNaN(v)) this.buf.add("k"); else if(!Math.isFinite(v)) this.buf.add(v < 0?"m":"p"); else {
-			this.buf.add("d");
-			this.buf.add(v);
-		}
-		break;
-	case 3:
-		this.buf.add(v?"t":"f");
-		break;
-	case 6:
-		var c = $e[2];
-		if(c == String) {
-			this.serializeString(v);
-			return;
-		}
-		if(this.useCache && this.serializeRef(v)) return;
-		switch(c) {
-		case Array:
-			var ucount = 0;
-			this.buf.add("a");
-			var l = v["length"];
-			var _g = 0;
-			while(_g < l) {
-				var i = _g++;
-				if(v[i] == null) ucount++; else {
-					if(ucount > 0) {
-						if(ucount == 1) this.buf.add("n"); else {
-							this.buf.add("u");
-							this.buf.add(ucount);
-						}
-						ucount = 0;
-					}
-					this.serialize(v[i]);
-				}
-			}
-			if(ucount > 0) {
-				if(ucount == 1) this.buf.add("n"); else {
-					this.buf.add("u");
-					this.buf.add(ucount);
-				}
-			}
-			this.buf.add("h");
-			break;
-		case List:
-			this.buf.add("l");
-			var v1 = v;
-			var $it0 = v1.iterator();
-			while( $it0.hasNext() ) {
-				var i = $it0.next();
-				this.serialize(i);
-			}
-			this.buf.add("h");
-			break;
-		case Date:
-			var d = v;
-			this.buf.add("v");
-			this.buf.add(d.toString());
-			break;
-		case Hash:
-			this.buf.add("b");
-			var v1 = v;
-			var $it1 = v1.keys();
-			while( $it1.hasNext() ) {
-				var k = $it1.next();
-				this.serializeString(k);
-				this.serialize(v1.get(k));
-			}
-			this.buf.add("h");
-			break;
-		case IntHash:
-			this.buf.add("q");
-			var v1 = v;
-			var $it2 = v1.keys();
-			while( $it2.hasNext() ) {
-				var k = $it2.next();
-				this.buf.add(":");
-				this.buf.add(k);
-				this.serialize(v1.get(k));
-			}
-			this.buf.add("h");
-			break;
-		case haxe.io.Bytes:
-			var v1 = v;
-			var i = 0;
-			var max = v1.length - 2;
-			var chars = "";
-			var b64 = haxe.Serializer.BASE64;
-			while(i < max) {
-				var b1 = v1.b[i++];
-				var b2 = v1.b[i++];
-				var b3 = v1.b[i++];
-				chars += b64.charAt(b1 >> 2) + b64.charAt((b1 << 4 | b2 >> 4) & 63) + b64.charAt((b2 << 2 | b3 >> 6) & 63) + b64.charAt(b3 & 63);
-			}
-			if(i == max) {
-				var b1 = v1.b[i++];
-				var b2 = v1.b[i++];
-				chars += b64.charAt(b1 >> 2) + b64.charAt((b1 << 4 | b2 >> 4) & 63) + b64.charAt(b2 << 2 & 63);
-			} else if(i == max + 1) {
-				var b1 = v1.b[i++];
-				chars += b64.charAt(b1 >> 2) + b64.charAt(b1 << 4 & 63);
-			}
-			this.buf.add("s");
-			this.buf.add(chars.length);
-			this.buf.add(":");
-			this.buf.add(chars);
-			break;
-		default:
-			this.cache.pop();
-			if(v.hxSerialize != null) {
-				this.buf.add("C");
-				this.serializeString(Type.getClassName(c));
-				this.cache.push(v);
-				v.hxSerialize(this);
-				this.buf.add("g");
-			} else {
-				this.buf.add("c");
-				this.serializeString(Type.getClassName(c));
-				this.cache.push(v);
-				this.serializeFields(v);
-			}
-		}
-		break;
-	case 4:
-		if(this.useCache && this.serializeRef(v)) return;
-		this.buf.add("o");
-		this.serializeFields(v);
-		break;
-	case 7:
-		var e = $e[2];
-		if(this.useCache && this.serializeRef(v)) return;
-		this.cache.pop();
-		this.buf.add(this.useEnumIndex?"j":"w");
-		this.serializeString(Type.getEnumName(e));
-		if(this.useEnumIndex) {
-			this.buf.add(":");
-			this.buf.add(v[1]);
-		} else this.serializeString(v[0]);
-		this.buf.add(":");
-		var l = v["length"];
-		this.buf.add(l - 2);
-		var _g = 2;
-		while(_g < l) {
-			var i = _g++;
-			this.serialize(v[i]);
-		}
-		this.cache.push(v);
-		break;
-	case 5:
-		throw "Cannot serialize function";
-		break;
-	default:
-		throw "Cannot serialize " + Std.string(v);
-	}
-}
-haxe.Serializer.prototype.serializeException = function(e) {
-	this.buf.add("x");
-	this.serialize(e);
-}
-haxe.Serializer.prototype.__class__ = haxe.Serializer;
 LogFilter = function() { }
 LogFilter.__name__ = ["LogFilter"];
 LogFilter.prototype.enabled = null;
@@ -6789,7 +6477,6 @@ GLArrayTexture.__name__ = ["GLArrayTexture"];
 GLArrayTexture.__super__ = GLTexture;
 for(var k in GLTexture.prototype ) GLArrayTexture.prototype[k] = GLTexture.prototype[k];
 GLArrayTexture.prototype.array = null;
-GLArrayTexture.prototype.isDirty = null;
 GLArrayTexture.prototype.setPixel = function(x,y,r,g,b,a) {
 	var index = (y * this.width + x) * 4;
 	this.array[index] = r;
@@ -7731,17 +7418,6 @@ kumite.vjinterface.Config.prototype.vjstats = null;
 kumite.vjinterface.Config.prototype.vjlayers = null;
 kumite.vjinterface.Config.prototype.__class__ = kumite.vjinterface.Config;
 kumite.vjinterface.Config.__interfaces__ = [haxe.rtti.Infos];
-haxe.io.Error = { __ename__ : ["haxe","io","Error"], __constructs__ : ["Blocked","Overflow","OutsideBounds","Custom"] }
-haxe.io.Error.Blocked = ["Blocked",0];
-haxe.io.Error.Blocked.toString = $estr;
-haxe.io.Error.Blocked.__enum__ = haxe.io.Error;
-haxe.io.Error.Overflow = ["Overflow",1];
-haxe.io.Error.Overflow.toString = $estr;
-haxe.io.Error.Overflow.__enum__ = haxe.io.Error;
-haxe.io.Error.OutsideBounds = ["OutsideBounds",2];
-haxe.io.Error.OutsideBounds.toString = $estr;
-haxe.io.Error.OutsideBounds.__enum__ = haxe.io.Error;
-haxe.io.Error.Custom = function(e) { var $x = ["Custom",3,e]; $x.__enum__ = haxe.io.Error; $x.toString = $estr; return $x; }
 Timeout = function() { }
 Timeout.__name__ = ["Timeout"];
 Timeout.execute = function(ms,method) {
@@ -7753,274 +7429,6 @@ Timeout.execute = function(ms,method) {
 	timer.run = run;
 }
 Timeout.prototype.__class__ = Timeout;
-haxe.Unserializer = function(buf) {
-	if( buf === $_ ) return;
-	this.buf = buf;
-	this.length = buf.length;
-	this.pos = 0;
-	this.scache = new Array();
-	this.cache = new Array();
-	var r = haxe.Unserializer.DEFAULT_RESOLVER;
-	if(r == null) {
-		r = Type;
-		haxe.Unserializer.DEFAULT_RESOLVER = r;
-	}
-	this.setResolver(r);
-}
-haxe.Unserializer.__name__ = ["haxe","Unserializer"];
-haxe.Unserializer.initCodes = function() {
-	var codes = new Array();
-	var _g1 = 0, _g = haxe.Unserializer.BASE64.length;
-	while(_g1 < _g) {
-		var i = _g1++;
-		codes[haxe.Unserializer.BASE64.cca(i)] = i;
-	}
-	return codes;
-}
-haxe.Unserializer.run = function(v) {
-	return new haxe.Unserializer(v).unserialize();
-}
-haxe.Unserializer.prototype.buf = null;
-haxe.Unserializer.prototype.pos = null;
-haxe.Unserializer.prototype.length = null;
-haxe.Unserializer.prototype.cache = null;
-haxe.Unserializer.prototype.scache = null;
-haxe.Unserializer.prototype.resolver = null;
-haxe.Unserializer.prototype.setResolver = function(r) {
-	if(r == null) this.resolver = { resolveClass : function(_) {
-		return null;
-	}, resolveEnum : function(_) {
-		return null;
-	}}; else this.resolver = r;
-}
-haxe.Unserializer.prototype.getResolver = function() {
-	return this.resolver;
-}
-haxe.Unserializer.prototype.get = function(p) {
-	return this.buf.cca(p);
-}
-haxe.Unserializer.prototype.readDigits = function() {
-	var k = 0;
-	var s = false;
-	var fpos = this.pos;
-	while(true) {
-		var c = this.buf.cca(this.pos);
-		if(c != c) break;
-		if(c == 45) {
-			if(this.pos != fpos) break;
-			s = true;
-			this.pos++;
-			continue;
-		}
-		if(c < 48 || c > 57) break;
-		k = k * 10 + (c - 48);
-		this.pos++;
-	}
-	if(s) k *= -1;
-	return k;
-}
-haxe.Unserializer.prototype.unserializeObject = function(o) {
-	while(true) {
-		if(this.pos >= this.length) throw "Invalid object";
-		if(this.buf.cca(this.pos) == 103) break;
-		var k = this.unserialize();
-		if(!Std["is"](k,String)) throw "Invalid object key";
-		var v = this.unserialize();
-		o[k] = v;
-	}
-	this.pos++;
-}
-haxe.Unserializer.prototype.unserializeEnum = function(edecl,tag) {
-	var constr = Reflect.field(edecl,tag);
-	if(constr == null) throw "Unknown enum tag " + Type.getEnumName(edecl) + "." + tag;
-	if(this.buf.cca(this.pos++) != 58) throw "Invalid enum format";
-	var nargs = this.readDigits();
-	if(nargs == 0) {
-		this.cache.push(constr);
-		return constr;
-	}
-	var args = new Array();
-	while(nargs > 0) {
-		args.push(this.unserialize());
-		nargs -= 1;
-	}
-	var e = constr.apply(edecl,args);
-	this.cache.push(e);
-	return e;
-}
-haxe.Unserializer.prototype.unserialize = function() {
-	switch(this.buf.cca(this.pos++)) {
-	case 110:
-		return null;
-	case 116:
-		return true;
-	case 102:
-		return false;
-	case 122:
-		return 0;
-	case 105:
-		return this.readDigits();
-	case 100:
-		var p1 = this.pos;
-		while(true) {
-			var c = this.buf.cca(this.pos);
-			if(c >= 43 && c < 58 || c == 101 || c == 69) this.pos++; else break;
-		}
-		return Std.parseFloat(this.buf.substr(p1,this.pos - p1));
-	case 121:
-		var len = this.readDigits();
-		if(this.buf.cca(this.pos++) != 58 || this.length - this.pos < len) throw "Invalid string length";
-		var s = this.buf.substr(this.pos,len);
-		this.pos += len;
-		s = StringTools.urlDecode(s);
-		this.scache.push(s);
-		return s;
-	case 107:
-		return Math.NaN;
-	case 109:
-		return Math.NEGATIVE_INFINITY;
-	case 112:
-		return Math.POSITIVE_INFINITY;
-	case 97:
-		var buf = this.buf;
-		var a = new Array();
-		this.cache.push(a);
-		while(true) {
-			var c = this.buf.cca(this.pos);
-			if(c == 104) {
-				this.pos++;
-				break;
-			}
-			if(c == 117) {
-				this.pos++;
-				var n = this.readDigits();
-				a[a.length + n - 1] = null;
-			} else a.push(this.unserialize());
-		}
-		return a;
-	case 111:
-		var o = { };
-		this.cache.push(o);
-		this.unserializeObject(o);
-		return o;
-	case 114:
-		var n = this.readDigits();
-		if(n < 0 || n >= this.cache.length) throw "Invalid reference";
-		return this.cache[n];
-	case 82:
-		var n = this.readDigits();
-		if(n < 0 || n >= this.scache.length) throw "Invalid string reference";
-		return this.scache[n];
-	case 120:
-		throw this.unserialize();
-		break;
-	case 99:
-		var name = this.unserialize();
-		var cl = this.resolver.resolveClass(name);
-		if(cl == null) throw "Class not found " + name;
-		var o = Type.createEmptyInstance(cl);
-		this.cache.push(o);
-		this.unserializeObject(o);
-		return o;
-	case 119:
-		var name = this.unserialize();
-		var edecl = this.resolver.resolveEnum(name);
-		if(edecl == null) throw "Enum not found " + name;
-		return this.unserializeEnum(edecl,this.unserialize());
-	case 106:
-		var name = this.unserialize();
-		var edecl = this.resolver.resolveEnum(name);
-		if(edecl == null) throw "Enum not found " + name;
-		this.pos++;
-		var index = this.readDigits();
-		var tag = Type.getEnumConstructs(edecl)[index];
-		if(tag == null) throw "Unknown enum index " + name + "@" + index;
-		return this.unserializeEnum(edecl,tag);
-	case 108:
-		var l = new List();
-		this.cache.push(l);
-		var buf = this.buf;
-		while(this.buf.cca(this.pos) != 104) l.add(this.unserialize());
-		this.pos++;
-		return l;
-	case 98:
-		var h = new Hash();
-		this.cache.push(h);
-		var buf = this.buf;
-		while(this.buf.cca(this.pos) != 104) {
-			var s = this.unserialize();
-			h.set(s,this.unserialize());
-		}
-		this.pos++;
-		return h;
-	case 113:
-		var h = new IntHash();
-		this.cache.push(h);
-		var buf = this.buf;
-		var c = this.buf.cca(this.pos++);
-		while(c == 58) {
-			var i = this.readDigits();
-			h.set(i,this.unserialize());
-			c = this.buf.cca(this.pos++);
-		}
-		if(c != 104) throw "Invalid IntHash format";
-		return h;
-	case 118:
-		var d = Date.fromString(this.buf.substr(this.pos,19));
-		this.cache.push(d);
-		this.pos += 19;
-		return d;
-	case 115:
-		var len = this.readDigits();
-		var buf = this.buf;
-		if(this.buf.cca(this.pos++) != 58 || this.length - this.pos < len) throw "Invalid bytes length";
-		var codes = haxe.Unserializer.CODES;
-		if(codes == null) {
-			codes = haxe.Unserializer.initCodes();
-			haxe.Unserializer.CODES = codes;
-		}
-		var i = this.pos;
-		var rest = len & 3;
-		var size = (len >> 2) * 3 + (rest >= 2?rest - 1:0);
-		var max = i + (len - rest);
-		var bytes = haxe.io.Bytes.alloc(size);
-		var bpos = 0;
-		while(i < max) {
-			var c1 = codes[buf.cca(i++)];
-			var c2 = codes[buf.cca(i++)];
-			bytes.b[bpos++] = (c1 << 2 | c2 >> 4) & 255;
-			var c3 = codes[buf.cca(i++)];
-			bytes.b[bpos++] = (c2 << 4 | c3 >> 2) & 255;
-			var c4 = codes[buf.cca(i++)];
-			bytes.b[bpos++] = (c3 << 6 | c4) & 255;
-		}
-		if(rest >= 2) {
-			var c1 = codes[buf.cca(i++)];
-			var c2 = codes[buf.cca(i++)];
-			bytes.b[bpos++] = (c1 << 2 | c2 >> 4) & 255;
-			if(rest == 3) {
-				var c3 = codes[buf.cca(i++)];
-				bytes.b[bpos++] = (c2 << 4 | c3 >> 2) & 255;
-			}
-		}
-		this.pos += len;
-		this.cache.push(bytes);
-		return bytes;
-	case 67:
-		var name = this.unserialize();
-		var cl = this.resolver.resolveClass(name);
-		if(cl == null) throw "Class not found " + name;
-		var o = Type.createEmptyInstance(cl);
-		this.cache.push(o);
-		o.hxUnserialize(this);
-		if(this.buf.cca(this.pos++) != 103) throw "Invalid custom data";
-		return o;
-	default:
-	}
-	this.pos--;
-	throw "Invalid char " + this.buf.charAt(this.pos) + " at position " + this.pos;
-}
-haxe.Unserializer.prototype.__class__ = haxe.Unserializer;
 bpmjs.ReflectUtil = function() { }
 bpmjs.ReflectUtil.__name__ = ["bpmjs","ReflectUtil"];
 bpmjs.ReflectUtil.callMethodWithMetadata = function(object,type,metadata,args) {
@@ -8067,65 +7475,32 @@ kumite.musicdraw.MusicDrawConfig = function(p) {
 	if( p === $_ ) return;
 	this.analyzer = new kumite.musicdraw.MusicAnalyzer();
 	this.bandsReader = new kumite.musicdraw.BandsReader();
-	this.worker = new kumite.musicdraw.TestWorkerHandler();
+	this.squareEffectWorkerHandler = new kumite.musicdraw.SquareEffectWorkerHandler();
 	this.clearLayer = new kumite.layer.ClearLayer();
 	this.clearLayer.color = new Color(0,0,0.0,1);
 	this.image1Layer = new kumite.layer.TextureLayer();
-	this.rasterX = 3;
 	this.scene = new kumite.scene.DefaultScene("MUSIC DRAW");
 }
 kumite.musicdraw.MusicDrawConfig.__name__ = ["kumite","musicdraw","MusicDrawConfig"];
 kumite.musicdraw.MusicDrawConfig.prototype.displayListLayer = null;
 kumite.musicdraw.MusicDrawConfig.prototype.textureRegistry = null;
-kumite.musicdraw.MusicDrawConfig.prototype.time = null;
+kumite.musicdraw.MusicDrawConfig.prototype.analyzer = null;
+kumite.musicdraw.MusicDrawConfig.prototype.bandsReader = null;
 kumite.musicdraw.MusicDrawConfig.prototype.scene = null;
 kumite.musicdraw.MusicDrawConfig.prototype.clearLayer = null;
 kumite.musicdraw.MusicDrawConfig.prototype.image1Layer = null;
-kumite.musicdraw.MusicDrawConfig.prototype.bandsReader = null;
-kumite.musicdraw.MusicDrawConfig.prototype.analyzer = null;
-kumite.musicdraw.MusicDrawConfig.prototype.worker = null;
-kumite.musicdraw.MusicDrawConfig.prototype.rasterX = null;
-kumite.musicdraw.MusicDrawConfig.prototype.gltexture = null;
+kumite.musicdraw.MusicDrawConfig.prototype.squareEffectWorkerHandler = null;
 kumite.musicdraw.MusicDrawConfig.prototype.init = function() {
 	this.scene.addLayerLifecycle(this.clearLayer,kumite.layer.LayerId.CLEAR);
 	this.scene.addLayerLifecycle(this.image1Layer);
 	this.scene.addLayerLifecycle(this.displayListLayer);
-	this.gltexture = this.textureRegistry.createGLArrayTexture(512,1024,9729);
-	this.image1Layer.texture = this.gltexture;
-	this.worker.config = this;
-	this.worker.texture = this.gltexture;
-	this.worker.textureRegistry = this.textureRegistry;
+	this.image1Layer.texture = this.squareEffectWorkerHandler.createTexture();
 	var group = new bpmjs.SequencerTaskGroup();
 	group.add(this.bandsReader.read("data/bands/expo2000.json"));
 	return group;
 }
 kumite.musicdraw.MusicDrawConfig.prototype.start = function() {
-	this.worker.start();
-	var stage = GLDisplayList.getDefault().stage;
-	var classInfo = reflect.ClassInfo.forInstance(this);
-	var binding = new reflect.Binding(this,classInfo.getProperty("rasterX"));
-	var sliderH = new GLSliderH();
-	sliderH.setMin(1);
-	sliderH.setMax(10);
-	sliderH.value = binding.getValue();
-	sliderH.setX(100);
-	sliderH.setY(100);
-	sliderH.setWidth(200);
-	sliderH.bind(binding);
-	stage.addChild(sliderH);
-}
-kumite.musicdraw.MusicDrawConfig.prototype.tick = function(tick) {
-	{
-		Log.posInfo = { fileName : "MusicDrawConfig.hx", lineNumber : 99, className : "kumite.musicdraw.MusicDrawConfig", methodName : "tick"};
-		if(Log.filter(LogLevel.INFO)) {
-			Log.fetchInput(this.rasterX,null,null,null,null,null,null);
-			console.info(Log.createMessage());
-		}
-	}
-	if(this.gltexture.isDirty) {
-		this.textureRegistry.updateGLArrayTexture(this.gltexture);
-		this.gltexture.isDirty = false;
-	}
+	this.squareEffectWorkerHandler.start();
 }
 kumite.musicdraw.MusicDrawConfig.prototype.__class__ = kumite.musicdraw.MusicDrawConfig;
 kumite.musicdraw.MusicDrawConfig.__interfaces__ = [haxe.rtti.Infos];
@@ -9178,8 +8553,6 @@ if(typeof(haxe_timers) == "undefined") haxe_timers = [];
 	Xml.Prolog = "prolog";
 	Xml.Document = "document";
 }
-kumite.musicdraw.TestWorkerHandler.__meta__ = { fields : { analyzer : { Inject : null}}};
-kumite.musicdraw.TestWorkerHandler.__rtti = "<class path=\"kumite.musicdraw.TestWorkerHandler\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<analyzer public=\"1\"><c path=\"kumite.musicdraw.MusicAnalyzer\"/></analyzer>\n\t<config public=\"1\"><c path=\"kumite.musicdraw.MusicDrawConfig\"/></config>\n\t<texture public=\"1\"><c path=\"GLArrayTexture\"/></texture>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<worker><c path=\"Worker\"/></worker>\n\t<workerRPC><c path=\"bpmjs.WorkerRPC\"/></workerRPC>\n\t<start public=\"1\" set=\"method\" line=\"26\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<setResult public=\"1\" set=\"method\" line=\"41\"><f a=\"data\">\n\t<c path=\"ArrayBuffer\"/>\n\t<e path=\"Void\"/>\n</f></setResult>\n\t<new public=\"1\" set=\"method\" line=\"22\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Log.filters = new Array();
 Log.args = new Array();
 Log.errors = new Array();
@@ -9204,6 +8577,8 @@ Matrix4.i41 = 3;
 Matrix4.i42 = 7;
 Matrix4.i43 = 11;
 Matrix4.i44 = 15;
+kumite.musicdraw.SquareEffectWorkerHandler.__meta__ = { fields : { textureRegistry : { Inject : null}, analyzer : { Inject : null}, stage : { Inject : null}}};
+kumite.musicdraw.SquareEffectWorkerHandler.__rtti = "<class path=\"kumite.musicdraw.SquareEffectWorkerHandler\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<analyzer public=\"1\"><c path=\"kumite.musicdraw.MusicAnalyzer\"/></analyzer>\n\t<stage public=\"1\"><c path=\"GLStage\"/></stage>\n\t<texture public=\"1\"><c path=\"GLArrayTexture\"/></texture>\n\t<rasterX><c path=\"Int\"/></rasterX>\n\t<workerRPC><c path=\"bpmjs.WorkerRPC\"/></workerRPC>\n\t<createTexture public=\"1\" set=\"method\" line=\"31\"><f a=\"\"><c path=\"GLArrayTexture\"/></f></createTexture>\n\t<start public=\"1\" set=\"method\" line=\"37\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<setResult public=\"1\" set=\"method\" line=\"55\"><f a=\"data\">\n\t<c path=\"ArrayBuffer\"/>\n\t<e path=\"Void\"/>\n</f></setResult>\n\t<new public=\"1\" set=\"method\" line=\"26\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.scene.LayerState.OUT = new kumite.scene.LayerState("OUT");
 kumite.scene.LayerState.IN = new kumite.scene.LayerState("IN");
 kumite.scene.LayerState.KEEP = new kumite.scene.LayerState("KEEP");
@@ -9221,7 +8596,7 @@ LogLevel.WARN = new LogLevel(2);
 LogLevel.ERROR = new LogLevel(3);
 LogLevel.OFF = new LogLevel(4);
 kumite.canvas.Config.__rtti = "<class path=\"kumite.canvas.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvasCase public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvasCase>\n\t<canvasController public=\"1\"><c path=\"kumite.canvas.CanvasController\"/></canvasController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.displaylist.ConfigAsLayer.__rtti = "<class path=\"kumite.displaylist.ConfigAsLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<displayListLayer public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayListLayer>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.displaylist.ConfigAsLayer.__rtti = "<class path=\"kumite.displaylist.ConfigAsLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<displayListLayer public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayListLayer>\n\t<stage public=\"1\"><c path=\"GLStage\"/></stage>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.time.Config.__rtti = "<class path=\"kumite.time.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<timeController public=\"1\"><c path=\"kumite.time.TimeController\"/></timeController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.musicdraw.BandsReader.__meta__ = { fields : { analyzer : { Inject : null}}};
 kumite.musicdraw.BandsReader.__rtti = "<class path=\"kumite.musicdraw.BandsReader\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<analyzer public=\"1\"><c path=\"kumite.musicdraw.MusicAnalyzer\"/></analyzer>\n\t<location><c path=\"String\"/></location>\n\t<read public=\"1\" set=\"method\" line=\"18\"><f a=\"location\">\n\t<c path=\"String\"/>\n\t<c path=\"bpmjs.HTTPTask\"/>\n</f></read>\n\t<handleHTTPComplete set=\"method\" line=\"29\"><f a=\"task\">\n\t<c path=\"bpmjs.HTTPTask\"/>\n\t<e path=\"Void\"/>\n</f></handleHTTPComplete>\n\t<new public=\"1\" set=\"method\" line=\"14\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
@@ -9254,9 +8629,6 @@ kumite.layer.LayerId.CLEAR = "CLEAR";
 kumite.webgl.InitAction.__meta__ = { fields : { canvas : { Inject : null}, init : { Sequence : ["boot","init"]}}};
 kumite.webgl.InitAction.__rtti = "<class path=\"kumite.webgl.InitAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<antialias public=\"1\"><e path=\"Bool\"/></antialias>\n\t<init public=\"1\" set=\"method\" line=\"16\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<new public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.projection.Config.__rtti = "<class path=\"kumite.projection.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<projectionController public=\"1\"><c path=\"kumite.projection.ProjectionController\"/></projectionController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-haxe.Serializer.USE_CACHE = false;
-haxe.Serializer.USE_ENUM_INDEX = false;
-haxe.Serializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
 kumite.vjinterface.VJInterface.__meta__ = { fields : { scenes : { Inject : null}, messenger : { Messenger : null}, start : { Sequence : ["boot","startComplete"]}, render : { Message : null}}};
 kumite.vjinterface.VJInterface.__rtti = "<class path=\"kumite.vjinterface.VJInterface\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<scenes public=\"1\"><c path=\"kumite.scene.Scenes\"/></scenes>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<timer><c path=\"haxe.Timer\"/></timer>\n\t<stage><c path=\"GLStage\"/></stage>\n\t<sceneContainer><c path=\"GLDisplayObjectContainer\"/></sceneContainer>\n\t<start public=\"1\" set=\"method\" line=\"31\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<render public=\"1\" set=\"method\" line=\"42\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<addSceneButtons set=\"method\" line=\"47\"><f a=\"\"><e path=\"Void\"/></f></addSceneButtons>\n\t<createSceneRequest set=\"method\" line=\"76\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<f a=\"button\">\n\t\t<c path=\"GLInteractiveObject\"/>\n\t\t<e path=\"Void\"/>\n\t</f>\n</f></createSceneRequest>\n\t<handleButtonClick set=\"method\" line=\"85\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></handleButtonClick>\n\t<navigateNext set=\"method\" line=\"90\"><f a=\"\"><e path=\"Void\"/></f></navigateNext>\n\t<new public=\"1\" set=\"method\" line=\"28\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.displaylist.DisplayListLayer.__rtti = "<class path=\"kumite.displaylist.DisplayListLayer\" params=\"\">\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<transition public=\"1\"><c path=\"Float\"/></transition>\n\t<renderer><c path=\"GLDisplayListRenderer\"/></renderer>\n\t<init public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"27\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"33\"><f a=\"renderContext\">\n\t<c path=\"kumite.scene.RenderContext\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"19\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
@@ -9569,11 +8941,8 @@ shader.DisplayObjectFragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\
 kumite.scene.DefaultScene.__rtti = "<class path=\"kumite.scene.DefaultScene\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.SceneLifecycle\"/>\n\t<name public=\"1\"><c path=\"String\"/></name>\n\t<preconfiguredLifecycles><c path=\"Array\"><c path=\"kumite.scene._DefaultScene.LifecycleAndLayerId\"/></c></preconfiguredLifecycles>\n\t<addLayerLifecycle public=\"1\" set=\"method\" line=\"25\"><f a=\"lifecycle:?layerId\">\n\t<c path=\"kumite.scene.LayerLifecycle\"/>\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></addLayerLifecycle>\n\t<sceneInit public=\"1\" set=\"method\" line=\"36\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></sceneInit>\n\t<initTransition public=\"1\" set=\"method\" line=\"42\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></initTransition>\n\t<renderTransition public=\"1\" set=\"method\" line=\"46\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"50\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<addPreconfiguredLifecycles set=\"method\" line=\"54\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></addPreconfiguredLifecycles>\n\t<new public=\"1\" set=\"method\" line=\"19\"><f a=\"?name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></new>\n</class>";
 kumite.camera.Config.__rtti = "<class path=\"kumite.camera.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<cameraMouseMover public=\"1\"><c path=\"kumite.camera.CameraMouseMover\"/></cameraMouseMover>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.vjinterface.Config.__rtti = "<class path=\"kumite.vjinterface.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<vjinterface public=\"1\"><c path=\"kumite.vjinterface.VJInterface\"/></vjinterface>\n\t<vjstats public=\"1\"><c path=\"kumite.vjinterface.VJStats\"/></vjstats>\n\t<vjlayers public=\"1\"><c path=\"kumite.vjinterface.VJLayers\"/></vjlayers>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-haxe.Unserializer.DEFAULT_RESOLVER = Type;
-haxe.Unserializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
-haxe.Unserializer.CODES = null;
-kumite.musicdraw.MusicDrawConfig.__meta__ = { fields : { displayListLayer : { Inject : null}, textureRegistry : { Inject : null}, time : { Inject : null}, init : { Sequence : ["boot","init"]}, start : { Sequence : ["boot","start"]}, tick : { Message : null}}};
-kumite.musicdraw.MusicDrawConfig.__rtti = "<class path=\"kumite.musicdraw.MusicDrawConfig\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<displayListLayer public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayListLayer>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<scene public=\"1\"><c path=\"kumite.scene.DefaultScene\"/></scene>\n\t<clearLayer public=\"1\"><c path=\"kumite.layer.ClearLayer\"/></clearLayer>\n\t<image1Layer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></image1Layer>\n\t<bandsReader public=\"1\"><c path=\"kumite.musicdraw.BandsReader\"/></bandsReader>\n\t<analyzer public=\"1\"><c path=\"kumite.musicdraw.MusicAnalyzer\"/></analyzer>\n\t<worker public=\"1\"><c path=\"kumite.musicdraw.TestWorkerHandler\"/></worker>\n\t<rasterX public=\"1\"><c path=\"Int\"/></rasterX>\n\t<gltexture><c path=\"GLArrayTexture\"/></gltexture>\n\t<init public=\"1\" set=\"method\" line=\"57\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></init>\n\t<start public=\"1\" set=\"method\" line=\"76\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<tick public=\"1\" set=\"method\" line=\"97\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></tick>\n\t<new public=\"1\" set=\"method\" line=\"41\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.musicdraw.MusicDrawConfig.__meta__ = { fields : { displayListLayer : { Inject : null}, textureRegistry : { Inject : null}, init : { Sequence : ["boot","init"]}, start : { Sequence : ["boot","start"]}}};
+kumite.musicdraw.MusicDrawConfig.__rtti = "<class path=\"kumite.musicdraw.MusicDrawConfig\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<displayListLayer public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayListLayer>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<analyzer public=\"1\"><c path=\"kumite.musicdraw.MusicAnalyzer\"/></analyzer>\n\t<bandsReader public=\"1\"><c path=\"kumite.musicdraw.BandsReader\"/></bandsReader>\n\t<scene public=\"1\"><c path=\"kumite.scene.DefaultScene\"/></scene>\n\t<clearLayer public=\"1\"><c path=\"kumite.layer.ClearLayer\"/></clearLayer>\n\t<image1Layer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></image1Layer>\n\t<squareEffectWorkerHandler public=\"1\"><c path=\"kumite.musicdraw.SquareEffectWorkerHandler\"/></squareEffectWorkerHandler>\n\t<init public=\"1\" set=\"method\" line=\"48\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></init>\n\t<start public=\"1\" set=\"method\" line=\"62\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<new public=\"1\" set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.scene.SceneConfig.__rtti = "<class path=\"kumite.scene.SceneConfig\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<scenes public=\"1\"><c path=\"kumite.scene.Scenes\"/></scenes>\n\t<sceneNavigator public=\"1\"><c path=\"kumite.scene.SceneNavigator\"/></sceneNavigator>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.mouse.Config.__rtti = "<class path=\"kumite.mouse.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<mouseController public=\"1\"><c path=\"kumite.mouse.MouseController\"/></mouseController>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs.Stats.fps = 0;

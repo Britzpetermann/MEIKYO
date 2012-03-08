@@ -30,8 +30,8 @@
 
 --next
 
--js release/bin/kumite.musicdraw.TestWorker.js
--main kumite.musicdraw.TestWorker
+-js release/bin/kumite.musicdraw.SquareEffectWorker.js
+-main kumite.musicdraw.SquareEffectWorker
 -cp construct/src
 -cp construct/src_extern
 -cp construct/src_bpmjs

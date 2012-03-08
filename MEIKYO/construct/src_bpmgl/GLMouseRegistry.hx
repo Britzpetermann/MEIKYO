@@ -3,9 +3,7 @@ import hsl.haxe.Signaler;
 
 class GLMouseRegistry
 {
-
 	static var instance : GLMouseRegistry;
-
 	public static function getInstance()
 	{
 		if (instance == null)
@@ -20,15 +18,17 @@ class GLMouseRegistry
 
 	var canvas : Canvas;
 
-	function new() {}
+	function new()
+	{
+		mouseDownSignaler = new DirectSignaler(this);
+		mouseUpSignaler = new DirectSignaler(this);
+		mouseMoveSignaler = new DirectSignaler(this);
+	}
 
 	public function init(canvas : Canvas)
 	{
 		this.canvas = canvas;
 
-		mouseDownSignaler = new DirectSignaler(this);
-		mouseUpSignaler = new DirectSignaler(this);
-		mouseMoveSignaler = new DirectSignaler(this);
 
 		canvas.onmouseup = onMouseUp;
 		canvas.onmousedown = onMouseDown;

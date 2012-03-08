@@ -4580,14 +4580,17 @@ Log.fetchInput = function(m0,m1,m2,m3,m4,m5,m6) {
 	if(m6 != null) Log.args.push(m6);
 }
 Log.createMessage = function() {
+	if(Log.posInfo == null) return Log.args.join(" ");
 	var from = Log.posInfo.className + "." + Log.posInfo.methodName;
 	return "[" + from + "] " + Log.args.join(" ");
 }
 Log.createErrorMessage = function() {
+	if(Log.posInfo == null) return Log.args.join(" ");
 	var from = Log.posInfo.className + "." + Log.posInfo.methodName;
 	return "[" + from + "]\n" + Log.args.join(" ");
 }
 Log.filter = function(level) {
+	if(Log.posInfo == null) return true;
 	var result = true;
 	var _g = 0, _g1 = Log.filters;
 	while(_g < _g1.length) {
@@ -4603,6 +4606,7 @@ Log.infoConsole = function(v,i) {
 	console.log("" + Log.createMessage() + " (trace)");
 }
 Log.displayError = function(message) {
+	if($closure(js.Lib.document,"createElement") == null) return;
 	if(Log.errorDiv == null) {
 		Log.errorDiv = js.Lib.document.createElement("div");
 		Log.errorDiv.className = "Error";
