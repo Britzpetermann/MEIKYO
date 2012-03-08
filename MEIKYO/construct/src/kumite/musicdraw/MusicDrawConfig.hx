@@ -1,5 +1,10 @@
 package kumite.musicdraw;
 
+import haxe.rtti.Infos;
+
+import reflect.ClassInfo;
+import reflect.Binding;
+
 import kumite.displaylist.DisplayListLayer;
 import kumite.scene.DefaultScene;
 import kumite.layer.ClearLayer;
@@ -7,12 +12,9 @@ import kumite.layer.TextureLayer;
 import kumite.time.Tick;
 import kumite.time.Time;
 
-import haxe.rtti.Infos;
 
 class MusicDrawConfig implements Infos
 {
-	public static var IMAGE_1 : GLTextureConfig = GLTextureConfig.create("data/image/along-the-line.png"); 
-	
 	@Inject
 	public var displayListLayer : DisplayListLayer;
 
@@ -25,73 +27,80 @@ class MusicDrawConfig implements Infos
 	public var scene : DefaultScene;
 	
 	public var clearLayer : ClearLayer;
-	public var pixelLayer : PixelLayer;
 	public var image1Layer : TextureLayer;
+	
+	public var bandsReader:BandsReader;
+	
+	public var analyzer : MusicAnalyzer;
+	public var worker : TestWorkerHandler;
+	
+	public var rasterX : Int;
 	
 	var gltexture : GLArrayTexture;
 
 	public function new()
 	{
+		analyzer = new MusicAnalyzer();
+		bandsReader = new BandsReader();
+		worker = new TestWorkerHandler();
+		
 		clearLayer = new ClearLayer();
 		clearLayer.color = new Color(0, 0, 0.0, 1);
-		
 		image1Layer = new TextureLayer();
 		
-		pixelLayer = new PixelLayer();
+		rasterX = 3;
 		
 		scene = new DefaultScene("MUSIC DRAW");
 	}
 
-	@Sequence("boot", "startPrepare")
-	public function startPrepare()
+	@Sequence("boot", "init")
+	public function init()
 	{
+		scene.addLayerLifecycle(clearLayer, kumite.layer.LayerId.CLEAR);
+		scene.addLayerLifecycle(image1Layer);
+		scene.addLayerLifecycle(displayListLayer);
+		
+		gltexture = textureRegistry.createGLArrayTexture(512, 1024, GL.LINEAR);
+		image1Layer.texture = gltexture;
+		
+		worker.config = this;
+		worker.texture = gltexture;
+		worker.textureRegistry = textureRegistry;
+		
 		var group = new bpmjs.SequencerTaskGroup();
-		//group.add(lglReader2.read("data/lgl/1105496683.lgl"));
+		group.add(bandsReader.read("data/bands/expo2000.json"));
 		return group;
 	}
+
+	@Sequence("boot", "start")
+	public function start()
+	{
+		worker.start();
+		
+		var stage = GLDisplayList.getDefault().stage;
+		
+		var classInfo = ClassInfo.forInstance(this);
+		var binding = new Binding(this, classInfo.getProperty("rasterX"));
+		
+		var sliderH = new GLSliderH();
+		sliderH.min = 1;
+		sliderH.max = 10;
+		sliderH.value = binding.getValue();
+		sliderH.x = 100;
+		sliderH.y = 100;
+		sliderH.width = 200;
+		sliderH.bind(binding);
+		stage.addChild(sliderH);		
+	}
 	
-	@Sequence("boot", "startPrepare")
-	public function loadImages()
-	{
-		var group = new bpmjs.SequencerTaskGroup();
-		
-		group.add(new GLTextureLoadingTask(textureRegistry, IMAGE_1));
-		
-		return group;
-	}	
-
-	@Sequence("boot", "startPrepare")
-	public function initTextures()
-	{
-		gltexture = textureRegistry.createGLArrayTexture(16, 16);
-
-		image1Layer.texture = gltexture;
-	}	
-
 	@Message
 	public function tick(tick:Tick)
 	{
-		var array = gltexture.array;
-		
-		for(x in 0...gltexture.width)
-		for(y in 0...gltexture.height)
+		Log.info(rasterX);
+		if (gltexture.isDirty)
 		{
-			gltexture.setPixel(x, y, 255, Math.sin(time.ms / 1000) * 255 + 128, 255, 255);
-			//array[0] = 255;
-			//array[1] = Math.sin(time.ms / 1000) * 255 + 128;
-			//array[2] = 255;
-			//array[3] = 255;
+			textureRegistry.updateGLArrayTexture(gltexture);
+			gltexture.isDirty = false;
 		}
-		
-		textureRegistry.updateGLArrayTexture(gltexture);
-	}
-
-	@Complete
-	public function complete()
-	{
-		scene.addLayerLifecycle(clearLayer, kumite.layer.LayerId.CLEAR);
-		scene.addLayerLifecycle(pixelLayer);
-		scene.addLayerLifecycle(image1Layer);
-		scene.addLayerLifecycle(displayListLayer);
 	}
 }

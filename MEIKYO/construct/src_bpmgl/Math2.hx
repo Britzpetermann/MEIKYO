@@ -20,5 +20,10 @@ class Math2
 		else if (value < 0)
 			return -1;
 		return 0;
-	}	
+	}
+	
+	public static inline function sin1(rad1 : Float) : Float
+	{
+		return Math.sin(rad1 * Math.PI * 2) * 0.5 + 0.5;
+	}
 }

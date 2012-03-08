@@ -14,15 +14,6 @@ Rand.list = function(list) {
 	return list[Std["int"](Math.random() * list.length)];
 }
 Rand.prototype.__class__ = Rand;
-if(typeof kumite=='undefined') kumite = {}
-if(!kumite.lgl) kumite.lgl = {}
-kumite.lgl.Command = function(type) {
-	if( type === $_ ) return;
-	this.type = type;
-}
-kumite.lgl.Command.__name__ = ["kumite","lgl","Command"];
-kumite.lgl.Command.prototype.type = null;
-kumite.lgl.Command.prototype.__class__ = kumite.lgl.Command;
 StringTools = function() { }
 StringTools.__name__ = ["StringTools"];
 StringTools.urlEncode = function(s) {
@@ -216,6 +207,8 @@ StringBuf.prototype.toString = function() {
 }
 StringBuf.prototype.b = null;
 StringBuf.prototype.__class__ = StringBuf;
+if(typeof kumite=='undefined') kumite = {}
+if(!kumite.lgl) kumite.lgl = {}
 kumite.lgl.Vertex = function(p) {
 	if( p === $_ ) return;
 	this.positionX = 0;
@@ -989,7 +982,7 @@ kumite.lgl.LGLWorker.prototype.start = function(postMessage,e) {
 	var lgl = haxe.Unserializer.run(e.data);
 	var vertexBuffer = new Float32Array(lgl.edges.length * 6);
 	var setMessage = function(type,message) {
-		postMessage(haxe.Serializer.run(new kumite.lgl.Command(type)));
+		postMessage(haxe.Serializer.run(new bpmjs.WorkerCommand(type)));
 		postMessage(message);
 	};
 	var lglLayout = new kumite.lgl.LGLLayout();
@@ -1004,7 +997,7 @@ kumite.lgl.LGLWorker.prototype.start = function(postMessage,e) {
 			lglLayout.render();
 		}
 		setMessage("Time",Date.now().getTime() - start);
-		postMessage(haxe.Serializer.run(new kumite.lgl.Command("render")));
+		postMessage(haxe.Serializer.run(new bpmjs.WorkerCommand("render")));
 		postMessage(this.createMessage(vertexBuffer,lgl));
 	}
 }
@@ -2135,6 +2128,14 @@ IntHash.prototype.toString = function() {
 	return s.b.join("");
 }
 IntHash.prototype.__class__ = IntHash;
+if(typeof bpmjs=='undefined') bpmjs = {}
+bpmjs.WorkerCommand = function(type) {
+	if( type === $_ ) return;
+	this.type = type;
+}
+bpmjs.WorkerCommand.__name__ = ["bpmjs","WorkerCommand"];
+bpmjs.WorkerCommand.prototype.type = null;
+bpmjs.WorkerCommand.prototype.__class__ = bpmjs.WorkerCommand;
 Vec3 = function(x,y,z) {
 	if( x === $_ ) return;
 	if(z == null) z = 0;

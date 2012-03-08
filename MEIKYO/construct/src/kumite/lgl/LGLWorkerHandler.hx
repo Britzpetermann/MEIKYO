@@ -15,30 +15,6 @@ class LGLWorkerHandler implements Infos
 	
 	public function start()
 	{
-		var resolver =
-		{
-			resolveClass:function (name : String) : Class<Dynamic>
-			{
-				switch(name)
-				{
-					case "Vec3":
-						return Vec3;
-					case "kumite.lgl.Vertex":
-						return Vertex;
-					case "kumite.lgl.Edge":
-						return Edge;
-					case "kumite.lgl.LGL":
-						return LGL;
-					default:
-						Log.info(name);
-						return untyped eval(name);	
-				}
-			},
-			resolveEnum:function (name : String) : Enum<Dynamic>
-			{
-				return untyped eval(name);
-			}
-		}
 		var worker = new Worker("bin/kumite.lgl.LGLWorker.js?cache=" + Date.now().getTime());
 		var lastMessage = Date.now().getTime();
 		var command:Command = null;

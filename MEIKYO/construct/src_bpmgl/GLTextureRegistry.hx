@@ -117,7 +117,7 @@ class GLTextureRegistry
 		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, filter != null ? filter : GL.NEAREST);
 		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
     	GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
-		GL.texImage2DArrayBufferView(GL.TEXTURE_2D, 0, GL.RGBA, 16, 16, 0, GL.RGBA, GL.UNSIGNED_BYTE, array);
+		GL.texImage2DArrayBufferView(GL.TEXTURE_2D, 0, GL.RGBA, width, height, 0, GL.RGBA, GL.UNSIGNED_BYTE, array);
 
 		if (
 			filter == GL.NEAREST_MIPMAP_NEAREST ||
@@ -141,7 +141,7 @@ class GLTextureRegistry
 	public function updateGLArrayTexture(texture : GLArrayTexture)
 	{
 		GL.bindTexture(GL.TEXTURE_2D, texture.texture);
-		GL.texImage2DArrayBufferView(GL.TEXTURE_2D, 0, GL.RGBA, 16, 16, 0, GL.RGBA, GL.UNSIGNED_BYTE, texture.array);
+		GL.texImage2DArrayBufferView(GL.TEXTURE_2D, 0, GL.RGBA, texture.width, texture.height, 0, GL.RGBA, GL.UNSIGNED_BYTE, texture.array);
 	}
 
 }

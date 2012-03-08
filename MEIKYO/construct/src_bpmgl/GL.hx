@@ -463,7 +463,7 @@ class GL
 		return glsl[0];
 	}
 
-	public static function createArrayBuffer(array : ArrayBuffer, ?type : GLenum = GL.STATIC_DRAW) : WebGLBuffer
+	public static function createArrayBuffer(array : ArrayBufferView, ?type : GLenum = GL.STATIC_DRAW) : WebGLBuffer
 	{
 		var vertexBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
@@ -525,12 +525,12 @@ class GL
 		gl.blendFunc(sfactor, dfactor);
 	}
 
-	public static inline function bufferData(target : GLenum, data : ArrayBuffer , usage : GLenum) : Void
+	public static inline function bufferData(target : GLenum, data : ArrayBufferView, usage : GLenum) : Void
 	{
 		gl.bufferData(target, data, usage);
 	}
 
-	public static inline function bufferSubData(target : GLenum, offset : GLintptr, data : ArrayBuffer) : Void
+	public static inline function bufferSubData(target : GLenum, offset : GLintptr, data : ArrayBufferView) : Void
 	{
 		gl.bufferSubData(target, offset, data);
 	}
@@ -665,7 +665,7 @@ class GL
 		gl.shaderSource(shader, source);
 	}
 
-	public static inline function texImage2DArrayBufferView(target : GLenum, level : GLint, internalformat : GLenum, width : GLsizei, height : GLsizei, border : GLint, format : GLenum, type : GLenum, pixels : ArrayBuffer) : Void
+	public static inline function texImage2DArrayBufferView(target : GLenum, level : GLint, internalformat : GLenum, width : GLsizei, height : GLsizei, border : GLint, format : GLenum, type : GLenum, pixels : ArrayBufferView) : Void
 	{
 		untyped gl.texImage2D(target, level, internalformat, width, height, border, format, type, pixels);
 	}

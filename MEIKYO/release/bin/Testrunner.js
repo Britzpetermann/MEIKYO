@@ -734,6 +734,47 @@ bpmjs.integration.Tests.addTo = function(runner) {
 	runner.add(new bpmjs.integration.TestMultipleConfigs());
 }
 bpmjs.integration.Tests.prototype.__class__ = bpmjs.integration.Tests;
+bpmjs.TestConfigure = function(p) {
+	if( p === $_ ) return;
+	TestCase2.call(this);
+}
+bpmjs.TestConfigure.__name__ = ["bpmjs","TestConfigure"];
+bpmjs.TestConfigure.__super__ = TestCase2;
+for(var k in TestCase2.prototype ) bpmjs.TestConfigure.prototype[k] = TestCase2.prototype[k];
+bpmjs.TestConfigure.prototype.testObject = function() {
+	var context = bpmjs.ContextBuilder.build(bpmjs._TestConfigure.TestConfigWithA);
+	bpmjs.ContextBuilder.configure(new bpmjs._TestConfigure.B());
+	var b = context.getObjectByType(bpmjs._TestConfigure.B);
+	this.assertNotNull(b,{ fileName : "TestConfigure.hx", lineNumber : 12, className : "bpmjs.TestConfigure", methodName : "testObject"});
+}
+bpmjs.TestConfigure.prototype.testInject = function() {
+	var context = bpmjs.ContextBuilder.build(bpmjs._TestConfigure.TestConfigWithA);
+	bpmjs.ContextBuilder.configure(new bpmjs._TestConfigure.B());
+	var b = context.getObjectByType(bpmjs._TestConfigure.B);
+	this.assertNotNull(b.a,{ fileName : "TestConfigure.hx", lineNumber : 22, className : "bpmjs.TestConfigure", methodName : "testInject"});
+}
+bpmjs.TestConfigure.prototype.__class__ = bpmjs.TestConfigure;
+if(!bpmjs._TestConfigure) bpmjs._TestConfigure = {}
+bpmjs._TestConfigure.TestConfigWithA = function(p) {
+	if( p === $_ ) return;
+	this.a = new bpmjs._TestConfigure.A();
+}
+bpmjs._TestConfigure.TestConfigWithA.__name__ = ["bpmjs","_TestConfigure","TestConfigWithA"];
+bpmjs._TestConfigure.TestConfigWithA.prototype.a = null;
+bpmjs._TestConfigure.TestConfigWithA.prototype.__class__ = bpmjs._TestConfigure.TestConfigWithA;
+bpmjs._TestConfigure.TestConfigWithA.__interfaces__ = [haxe.rtti.Infos];
+bpmjs._TestConfigure.A = function(p) {
+}
+bpmjs._TestConfigure.A.__name__ = ["bpmjs","_TestConfigure","A"];
+bpmjs._TestConfigure.A.prototype.b = null;
+bpmjs._TestConfigure.A.prototype.__class__ = bpmjs._TestConfigure.A;
+bpmjs._TestConfigure.A.__interfaces__ = [haxe.rtti.Infos];
+bpmjs._TestConfigure.B = function(p) {
+}
+bpmjs._TestConfigure.B.__name__ = ["bpmjs","_TestConfigure","B"];
+bpmjs._TestConfigure.B.prototype.a = null;
+bpmjs._TestConfigure.B.prototype.__class__ = bpmjs._TestConfigure.B;
+bpmjs._TestConfigure.B.__interfaces__ = [haxe.rtti.Infos];
 if(typeof bpmgl=='undefined') bpmgl = {}
 bpmgl.Matrix4TestCase = function(p) {
 	if( p === $_ ) return;
@@ -788,47 +829,6 @@ bpmgl.TestMatrix4Creations.prototype.testSetFrom = function() {
 	this.matrixEquals(m1,null,this.m);
 }
 bpmgl.TestMatrix4Creations.prototype.__class__ = bpmgl.TestMatrix4Creations;
-bpmjs.TestConfigure = function(p) {
-	if( p === $_ ) return;
-	TestCase2.call(this);
-}
-bpmjs.TestConfigure.__name__ = ["bpmjs","TestConfigure"];
-bpmjs.TestConfigure.__super__ = TestCase2;
-for(var k in TestCase2.prototype ) bpmjs.TestConfigure.prototype[k] = TestCase2.prototype[k];
-bpmjs.TestConfigure.prototype.testObject = function() {
-	var context = bpmjs.ContextBuilder.build(bpmjs._TestConfigure.TestConfigWithA);
-	bpmjs.ContextBuilder.configure(new bpmjs._TestConfigure.B());
-	var b = context.getObjectByType(bpmjs._TestConfigure.B);
-	this.assertNotNull(b,{ fileName : "TestConfigure.hx", lineNumber : 12, className : "bpmjs.TestConfigure", methodName : "testObject"});
-}
-bpmjs.TestConfigure.prototype.testInject = function() {
-	var context = bpmjs.ContextBuilder.build(bpmjs._TestConfigure.TestConfigWithA);
-	bpmjs.ContextBuilder.configure(new bpmjs._TestConfigure.B());
-	var b = context.getObjectByType(bpmjs._TestConfigure.B);
-	this.assertNotNull(b.a,{ fileName : "TestConfigure.hx", lineNumber : 22, className : "bpmjs.TestConfigure", methodName : "testInject"});
-}
-bpmjs.TestConfigure.prototype.__class__ = bpmjs.TestConfigure;
-if(!bpmjs._TestConfigure) bpmjs._TestConfigure = {}
-bpmjs._TestConfigure.TestConfigWithA = function(p) {
-	if( p === $_ ) return;
-	this.a = new bpmjs._TestConfigure.A();
-}
-bpmjs._TestConfigure.TestConfigWithA.__name__ = ["bpmjs","_TestConfigure","TestConfigWithA"];
-bpmjs._TestConfigure.TestConfigWithA.prototype.a = null;
-bpmjs._TestConfigure.TestConfigWithA.prototype.__class__ = bpmjs._TestConfigure.TestConfigWithA;
-bpmjs._TestConfigure.TestConfigWithA.__interfaces__ = [haxe.rtti.Infos];
-bpmjs._TestConfigure.A = function(p) {
-}
-bpmjs._TestConfigure.A.__name__ = ["bpmjs","_TestConfigure","A"];
-bpmjs._TestConfigure.A.prototype.b = null;
-bpmjs._TestConfigure.A.prototype.__class__ = bpmjs._TestConfigure.A;
-bpmjs._TestConfigure.A.__interfaces__ = [haxe.rtti.Infos];
-bpmjs._TestConfigure.B = function(p) {
-}
-bpmjs._TestConfigure.B.__name__ = ["bpmjs","_TestConfigure","B"];
-bpmjs._TestConfigure.B.prototype.a = null;
-bpmjs._TestConfigure.B.prototype.__class__ = bpmjs._TestConfigure.B;
-bpmjs._TestConfigure.B.__interfaces__ = [haxe.rtti.Infos];
 reflect.Field = function(field,definedInClass,owner) {
 	if( field === $_ ) return;
 	this.field = field;
@@ -4785,6 +4785,9 @@ reflect.Method.prototype.getParameters = function() {
 		this.parameters.push(parameter);
 	}
 	return this.parameters;
+}
+reflect.Method.prototype.call = function(instance,params) {
+	Reflect.field(instance,this.field.name).apply(instance,params);
 }
 reflect.Method.prototype.__class__ = reflect.Method;
 bpmjs.TestComplete = function(p) {

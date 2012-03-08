@@ -1,10 +1,11 @@
 class GLArrayTexture extends GLTexture
 {
 	public var array : Uint8Array;
+	public var isDirty : Bool;
 	
 	public inline function setPixel(x, y, r, g, b, a)
 	{
-		var index = y * width + x;
+		var index = (y * width + x) * 4;
 		array[index + 0] = r;
 		array[index + 1] = g;
 		array[index + 2] = b;

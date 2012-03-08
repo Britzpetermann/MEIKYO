@@ -1,4 +1,4 @@
-extern class Uint8Array extends ArrayBuffer
+extern class Uint8Array extends ArrayBufferView
 {
 	function new(arrayOrLength : Dynamic) : Void;
 }

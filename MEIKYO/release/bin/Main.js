@@ -1,4 +1,40 @@
 $estr = function() { return js.Boot.__string_rec(this,''); }
+if(typeof haxe=='undefined') haxe = {}
+if(!haxe.rtti) haxe.rtti = {}
+haxe.rtti.Infos = function() { }
+haxe.rtti.Infos.__name__ = ["haxe","rtti","Infos"];
+haxe.rtti.Infos.prototype.__class__ = haxe.rtti.Infos;
+if(typeof kumite=='undefined') kumite = {}
+if(!kumite.musicdraw) kumite.musicdraw = {}
+kumite.musicdraw.TestWorkerHandler = function(p) {
+}
+kumite.musicdraw.TestWorkerHandler.__name__ = ["kumite","musicdraw","TestWorkerHandler"];
+kumite.musicdraw.TestWorkerHandler.prototype.analyzer = null;
+kumite.musicdraw.TestWorkerHandler.prototype.config = null;
+kumite.musicdraw.TestWorkerHandler.prototype.texture = null;
+kumite.musicdraw.TestWorkerHandler.prototype.textureRegistry = null;
+kumite.musicdraw.TestWorkerHandler.prototype.worker = null;
+kumite.musicdraw.TestWorkerHandler.prototype.workerRPC = null;
+kumite.musicdraw.TestWorkerHandler.prototype.start = function() {
+	var me = this;
+	this.worker = new Worker("bin/kumite.musicdraw.TestWorker.js?cache=" + Date.now().getTime());
+	this.workerRPC = new bpmjs.WorkerRPC();
+	this.workerRPC.sender = this.worker;
+	this.workerRPC.receiver = this;
+	this.workerRPC.init();
+	this.workerRPC.startDebugTimer();
+	this.worker.onmessage = function(e) {
+		me.workerRPC.processMessageEvent(e);
+	};
+	this.worker.postMessage(haxe.Serializer.run(this.analyzer));
+}
+kumite.musicdraw.TestWorkerHandler.prototype.setResult = function(data) {
+	this.texture.array.set(new Uint8Array(data));
+	this.texture.isDirty = true;
+	this.worker.webkitPostMessage(data,[data]);
+}
+kumite.musicdraw.TestWorkerHandler.prototype.__class__ = kumite.musicdraw.TestWorkerHandler;
+kumite.musicdraw.TestWorkerHandler.__interfaces__ = [haxe.rtti.Infos];
 if(typeof reflect=='undefined') reflect = {}
 reflect.MetadataAware = function() { }
 reflect.MetadataAware.__name__ = ["reflect","MetadataAware"];
@@ -75,7 +111,6 @@ Rand.list = function(list) {
 	return list[Std["int"](Math.random() * list.length)];
 }
 Rand.prototype.__class__ = Rand;
-if(typeof kumite=='undefined') kumite = {}
 if(!kumite.scene) kumite.scene = {}
 kumite.scene.LayerLifecycle = function() { }
 kumite.scene.LayerLifecycle.__name__ = ["kumite","scene","LayerLifecycle"];
@@ -301,8 +336,6 @@ GLInteractiveObject.prototype.setHeight = function(value) {
 	return result;
 }
 GLInteractiveObject.prototype.__class__ = GLInteractiveObject;
-if(typeof haxe=='undefined') haxe = {}
-if(!haxe.rtti) haxe.rtti = {}
 haxe.rtti.XmlParser = function(p) {
 	if( p === $_ ) return;
 	this.root = new Array();
@@ -1011,9 +1044,6 @@ bpmjs.TaskError.__name__ = ["bpmjs","TaskError"];
 bpmjs.TaskError.prototype.task = null;
 bpmjs.TaskError.prototype.error = null;
 bpmjs.TaskError.prototype.__class__ = bpmjs.TaskError;
-haxe.rtti.Infos = function() { }
-haxe.rtti.Infos.__name__ = ["haxe","rtti","Infos"];
-haxe.rtti.Infos.prototype.__class__ = haxe.rtti.Infos;
 Color = function(r,g,b,a) {
 	if( r === $_ ) return;
 	if(a == null) a = 1.0;
@@ -1280,20 +1310,20 @@ GLAttribLocation.prototype.size = null;
 GLAttribLocation.prototype.type = null;
 GLAttribLocation.prototype.buffer = null;
 GLAttribLocation.prototype.currentLength = null;
-GLAttribLocation.prototype.updateBuffer = function(arrayBuffer,type) {
+GLAttribLocation.prototype.updateBuffer = function(arrayBufferView,type) {
 	if(type == null) type = 35044;
 	if(this.buffer != null) GL.gl.deleteBuffer(this.buffer);
-	this.currentLength = arrayBuffer.byteLength;
-	this.buffer = GL.createArrayBuffer(arrayBuffer,type);
+	this.currentLength = arrayBufferView.byteLength;
+	this.buffer = GL.createArrayBuffer(arrayBufferView,type);
 }
-GLAttribLocation.prototype.updateBuffer2 = function(arrayBuffer,type) {
+GLAttribLocation.prototype.updateBuffer2 = function(arrayBufferView,type) {
 	if(type == null) type = 35044;
 	GL.gl.bindBuffer(34962,this.buffer);
-	GL.gl.bufferData(34962,arrayBuffer,type);
+	GL.gl.bufferData(34962,arrayBufferView,type);
 }
-GLAttribLocation.prototype.updateBuffer3 = function(arrayBuffer) {
+GLAttribLocation.prototype.updateBuffer3 = function(arrayBufferView) {
 	GL.gl.bindBuffer(34962,this.buffer);
-	GL.gl.bufferSubData(34962,0,arrayBuffer);
+	GL.gl.bufferSubData(34962,0,arrayBufferView);
 }
 GLAttribLocation.prototype.vertexAttribPointer = function() {
 	GL.gl.bindBuffer(34962,this.buffer);
@@ -1341,41 +1371,78 @@ kumite.canvas.CanvasCase = function(p) {
 kumite.canvas.CanvasCase.__name__ = ["kumite","canvas","CanvasCase"];
 kumite.canvas.CanvasCase.prototype.itself = null;
 kumite.canvas.CanvasCase.prototype.__class__ = kumite.canvas.CanvasCase;
-if(!kumite.musicdraw) kumite.musicdraw = {}
-kumite.musicdraw.PixelLayer = function(p) {
+bpmjs.Task = function(p) {
 	if( p === $_ ) return;
-	this.transitions = new kumite.layer.LayerTransitions();
-	this.transitions.add(this.alphaTransition = new kumite.layer.LayerTransition("alpha"));
-	this.transitions.enableChild("alpha");
+	this.startSignaler = new hsl.haxe.DirectSignaler(this);
+	this.completeSignaler = new hsl.haxe.DirectSignaler(this);
+	this.errorSignaler = new hsl.haxe.DirectSignaler(this);
+	this.setMonitor(new bpmjs.ProgressMonitor());
 }
-kumite.musicdraw.PixelLayer.__name__ = ["kumite","musicdraw","PixelLayer"];
-kumite.musicdraw.PixelLayer.prototype.time = null;
-kumite.musicdraw.PixelLayer.prototype.stage = null;
-kumite.musicdraw.PixelLayer.prototype.transitions = null;
-kumite.musicdraw.PixelLayer.prototype.alphaTransition = null;
-kumite.musicdraw.PixelLayer.prototype.shaderProgram = null;
-kumite.musicdraw.PixelLayer.prototype.init = function() {
-	this.shaderProgram = GL.createProgram(kumite.musicdraw._PixelLayer.Vertex,kumite.musicdraw._PixelLayer.Fragment);
+bpmjs.Task.__name__ = ["bpmjs","Task"];
+bpmjs.Task.prototype.startSignaler = null;
+bpmjs.Task.prototype.completeSignaler = null;
+bpmjs.Task.prototype.errorSignaler = null;
+bpmjs.Task.prototype.monitor = null;
+bpmjs.Task.prototype.start = function() {
+	try {
+		var t = this;
+		this.startSignaler.dispatch(t,null,{ fileName : "Task.hx", lineNumber : 29, className : "bpmjs.Task", methodName : "start"});
+		this.doStart();
+	} catch( e ) {
+		{
+			Log.posInfo = { fileName : "Task.hx", lineNumber : 34, className : "bpmjs.Task", methodName : "start"};
+			if(Log.filter(LogLevel.ERROR)) {
+				Log.fetchInput("Error starting Task: ",e,null,null,null,null,null);
+				console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
+				Log.displayError(Log.createErrorMessage());
+			}
+		}
+	}
 }
-kumite.musicdraw.PixelLayer.prototype.renderTransition = function(transitionContext) {
-	this.transitions.setTransition(transitionContext.getTransition());
-	this.render(transitionContext);
+bpmjs.Task.prototype.doStart = function() {
 }
-kumite.musicdraw.PixelLayer.prototype.render = function(renderContext) {
-	GL.useProgram(this.shaderProgram);
-	GL.gl.viewport(0,0,renderContext.getWidth(),renderContext.getHeight());
-	GL.gl.disable(2929);
-	GL.gl.enable(3042);
+bpmjs.Task.prototype.complete = function() {
+	this.getMonitor().setCurrent(1);
+	var t = this;
+	this.completeSignaler.dispatch(t,null,{ fileName : "Task.hx", lineNumber : 46, className : "bpmjs.Task", methodName : "complete"});
 }
-kumite.musicdraw.PixelLayer.prototype.__class__ = kumite.musicdraw.PixelLayer;
-kumite.musicdraw.PixelLayer.__interfaces__ = [haxe.rtti.Infos,kumite.scene.LayerLifecycle];
-if(!kumite.musicdraw._PixelLayer) kumite.musicdraw._PixelLayer = {}
-kumite.musicdraw._PixelLayer.Vertex = function() { }
-kumite.musicdraw._PixelLayer.Vertex.__name__ = ["kumite","musicdraw","_PixelLayer","Vertex"];
-kumite.musicdraw._PixelLayer.Vertex.prototype.__class__ = kumite.musicdraw._PixelLayer.Vertex;
-kumite.musicdraw._PixelLayer.Fragment = function() { }
-kumite.musicdraw._PixelLayer.Fragment.__name__ = ["kumite","musicdraw","_PixelLayer","Fragment"];
-kumite.musicdraw._PixelLayer.Fragment.prototype.__class__ = kumite.musicdraw._PixelLayer.Fragment;
+bpmjs.Task.prototype.error = function(result,error) {
+	var taskError = new bpmjs.TaskError();
+	taskError.task = result;
+	taskError.error = error;
+	this.errorSignaler.dispatch(taskError,null,{ fileName : "Task.hx", lineNumber : 54, className : "bpmjs.Task", methodName : "error"});
+}
+bpmjs.Task.prototype.getMonitor = function() {
+	return this.monitor;
+}
+bpmjs.Task.prototype.setMonitor = function(monitor) {
+	this.monitor = monitor;
+	return monitor;
+}
+bpmjs.Task.prototype.__class__ = bpmjs.Task;
+bpmjs.HTTPTask = function(p) {
+	if( p === $_ ) return;
+	bpmjs.Task.call(this);
+}
+bpmjs.HTTPTask.__name__ = ["bpmjs","HTTPTask"];
+bpmjs.HTTPTask.__super__ = bpmjs.Task;
+for(var k in bpmjs.Task.prototype ) bpmjs.HTTPTask.prototype[k] = bpmjs.Task.prototype[k];
+bpmjs.HTTPTask.prototype.location = null;
+bpmjs.HTTPTask.prototype.data = null;
+bpmjs.HTTPTask.prototype.doStart = function() {
+	var r = new haxe.Http(this.location);
+	r.onError = $closure(this,"onError");
+	r.onData = $closure(this,"onData");
+	r.request(false);
+}
+bpmjs.HTTPTask.prototype.onError = function(errorData) {
+	this.error(this,errorData);
+}
+bpmjs.HTTPTask.prototype.onData = function(data) {
+	this.data = data;
+	this.complete();
+}
+bpmjs.HTTPTask.prototype.__class__ = bpmjs.HTTPTask;
 if(!kumite.stage) kumite.stage = {}
 kumite.stage.Config = function(p) {
 	if( p === $_ ) return;
@@ -1879,6 +1946,57 @@ IntHash.prototype.toString = function() {
 	return s.b.join("");
 }
 IntHash.prototype.__class__ = IntHash;
+bpmjs.WorkerRPC = function(p) {
+}
+bpmjs.WorkerRPC.__name__ = ["bpmjs","WorkerRPC"];
+bpmjs.WorkerRPC.prototype.receiver = null;
+bpmjs.WorkerRPC.prototype.sender = null;
+bpmjs.WorkerRPC.prototype.lastMessage = null;
+bpmjs.WorkerRPC.prototype.command = null;
+bpmjs.WorkerRPC.prototype.logs = null;
+bpmjs.WorkerRPC.prototype.receiverClassInfo = null;
+bpmjs.WorkerRPC.prototype.init = function() {
+	this.lastMessage = Date.now().getTime();
+	this.command = null;
+	this.logs = new Hash();
+	this.receiverClassInfo = reflect.ClassInfo.forInstance(this.receiver);
+}
+bpmjs.WorkerRPC.prototype.startDebugTimer = function() {
+	var me = this;
+	var t = new haxe.Timer(1000);
+	t.run = function() {
+		var messages = ["Info:"];
+		var $it0 = me.logs.keys();
+		while( $it0.hasNext() ) {
+			var logKey = $it0.next();
+			messages.push(logKey + ": " + me.logs.get(logKey));
+		}
+		me.logs = new Hash();
+		{
+			Log.posInfo = { fileName : "WorkerRPC.hx", lineNumber : 39, className : "bpmjs.WorkerRPC", methodName : "startDebugTimer"};
+			if(Log.filter(LogLevel.INFO)) {
+				Log.fetchInput(messages.join("\n\t"),null,null,null,null,null,null);
+				console.info(Log.createMessage());
+			}
+		}
+	};
+}
+bpmjs.WorkerRPC.prototype.sendCommand = function(type,param) {
+	this.sender.postMessage(new bpmjs.WorkerCommand(type));
+	this.sender.postMessage(param);
+}
+bpmjs.WorkerRPC.prototype.processMessageEvent = function(event) {
+	var data = event.data;
+	if(this.command == null) this.command = haxe.Unserializer.run(data); else {
+		var method = this.receiverClassInfo.getMethod(this.command.type);
+		if(method != null) method.call(this.receiver,[data]); else this.logs.set(this.command.type,Std.string(data));
+		var now = Date.now().getTime();
+		this.logs.set(this.command.type,Std.string(now - this.lastMessage));
+		this.lastMessage = now;
+		this.command = null;
+	}
+}
+bpmjs.WorkerRPC.prototype.__class__ = bpmjs.WorkerRPC;
 kumite.scene.LayerState = function(name) {
 	if( name === $_ ) return;
 	this.name = name;
@@ -1896,6 +2014,223 @@ kumite.mouse.MouseController.prototype.start = function() {
 }
 kumite.mouse.MouseController.prototype.__class__ = kumite.mouse.MouseController;
 kumite.mouse.MouseController.__interfaces__ = [haxe.rtti.Infos];
+StringTools = function() { }
+StringTools.__name__ = ["StringTools"];
+StringTools.urlEncode = function(s) {
+	return encodeURIComponent(s);
+}
+StringTools.urlDecode = function(s) {
+	return decodeURIComponent(s.split("+").join(" "));
+}
+StringTools.htmlEscape = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+}
+StringTools.htmlUnescape = function(s) {
+	return s.split("&gt;").join(">").split("&lt;").join("<").split("&amp;").join("&");
+}
+StringTools.startsWith = function(s,start) {
+	return s.length >= start.length && s.substr(0,start.length) == start;
+}
+StringTools.endsWith = function(s,end) {
+	var elen = end.length;
+	var slen = s.length;
+	return slen >= elen && s.substr(slen - elen,elen) == end;
+}
+StringTools.isSpace = function(s,pos) {
+	var c = s.charCodeAt(pos);
+	return c >= 9 && c <= 13 || c == 32;
+}
+StringTools.ltrim = function(s) {
+	var l = s.length;
+	var r = 0;
+	while(r < l && StringTools.isSpace(s,r)) r++;
+	if(r > 0) return s.substr(r,l - r); else return s;
+}
+StringTools.rtrim = function(s) {
+	var l = s.length;
+	var r = 0;
+	while(r < l && StringTools.isSpace(s,l - r - 1)) r++;
+	if(r > 0) return s.substr(0,l - r); else return s;
+}
+StringTools.trim = function(s) {
+	return StringTools.ltrim(StringTools.rtrim(s));
+}
+StringTools.rpad = function(s,c,l) {
+	var sl = s.length;
+	var cl = c.length;
+	while(sl < l) if(l - sl < cl) {
+		s += c.substr(0,l - sl);
+		sl = l;
+	} else {
+		s += c;
+		sl += cl;
+	}
+	return s;
+}
+StringTools.lpad = function(s,c,l) {
+	var ns = "";
+	var sl = s.length;
+	if(sl >= l) return s;
+	var cl = c.length;
+	while(sl < l) if(l - sl < cl) {
+		ns += c.substr(0,l - sl);
+		sl = l;
+	} else {
+		ns += c;
+		sl += cl;
+	}
+	return ns + s;
+}
+StringTools.replace = function(s,sub,by) {
+	return s.split(sub).join(by);
+}
+StringTools.hex = function(n,digits) {
+	var s = "";
+	var hexChars = "0123456789ABCDEF";
+	do {
+		s = hexChars.charAt(n & 15) + s;
+		n >>>= 4;
+	} while(n > 0);
+	if(digits != null) while(s.length < digits) s = "0" + s;
+	return s;
+}
+StringTools.fastCodeAt = function(s,index) {
+	return s.cca(index);
+}
+StringTools.isEOF = function(c) {
+	return c != c;
+}
+StringTools.prototype.__class__ = StringTools;
+if(!haxe.io) haxe.io = {}
+haxe.io.Bytes = function(length,b) {
+	if( length === $_ ) return;
+	this.length = length;
+	this.b = b;
+}
+haxe.io.Bytes.__name__ = ["haxe","io","Bytes"];
+haxe.io.Bytes.alloc = function(length) {
+	var a = new Array();
+	var _g = 0;
+	while(_g < length) {
+		var i = _g++;
+		a.push(0);
+	}
+	return new haxe.io.Bytes(length,a);
+}
+haxe.io.Bytes.ofString = function(s) {
+	var a = new Array();
+	var _g1 = 0, _g = s.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		var c = s.cca(i);
+		if(c <= 127) a.push(c); else if(c <= 2047) {
+			a.push(192 | c >> 6);
+			a.push(128 | c & 63);
+		} else if(c <= 65535) {
+			a.push(224 | c >> 12);
+			a.push(128 | c >> 6 & 63);
+			a.push(128 | c & 63);
+		} else {
+			a.push(240 | c >> 18);
+			a.push(128 | c >> 12 & 63);
+			a.push(128 | c >> 6 & 63);
+			a.push(128 | c & 63);
+		}
+	}
+	return new haxe.io.Bytes(a.length,a);
+}
+haxe.io.Bytes.ofData = function(b) {
+	return new haxe.io.Bytes(b.length,b);
+}
+haxe.io.Bytes.prototype.length = null;
+haxe.io.Bytes.prototype.b = null;
+haxe.io.Bytes.prototype.get = function(pos) {
+	return this.b[pos];
+}
+haxe.io.Bytes.prototype.set = function(pos,v) {
+	this.b[pos] = v & 255;
+}
+haxe.io.Bytes.prototype.blit = function(pos,src,srcpos,len) {
+	if(pos < 0 || srcpos < 0 || len < 0 || pos + len > this.length || srcpos + len > src.length) throw haxe.io.Error.OutsideBounds;
+	var b1 = this.b;
+	var b2 = src.b;
+	if(b1 == b2 && pos > srcpos) {
+		var i = len;
+		while(i > 0) {
+			i--;
+			b1[i + pos] = b2[i + srcpos];
+		}
+		return;
+	}
+	var _g = 0;
+	while(_g < len) {
+		var i = _g++;
+		b1[i + pos] = b2[i + srcpos];
+	}
+}
+haxe.io.Bytes.prototype.sub = function(pos,len) {
+	if(pos < 0 || len < 0 || pos + len > this.length) throw haxe.io.Error.OutsideBounds;
+	return new haxe.io.Bytes(len,this.b.slice(pos,pos + len));
+}
+haxe.io.Bytes.prototype.compare = function(other) {
+	var b1 = this.b;
+	var b2 = other.b;
+	var len = this.length < other.length?this.length:other.length;
+	var _g = 0;
+	while(_g < len) {
+		var i = _g++;
+		if(b1[i] != b2[i]) return b1[i] - b2[i];
+	}
+	return this.length - other.length;
+}
+haxe.io.Bytes.prototype.readString = function(pos,len) {
+	if(pos < 0 || len < 0 || pos + len > this.length) throw haxe.io.Error.OutsideBounds;
+	var s = "";
+	var b = this.b;
+	var fcc = String.fromCharCode;
+	var i = pos;
+	var max = pos + len;
+	while(i < max) {
+		var c = b[i++];
+		if(c < 128) {
+			if(c == 0) break;
+			s += fcc(c);
+		} else if(c < 224) s += fcc((c & 63) << 6 | b[i++] & 127); else if(c < 240) {
+			var c2 = b[i++];
+			s += fcc((c & 31) << 12 | (c2 & 127) << 6 | b[i++] & 127);
+		} else {
+			var c2 = b[i++];
+			var c3 = b[i++];
+			s += fcc((c & 15) << 18 | (c2 & 127) << 12 | c3 << 6 & 127 | b[i++] & 127);
+		}
+	}
+	return s;
+}
+haxe.io.Bytes.prototype.toString = function() {
+	return this.readString(0,this.length);
+}
+haxe.io.Bytes.prototype.toHex = function() {
+	var s = new StringBuf();
+	var chars = [];
+	var str = "0123456789abcdef";
+	var _g1 = 0, _g = str.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		chars.push(str.charCodeAt(i));
+	}
+	var _g1 = 0, _g = this.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		var c = this.b[i];
+		s.b[s.b.length] = String.fromCharCode(chars[c >> 4]);
+		s.b[s.b.length] = String.fromCharCode(chars[c & 15]);
+	}
+	return s.b.join("");
+}
+haxe.io.Bytes.prototype.getData = function() {
+	return this.b;
+}
+haxe.io.Bytes.prototype.__class__ = haxe.io.Bytes;
 GLFrame = function(p) {
 }
 GLFrame.__name__ = ["GLFrame"];
@@ -1976,81 +2311,6 @@ GLDragH.prototype.handleMouseMove2 = function(position) {
 	this.changeSignaler.dispatch(this.x,null,{ fileName : "GLDragH.hx", lineNumber : 82, className : "GLDragH", methodName : "handleMouseMove2"});
 }
 GLDragH.prototype.__class__ = GLDragH;
-bpmjs.Task = function(p) {
-	if( p === $_ ) return;
-	this.startSignaler = new hsl.haxe.DirectSignaler(this);
-	this.completeSignaler = new hsl.haxe.DirectSignaler(this);
-	this.errorSignaler = new hsl.haxe.DirectSignaler(this);
-	this.setMonitor(new bpmjs.ProgressMonitor());
-}
-bpmjs.Task.__name__ = ["bpmjs","Task"];
-bpmjs.Task.prototype.startSignaler = null;
-bpmjs.Task.prototype.completeSignaler = null;
-bpmjs.Task.prototype.errorSignaler = null;
-bpmjs.Task.prototype.monitor = null;
-bpmjs.Task.prototype.start = function() {
-	try {
-		var t = this;
-		this.startSignaler.dispatch(t,null,{ fileName : "Task.hx", lineNumber : 29, className : "bpmjs.Task", methodName : "start"});
-		this.doStart();
-	} catch( e ) {
-		{
-			Log.posInfo = { fileName : "Task.hx", lineNumber : 34, className : "bpmjs.Task", methodName : "start"};
-			if(Log.filter(LogLevel.ERROR)) {
-				Log.fetchInput("Error starting Task: ",e,null,null,null,null,null);
-				console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
-				Log.displayError(Log.createErrorMessage());
-			}
-		}
-	}
-}
-bpmjs.Task.prototype.doStart = function() {
-}
-bpmjs.Task.prototype.complete = function() {
-	this.getMonitor().setCurrent(1);
-	var t = this;
-	this.completeSignaler.dispatch(t,null,{ fileName : "Task.hx", lineNumber : 46, className : "bpmjs.Task", methodName : "complete"});
-}
-bpmjs.Task.prototype.error = function(result,error) {
-	var taskError = new bpmjs.TaskError();
-	taskError.task = result;
-	taskError.error = error;
-	this.errorSignaler.dispatch(taskError,null,{ fileName : "Task.hx", lineNumber : 54, className : "bpmjs.Task", methodName : "error"});
-}
-bpmjs.Task.prototype.getMonitor = function() {
-	return this.monitor;
-}
-bpmjs.Task.prototype.setMonitor = function(monitor) {
-	this.monitor = monitor;
-	return monitor;
-}
-bpmjs.Task.prototype.__class__ = bpmjs.Task;
-bpmjs.ImageLoaderTask = function(location) {
-	if( location === $_ ) return;
-	bpmjs.Task.call(this);
-	this.location = location;
-	this.getMonitor().name = location;
-}
-bpmjs.ImageLoaderTask.__name__ = ["bpmjs","ImageLoaderTask"];
-bpmjs.ImageLoaderTask.__super__ = bpmjs.Task;
-for(var k in bpmjs.Task.prototype ) bpmjs.ImageLoaderTask.prototype[k] = bpmjs.Task.prototype[k];
-bpmjs.ImageLoaderTask.prototype.location = null;
-bpmjs.ImageLoaderTask.prototype.image = null;
-bpmjs.ImageLoaderTask.prototype.timer = null;
-bpmjs.ImageLoaderTask.prototype.doStart = function() {
-	this.getMonitor().name = this.location;
-	this.image = new Image();
-	this.image.onload = $closure(this,"handleImageLoaded");
-	this.image.src = this.location;
-}
-bpmjs.ImageLoaderTask.prototype.handleImageLoaded = function() {
-	this.complete();
-}
-bpmjs.ImageLoaderTask.prototype.doComplete = function() {
-	this.timer.stop();
-	this.complete();
-}
-bpmjs.ImageLoaderTask.prototype.__class__ = bpmjs.ImageLoaderTask;
 if(typeof hsl=='undefined') hsl = {}
 if(!hsl.haxe) hsl.haxe = {}
 hsl.haxe.Signaler = function() { }
@@ -2637,6 +2897,9 @@ Math2.signum = function(value) {
 	if(value > 0) return 1; else if(value < 0) return -1;
 	return 0;
 }
+Math2.sin1 = function(rad1) {
+	return Math.sin(rad1 * Math.PI * 2) * 0.5 + 0.5;
+}
 Math2.prototype.__class__ = Math2;
 LogLevel = function(value) {
 	if( value === $_ ) return;
@@ -2769,6 +3032,313 @@ kumite.scene.TransitionContext.prototype.setTransition = function(value) {
 	return value;
 }
 kumite.scene.TransitionContext.prototype.__class__ = kumite.scene.TransitionContext;
+if(typeof hxjson2=='undefined') hxjson2 = {}
+hxjson2.JSONTokenizer = function(s,strict) {
+	if( s === $_ ) return;
+	this.jsonString = s;
+	this.strict = strict;
+	this.loc = 0;
+	this.nextChar();
+}
+hxjson2.JSONTokenizer.__name__ = ["hxjson2","JSONTokenizer"];
+hxjson2.JSONTokenizer.prototype.obj = null;
+hxjson2.JSONTokenizer.prototype.jsonString = null;
+hxjson2.JSONTokenizer.prototype.loc = null;
+hxjson2.JSONTokenizer.prototype.ch = null;
+hxjson2.JSONTokenizer.prototype.strict = null;
+hxjson2.JSONTokenizer.prototype.getNextToken = function() {
+	var token = new hxjson2.JSONToken();
+	this.skipIgnored();
+	switch(this.ch) {
+	case "{":
+		token.type = hxjson2.JSONTokenType.tLEFT_BRACE;
+		token.value = "{";
+		this.nextChar();
+		break;
+	case "}":
+		token.type = hxjson2.JSONTokenType.tRIGHT_BRACE;
+		token.value = "}";
+		this.nextChar();
+		break;
+	case "[":
+		token.type = hxjson2.JSONTokenType.tLEFT_BRACKET;
+		token.value = "[";
+		this.nextChar();
+		break;
+	case "]":
+		token.type = hxjson2.JSONTokenType.tRIGHT_BRACKET;
+		token.value = "]";
+		this.nextChar();
+		break;
+	case ",":
+		token.type = hxjson2.JSONTokenType.tCOMMA;
+		token.value = ",";
+		this.nextChar();
+		break;
+	case ":":
+		token.type = hxjson2.JSONTokenType.tCOLON;
+		token.value = ":";
+		this.nextChar();
+		break;
+	case "t":
+		var possibleTrue = "t" + (this.nextChar() + this.nextChar() + this.nextChar());
+		if(possibleTrue == "true") {
+			token.type = hxjson2.JSONTokenType.tTRUE;
+			token.value = true;
+			this.nextChar();
+		} else this.parseError("Expecting 'true' but found " + possibleTrue);
+		break;
+	case "f":
+		var possibleFalse = "f" + this.nextChar() + this.nextChar() + this.nextChar() + this.nextChar();
+		if(possibleFalse == "false") {
+			token.type = hxjson2.JSONTokenType.tFALSE;
+			token.value = false;
+			this.nextChar();
+		} else this.parseError("Expecting 'false' but found " + possibleFalse);
+		break;
+	case "n":
+		var possibleNull = "n" + this.nextChar() + this.nextChar() + this.nextChar();
+		if(possibleNull == "null") {
+			token.type = hxjson2.JSONTokenType.tNULL;
+			token.value = null;
+			this.nextChar();
+		} else this.parseError("Expecting 'null' but found " + possibleNull);
+		break;
+	case "N":
+		var possibleNAN = "N" + this.nextChar() + this.nextChar();
+		if(possibleNAN == "NAN" || possibleNAN == "NaN") {
+			token.type = hxjson2.JSONTokenType.tNAN;
+			token.value = Math.NaN;
+			this.nextChar();
+		} else this.parseError("Expecting 'nan' but found " + possibleNAN);
+		break;
+	case "\"":
+		token = this.readString();
+		break;
+	default:
+		if(this.isDigit(this.ch) || this.ch == "-") token = this.readNumber(); else if(this.ch == "") return null; else this.parseError("Unexpected " + this.ch + " encountered");
+	}
+	return token;
+}
+hxjson2.JSONTokenizer.prototype.readString = function() {
+	var string = "";
+	this.nextChar();
+	while(this.ch != "\"" && this.ch != "") {
+		if(this.ch == "\\") {
+			this.nextChar();
+			switch(this.ch) {
+			case "\"":
+				string += "\"";
+				break;
+			case "/":
+				string += "/";
+				break;
+			case "\\/":
+				string += "/";
+				break;
+			case "\\":
+				string += "\\";
+				break;
+			case "n":
+				string += "\n";
+				break;
+			case "r":
+				string += "\r";
+				break;
+			case "t":
+				string += "\t";
+				break;
+			case "u":
+				var hexValue = "";
+				var _g = 0;
+				while(_g < 4) {
+					var i = _g++;
+					if(!this.isHexDigit(this.nextChar())) this.parseError(" Excepted a hex digit, but found: " + this.ch);
+					hexValue += this.ch;
+				}
+				string += String.fromCharCode(this.hexValToInt(hexValue));
+				break;
+			default:
+				string += "\\" + this.ch;
+			}
+		} else string += this.ch;
+		this.nextChar();
+	}
+	if(this.ch == "") this.parseError("Unterminated string literal");
+	this.nextChar();
+	var token = new hxjson2.JSONToken();
+	token.type = hxjson2.JSONTokenType.tSTRING;
+	token.value = string;
+	return token;
+}
+hxjson2.JSONTokenizer.prototype.hexValToInt = function(hexVal) {
+	var ret = 0;
+	var _g1 = 0, _g = hexVal.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		ret = ret << 4;
+		switch(hexVal.charAt(i).toUpperCase()) {
+		case "1":
+			ret += 1;
+			break;
+		case "2":
+			ret += 2;
+			break;
+		case "3":
+			ret += 3;
+			break;
+		case "4":
+			ret += 4;
+			break;
+		case "5":
+			ret += 5;
+			break;
+		case "6":
+			ret += 6;
+			break;
+		case "7":
+			ret += 7;
+			break;
+		case "8":
+			ret += 8;
+			break;
+		case "9":
+			ret += 9;
+			break;
+		case "A":
+			ret += 10;
+			break;
+		case "B":
+			ret += 11;
+			break;
+		case "C":
+			ret += 12;
+			break;
+		case "D":
+			ret += 13;
+			break;
+		case "E":
+			ret += 14;
+			break;
+		case "F":
+			ret += 15;
+			break;
+		}
+	}
+	return ret;
+}
+hxjson2.JSONTokenizer.prototype.readNumber = function() {
+	var input = "";
+	if(this.ch == "-") {
+		input += "-";
+		this.nextChar();
+	}
+	if(!this.isDigit(this.ch)) this.parseError("Expecting a digit");
+	if(this.ch == "0") {
+		input += this.ch;
+		this.nextChar();
+		if(this.isDigit(this.ch)) this.parseError("A digit cannot immediately follow 0"); else if(!this.strict && this.ch == "x") {
+			input += this.ch;
+			this.nextChar();
+			if(this.isHexDigit(this.ch)) {
+				input += this.ch;
+				this.nextChar();
+			} else this.parseError("Number in hex format require at least one hex digit after \"0x\"");
+			while(this.isHexDigit(this.ch)) {
+				input += this.ch;
+				this.nextChar();
+			}
+			input = Std.string(this.hexValToInt(input));
+		}
+	} else while(this.isDigit(this.ch)) {
+		input += this.ch;
+		this.nextChar();
+	}
+	if(this.ch == ".") {
+		input += ".";
+		this.nextChar();
+		if(!this.isDigit(this.ch)) this.parseError("Expecting a digit");
+		while(this.isDigit(this.ch)) {
+			input += this.ch;
+			this.nextChar();
+		}
+	}
+	if(this.ch == "e" || this.ch == "E") {
+		input += "e";
+		this.nextChar();
+		if(this.ch == "+" || this.ch == "-") {
+			input += this.ch;
+			this.nextChar();
+		}
+		if(!this.isDigit(this.ch)) this.parseError("Scientific notation number needs exponent value");
+		while(this.isDigit(this.ch)) {
+			input += this.ch;
+			this.nextChar();
+		}
+	}
+	var num = Std.parseFloat(input);
+	if(Math.isFinite(num) && !Math.isNaN(num)) {
+		var token = new hxjson2.JSONToken();
+		token.type = hxjson2.JSONTokenType.tNUMBER;
+		token.value = num;
+		return token;
+	} else this.parseError("Number " + num + " is not valid!");
+	return null;
+}
+hxjson2.JSONTokenizer.prototype.nextChar = function() {
+	return this.ch = this.jsonString.charAt(this.loc++);
+}
+hxjson2.JSONTokenizer.prototype.skipIgnored = function() {
+	var originalLoc;
+	do {
+		originalLoc = this.loc;
+		this.skipWhite();
+		this.skipComments();
+	} while(originalLoc != this.loc);
+}
+hxjson2.JSONTokenizer.prototype.skipComments = function() {
+	if(this.ch == "/") {
+		this.nextChar();
+		switch(this.ch) {
+		case "/":
+			do this.nextChar(); while(this.ch != "\n" && this.ch != "");
+			this.nextChar();
+			break;
+		case "*":
+			this.nextChar();
+			while(true) {
+				if(this.ch == "*") {
+					this.nextChar();
+					if(this.ch == "/") {
+						this.nextChar();
+						break;
+					}
+				} else this.nextChar();
+				if(this.ch == "") this.parseError("Multi-line comment not closed");
+			}
+			break;
+		default:
+			this.parseError("Unexpected " + this.ch + " encountered (expecting '/' or '*' )");
+		}
+	}
+}
+hxjson2.JSONTokenizer.prototype.skipWhite = function() {
+	while(this.isWhiteSpace(this.ch)) this.nextChar();
+}
+hxjson2.JSONTokenizer.prototype.isWhiteSpace = function(ch) {
+	return ch == " " || ch == "\t" || ch == "\n" || ch == "\r";
+}
+hxjson2.JSONTokenizer.prototype.isDigit = function(ch) {
+	return ch >= "0" && ch <= "9";
+}
+hxjson2.JSONTokenizer.prototype.isHexDigit = function(ch) {
+	var uc = ch.toUpperCase();
+	return this.isDigit(ch) || uc >= "A" && uc <= "F";
+}
+hxjson2.JSONTokenizer.prototype.parseError = function(message) {
+	throw new hxjson2.JSONParseError(message,this.loc,this.jsonString);
+}
+hxjson2.JSONTokenizer.prototype.__class__ = hxjson2.JSONTokenizer;
 if(!kumite.displaylist) kumite.displaylist = {}
 kumite.displaylist.ConfigAsLayer = function(p) {
 	if( p === $_ ) return;
@@ -3051,7 +3621,7 @@ GLTextureRegistry.prototype.createGLArrayTexture = function(width,height,filter)
 	GL.gl.texParameteri(3553,10241,filter != null?filter:9728);
 	GL.gl.texParameteri(3553,10242,33071);
 	GL.gl.texParameteri(3553,10243,33071);
-	GL.gl.texImage2D(3553,0,6408,16,16,0,6408,5121,array);
+	GL.gl.texImage2D(3553,0,6408,width,height,0,6408,5121,array);
 	if(filter == 9984 || filter == 9986 || filter == 9985 || filter == 9987) GL.gl.generateMipmap(3553);
 	var result = new GLArrayTexture();
 	result.width = width;
@@ -3062,7 +3632,7 @@ GLTextureRegistry.prototype.createGLArrayTexture = function(width,height,filter)
 }
 GLTextureRegistry.prototype.updateGLArrayTexture = function(texture) {
 	GL.gl.bindTexture(3553,texture.texture);
-	GL.gl.texImage2D(3553,0,6408,16,16,0,6408,5121,texture.array);
+	GL.gl.texImage2D(3553,0,6408,texture.width,texture.height,0,6408,5121,texture.array);
 }
 GLTextureRegistry.prototype.__class__ = GLTextureRegistry;
 bpmjs.ContextBuilder = function(p) {
@@ -3332,67 +3902,6 @@ bpmjs._FrontMessenger.Receiver.prototype.execute = function(message) {
 	this.method.apply(this.receiver,[message]);
 }
 bpmjs._FrontMessenger.Receiver.prototype.__class__ = bpmjs._FrontMessenger.Receiver;
-GLDisplayList = function(p) {
-	if( p === $_ ) return;
-	this.lastFrameTime = Date.now().getTime();
-	this.startTime = this.lastFrameTime;
-	this.enterFrameSignaler = new hsl.haxe.DirectSignaler(this);
-	this.hitareaPicker = new GLHitareaPicker();
-	GLMouseRegistry.getInstance().mouseUpSignaler.bind($closure(this,"handleMouseUp"));
-	GLMouseRegistry.getInstance().mouseDownSignaler.bind($closure(this,"handleMouseDown"));
-	GLMouseRegistry.getInstance().mouseMoveSignaler.bind($closure(this,"handleMouseMove"));
-	this.cursorClient = GLMouseRegistry.getInstance().createCursorClient();
-}
-GLDisplayList.__name__ = ["GLDisplayList"];
-GLDisplayList.instance = null;
-GLDisplayList.getDefault = function() {
-	if(GLDisplayList.instance == null) {
-		GLDisplayList.instance = new GLDisplayList();
-		GLDisplayList.instance.stage = new GLStage();
-		GLDisplayList.instance.initDisplayObject(GLDisplayList.instance.stage);
-	}
-	return GLDisplayList.instance;
-}
-GLDisplayList.prototype.stage = null;
-GLDisplayList.prototype.hitareaPicker = null;
-GLDisplayList.prototype.lastFrameTime = null;
-GLDisplayList.prototype.startTime = null;
-GLDisplayList.prototype.cursorClient = null;
-GLDisplayList.prototype.enterFrameSignaler = null;
-GLDisplayList.prototype.initDisplayObject = function(displayObject) {
-	displayObject.stage = this.stage;
-	displayObject.enterFrameSignaler = this.enterFrameSignaler;
-}
-GLDisplayList.prototype.initInteractiveObject = function(interactiveObject) {
-	interactiveObject.mouseUpSignaler = new hsl.haxe.DirectSignaler(this);
-	interactiveObject.mouseDownSignaler = new hsl.haxe.DirectSignaler(this);
-}
-GLDisplayList.prototype.setStageSize = function(width,height) {
-	this.stage.stageWidth = width;
-	this.stage.stageHeight = height;
-}
-GLDisplayList.prototype.dispatchEnterFrame = function() {
-	var time = Date.now().getTime();
-	var frame = new GLFrame();
-	frame.time = time;
-	frame.timer = time - this.startTime;
-	frame.frameTime = time - this.lastFrameTime;
-	this.lastFrameTime = time;
-	this.enterFrameSignaler.dispatch(frame,null,{ fileName : "GLDisplayList.hx", lineNumber : 71, className : "GLDisplayList", methodName : "dispatchEnterFrame"});
-}
-GLDisplayList.prototype.handleMouseDown = function(position) {
-	var result = this.hitareaPicker.pick(this.stage,position);
-	if(result != null) result.mouseDownSignaler.dispatch(result,null,{ fileName : "GLDisplayList.hx", lineNumber : 79, className : "GLDisplayList", methodName : "handleMouseDown"});
-}
-GLDisplayList.prototype.handleMouseUp = function(position) {
-	var result = this.hitareaPicker.pick(this.stage,position);
-	if(result != null) result.mouseUpSignaler.dispatch(result,null,{ fileName : "GLDisplayList.hx", lineNumber : 88, className : "GLDisplayList", methodName : "handleMouseUp"});
-}
-GLDisplayList.prototype.handleMouseMove = function(position) {
-	var result = this.hitareaPicker.pick(this.stage,position);
-	if(result != null) this.cursorClient.handCursor(); else this.cursorClient.defaultCursor();
-}
-GLDisplayList.prototype.__class__ = GLDisplayList;
 kumite.scene.SceneMixer = function(p) {
 }
 kumite.scene.SceneMixer.__name__ = ["kumite","scene","SceneMixer"];
@@ -3459,6 +3968,67 @@ kumite.scene.SceneMixer.prototype.sorter = function(a,b) {
 	return result(0,{ fileName : "SceneMixer.hx", lineNumber : 106, className : "kumite.scene.SceneMixer", methodName : "sorter"});
 }
 kumite.scene.SceneMixer.prototype.__class__ = kumite.scene.SceneMixer;
+GLDisplayList = function(p) {
+	if( p === $_ ) return;
+	this.lastFrameTime = Date.now().getTime();
+	this.startTime = this.lastFrameTime;
+	this.enterFrameSignaler = new hsl.haxe.DirectSignaler(this);
+	this.hitareaPicker = new GLHitareaPicker();
+	GLMouseRegistry.getInstance().mouseUpSignaler.bind($closure(this,"handleMouseUp"));
+	GLMouseRegistry.getInstance().mouseDownSignaler.bind($closure(this,"handleMouseDown"));
+	GLMouseRegistry.getInstance().mouseMoveSignaler.bind($closure(this,"handleMouseMove"));
+	this.cursorClient = GLMouseRegistry.getInstance().createCursorClient();
+}
+GLDisplayList.__name__ = ["GLDisplayList"];
+GLDisplayList.instance = null;
+GLDisplayList.getDefault = function() {
+	if(GLDisplayList.instance == null) {
+		GLDisplayList.instance = new GLDisplayList();
+		GLDisplayList.instance.stage = new GLStage();
+		GLDisplayList.instance.initDisplayObject(GLDisplayList.instance.stage);
+	}
+	return GLDisplayList.instance;
+}
+GLDisplayList.prototype.stage = null;
+GLDisplayList.prototype.hitareaPicker = null;
+GLDisplayList.prototype.lastFrameTime = null;
+GLDisplayList.prototype.startTime = null;
+GLDisplayList.prototype.cursorClient = null;
+GLDisplayList.prototype.enterFrameSignaler = null;
+GLDisplayList.prototype.initDisplayObject = function(displayObject) {
+	displayObject.stage = this.stage;
+	displayObject.enterFrameSignaler = this.enterFrameSignaler;
+}
+GLDisplayList.prototype.initInteractiveObject = function(interactiveObject) {
+	interactiveObject.mouseUpSignaler = new hsl.haxe.DirectSignaler(this);
+	interactiveObject.mouseDownSignaler = new hsl.haxe.DirectSignaler(this);
+}
+GLDisplayList.prototype.setStageSize = function(width,height) {
+	this.stage.stageWidth = width;
+	this.stage.stageHeight = height;
+}
+GLDisplayList.prototype.dispatchEnterFrame = function() {
+	var time = Date.now().getTime();
+	var frame = new GLFrame();
+	frame.time = time;
+	frame.timer = time - this.startTime;
+	frame.frameTime = time - this.lastFrameTime;
+	this.lastFrameTime = time;
+	this.enterFrameSignaler.dispatch(frame,null,{ fileName : "GLDisplayList.hx", lineNumber : 71, className : "GLDisplayList", methodName : "dispatchEnterFrame"});
+}
+GLDisplayList.prototype.handleMouseDown = function(position) {
+	var result = this.hitareaPicker.pick(this.stage,position);
+	if(result != null) result.mouseDownSignaler.dispatch(result,null,{ fileName : "GLDisplayList.hx", lineNumber : 79, className : "GLDisplayList", methodName : "handleMouseDown"});
+}
+GLDisplayList.prototype.handleMouseUp = function(position) {
+	var result = this.hitareaPicker.pick(this.stage,position);
+	if(result != null) result.mouseUpSignaler.dispatch(result,null,{ fileName : "GLDisplayList.hx", lineNumber : 88, className : "GLDisplayList", methodName : "handleMouseUp"});
+}
+GLDisplayList.prototype.handleMouseMove = function(position) {
+	var result = this.hitareaPicker.pick(this.stage,position);
+	if(result != null) this.cursorClient.handCursor(); else this.cursorClient.defaultCursor();
+}
+GLDisplayList.prototype.__class__ = GLDisplayList;
 GLAnimationFrame = function() { }
 GLAnimationFrame.__name__ = ["GLAnimationFrame"];
 GLAnimationFrame.run = function(method,ms) {
@@ -3535,6 +4105,38 @@ reflect.NullBinding.prototype.getValue = function() {
 reflect.NullBinding.prototype.setValue = function(value) {
 }
 reflect.NullBinding.prototype.__class__ = reflect.NullBinding;
+kumite.musicdraw.BandsReader = function(p) {
+}
+kumite.musicdraw.BandsReader.__name__ = ["kumite","musicdraw","BandsReader"];
+kumite.musicdraw.BandsReader.prototype.analyzer = null;
+kumite.musicdraw.BandsReader.prototype.location = null;
+kumite.musicdraw.BandsReader.prototype.read = function(location) {
+	this.location = location;
+	var task = new bpmjs.HTTPTask();
+	task.completeSignaler.bind($closure(this,"handleHTTPComplete"));
+	task.location = location;
+	return task;
+}
+kumite.musicdraw.BandsReader.prototype.handleHTTPComplete = function(task) {
+	var data = new hxjson2.JSONDecoder(task.data,true).getValue();
+	this.analyzer.bands = data.bands;
+	{
+		Log.posInfo = { fileName : "BandsReader.hx", lineNumber : 33, className : "kumite.musicdraw.BandsReader", methodName : "handleHTTPComplete"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput("bands: " + this.analyzer.bands.length,null,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
+	{
+		Log.posInfo = { fileName : "BandsReader.hx", lineNumber : 34, className : "kumite.musicdraw.BandsReader", methodName : "handleHTTPComplete"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput("notes: " + this.analyzer.bands[0].length,null,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
+}
+kumite.musicdraw.BandsReader.prototype.__class__ = kumite.musicdraw.BandsReader;
+kumite.musicdraw.BandsReader.__interfaces__ = [haxe.rtti.Infos];
 if(!kumite.projection) kumite.projection = {}
 kumite.projection.ProjectionController = function(p) {
 }
@@ -4345,6 +4947,9 @@ reflect.Method.prototype.getParameters = function() {
 		this.parameters.push(parameter);
 	}
 	return this.parameters;
+}
+reflect.Method.prototype.call = function(instance,params) {
+	Reflect.field(instance,this.field.name).apply(instance,params);
 }
 reflect.Method.prototype.__class__ = reflect.Method;
 kumite.vjinterface.VJLayers = function(p) {
@@ -5620,6 +6225,242 @@ kumite.projection.Config.prototype.projection = null;
 kumite.projection.Config.prototype.projectionController = null;
 kumite.projection.Config.prototype.__class__ = kumite.projection.Config;
 kumite.projection.Config.__interfaces__ = [haxe.rtti.Infos];
+haxe.Serializer = function(p) {
+	if( p === $_ ) return;
+	this.buf = new StringBuf();
+	this.cache = new Array();
+	this.useCache = haxe.Serializer.USE_CACHE;
+	this.useEnumIndex = haxe.Serializer.USE_ENUM_INDEX;
+	this.shash = new Hash();
+	this.scount = 0;
+}
+haxe.Serializer.__name__ = ["haxe","Serializer"];
+haxe.Serializer.run = function(v) {
+	var s = new haxe.Serializer();
+	s.serialize(v);
+	return s.toString();
+}
+haxe.Serializer.prototype.buf = null;
+haxe.Serializer.prototype.cache = null;
+haxe.Serializer.prototype.shash = null;
+haxe.Serializer.prototype.scount = null;
+haxe.Serializer.prototype.useCache = null;
+haxe.Serializer.prototype.useEnumIndex = null;
+haxe.Serializer.prototype.toString = function() {
+	return this.buf.b.join("");
+}
+haxe.Serializer.prototype.serializeString = function(s) {
+	var x = this.shash.get(s);
+	if(x != null) {
+		this.buf.add("R");
+		this.buf.add(x);
+		return;
+	}
+	this.shash.set(s,this.scount++);
+	this.buf.add("y");
+	s = StringTools.urlEncode(s);
+	this.buf.add(s.length);
+	this.buf.add(":");
+	this.buf.add(s);
+}
+haxe.Serializer.prototype.serializeRef = function(v) {
+	var vt = typeof(v);
+	var _g1 = 0, _g = this.cache.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		var ci = this.cache[i];
+		if(typeof(ci) == vt && ci == v) {
+			this.buf.add("r");
+			this.buf.add(i);
+			return true;
+		}
+	}
+	this.cache.push(v);
+	return false;
+}
+haxe.Serializer.prototype.serializeFields = function(v) {
+	var _g = 0, _g1 = Reflect.fields(v);
+	while(_g < _g1.length) {
+		var f = _g1[_g];
+		++_g;
+		this.serializeString(f);
+		this.serialize(Reflect.field(v,f));
+	}
+	this.buf.add("g");
+}
+haxe.Serializer.prototype.serialize = function(v) {
+	var $e = (Type["typeof"](v));
+	switch( $e[1] ) {
+	case 0:
+		this.buf.add("n");
+		break;
+	case 1:
+		if(v == 0) {
+			this.buf.add("z");
+			return;
+		}
+		this.buf.add("i");
+		this.buf.add(v);
+		break;
+	case 2:
+		if(Math.isNaN(v)) this.buf.add("k"); else if(!Math.isFinite(v)) this.buf.add(v < 0?"m":"p"); else {
+			this.buf.add("d");
+			this.buf.add(v);
+		}
+		break;
+	case 3:
+		this.buf.add(v?"t":"f");
+		break;
+	case 6:
+		var c = $e[2];
+		if(c == String) {
+			this.serializeString(v);
+			return;
+		}
+		if(this.useCache && this.serializeRef(v)) return;
+		switch(c) {
+		case Array:
+			var ucount = 0;
+			this.buf.add("a");
+			var l = v["length"];
+			var _g = 0;
+			while(_g < l) {
+				var i = _g++;
+				if(v[i] == null) ucount++; else {
+					if(ucount > 0) {
+						if(ucount == 1) this.buf.add("n"); else {
+							this.buf.add("u");
+							this.buf.add(ucount);
+						}
+						ucount = 0;
+					}
+					this.serialize(v[i]);
+				}
+			}
+			if(ucount > 0) {
+				if(ucount == 1) this.buf.add("n"); else {
+					this.buf.add("u");
+					this.buf.add(ucount);
+				}
+			}
+			this.buf.add("h");
+			break;
+		case List:
+			this.buf.add("l");
+			var v1 = v;
+			var $it0 = v1.iterator();
+			while( $it0.hasNext() ) {
+				var i = $it0.next();
+				this.serialize(i);
+			}
+			this.buf.add("h");
+			break;
+		case Date:
+			var d = v;
+			this.buf.add("v");
+			this.buf.add(d.toString());
+			break;
+		case Hash:
+			this.buf.add("b");
+			var v1 = v;
+			var $it1 = v1.keys();
+			while( $it1.hasNext() ) {
+				var k = $it1.next();
+				this.serializeString(k);
+				this.serialize(v1.get(k));
+			}
+			this.buf.add("h");
+			break;
+		case IntHash:
+			this.buf.add("q");
+			var v1 = v;
+			var $it2 = v1.keys();
+			while( $it2.hasNext() ) {
+				var k = $it2.next();
+				this.buf.add(":");
+				this.buf.add(k);
+				this.serialize(v1.get(k));
+			}
+			this.buf.add("h");
+			break;
+		case haxe.io.Bytes:
+			var v1 = v;
+			var i = 0;
+			var max = v1.length - 2;
+			var chars = "";
+			var b64 = haxe.Serializer.BASE64;
+			while(i < max) {
+				var b1 = v1.b[i++];
+				var b2 = v1.b[i++];
+				var b3 = v1.b[i++];
+				chars += b64.charAt(b1 >> 2) + b64.charAt((b1 << 4 | b2 >> 4) & 63) + b64.charAt((b2 << 2 | b3 >> 6) & 63) + b64.charAt(b3 & 63);
+			}
+			if(i == max) {
+				var b1 = v1.b[i++];
+				var b2 = v1.b[i++];
+				chars += b64.charAt(b1 >> 2) + b64.charAt((b1 << 4 | b2 >> 4) & 63) + b64.charAt(b2 << 2 & 63);
+			} else if(i == max + 1) {
+				var b1 = v1.b[i++];
+				chars += b64.charAt(b1 >> 2) + b64.charAt(b1 << 4 & 63);
+			}
+			this.buf.add("s");
+			this.buf.add(chars.length);
+			this.buf.add(":");
+			this.buf.add(chars);
+			break;
+		default:
+			this.cache.pop();
+			if(v.hxSerialize != null) {
+				this.buf.add("C");
+				this.serializeString(Type.getClassName(c));
+				this.cache.push(v);
+				v.hxSerialize(this);
+				this.buf.add("g");
+			} else {
+				this.buf.add("c");
+				this.serializeString(Type.getClassName(c));
+				this.cache.push(v);
+				this.serializeFields(v);
+			}
+		}
+		break;
+	case 4:
+		if(this.useCache && this.serializeRef(v)) return;
+		this.buf.add("o");
+		this.serializeFields(v);
+		break;
+	case 7:
+		var e = $e[2];
+		if(this.useCache && this.serializeRef(v)) return;
+		this.cache.pop();
+		this.buf.add(this.useEnumIndex?"j":"w");
+		this.serializeString(Type.getEnumName(e));
+		if(this.useEnumIndex) {
+			this.buf.add(":");
+			this.buf.add(v[1]);
+		} else this.serializeString(v[0]);
+		this.buf.add(":");
+		var l = v["length"];
+		this.buf.add(l - 2);
+		var _g = 2;
+		while(_g < l) {
+			var i = _g++;
+			this.serialize(v[i]);
+		}
+		this.cache.push(v);
+		break;
+	case 5:
+		throw "Cannot serialize function";
+		break;
+	default:
+		throw "Cannot serialize " + Std.string(v);
+	}
+}
+haxe.Serializer.prototype.serializeException = function(e) {
+	this.buf.add("x");
+	this.serialize(e);
+}
+haxe.Serializer.prototype.__class__ = haxe.Serializer;
 LogFilter = function() { }
 LogFilter.__name__ = ["LogFilter"];
 LogFilter.prototype.enabled = null;
@@ -5700,51 +6541,6 @@ kumite.scene._RenderContext.Viewport.__name__ = ["kumite","scene","_RenderContex
 kumite.scene._RenderContext.Viewport.prototype.width = null;
 kumite.scene._RenderContext.Viewport.prototype.height = null;
 kumite.scene._RenderContext.Viewport.prototype.__class__ = kumite.scene._RenderContext.Viewport;
-GLTextureLoadingTask = function(textureRegistry,textureConfig) {
-	if( textureRegistry === $_ ) return;
-	bpmjs.ImageLoaderTask.call(this);
-	if(textureRegistry == null) throw "TextureRegistry was null!";
-	this.textureRegistry = textureRegistry;
-	this.textureConfig = textureConfig;
-}
-GLTextureLoadingTask.__name__ = ["GLTextureLoadingTask"];
-GLTextureLoadingTask.__super__ = bpmjs.ImageLoaderTask;
-for(var k in bpmjs.ImageLoaderTask.prototype ) GLTextureLoadingTask.prototype[k] = bpmjs.ImageLoaderTask.prototype[k];
-GLTextureLoadingTask.prototype.textureRegistry = null;
-GLTextureLoadingTask.prototype.textureConfig = null;
-GLTextureLoadingTask.prototype.doStart = function() {
-	this.location = this.textureConfig.location;
-	bpmjs.ImageLoaderTask.prototype.doStart.call(this);
-}
-GLTextureLoadingTask.prototype.handleImageLoaded = function() {
-	if(this.textureConfig.textureManipulation != null) this.textureRegistry.register(this.textureConfig,this.textureRegistry.createGLTextureFromCanvas(this.textureConfig.textureManipulation.create(this.image),this.textureConfig.filter)); else {
-		var testPowerOfTwoWidth = Std["int"](Math2.nextPowerOf2(this.image.width));
-		var testPowerOfTwoHeight = Std["int"](Math2.nextPowerOf2(this.image.height));
-		if(testPowerOfTwoWidth != this.image.width || testPowerOfTwoHeight != this.image.height) {
-			{
-				Log.posInfo = { fileName : "GLTextureLoadingTask.hx", lineNumber : 35, className : "GLTextureLoadingTask", methodName : "handleImageLoaded"};
-				if(Log.filter(LogLevel.WARN)) {
-					Log.fetchInput("Image",this.textureConfig.location,"size must be a valid texture size! Resizing...",null,null,null,null);
-					console.warn(Log.createMessage());
-				}
-			}
-			var canvasGraphic = new CanvasGraphic();
-			canvasGraphic.setWidth(Std["int"](testPowerOfTwoWidth / 2));
-			canvasGraphic.setHeight(Std["int"](testPowerOfTwoHeight / 2));
-			canvasGraphic.drawImage(this.image,0,0,canvasGraphic.width,canvasGraphic.height);
-			this.textureRegistry.register(this.textureConfig,this.textureRegistry.createGLTextureFromCanvas(canvasGraphic.canvas,this.textureConfig.filter));
-		} else this.textureRegistry.register(this.textureConfig,this.textureRegistry.createGLTextureFromImage(this.image,this.textureConfig.filter));
-	}
-	{
-		Log.posInfo = { fileName : "GLTextureLoadingTask.hx", lineNumber : 49, className : "GLTextureLoadingTask", methodName : "handleImageLoaded"};
-		if(Log.filter(LogLevel.INFO)) {
-			Log.fetchInput("Complete: ",this.textureConfig.location,null,null,null,null,null);
-			console.info(Log.createMessage());
-		}
-	}
-	this.complete();
-}
-GLTextureLoadingTask.prototype.__class__ = GLTextureLoadingTask;
 kumite.blobs.Blobs = function(p) {
 	if( p === $_ ) return;
 	this.blobs = new Array();
@@ -5768,6 +6564,135 @@ GLHitarea.prototype.isUnder = function(matrix,positionOnStage) {
 	return tl.x <= positionOnStage.x && br.x >= positionOnStage.x && tl.y <= positionOnStage.y && br.y >= positionOnStage.y;
 }
 GLHitarea.prototype.__class__ = GLHitarea;
+hxjson2.JSONTokenType = { __ename__ : ["hxjson2","JSONTokenType"], __constructs__ : ["tUNKNOWN","tCOMMA","tLEFT_BRACE","tRIGHT_BRACE","tLEFT_BRACKET","tRIGHT_BRACKET","tCOLON","tTRUE","tFALSE","tNULL","tSTRING","tNUMBER","tNAN"] }
+hxjson2.JSONTokenType.tUNKNOWN = ["tUNKNOWN",0];
+hxjson2.JSONTokenType.tUNKNOWN.toString = $estr;
+hxjson2.JSONTokenType.tUNKNOWN.__enum__ = hxjson2.JSONTokenType;
+hxjson2.JSONTokenType.tCOMMA = ["tCOMMA",1];
+hxjson2.JSONTokenType.tCOMMA.toString = $estr;
+hxjson2.JSONTokenType.tCOMMA.__enum__ = hxjson2.JSONTokenType;
+hxjson2.JSONTokenType.tLEFT_BRACE = ["tLEFT_BRACE",2];
+hxjson2.JSONTokenType.tLEFT_BRACE.toString = $estr;
+hxjson2.JSONTokenType.tLEFT_BRACE.__enum__ = hxjson2.JSONTokenType;
+hxjson2.JSONTokenType.tRIGHT_BRACE = ["tRIGHT_BRACE",3];
+hxjson2.JSONTokenType.tRIGHT_BRACE.toString = $estr;
+hxjson2.JSONTokenType.tRIGHT_BRACE.__enum__ = hxjson2.JSONTokenType;
+hxjson2.JSONTokenType.tLEFT_BRACKET = ["tLEFT_BRACKET",4];
+hxjson2.JSONTokenType.tLEFT_BRACKET.toString = $estr;
+hxjson2.JSONTokenType.tLEFT_BRACKET.__enum__ = hxjson2.JSONTokenType;
+hxjson2.JSONTokenType.tRIGHT_BRACKET = ["tRIGHT_BRACKET",5];
+hxjson2.JSONTokenType.tRIGHT_BRACKET.toString = $estr;
+hxjson2.JSONTokenType.tRIGHT_BRACKET.__enum__ = hxjson2.JSONTokenType;
+hxjson2.JSONTokenType.tCOLON = ["tCOLON",6];
+hxjson2.JSONTokenType.tCOLON.toString = $estr;
+hxjson2.JSONTokenType.tCOLON.__enum__ = hxjson2.JSONTokenType;
+hxjson2.JSONTokenType.tTRUE = ["tTRUE",7];
+hxjson2.JSONTokenType.tTRUE.toString = $estr;
+hxjson2.JSONTokenType.tTRUE.__enum__ = hxjson2.JSONTokenType;
+hxjson2.JSONTokenType.tFALSE = ["tFALSE",8];
+hxjson2.JSONTokenType.tFALSE.toString = $estr;
+hxjson2.JSONTokenType.tFALSE.__enum__ = hxjson2.JSONTokenType;
+hxjson2.JSONTokenType.tNULL = ["tNULL",9];
+hxjson2.JSONTokenType.tNULL.toString = $estr;
+hxjson2.JSONTokenType.tNULL.__enum__ = hxjson2.JSONTokenType;
+hxjson2.JSONTokenType.tSTRING = ["tSTRING",10];
+hxjson2.JSONTokenType.tSTRING.toString = $estr;
+hxjson2.JSONTokenType.tSTRING.__enum__ = hxjson2.JSONTokenType;
+hxjson2.JSONTokenType.tNUMBER = ["tNUMBER",11];
+hxjson2.JSONTokenType.tNUMBER.toString = $estr;
+hxjson2.JSONTokenType.tNUMBER.__enum__ = hxjson2.JSONTokenType;
+hxjson2.JSONTokenType.tNAN = ["tNAN",12];
+hxjson2.JSONTokenType.tNAN.toString = $estr;
+hxjson2.JSONTokenType.tNAN.__enum__ = hxjson2.JSONTokenType;
+hxjson2.JSONDecoder = function(s,strict) {
+	if( s === $_ ) return;
+	this.strict = strict;
+	this.tokenizer = new hxjson2.JSONTokenizer(s,strict);
+	this.nextToken();
+	this.value = this.parseValue();
+	if(strict && this.nextToken() != null) this.tokenizer.parseError("Unexpected characters left in input stream!");
+}
+hxjson2.JSONDecoder.__name__ = ["hxjson2","JSONDecoder"];
+hxjson2.JSONDecoder.prototype.strict = null;
+hxjson2.JSONDecoder.prototype.value = null;
+hxjson2.JSONDecoder.prototype.tokenizer = null;
+hxjson2.JSONDecoder.prototype.token = null;
+hxjson2.JSONDecoder.prototype.getValue = function() {
+	return this.value;
+}
+hxjson2.JSONDecoder.prototype.nextToken = function() {
+	return this.token = this.tokenizer.getNextToken();
+}
+hxjson2.JSONDecoder.prototype.parseArray = function() {
+	var a = new Array();
+	this.nextToken();
+	if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACKET) return a; else if(!this.strict && this.token.type == hxjson2.JSONTokenType.tCOMMA) {
+		this.nextToken();
+		if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACKET) return a; else this.tokenizer.parseError("Leading commas are not supported.  Expecting ']' but found " + this.token.value);
+	}
+	while(true) {
+		a.push(this.parseValue());
+		this.nextToken();
+		if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACKET) return a; else if(this.token.type == hxjson2.JSONTokenType.tCOMMA) {
+			this.nextToken();
+			if(!this.strict) {
+				if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACKET) return a;
+			}
+		} else this.tokenizer.parseError("Expecting ] or , but found " + this.token.value);
+	}
+	return null;
+}
+hxjson2.JSONDecoder.prototype.parseObject = function() {
+	var o = { };
+	var key;
+	this.nextToken();
+	if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACE) return o; else if(!this.strict && this.token.type == hxjson2.JSONTokenType.tCOMMA) {
+		this.nextToken();
+		if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACE) return o; else this.tokenizer.parseError("Leading commas are not supported.  Expecting '}' but found " + this.token.value);
+	}
+	while(true) if(this.token.type == hxjson2.JSONTokenType.tSTRING) {
+		key = Std.string(this.token.value);
+		this.nextToken();
+		if(this.token.type == hxjson2.JSONTokenType.tCOLON) {
+			this.nextToken();
+			o[key] = this.parseValue();
+			this.nextToken();
+			if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACE) return o; else if(this.token.type == hxjson2.JSONTokenType.tCOMMA) {
+				this.nextToken();
+				if(!this.strict) {
+					if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACE) return o;
+				}
+			} else this.tokenizer.parseError("Expecting } or , but found " + this.token.value);
+		} else this.tokenizer.parseError("Expecting : but found " + this.token.value);
+	} else this.tokenizer.parseError("Expecting string but found " + this.token.value);
+	return null;
+}
+hxjson2.JSONDecoder.prototype.parseValue = function() {
+	if(this.token == null) this.tokenizer.parseError("Unexpected end of input");
+	switch( (this.token.type)[1] ) {
+	case 2:
+		return this.parseObject();
+	case 4:
+		return this.parseArray();
+	case 10:
+		return this.token.value;
+	case 11:
+		return this.token.value;
+	case 7:
+		return true;
+	case 8:
+		return false;
+	case 9:
+		return null;
+	case 12:
+		if(!this.strict) return this.token.value; else this.tokenizer.parseError("Unexpected " + this.token.value);
+		break;
+	default:
+		this.tokenizer.parseError("Unexpected " + this.token.value);
+	}
+	return null;
+}
+hxjson2.JSONDecoder.prototype.__class__ = hxjson2.JSONDecoder;
 if(typeof ease=='undefined') ease = {}
 ease.Quad = function() { }
 ease.Quad.__name__ = ["ease","Quad"];
@@ -5782,6 +6707,33 @@ ease.Quad.easeInOut = function(t,b,c,d) {
 	return -c / 2 * (--t * (t - 2) - 1) + b;
 }
 ease.Quad.prototype.__class__ = ease.Quad;
+hxjson2.JSONParseError = function(message,location,text) {
+	if( message === $_ ) return;
+	if(text == null) text = "";
+	if(location == null) location = 0;
+	if(message == null) message = "";
+	this.name = "JSONParseError";
+	this._location = location;
+	this._text = text;
+	this.message = message;
+}
+hxjson2.JSONParseError.__name__ = ["hxjson2","JSONParseError"];
+hxjson2.JSONParseError.prototype._location = null;
+hxjson2.JSONParseError.prototype._text = null;
+hxjson2.JSONParseError.prototype.name = null;
+hxjson2.JSONParseError.prototype.text = null;
+hxjson2.JSONParseError.prototype.location = null;
+hxjson2.JSONParseError.prototype.message = null;
+hxjson2.JSONParseError.prototype.getlocation = function() {
+	return this._location;
+}
+hxjson2.JSONParseError.prototype.gettext = function() {
+	return this._text;
+}
+hxjson2.JSONParseError.prototype.toString = function() {
+	return this.name + ": " + this.message + " at position: " + this._location + " near \"" + this._text + "\"";
+}
+hxjson2.JSONParseError.prototype.__class__ = hxjson2.JSONParseError;
 kumite.displaylist.DisplayListLayer = function(p) {
 }
 kumite.displaylist.DisplayListLayer.__name__ = ["kumite","displaylist","DisplayListLayer"];
@@ -5837,8 +6789,9 @@ GLArrayTexture.__name__ = ["GLArrayTexture"];
 GLArrayTexture.__super__ = GLTexture;
 for(var k in GLTexture.prototype ) GLArrayTexture.prototype[k] = GLTexture.prototype[k];
 GLArrayTexture.prototype.array = null;
+GLArrayTexture.prototype.isDirty = null;
 GLArrayTexture.prototype.setPixel = function(x,y,r,g,b,a) {
-	var index = y * this.width + x;
+	var index = (y * this.width + x) * 4;
 	this.array[index] = r;
 	this.array[index + 1] = g;
 	this.array[index + 2] = b;
@@ -5868,6 +6821,117 @@ kumite.scene.SceneAndLifecycle.__name__ = ["kumite","scene","SceneAndLifecycle"]
 kumite.scene.SceneAndLifecycle.prototype.scene = null;
 kumite.scene.SceneAndLifecycle.prototype.lifecycle = null;
 kumite.scene.SceneAndLifecycle.prototype.__class__ = kumite.scene.SceneAndLifecycle;
+hxjson2.JSONEncoder = function(value) {
+	if( value === $_ ) return;
+	this.jsonString = this.convertToString(value);
+}
+hxjson2.JSONEncoder.__name__ = ["hxjson2","JSONEncoder"];
+hxjson2.JSONEncoder.prototype.jsonString = null;
+hxjson2.JSONEncoder.prototype.getString = function() {
+	return this.jsonString;
+}
+hxjson2.JSONEncoder.prototype.convertToString = function(value) {
+	if(Std["is"](value,List) || Std["is"](value,IntHash)) value = Lambda.array(value);
+	if(Std["is"](value,Hash)) value = this.mapHash(value);
+	if(Std["is"](value,String)) return this.escapeString((function($this) {
+		var $r;
+		var $t = value;
+		if(Std["is"]($t,String)) $t; else throw "Class cast error";
+		$r = $t;
+		return $r;
+	}(this))); else if(Std["is"](value,Float)) return Math.isFinite((function($this) {
+		var $r;
+		var $t = value;
+		if(Std["is"]($t,Float)) $t; else throw "Class cast error";
+		$r = $t;
+		return $r;
+	}(this)))?value + "":"null"; else if(Std["is"](value,Bool)) return value?"true":"false"; else if(Std["is"](value,Array)) return this.arrayToString((function($this) {
+		var $r;
+		var $t = value;
+		if(Std["is"]($t,Array)) $t; else throw "Class cast error";
+		$r = $t;
+		return $r;
+	}(this))); else if(Std["is"](value,Dynamic) && value != null) return this.objectToString(value);
+	return "null";
+}
+hxjson2.JSONEncoder.prototype.mapHash = function(value) {
+	var ret = { };
+	var $it0 = value.keys();
+	while( $it0.hasNext() ) {
+		var i = $it0.next();
+		ret[i] = value.get(i);
+	}
+	return ret;
+}
+hxjson2.JSONEncoder.prototype.escapeString = function(str) {
+	var s = "";
+	var ch;
+	var len = str.length;
+	var _g = 0;
+	while(_g < len) {
+		var i = _g++;
+		ch = str.charAt(i);
+		switch(ch) {
+		case "/":
+			s += "\\/";
+			break;
+		case "\"":
+			s += "\\\"";
+			break;
+		case "\\":
+			s += "\\\\";
+			break;
+		case "\n":
+			s += "\\n";
+			break;
+		case "\r":
+			s += "\\r";
+			break;
+		case "\t":
+			s += "\\t";
+			break;
+		default:
+			var code = ch.charCodeAt(0);
+			if(ch < " " || code > 127) {
+				var hexCode = StringTools.hex(ch.charCodeAt(0));
+				var zeroPad = "";
+				var _g2 = 0, _g1 = 4 - hexCode.length;
+				while(_g2 < _g1) {
+					var j = _g2++;
+					zeroPad += "0";
+				}
+				s += "\\u" + zeroPad + hexCode;
+			} else s += ch;
+		}
+	}
+	return "\"" + s + "\"";
+}
+hxjson2.JSONEncoder.prototype.arrayToString = function(a) {
+	var s = "";
+	var _g1 = 0, _g = a.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		if(s.length > 0) s += ",";
+		s += this.convertToString(a[i]);
+	}
+	return "[" + s + "]";
+}
+hxjson2.JSONEncoder.prototype.objectToString = function(o) {
+	var s = "";
+	var value;
+	var _g = 0, _g1 = Reflect.fields(o);
+	while(_g < _g1.length) {
+		var key = _g1[_g];
+		++_g;
+		value = Reflect.field(o,key);
+		if(!Reflect.isFunction(value)) {
+			if(s.length > 0) s += ",";
+			s += this.escapeString(key) + ":" + this.convertToString(value);
+		}
+	}
+	return "{" + s + "}";
+}
+hxjson2.JSONEncoder.prototype.__class__ = hxjson2.JSONEncoder;
 if(!haxe.exception) haxe.exception = {}
 haxe.exception.Exception = function(message,innerException,numberOfStackTraceShifts) {
 	if( message === $_ ) return;
@@ -6384,6 +7448,15 @@ GL.viewport = function(x,y,width,height) {
 	GL.gl.viewport(x,y,width,height);
 }
 GL.prototype.__class__ = GL;
+hxjson2.JSONToken = function(type,value) {
+	if( type === $_ ) return;
+	this.type = type == null?hxjson2.JSONTokenType.tUNKNOWN:type;
+	this.value = value;
+}
+hxjson2.JSONToken.__name__ = ["hxjson2","JSONToken"];
+hxjson2.JSONToken.prototype.type = null;
+hxjson2.JSONToken.prototype.value = null;
+hxjson2.JSONToken.prototype.__class__ = hxjson2.JSONToken;
 GLStats = function(p) {
 	if( p === $_ ) return;
 	GLDisplayObjectContainer.call(this);
@@ -6658,6 +7731,17 @@ kumite.vjinterface.Config.prototype.vjstats = null;
 kumite.vjinterface.Config.prototype.vjlayers = null;
 kumite.vjinterface.Config.prototype.__class__ = kumite.vjinterface.Config;
 kumite.vjinterface.Config.__interfaces__ = [haxe.rtti.Infos];
+haxe.io.Error = { __ename__ : ["haxe","io","Error"], __constructs__ : ["Blocked","Overflow","OutsideBounds","Custom"] }
+haxe.io.Error.Blocked = ["Blocked",0];
+haxe.io.Error.Blocked.toString = $estr;
+haxe.io.Error.Blocked.__enum__ = haxe.io.Error;
+haxe.io.Error.Overflow = ["Overflow",1];
+haxe.io.Error.Overflow.toString = $estr;
+haxe.io.Error.Overflow.__enum__ = haxe.io.Error;
+haxe.io.Error.OutsideBounds = ["OutsideBounds",2];
+haxe.io.Error.OutsideBounds.toString = $estr;
+haxe.io.Error.OutsideBounds.__enum__ = haxe.io.Error;
+haxe.io.Error.Custom = function(e) { var $x = ["Custom",3,e]; $x.__enum__ = haxe.io.Error; $x.toString = $estr; return $x; }
 Timeout = function() { }
 Timeout.__name__ = ["Timeout"];
 Timeout.execute = function(ms,method) {
@@ -6669,6 +7753,274 @@ Timeout.execute = function(ms,method) {
 	timer.run = run;
 }
 Timeout.prototype.__class__ = Timeout;
+haxe.Unserializer = function(buf) {
+	if( buf === $_ ) return;
+	this.buf = buf;
+	this.length = buf.length;
+	this.pos = 0;
+	this.scache = new Array();
+	this.cache = new Array();
+	var r = haxe.Unserializer.DEFAULT_RESOLVER;
+	if(r == null) {
+		r = Type;
+		haxe.Unserializer.DEFAULT_RESOLVER = r;
+	}
+	this.setResolver(r);
+}
+haxe.Unserializer.__name__ = ["haxe","Unserializer"];
+haxe.Unserializer.initCodes = function() {
+	var codes = new Array();
+	var _g1 = 0, _g = haxe.Unserializer.BASE64.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		codes[haxe.Unserializer.BASE64.cca(i)] = i;
+	}
+	return codes;
+}
+haxe.Unserializer.run = function(v) {
+	return new haxe.Unserializer(v).unserialize();
+}
+haxe.Unserializer.prototype.buf = null;
+haxe.Unserializer.prototype.pos = null;
+haxe.Unserializer.prototype.length = null;
+haxe.Unserializer.prototype.cache = null;
+haxe.Unserializer.prototype.scache = null;
+haxe.Unserializer.prototype.resolver = null;
+haxe.Unserializer.prototype.setResolver = function(r) {
+	if(r == null) this.resolver = { resolveClass : function(_) {
+		return null;
+	}, resolveEnum : function(_) {
+		return null;
+	}}; else this.resolver = r;
+}
+haxe.Unserializer.prototype.getResolver = function() {
+	return this.resolver;
+}
+haxe.Unserializer.prototype.get = function(p) {
+	return this.buf.cca(p);
+}
+haxe.Unserializer.prototype.readDigits = function() {
+	var k = 0;
+	var s = false;
+	var fpos = this.pos;
+	while(true) {
+		var c = this.buf.cca(this.pos);
+		if(c != c) break;
+		if(c == 45) {
+			if(this.pos != fpos) break;
+			s = true;
+			this.pos++;
+			continue;
+		}
+		if(c < 48 || c > 57) break;
+		k = k * 10 + (c - 48);
+		this.pos++;
+	}
+	if(s) k *= -1;
+	return k;
+}
+haxe.Unserializer.prototype.unserializeObject = function(o) {
+	while(true) {
+		if(this.pos >= this.length) throw "Invalid object";
+		if(this.buf.cca(this.pos) == 103) break;
+		var k = this.unserialize();
+		if(!Std["is"](k,String)) throw "Invalid object key";
+		var v = this.unserialize();
+		o[k] = v;
+	}
+	this.pos++;
+}
+haxe.Unserializer.prototype.unserializeEnum = function(edecl,tag) {
+	var constr = Reflect.field(edecl,tag);
+	if(constr == null) throw "Unknown enum tag " + Type.getEnumName(edecl) + "." + tag;
+	if(this.buf.cca(this.pos++) != 58) throw "Invalid enum format";
+	var nargs = this.readDigits();
+	if(nargs == 0) {
+		this.cache.push(constr);
+		return constr;
+	}
+	var args = new Array();
+	while(nargs > 0) {
+		args.push(this.unserialize());
+		nargs -= 1;
+	}
+	var e = constr.apply(edecl,args);
+	this.cache.push(e);
+	return e;
+}
+haxe.Unserializer.prototype.unserialize = function() {
+	switch(this.buf.cca(this.pos++)) {
+	case 110:
+		return null;
+	case 116:
+		return true;
+	case 102:
+		return false;
+	case 122:
+		return 0;
+	case 105:
+		return this.readDigits();
+	case 100:
+		var p1 = this.pos;
+		while(true) {
+			var c = this.buf.cca(this.pos);
+			if(c >= 43 && c < 58 || c == 101 || c == 69) this.pos++; else break;
+		}
+		return Std.parseFloat(this.buf.substr(p1,this.pos - p1));
+	case 121:
+		var len = this.readDigits();
+		if(this.buf.cca(this.pos++) != 58 || this.length - this.pos < len) throw "Invalid string length";
+		var s = this.buf.substr(this.pos,len);
+		this.pos += len;
+		s = StringTools.urlDecode(s);
+		this.scache.push(s);
+		return s;
+	case 107:
+		return Math.NaN;
+	case 109:
+		return Math.NEGATIVE_INFINITY;
+	case 112:
+		return Math.POSITIVE_INFINITY;
+	case 97:
+		var buf = this.buf;
+		var a = new Array();
+		this.cache.push(a);
+		while(true) {
+			var c = this.buf.cca(this.pos);
+			if(c == 104) {
+				this.pos++;
+				break;
+			}
+			if(c == 117) {
+				this.pos++;
+				var n = this.readDigits();
+				a[a.length + n - 1] = null;
+			} else a.push(this.unserialize());
+		}
+		return a;
+	case 111:
+		var o = { };
+		this.cache.push(o);
+		this.unserializeObject(o);
+		return o;
+	case 114:
+		var n = this.readDigits();
+		if(n < 0 || n >= this.cache.length) throw "Invalid reference";
+		return this.cache[n];
+	case 82:
+		var n = this.readDigits();
+		if(n < 0 || n >= this.scache.length) throw "Invalid string reference";
+		return this.scache[n];
+	case 120:
+		throw this.unserialize();
+		break;
+	case 99:
+		var name = this.unserialize();
+		var cl = this.resolver.resolveClass(name);
+		if(cl == null) throw "Class not found " + name;
+		var o = Type.createEmptyInstance(cl);
+		this.cache.push(o);
+		this.unserializeObject(o);
+		return o;
+	case 119:
+		var name = this.unserialize();
+		var edecl = this.resolver.resolveEnum(name);
+		if(edecl == null) throw "Enum not found " + name;
+		return this.unserializeEnum(edecl,this.unserialize());
+	case 106:
+		var name = this.unserialize();
+		var edecl = this.resolver.resolveEnum(name);
+		if(edecl == null) throw "Enum not found " + name;
+		this.pos++;
+		var index = this.readDigits();
+		var tag = Type.getEnumConstructs(edecl)[index];
+		if(tag == null) throw "Unknown enum index " + name + "@" + index;
+		return this.unserializeEnum(edecl,tag);
+	case 108:
+		var l = new List();
+		this.cache.push(l);
+		var buf = this.buf;
+		while(this.buf.cca(this.pos) != 104) l.add(this.unserialize());
+		this.pos++;
+		return l;
+	case 98:
+		var h = new Hash();
+		this.cache.push(h);
+		var buf = this.buf;
+		while(this.buf.cca(this.pos) != 104) {
+			var s = this.unserialize();
+			h.set(s,this.unserialize());
+		}
+		this.pos++;
+		return h;
+	case 113:
+		var h = new IntHash();
+		this.cache.push(h);
+		var buf = this.buf;
+		var c = this.buf.cca(this.pos++);
+		while(c == 58) {
+			var i = this.readDigits();
+			h.set(i,this.unserialize());
+			c = this.buf.cca(this.pos++);
+		}
+		if(c != 104) throw "Invalid IntHash format";
+		return h;
+	case 118:
+		var d = Date.fromString(this.buf.substr(this.pos,19));
+		this.cache.push(d);
+		this.pos += 19;
+		return d;
+	case 115:
+		var len = this.readDigits();
+		var buf = this.buf;
+		if(this.buf.cca(this.pos++) != 58 || this.length - this.pos < len) throw "Invalid bytes length";
+		var codes = haxe.Unserializer.CODES;
+		if(codes == null) {
+			codes = haxe.Unserializer.initCodes();
+			haxe.Unserializer.CODES = codes;
+		}
+		var i = this.pos;
+		var rest = len & 3;
+		var size = (len >> 2) * 3 + (rest >= 2?rest - 1:0);
+		var max = i + (len - rest);
+		var bytes = haxe.io.Bytes.alloc(size);
+		var bpos = 0;
+		while(i < max) {
+			var c1 = codes[buf.cca(i++)];
+			var c2 = codes[buf.cca(i++)];
+			bytes.b[bpos++] = (c1 << 2 | c2 >> 4) & 255;
+			var c3 = codes[buf.cca(i++)];
+			bytes.b[bpos++] = (c2 << 4 | c3 >> 2) & 255;
+			var c4 = codes[buf.cca(i++)];
+			bytes.b[bpos++] = (c3 << 6 | c4) & 255;
+		}
+		if(rest >= 2) {
+			var c1 = codes[buf.cca(i++)];
+			var c2 = codes[buf.cca(i++)];
+			bytes.b[bpos++] = (c1 << 2 | c2 >> 4) & 255;
+			if(rest == 3) {
+				var c3 = codes[buf.cca(i++)];
+				bytes.b[bpos++] = (c2 << 4 | c3 >> 2) & 255;
+			}
+		}
+		this.pos += len;
+		this.cache.push(bytes);
+		return bytes;
+	case 67:
+		var name = this.unserialize();
+		var cl = this.resolver.resolveClass(name);
+		if(cl == null) throw "Class not found " + name;
+		var o = Type.createEmptyInstance(cl);
+		this.cache.push(o);
+		o.hxUnserialize(this);
+		if(this.buf.cca(this.pos++) != 103) throw "Invalid custom data";
+		return o;
+	default:
+	}
+	this.pos--;
+	throw "Invalid char " + this.buf.charAt(this.pos) + " at position " + this.pos;
+}
+haxe.Unserializer.prototype.__class__ = haxe.Unserializer;
 bpmjs.ReflectUtil = function() { }
 bpmjs.ReflectUtil.__name__ = ["bpmjs","ReflectUtil"];
 bpmjs.ReflectUtil.callMethodWithMetadata = function(object,type,metadata,args) {
@@ -6694,12 +8046,32 @@ haxe.exception.ArgumentNullException.__name__ = ["haxe","exception","ArgumentNul
 haxe.exception.ArgumentNullException.__super__ = haxe.exception.Exception;
 for(var k in haxe.exception.Exception.prototype ) haxe.exception.ArgumentNullException.prototype[k] = haxe.exception.Exception.prototype[k];
 haxe.exception.ArgumentNullException.prototype.__class__ = haxe.exception.ArgumentNullException;
+hxjson2.JSON = function() { }
+hxjson2.JSON.__name__ = ["hxjson2","JSON"];
+hxjson2.JSON.encode = function(o) {
+	return new hxjson2.JSONEncoder(o).getString();
+}
+hxjson2.JSON.decode = function(s,strict) {
+	if(strict == null) strict = true;
+	return new hxjson2.JSONDecoder(s,strict).getValue();
+}
+hxjson2.JSON.stringify = function(o) {
+	return new hxjson2.JSONEncoder(o).getString();
+}
+hxjson2.JSON.parse = function(s,strict) {
+	if(strict == null) strict = true;
+	return new hxjson2.JSONDecoder(s,strict).getValue();
+}
+hxjson2.JSON.prototype.__class__ = hxjson2.JSON;
 kumite.musicdraw.MusicDrawConfig = function(p) {
 	if( p === $_ ) return;
+	this.analyzer = new kumite.musicdraw.MusicAnalyzer();
+	this.bandsReader = new kumite.musicdraw.BandsReader();
+	this.worker = new kumite.musicdraw.TestWorkerHandler();
 	this.clearLayer = new kumite.layer.ClearLayer();
 	this.clearLayer.color = new Color(0,0,0.0,1);
 	this.image1Layer = new kumite.layer.TextureLayer();
-	this.pixelLayer = new kumite.musicdraw.PixelLayer();
+	this.rasterX = 3;
 	this.scene = new kumite.scene.DefaultScene("MUSIC DRAW");
 }
 kumite.musicdraw.MusicDrawConfig.__name__ = ["kumite","musicdraw","MusicDrawConfig"];
@@ -6708,40 +8080,52 @@ kumite.musicdraw.MusicDrawConfig.prototype.textureRegistry = null;
 kumite.musicdraw.MusicDrawConfig.prototype.time = null;
 kumite.musicdraw.MusicDrawConfig.prototype.scene = null;
 kumite.musicdraw.MusicDrawConfig.prototype.clearLayer = null;
-kumite.musicdraw.MusicDrawConfig.prototype.pixelLayer = null;
 kumite.musicdraw.MusicDrawConfig.prototype.image1Layer = null;
+kumite.musicdraw.MusicDrawConfig.prototype.bandsReader = null;
+kumite.musicdraw.MusicDrawConfig.prototype.analyzer = null;
+kumite.musicdraw.MusicDrawConfig.prototype.worker = null;
+kumite.musicdraw.MusicDrawConfig.prototype.rasterX = null;
 kumite.musicdraw.MusicDrawConfig.prototype.gltexture = null;
-kumite.musicdraw.MusicDrawConfig.prototype.startPrepare = function() {
-	var group = new bpmjs.SequencerTaskGroup();
-	return group;
-}
-kumite.musicdraw.MusicDrawConfig.prototype.loadImages = function() {
-	var group = new bpmjs.SequencerTaskGroup();
-	group.add(new GLTextureLoadingTask(this.textureRegistry,kumite.musicdraw.MusicDrawConfig.IMAGE_1));
-	return group;
-}
-kumite.musicdraw.MusicDrawConfig.prototype.initTextures = function() {
-	this.gltexture = this.textureRegistry.createGLArrayTexture(16,16);
-	this.image1Layer.texture = this.gltexture;
-}
-kumite.musicdraw.MusicDrawConfig.prototype.tick = function(tick) {
-	var array = this.gltexture.array;
-	var _g1 = 0, _g = this.gltexture.width;
-	while(_g1 < _g) {
-		var x = _g1++;
-		var _g3 = 0, _g2 = this.gltexture.height;
-		while(_g3 < _g2) {
-			var y = _g3++;
-			this.gltexture.setPixel(x,y,255,Math.sin(this.time.ms / 1000) * 255 + 128,255,255);
-		}
-	}
-	this.textureRegistry.updateGLArrayTexture(this.gltexture);
-}
-kumite.musicdraw.MusicDrawConfig.prototype.complete = function() {
+kumite.musicdraw.MusicDrawConfig.prototype.init = function() {
 	this.scene.addLayerLifecycle(this.clearLayer,kumite.layer.LayerId.CLEAR);
-	this.scene.addLayerLifecycle(this.pixelLayer);
 	this.scene.addLayerLifecycle(this.image1Layer);
 	this.scene.addLayerLifecycle(this.displayListLayer);
+	this.gltexture = this.textureRegistry.createGLArrayTexture(512,1024,9729);
+	this.image1Layer.texture = this.gltexture;
+	this.worker.config = this;
+	this.worker.texture = this.gltexture;
+	this.worker.textureRegistry = this.textureRegistry;
+	var group = new bpmjs.SequencerTaskGroup();
+	group.add(this.bandsReader.read("data/bands/expo2000.json"));
+	return group;
+}
+kumite.musicdraw.MusicDrawConfig.prototype.start = function() {
+	this.worker.start();
+	var stage = GLDisplayList.getDefault().stage;
+	var classInfo = reflect.ClassInfo.forInstance(this);
+	var binding = new reflect.Binding(this,classInfo.getProperty("rasterX"));
+	var sliderH = new GLSliderH();
+	sliderH.setMin(1);
+	sliderH.setMax(10);
+	sliderH.value = binding.getValue();
+	sliderH.setX(100);
+	sliderH.setY(100);
+	sliderH.setWidth(200);
+	sliderH.bind(binding);
+	stage.addChild(sliderH);
+}
+kumite.musicdraw.MusicDrawConfig.prototype.tick = function(tick) {
+	{
+		Log.posInfo = { fileName : "MusicDrawConfig.hx", lineNumber : 99, className : "kumite.musicdraw.MusicDrawConfig", methodName : "tick"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput(this.rasterX,null,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
+	if(this.gltexture.isDirty) {
+		this.textureRegistry.updateGLArrayTexture(this.gltexture);
+		this.gltexture.isDirty = false;
+	}
 }
 kumite.musicdraw.MusicDrawConfig.prototype.__class__ = kumite.musicdraw.MusicDrawConfig;
 kumite.musicdraw.MusicDrawConfig.__interfaces__ = [haxe.rtti.Infos];
@@ -6837,6 +8221,112 @@ kumite.mouse.Config.__name__ = ["kumite","mouse","Config"];
 kumite.mouse.Config.prototype.mouseController = null;
 kumite.mouse.Config.prototype.__class__ = kumite.mouse.Config;
 kumite.mouse.Config.__interfaces__ = [haxe.rtti.Infos];
+haxe.Http = function(url) {
+	if( url === $_ ) return;
+	this.url = url;
+	this.headers = new Hash();
+	this.params = new Hash();
+	this.async = true;
+}
+haxe.Http.__name__ = ["haxe","Http"];
+haxe.Http.requestUrl = function(url) {
+	var h = new haxe.Http(url);
+	h.async = false;
+	var r = null;
+	h.onData = function(d) {
+		r = d;
+	};
+	h.onError = function(e) {
+		throw e;
+	};
+	h.request(false);
+	return r;
+}
+haxe.Http.prototype.url = null;
+haxe.Http.prototype.async = null;
+haxe.Http.prototype.postData = null;
+haxe.Http.prototype.headers = null;
+haxe.Http.prototype.params = null;
+haxe.Http.prototype.setHeader = function(header,value) {
+	this.headers.set(header,value);
+}
+haxe.Http.prototype.setParameter = function(param,value) {
+	this.params.set(param,value);
+}
+haxe.Http.prototype.setPostData = function(data) {
+	this.postData = data;
+}
+haxe.Http.prototype.request = function(post) {
+	var me = this;
+	var r = new js.XMLHttpRequest();
+	var onreadystatechange = function() {
+		if(r.readyState != 4) return;
+		var s = (function($this) {
+			var $r;
+			try {
+				$r = r.status;
+			} catch( e ) {
+				$r = null;
+			}
+			return $r;
+		}(this));
+		if(s == undefined) s = null;
+		if(s != null) me.onStatus(s);
+		if(s != null && s >= 200 && s < 400) me.onData(r.responseText); else switch(s) {
+		case null: case undefined:
+			me.onError("Failed to connect or resolve host");
+			break;
+		case 12029:
+			me.onError("Failed to connect to host");
+			break;
+		case 12007:
+			me.onError("Unknown host");
+			break;
+		default:
+			me.onError("Http Error #" + r.status);
+		}
+	};
+	if(this.async) r.onreadystatechange = onreadystatechange;
+	var uri = this.postData;
+	if(uri != null) post = true; else {
+		var $it0 = this.params.keys();
+		while( $it0.hasNext() ) {
+			var p = $it0.next();
+			if(uri == null) uri = ""; else uri += "&";
+			uri += StringTools.urlDecode(p) + "=" + StringTools.urlEncode(this.params.get(p));
+		}
+	}
+	try {
+		if(post) r.open("POST",this.url,this.async); else if(uri != null) {
+			var question = this.url.split("?").length <= 1;
+			r.open("GET",this.url + (question?"?":"&") + uri,this.async);
+			uri = null;
+		} else r.open("GET",this.url,this.async);
+	} catch( e ) {
+		this.onError(e.toString());
+		return;
+	}
+	if(this.headers.get("Content-Type") == null && post && this.postData == null) r.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+	var $it1 = this.headers.keys();
+	while( $it1.hasNext() ) {
+		var h = $it1.next();
+		r.setRequestHeader(h,this.headers.get(h));
+	}
+	r.send(uri);
+	if(!this.async) onreadystatechange();
+}
+haxe.Http.prototype.onData = function(data) {
+}
+haxe.Http.prototype.onError = function(msg) {
+}
+haxe.Http.prototype.onStatus = function(status) {
+}
+haxe.Http.prototype.__class__ = haxe.Http;
+kumite.musicdraw.MusicAnalyzer = function(p) {
+}
+kumite.musicdraw.MusicAnalyzer.__name__ = ["kumite","musicdraw","MusicAnalyzer"];
+kumite.musicdraw.MusicAnalyzer.prototype.bands = null;
+kumite.musicdraw.MusicAnalyzer.prototype.__class__ = kumite.musicdraw.MusicAnalyzer;
 GLTweenManager = function(p) {
 	if( p === $_ ) return;
 	this.time = Date.now().getTime();
@@ -7080,6 +8570,13 @@ kumite.launch.Config.prototype.launcher = null;
 kumite.launch.Config.prototype.preloadDisplay = null;
 kumite.launch.Config.prototype.__class__ = kumite.launch.Config;
 kumite.launch.Config.__interfaces__ = [haxe.rtti.Infos];
+bpmjs.WorkerCommand = function(type) {
+	if( type === $_ ) return;
+	this.type = type;
+}
+bpmjs.WorkerCommand.__name__ = ["bpmjs","WorkerCommand"];
+bpmjs.WorkerCommand.prototype.type = null;
+bpmjs.WorkerCommand.prototype.__class__ = bpmjs.WorkerCommand;
 EReg = function(r,opt) {
 	if( r === $_ ) return;
 	opt = opt.split("u").join("");
@@ -7642,6 +9139,21 @@ js.Boot.__init();
 		return isNaN(i);
 	};
 }
+js["XMLHttpRequest"] = window.XMLHttpRequest?XMLHttpRequest:window.ActiveXObject?function() {
+	try {
+		return new ActiveXObject("Msxml2.XMLHTTP");
+	} catch( e ) {
+		try {
+			return new ActiveXObject("Microsoft.XMLHTTP");
+		} catch( e1 ) {
+			throw "Unable to create XMLHttpRequest object.";
+		}
+	}
+}:(function($this) {
+	var $r;
+	throw "Unable to create XMLHttpRequest object.";
+	return $r;
+}(this));
 {
 	String.prototype.__class__ = String;
 	String.__name__ = ["String"];
@@ -7666,14 +9178,12 @@ if(typeof(haxe_timers) == "undefined") haxe_timers = [];
 	Xml.Prolog = "prolog";
 	Xml.Document = "document";
 }
+kumite.musicdraw.TestWorkerHandler.__meta__ = { fields : { analyzer : { Inject : null}}};
+kumite.musicdraw.TestWorkerHandler.__rtti = "<class path=\"kumite.musicdraw.TestWorkerHandler\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<analyzer public=\"1\"><c path=\"kumite.musicdraw.MusicAnalyzer\"/></analyzer>\n\t<config public=\"1\"><c path=\"kumite.musicdraw.MusicDrawConfig\"/></config>\n\t<texture public=\"1\"><c path=\"GLArrayTexture\"/></texture>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<worker><c path=\"Worker\"/></worker>\n\t<workerRPC><c path=\"bpmjs.WorkerRPC\"/></workerRPC>\n\t<start public=\"1\" set=\"method\" line=\"26\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<setResult public=\"1\" set=\"method\" line=\"41\"><f a=\"data\">\n\t<c path=\"ArrayBuffer\"/>\n\t<e path=\"Void\"/>\n</f></setResult>\n\t<new public=\"1\" set=\"method\" line=\"22\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Log.filters = new Array();
 Log.args = new Array();
 Log.errors = new Array();
 Color.__rtti = "<class path=\"Color\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<r public=\"1\"><c path=\"Float\"/></r>\n\t<g public=\"1\"><c path=\"Float\"/></g>\n\t<b public=\"1\"><c path=\"Float\"/></b>\n\t<a public=\"1\"><c path=\"Float\"/></a>\n\t<fromHex public=\"1\" set=\"method\" line=\"18\"><f a=\"hex\">\n\t<c path=\"Int\"/>\n\t<c path=\"Color\"/>\n</f></fromHex>\n\t<scaleRGB public=\"1\" set=\"method\" line=\"28\"><f a=\"factor\">\n\t<c path=\"Float\"/>\n\t<e path=\"Void\"/>\n</f></scaleRGB>\n\t<mixFrom public=\"1\" set=\"method\" line=\"35\"><f a=\"color1:color2:color1Mix\">\n\t<c path=\"Color\"/>\n\t<c path=\"Color\"/>\n\t<c path=\"Float\"/>\n\t<e path=\"Void\"/>\n</f></mixFrom>\n\t<toContextRGB public=\"1\" set=\"method\" line=\"50\"><f a=\"\"><c path=\"String\"/></f></toContextRGB>\n\t<toContextRGBA public=\"1\" set=\"method\" line=\"55\"><f a=\"\"><c path=\"String\"/></f></toContextRGBA>\n\t<clone public=\"1\" set=\"method\" line=\"60\"><f a=\"\"><c path=\"Color\"/></f></clone>\n\t<toString public=\"1\" set=\"method\" line=\"65\"><f a=\"\"><c path=\"String\"/></f></toString>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"?r:?g:?b:?a\">\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<e path=\"Void\"/>\n</f></new>\n</class>";
-kumite.musicdraw.PixelLayer.__meta__ = { fields : { time : { Inject : null}, stage : { Inject : null}}};
-kumite.musicdraw.PixelLayer.__rtti = "<class path=\"kumite.musicdraw.PixelLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<transitions public=\"1\"><c path=\"kumite.layer.LayerTransitions\"/></transitions>\n\t<alphaTransition public=\"1\"><c path=\"kumite.layer.LayerTransition\"/></alphaTransition>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<init public=\"1\" set=\"method\" line=\"39\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"44\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"50\"><f a=\"renderContext\">\n\t<c path=\"kumite.scene.RenderContext\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"32\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.musicdraw._PixelLayer.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec3 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 worldViewMatrix;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 1.0);\n\t\tgl_PointSize = 1.0;\n\t}\n\n"]}};
-kumite.musicdraw._PixelLayer.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform float alpha;\n\n\tvoid main(void)\n\t{\n\t\tgl_FragColor = vec4(1.0, 1.0, 1.0, alpha);\n\t}\n\n"]}};
 kumite.stage.Config.__rtti = "<class path=\"kumite.stage.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<stageResizeAction public=\"1\"><c path=\"kumite.stage.StageResizeAction\"/></stageResizeAction>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Matrix4.IDENTITY_BUFFER = Matrix4.createIdentityBuffer();
 Matrix4.tempMatrix1 = new Matrix4();
@@ -7713,6 +9223,8 @@ LogLevel.OFF = new LogLevel(4);
 kumite.canvas.Config.__rtti = "<class path=\"kumite.canvas.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvasCase public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvasCase>\n\t<canvasController public=\"1\"><c path=\"kumite.canvas.CanvasController\"/></canvasController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.displaylist.ConfigAsLayer.__rtti = "<class path=\"kumite.displaylist.ConfigAsLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<displayListLayer public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayListLayer>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.time.Config.__rtti = "<class path=\"kumite.time.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<timeController public=\"1\"><c path=\"kumite.time.TimeController\"/></timeController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.musicdraw.BandsReader.__meta__ = { fields : { analyzer : { Inject : null}}};
+kumite.musicdraw.BandsReader.__rtti = "<class path=\"kumite.musicdraw.BandsReader\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<analyzer public=\"1\"><c path=\"kumite.musicdraw.MusicAnalyzer\"/></analyzer>\n\t<location><c path=\"String\"/></location>\n\t<read public=\"1\" set=\"method\" line=\"18\"><f a=\"location\">\n\t<c path=\"String\"/>\n\t<c path=\"bpmjs.HTTPTask\"/>\n</f></read>\n\t<handleHTTPComplete set=\"method\" line=\"29\"><f a=\"task\">\n\t<c path=\"bpmjs.HTTPTask\"/>\n\t<e path=\"Void\"/>\n</f></handleHTTPComplete>\n\t<new public=\"1\" set=\"method\" line=\"14\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.projection.ProjectionController.__meta__ = { fields : { projection : { Inject : null}, stage : { Inject : null}, init : { Sequence : ["boot","init"]}, updateProjectionSizeFromStage : { Message : null}}};
 kumite.projection.ProjectionController.__rtti = "<class path=\"kumite.projection.ProjectionController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<fov public=\"1\"><c path=\"Float\"/></fov>\n\t<near public=\"1\"><c path=\"Float\"/></near>\n\t<far public=\"1\"><c path=\"Float\"/></far>\n\t<init public=\"1\" set=\"method\" line=\"23\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateProjectionSizeFromStage public=\"1\" set=\"method\" line=\"30\"><f a=\"?message\">\n\t<c path=\"kumite.stage.StageResizeMessage\"/>\n\t<e path=\"Void\"/>\n</f></updateProjectionSizeFromStage>\n\t<new public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.vjinterface.VJStats.__meta__ = { fields : { stage : { Inject : null}, start : { Sequence : ["boot","startComplete"]}, tick : { Message : null}}};
@@ -7742,6 +9254,9 @@ kumite.layer.LayerId.CLEAR = "CLEAR";
 kumite.webgl.InitAction.__meta__ = { fields : { canvas : { Inject : null}, init : { Sequence : ["boot","init"]}}};
 kumite.webgl.InitAction.__rtti = "<class path=\"kumite.webgl.InitAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<antialias public=\"1\"><e path=\"Bool\"/></antialias>\n\t<init public=\"1\" set=\"method\" line=\"16\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<new public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.projection.Config.__rtti = "<class path=\"kumite.projection.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<projectionController public=\"1\"><c path=\"kumite.projection.ProjectionController\"/></projectionController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+haxe.Serializer.USE_CACHE = false;
+haxe.Serializer.USE_ENUM_INDEX = false;
+haxe.Serializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
 kumite.vjinterface.VJInterface.__meta__ = { fields : { scenes : { Inject : null}, messenger : { Messenger : null}, start : { Sequence : ["boot","startComplete"]}, render : { Message : null}}};
 kumite.vjinterface.VJInterface.__rtti = "<class path=\"kumite.vjinterface.VJInterface\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<scenes public=\"1\"><c path=\"kumite.scene.Scenes\"/></scenes>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<timer><c path=\"haxe.Timer\"/></timer>\n\t<stage><c path=\"GLStage\"/></stage>\n\t<sceneContainer><c path=\"GLDisplayObjectContainer\"/></sceneContainer>\n\t<start public=\"1\" set=\"method\" line=\"31\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<render public=\"1\" set=\"method\" line=\"42\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<addSceneButtons set=\"method\" line=\"47\"><f a=\"\"><e path=\"Void\"/></f></addSceneButtons>\n\t<createSceneRequest set=\"method\" line=\"76\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<f a=\"button\">\n\t\t<c path=\"GLInteractiveObject\"/>\n\t\t<e path=\"Void\"/>\n\t</f>\n</f></createSceneRequest>\n\t<handleButtonClick set=\"method\" line=\"85\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></handleButtonClick>\n\t<navigateNext set=\"method\" line=\"90\"><f a=\"\"><e path=\"Void\"/></f></navigateNext>\n\t<new public=\"1\" set=\"method\" line=\"28\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.displaylist.DisplayListLayer.__rtti = "<class path=\"kumite.displaylist.DisplayListLayer\" params=\"\">\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<transition public=\"1\"><c path=\"Float\"/></transition>\n\t<renderer><c path=\"GLDisplayListRenderer\"/></renderer>\n\t<init public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"27\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"33\"><f a=\"renderContext\">\n\t<c path=\"kumite.scene.RenderContext\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"19\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
@@ -8054,9 +9569,11 @@ shader.DisplayObjectFragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\
 kumite.scene.DefaultScene.__rtti = "<class path=\"kumite.scene.DefaultScene\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.SceneLifecycle\"/>\n\t<name public=\"1\"><c path=\"String\"/></name>\n\t<preconfiguredLifecycles><c path=\"Array\"><c path=\"kumite.scene._DefaultScene.LifecycleAndLayerId\"/></c></preconfiguredLifecycles>\n\t<addLayerLifecycle public=\"1\" set=\"method\" line=\"25\"><f a=\"lifecycle:?layerId\">\n\t<c path=\"kumite.scene.LayerLifecycle\"/>\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></addLayerLifecycle>\n\t<sceneInit public=\"1\" set=\"method\" line=\"36\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></sceneInit>\n\t<initTransition public=\"1\" set=\"method\" line=\"42\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></initTransition>\n\t<renderTransition public=\"1\" set=\"method\" line=\"46\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"50\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<addPreconfiguredLifecycles set=\"method\" line=\"54\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></addPreconfiguredLifecycles>\n\t<new public=\"1\" set=\"method\" line=\"19\"><f a=\"?name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></new>\n</class>";
 kumite.camera.Config.__rtti = "<class path=\"kumite.camera.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<cameraMouseMover public=\"1\"><c path=\"kumite.camera.CameraMouseMover\"/></cameraMouseMover>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.vjinterface.Config.__rtti = "<class path=\"kumite.vjinterface.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<vjinterface public=\"1\"><c path=\"kumite.vjinterface.VJInterface\"/></vjinterface>\n\t<vjstats public=\"1\"><c path=\"kumite.vjinterface.VJStats\"/></vjstats>\n\t<vjlayers public=\"1\"><c path=\"kumite.vjinterface.VJLayers\"/></vjlayers>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.musicdraw.MusicDrawConfig.__meta__ = { fields : { displayListLayer : { Inject : null}, textureRegistry : { Inject : null}, time : { Inject : null}, startPrepare : { Sequence : ["boot","startPrepare"]}, loadImages : { Sequence : ["boot","startPrepare"]}, initTextures : { Sequence : ["boot","startPrepare"]}, tick : { Message : null}, complete : { Complete : null}}};
-kumite.musicdraw.MusicDrawConfig.__rtti = "<class path=\"kumite.musicdraw.MusicDrawConfig\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<IMAGE_1 public=\"1\" line=\"14\" static=\"1\"><c path=\"GLTextureConfig\"/></IMAGE_1>\n\t<displayListLayer public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayListLayer>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<scene public=\"1\"><c path=\"kumite.scene.DefaultScene\"/></scene>\n\t<clearLayer public=\"1\"><c path=\"kumite.layer.ClearLayer\"/></clearLayer>\n\t<pixelLayer public=\"1\"><c path=\"kumite.musicdraw.PixelLayer\"/></pixelLayer>\n\t<image1Layer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></image1Layer>\n\t<gltexture><c path=\"GLArrayTexture\"/></gltexture>\n\t<startPrepare public=\"1\" set=\"method\" line=\"46\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></startPrepare>\n\t<loadImages public=\"1\" set=\"method\" line=\"54\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></loadImages>\n\t<initTextures public=\"1\" set=\"method\" line=\"64\"><f a=\"\"><e path=\"Void\"/></f></initTextures>\n\t<tick public=\"1\" set=\"method\" line=\"72\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></tick>\n\t<complete public=\"1\" set=\"method\" line=\"90\"><f a=\"\"><e path=\"Void\"/></f></complete>\n\t<new public=\"1\" set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.musicdraw.MusicDrawConfig.IMAGE_1 = GLTextureConfig.create("data/image/along-the-line.png");
+haxe.Unserializer.DEFAULT_RESOLVER = Type;
+haxe.Unserializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
+haxe.Unserializer.CODES = null;
+kumite.musicdraw.MusicDrawConfig.__meta__ = { fields : { displayListLayer : { Inject : null}, textureRegistry : { Inject : null}, time : { Inject : null}, init : { Sequence : ["boot","init"]}, start : { Sequence : ["boot","start"]}, tick : { Message : null}}};
+kumite.musicdraw.MusicDrawConfig.__rtti = "<class path=\"kumite.musicdraw.MusicDrawConfig\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<displayListLayer public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayListLayer>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<scene public=\"1\"><c path=\"kumite.scene.DefaultScene\"/></scene>\n\t<clearLayer public=\"1\"><c path=\"kumite.layer.ClearLayer\"/></clearLayer>\n\t<image1Layer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></image1Layer>\n\t<bandsReader public=\"1\"><c path=\"kumite.musicdraw.BandsReader\"/></bandsReader>\n\t<analyzer public=\"1\"><c path=\"kumite.musicdraw.MusicAnalyzer\"/></analyzer>\n\t<worker public=\"1\"><c path=\"kumite.musicdraw.TestWorkerHandler\"/></worker>\n\t<rasterX public=\"1\"><c path=\"Int\"/></rasterX>\n\t<gltexture><c path=\"GLArrayTexture\"/></gltexture>\n\t<init public=\"1\" set=\"method\" line=\"57\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></init>\n\t<start public=\"1\" set=\"method\" line=\"76\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<tick public=\"1\" set=\"method\" line=\"97\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></tick>\n\t<new public=\"1\" set=\"method\" line=\"41\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.scene.SceneConfig.__rtti = "<class path=\"kumite.scene.SceneConfig\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<scenes public=\"1\"><c path=\"kumite.scene.Scenes\"/></scenes>\n\t<sceneNavigator public=\"1\"><c path=\"kumite.scene.SceneNavigator\"/></sceneNavigator>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.mouse.Config.__rtti = "<class path=\"kumite.mouse.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<mouseController public=\"1\"><c path=\"kumite.mouse.MouseController\"/></mouseController>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs.Stats.fps = 0;

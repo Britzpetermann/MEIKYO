@@ -1,5 +1,7 @@
 package kumite.lgl;
 
+import bpmjs.WorkerCommand;
+
 class LGLWorker
 {
 	static function main()
@@ -20,7 +22,7 @@ class LGLWorker
 		
 		function setMessage(type:String, message:Dynamic):Void
 		{
-			postMessage(haxe.Serializer.run(new Command(type)));	
+			postMessage(haxe.Serializer.run(new WorkerCommand(type)));	
 			postMessage(message);
 		}
 		
@@ -35,7 +37,7 @@ class LGLWorker
 			for(i in 0 ... 1)
 				lglLayout.render();
 			setMessage("Time", Date.now().getTime() - start);	
-			postMessage(haxe.Serializer.run(new Command("render")));	
+			postMessage(haxe.Serializer.run(new WorkerCommand("render")));	
 			postMessage(createMessage(vertexBuffer, lgl));
 		}
 	}

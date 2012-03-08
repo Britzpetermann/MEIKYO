@@ -6,6 +6,7 @@
 -cp construct/src_bpmgl
 -cp construct/src_reflect
 -lib hsl-1
+-lib hxjson2
 
 --next
 
@@ -16,7 +17,6 @@
 -cp construct/src_bpmjs
 -cp construct/src_bpmgl
 -cp construct/src_reflect
--lib hsl-1
 
 --next
 
@@ -27,7 +27,16 @@
 -cp construct/src_bpmjs
 -cp construct/src_bpmgl
 -cp construct/src_reflect
--lib hsl-1
+
+--next
+
+-js release/bin/kumite.musicdraw.TestWorker.js
+-main kumite.musicdraw.TestWorker
+-cp construct/src
+-cp construct/src_extern
+-cp construct/src_bpmjs
+-cp construct/src_bpmgl
+-cp construct/src_reflect
 
 --next
 
@@ -40,7 +49,6 @@
 -cp construct/src_bpmgl
 -cp construct/src_extern
 -lib hsl-1
-
 
 
 
