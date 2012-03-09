@@ -2891,9 +2891,9 @@ kumite.musicdraw.SquareEffectWorkerHandler.prototype.analyzer = null;
 kumite.musicdraw.SquareEffectWorkerHandler.prototype.stage = null;
 kumite.musicdraw.SquareEffectWorkerHandler.prototype.texture = null;
 kumite.musicdraw.SquareEffectWorkerHandler.prototype.workerService = null;
+kumite.musicdraw.SquareEffectWorkerHandler.prototype.roundtripSynchronizer = null;
 kumite.musicdraw.SquareEffectWorkerHandler.prototype.rasterX = null;
 kumite.musicdraw.SquareEffectWorkerHandler.prototype.label = null;
-kumite.musicdraw.SquareEffectWorkerHandler.prototype.roundtripSynchronizer = null;
 kumite.musicdraw.SquareEffectWorkerHandler.prototype.createTexture = function() {
 	$s.push("kumite.musicdraw.SquareEffectWorkerHandler::createTexture");
 	var $spos = $s.length;
@@ -2933,6 +2933,7 @@ kumite.musicdraw.SquareEffectWorkerHandler.prototype.loop = function() {
 	$s.push("kumite.musicdraw.SquareEffectWorkerHandler::loop");
 	var $spos = $s.length;
 	this.label.setText(this.roundtripSynchronizer.getInfo());
+	this.workerService.call("config",[this.rasterX]);
 	this.roundtripSynchronizer.workStart();
 	this.workerService.callTransfer("render",this.texture.array.buffer,$closure(this,"handleRender"));
 	$s.pop();
@@ -13213,7 +13214,7 @@ Matrix4.i42 = 7;
 Matrix4.i43 = 11;
 Matrix4.i44 = 15;
 kumite.musicdraw.SquareEffectWorkerHandler.__meta__ = { fields : { textureRegistry : { Inject : null}, analyzer : { Inject : null}, stage : { Inject : null}}};
-kumite.musicdraw.SquareEffectWorkerHandler.__rtti = "<class path=\"kumite.musicdraw.SquareEffectWorkerHandler\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<analyzer public=\"1\"><c path=\"kumite.musicdraw.MusicAnalyzer\"/></analyzer>\n\t<stage public=\"1\"><c path=\"GLStage\"/></stage>\n\t<texture public=\"1\"><c path=\"GLArrayTexture\"/></texture>\n\t<workerService><c path=\"bpmjs.WorkerService\"/></workerService>\n\t<rasterX><c path=\"Int\"/></rasterX>\n\t<label><c path=\"GLLabel\"/></label>\n\t<roundtripSynchronizer><c path=\"bpmjs.RoundtripSynchronizer\"/></roundtripSynchronizer>\n\t<createTexture public=\"1\" set=\"method\" line=\"36\"><f a=\"\"><c path=\"GLArrayTexture\"/></f></createTexture>\n\t<start public=\"1\" set=\"method\" line=\"42\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<loop set=\"method\" line=\"70\"><f a=\"\"><e path=\"Void\"/></f></loop>\n\t<handleRender set=\"method\" line=\"78\"><f a=\"buffer\">\n\t<c path=\"ArrayBuffer\"/>\n\t<e path=\"Void\"/>\n</f></handleRender>\n\t<new public=\"1\" set=\"method\" line=\"29\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.musicdraw.SquareEffectWorkerHandler.__rtti = "<class path=\"kumite.musicdraw.SquareEffectWorkerHandler\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<analyzer public=\"1\"><c path=\"kumite.musicdraw.MusicAnalyzer\"/></analyzer>\n\t<stage public=\"1\"><c path=\"GLStage\"/></stage>\n\t<texture public=\"1\"><c path=\"GLArrayTexture\"/></texture>\n\t<workerService><c path=\"bpmjs.WorkerService\"/></workerService>\n\t<roundtripSynchronizer><c path=\"bpmjs.RoundtripSynchronizer\"/></roundtripSynchronizer>\n\t<rasterX><c path=\"Int\"/></rasterX>\n\t<label><c path=\"GLLabel\"/></label>\n\t<createTexture public=\"1\" set=\"method\" line=\"36\"><f a=\"\"><c path=\"GLArrayTexture\"/></f></createTexture>\n\t<start public=\"1\" set=\"method\" line=\"42\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<loop set=\"method\" line=\"70\"><f a=\"\"><e path=\"Void\"/></f></loop>\n\t<handleRender set=\"method\" line=\"80\"><f a=\"buffer\">\n\t<c path=\"ArrayBuffer\"/>\n\t<e path=\"Void\"/>\n</f></handleRender>\n\t<new public=\"1\" set=\"method\" line=\"29\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.scene.LayerState.OUT = new kumite.scene.LayerState("OUT");
 kumite.scene.LayerState.IN = new kumite.scene.LayerState("IN");
 kumite.scene.LayerState.KEEP = new kumite.scene.LayerState("KEEP");

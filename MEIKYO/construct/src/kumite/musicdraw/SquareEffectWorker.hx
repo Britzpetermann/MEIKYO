@@ -26,6 +26,11 @@ class SquareEffectWorker
 		effect.init();
 	}
 	
+	function config(rasterX:Int)
+	{
+		effect.rasterX = rasterX;
+	}
+	
 	function render(buffer:ArrayBuffer)
 	{
 		effect.texture.array = new Uint8Array(buffer);

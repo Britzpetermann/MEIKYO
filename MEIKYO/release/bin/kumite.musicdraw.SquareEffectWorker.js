@@ -481,6 +481,9 @@ kumite.musicdraw.SquareEffectWorker.prototype.init = function(analyzer) {
 	this.effect.analyzer.bands = analyzer.bands;
 	this.effect.init();
 }
+kumite.musicdraw.SquareEffectWorker.prototype.config = function(rasterX) {
+	this.effect.rasterX = rasterX;
+}
 kumite.musicdraw.SquareEffectWorker.prototype.render = function(buffer) {
 	this.effect.texture.array = new Uint8Array(buffer);
 	this.effect.render();

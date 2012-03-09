@@ -21,10 +21,10 @@ class SquareEffectWorkerHandler implements Infos
 	public var texture:GLArrayTexture;
 
 	var workerService:WorkerService;
-	var rasterX:Int;
-	
-	var label:GLLabel;
 	var roundtripSynchronizer:RoundtripSynchronizer;
+	
+	var rasterX:Int;
+	var label:GLLabel;
 
 	public function new()
 	{
@@ -70,6 +70,8 @@ class SquareEffectWorkerHandler implements Infos
 	function loop()
 	{
 		label.text = roundtripSynchronizer.getInfo();
+		
+		workerService.call("config", [rasterX]);
 		
 		roundtripSynchronizer.workStart();
 		workerService.callTransfer("render", texture.array.buffer, handleRender);
