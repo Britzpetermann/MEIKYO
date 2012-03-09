@@ -134,8 +134,8 @@ class VJLayers implements Infos
 				layerContainer.addChild(paramLabel);
 
 				var sliderH = new GLSliderH();
-				sliderH.min = -1;
-				sliderH.max = 1;
+				sliderH.min = -3;
+				sliderH.max = 3;
 				sliderH.value = param.getBinding().getValue();
 				sliderH.x = 103;
 				sliderH.y = currentY;

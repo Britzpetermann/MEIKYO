@@ -138,10 +138,24 @@ class GLTextureRegistry
 		return result;
 	}
 
-	public function updateGLArrayTexture(texture : GLArrayTexture)
+	public function updateGLArrayTexture(texture : GLArrayTexture, ?filter : Int = null)
 	{
 		GL.bindTexture(GL.TEXTURE_2D, texture.texture);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, filter != null ? filter : GL.NEAREST);
+		GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, filter != null ? filter : GL.NEAREST);
+		
 		GL.texImage2DArrayBufferView(GL.TEXTURE_2D, 0, GL.RGBA, texture.width, texture.height, 0, GL.RGBA, GL.UNSIGNED_BYTE, texture.array);
+		
+		if (
+			filter == GL.NEAREST_MIPMAP_NEAREST ||
+			filter == GL.NEAREST_MIPMAP_LINEAR ||
+			filter == GL.LINEAR_MIPMAP_NEAREST ||
+			filter == GL.LINEAR_MIPMAP_LINEAR
+			)
+		{
+			GL.generateMipmap(GL.TEXTURE_2D);
+		}
+		
 	}
 
 }

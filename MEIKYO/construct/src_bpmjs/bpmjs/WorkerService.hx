@@ -17,7 +17,7 @@ class WorkerService
 	
 	public function init(workerScript:String)
 	{
-		worker = new Worker(workerScript);
+		worker = new Worker(workerScript + "?cache=" + Date.now().getTime());
 		worker.onmessage = onMessage;
 	}
 	

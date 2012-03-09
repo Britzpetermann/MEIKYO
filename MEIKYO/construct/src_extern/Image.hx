@@ -9,5 +9,7 @@ extern class Image implements ImageData
 	var naturalWidth : Int;
 	var naturalHeight : Int;
 
+	var data:Uint8Array;
+
 	function new() : Void;
 }
