@@ -4262,23 +4262,27 @@ bpmjs.ContextBuilder.prototype.createObjects = function(configClass) {
 	while(_g < _g1.length) {
 		var property = _g1[_g];
 		++_g;
-		if(property.hasMetadata("Inject")) continue;
-		var instance = Reflect.field(config,property.field.name);
-		if(instance == null) {
-			Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 92, className : "bpmjs.ContextBuilder", methodName : "createObjects"};
-			if(Log.filter(LogLevel.WARN)) {
-				Log.fetchInput("Found property",property.field.name,"in config",ci.name,"but was null",null,null);
-				console.warn(Log.createMessage());
+		try {
+			if(property.hasMetadata("Inject")) continue;
+			var instance = Reflect.field(config,property.field.name);
+			if(instance == null) throw "Found property " + property.field.name + " in config " + ci.name + " but was null "; else {
+				this.context.addObject(property.field.name,reflect.ClassInfo.forCType(property.field.type),instance);
+				if(property.getClass() == Array) {
+					var list = instance;
+					var _g2 = 0;
+					while(_g2 < list.length) {
+						var listInstance = list[_g2];
+						++_g2;
+						this.context.addObject("dynamic",reflect.ClassInfo.forInstance(listInstance),listInstance);
+					}
+				}
 			}
-		} else {
-			this.context.addObject(property.field.name,reflect.ClassInfo.forCType(property.field.type),instance);
-			if(property.getClass() == Array) {
-				var list = instance;
-				var _g2 = 0;
-				while(_g2 < list.length) {
-					var listInstance = list[_g2];
-					++_g2;
-					this.context.addObject("dynamic",reflect.ClassInfo.forInstance(listInstance),listInstance);
+		} catch( e ) {
+			{
+				Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 112, className : "bpmjs.ContextBuilder", methodName : "createObjects"};
+				if(Log.filter(LogLevel.WARN)) {
+					Log.fetchInput(e,null,null,null,null,null,null);
+					console.warn(Log.createMessage());
 				}
 			}
 		}
@@ -4296,7 +4300,7 @@ bpmjs.ContextBuilder.prototype.configureDynamicObjects = function(objects) {
 }
 bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
 	if(!contextObject.classInfo.hasRtti) {
-		Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 127, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
+		Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 134, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
 		if(Log.filter(LogLevel.WARN)) {
 			Log.fetchInput("No RTTI for: ",contextObject.name,contextObject.classInfo.name,null,null,null,null);
 			console.warn(Log.createMessage());
@@ -4310,7 +4314,7 @@ bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
 			if(property.getClass() == bpmjs.Context) contextObject.object[property.field.name] = this.context; else {
 				var objects = this.context.getDynamicObjectsByType(property.getClass());
 				if(objects.length == 0) {
-					Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 141, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
+					Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 148, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
 					if(Log.filter(LogLevel.WARN)) {
 						Log.fetchInput("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + property.field.name + " but could not find object to inject.",null,null,null,null,null,null);
 						console.warn(Log.createMessage());
@@ -4328,7 +4332,7 @@ bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
 					}
 					if(!found && Reflect.field(contextObject.object,property.field.name) == null) {
 						{
-							Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 162, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
+							Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 169, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
 							if(Log.filter(LogLevel.INFO)) {
 								Log.fetchInput("value: " + Reflect.field(contextObject.object,property.field.name),null,null,null,null,null,null);
 								console.info(Log.createMessage());

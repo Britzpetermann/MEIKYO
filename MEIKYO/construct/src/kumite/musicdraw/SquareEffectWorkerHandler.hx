@@ -4,7 +4,8 @@ import haxe.rtti.Infos;
 
 import reflect.Binding;
 
-import bpmjs.WorkerRPC;
+import bpmjs.WorkerService;
+import bpmjs.RoundtripSynchronizer;
 
 class SquareEffectWorkerHandler implements Infos
 {
@@ -19,13 +20,17 @@ class SquareEffectWorkerHandler implements Infos
 	
 	public var texture:GLArrayTexture;
 
-	var rasterX : Int;
-
-	var workerRPC:WorkerRPC;
+	var workerService:WorkerService;
+	var rasterX:Int;
 	
+	var label:GLLabel;
+	var roundtripSynchronizer:RoundtripSynchronizer;
+
 	public function new()
 	{
 		rasterX = 0;
+		roundtripSynchronizer = new RoundtripSynchronizer();
+		roundtripSynchronizer.targetMs = 1000 / 60;
 	}
 	
 	public function createTexture()
@@ -36,11 +41,13 @@ class SquareEffectWorkerHandler implements Infos
 	
 	public function start()
 	{
-		workerRPC = WorkerRPC.initForHandler(this, "bin/kumite.musicdraw.SquareEffectWorker.js");
-		workerRPC.sendCommand("init", analyzer);
+		workerService = new WorkerService();
+		workerService.debug = false;
+		workerService.init("bin/kumite.musicdraw.SquareEffectWorker.js");
+		
+		workerService.call("init", [analyzer], loop);
 		
 		var binding = Binding.createForInstanceAndName(this, "rasterX");
-		
 		var sliderH = new GLSliderH();
 		sliderH.min = -200;
 		sliderH.max = 200;
@@ -49,16 +56,32 @@ class SquareEffectWorkerHandler implements Infos
 		sliderH.y = 100;
 		sliderH.width = 200;
 		sliderH.bind(binding);
-		stage.addChild(sliderH);		
+		stage.addChild(sliderH);
+				
+		label = new GLLabel();
+		label.text = "Huhu";
+		label.x = 10;
+		label.y = 75;
+		label.width = 200;
+		label.height = 20;
+		stage.addChild(label);		
 	}
 	
-	public function setResult(data:ArrayBuffer)
+	function loop()
 	{
-		texture.array.set(new Uint8Array(data));
+		label.text = roundtripSynchronizer.getInfo();
+		
+		roundtripSynchronizer.workStart();
+		workerService.callTransfer("render", texture.array.buffer, handleRender);
+	}
+	
+	function handleRender(buffer:ArrayBuffer)
+	{
+		roundtripSynchronizer.workComplete();
+		
+		texture.array = new Uint8Array(buffer);
 		textureRegistry.updateGLArrayTexture(texture);
 		
-		workerRPC.sendTransferableCommand("returnBuffer", data);
-		workerRPC.sendCommand("setRasterX", rasterX);
-		workerRPC.sendCommand("render");
+		roundtripSynchronizer.delay(loop);
 	}
 }

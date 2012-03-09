@@ -19,7 +19,7 @@ class WorkerRPC
 		workerRPC.postMessage = worker.webkitPostMessage;
 		workerRPC.receiver = receiver;
 		workerRPC.init();
-		worker.onmessage = function(e:WorkerMessageEvent)
+		worker.onmessage = function(e:MessageEvent)
 		{
 			workerRPC.processMessageEvent(e);
 		}
@@ -37,12 +37,11 @@ class WorkerRPC
 		untyped __js__("
 			onmessage = function(event)
 			{
-				var f = function(data)
+				onmessage = function(event)
 				{
-					webkitPostMessage(data);
+					webkitPostMessage(receiver.returnBuffer(event.data));
 				}
-				workerRPC.postMessage = f;
-				workerRPC.processMessageEvent(event);
+				receiver.init(event.data);
 			}
 		");
 
@@ -81,23 +80,23 @@ class WorkerRPC
 
 	public function sendCommand(type:String, ?param:Dynamic = null)
 	{
-		postMessage(new WorkerCommand(type));
+		postMessage(type);
 		postMessage(param);
 	}
 	
 	public function sendTransferableCommand(type:String, param:ArrayBuffer)
 	{
-		postMessage(new WorkerCommand(type));
+		postMessage(type);
 		postMessage(param, [param]);
 	}
 	
-	public function processMessageEvent(event:WorkerMessageEvent)
+	public function processMessageEvent(event:MessageEvent)
 	{
 		var data:Dynamic = event.data;
 		
 		if (command == null)
 		{
-			command = new WorkerCommand(data.type);
+			command = new WorkerCommand(data);
 		}
 		else
 		{

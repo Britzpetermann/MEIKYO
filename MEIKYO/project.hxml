@@ -1,5 +1,6 @@
 -js release/bin/Main.js
 -main Main
+-debug
 -cp construct/src
 -cp construct/src_extern
 -cp construct/src_bpmjs
@@ -8,15 +9,18 @@
 -lib hsl-1
 -lib hxjson2
 
+
 --next
 
--js release/bin/kumite.webworker.WorkingInstance.js
--main kumite.webworker.WorkingInstance
+-js release/bin/kumite.webworker.WorkingInstanceImpl.js
+-main kumite.webworker.WorkingInstanceImpl
 -cp construct/src
 -cp construct/src_extern
 -cp construct/src_bpmjs
 -cp construct/src_bpmgl
 -cp construct/src_reflect
+
+
 
 --next
 
@@ -28,6 +32,8 @@
 -cp construct/src_bpmgl
 -cp construct/src_reflect
 
+
+
 --next
 
 -js release/bin/kumite.musicdraw.SquareEffectWorker.js
@@ -37,6 +43,8 @@
 -cp construct/src_bpmjs
 -cp construct/src_bpmgl
 -cp construct/src_reflect
+
+
 
 --next
 
@@ -49,6 +57,7 @@
 -cp construct/src_bpmgl
 -cp construct/src_extern
 -lib hsl-1
+
 
 
 

@@ -6,9 +6,12 @@ reflect.MetadataAware.prototype.hasMetadata = null;
 reflect.MetadataAware.prototype.__class__ = reflect.MetadataAware;
 reflect.Field = function(field,definedInClass,owner) {
 	if( field === $_ ) return;
+	$s.push("reflect.Field::new");
+	var $spos = $s.length;
 	this.field = field;
 	this.definedInClass = definedInClass;
 	this.owner = owner;
+	$s.pop();
 }
 reflect.Field.__name__ = ["reflect","Field"];
 reflect.Field.prototype.owner = null;
@@ -18,6 +21,8 @@ reflect.Field.prototype.clazz = null;
 reflect.Field.prototype.field = null;
 reflect.Field.prototype.definedInClass = null;
 reflect.Field.prototype.hasMetadata = function(name) {
+	$s.push("reflect.Field::hasMetadata");
+	var $spos = $s.length;
 	var declaredType = reflect.ClassInfo.forName(this.definedInClass);
 	var metadatas = haxe.rtti.Meta.getFields(declaredType.type);
 	var _g = 0, _g1 = Reflect.fields(metadatas);
@@ -26,53 +31,155 @@ reflect.Field.prototype.hasMetadata = function(name) {
 		++_g;
 		if(fieldName == this.field.name) {
 			var meta = Reflect.field(metadatas,fieldName);
-			if(Reflect.hasField(meta,name)) return true;
+			if(Reflect.hasField(meta,name)) {
+				$s.pop();
+				return true;
+			}
 		}
 	}
+	$s.pop();
 	return false;
+	$s.pop();
 }
 reflect.Field.prototype.getOwner = function() {
-	return this.owner;
+	$s.push("reflect.Field::getOwner");
+	var $spos = $s.length;
+	var $tmp = this.owner;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 reflect.Field.prototype.getName = function() {
-	return this.field.name;
+	$s.push("reflect.Field::getName");
+	var $spos = $s.length;
+	var $tmp = this.field.name;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 reflect.Field.prototype.getType = function() {
-	return reflect.ClassInfo.forCType(this.field.type);
+	$s.push("reflect.Field::getType");
+	var $spos = $s.length;
+	var $tmp = reflect.ClassInfo.forCType(this.field.type);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 reflect.Field.prototype.getClass = function() {
+	$s.push("reflect.Field::getClass");
+	var $spos = $s.length;
 	var type = reflect.ClassInfo.forCType(this.field.type);
-	return type == null?null:type.type;
+	var $tmp = type == null?null:type.type;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 reflect.Field.prototype.__class__ = reflect.Field;
 reflect.Field.__interfaces__ = [reflect.MetadataAware];
 reflect.Property = function(field,definedInClass,owner) {
 	if( field === $_ ) return;
+	$s.push("reflect.Property::new");
+	var $spos = $s.length;
 	reflect.Field.call(this,field,definedInClass,owner);
+	$s.pop();
 }
 reflect.Property.__name__ = ["reflect","Property"];
 reflect.Property.__super__ = reflect.Field;
 for(var k in reflect.Field.prototype ) reflect.Property.prototype[k] = reflect.Field.prototype[k];
 reflect.Property.prototype.getValue = function(instance) {
-	return Reflect.field(instance,this.field.name);
+	$s.push("reflect.Property::getValue");
+	var $spos = $s.length;
+	var $tmp = Reflect.field(instance,this.field.name);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 reflect.Property.prototype.setValue = function(instance,value) {
+	$s.push("reflect.Property::setValue");
+	var $spos = $s.length;
 	instance[this.field.name] = value;
+	$s.pop();
 }
 reflect.Property.prototype.__class__ = reflect.Property;
+if(typeof bpmjs=='undefined') bpmjs = {}
+bpmjs.RoundtripSynchronizer = function(p) {
+	if( p === $_ ) return;
+	$s.push("bpmjs.RoundtripSynchronizer::new");
+	var $spos = $s.length;
+	this.targetMs = 1000 / 60;
+	this.lastDelayTime = 0;
+	$s.pop();
+}
+bpmjs.RoundtripSynchronizer.__name__ = ["bpmjs","RoundtripSynchronizer"];
+bpmjs.RoundtripSynchronizer.prototype.targetMs = null;
+bpmjs.RoundtripSynchronizer.prototype.workMs = null;
+bpmjs.RoundtripSynchronizer.prototype.roundtripMs = null;
+bpmjs.RoundtripSynchronizer.prototype.workStartTime = null;
+bpmjs.RoundtripSynchronizer.prototype.lastDelayTime = null;
+bpmjs.RoundtripSynchronizer.prototype.workStart = function() {
+	$s.push("bpmjs.RoundtripSynchronizer::workStart");
+	var $spos = $s.length;
+	this.roundtripMs = Date.now().getTime() - this.workStartTime;
+	this.workStartTime = Date.now().getTime();
+	$s.pop();
+}
+bpmjs.RoundtripSynchronizer.prototype.workComplete = function() {
+	$s.push("bpmjs.RoundtripSynchronizer::workComplete");
+	var $spos = $s.length;
+	this.workMs = Date.now().getTime() - this.workStartTime;
+	$s.pop();
+}
+bpmjs.RoundtripSynchronizer.prototype.delay = function(method) {
+	$s.push("bpmjs.RoundtripSynchronizer::delay");
+	var $spos = $s.length;
+	var elapsedUntilWorkStart = Date.now().getTime() - this.workStartTime;
+	this.lastDelayTime = Std["int"](this.targetMs - elapsedUntilWorkStart - 1);
+	if(this.lastDelayTime < 0) this.lastDelayTime = 0;
+	if(this.lastDelayTime > 0) haxe.Timer.delay(method,this.lastDelayTime); else method();
+	$s.pop();
+}
+bpmjs.RoundtripSynchronizer.prototype.getInfo = function() {
+	$s.push("bpmjs.RoundtripSynchronizer::getInfo");
+	var $spos = $s.length;
+	var $tmp = "WRD(ms): " + this.workMs + ", " + this.roundtripMs + ", " + this.lastDelayTime;
+	$s.pop();
+	return $tmp;
+	$s.pop();
+}
+bpmjs.RoundtripSynchronizer.prototype.__class__ = bpmjs.RoundtripSynchronizer;
 Rand = function() { }
 Rand.__name__ = ["Rand"];
 Rand["float"] = function(from,to) {
-	return from + Math.random() * (to - from);
+	$s.push("Rand::float");
+	var $spos = $s.length;
+	var $tmp = from + Math.random() * (to - from);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Rand["int"] = function(from,to) {
-	return Std["int"](from + Math.random() * (to - from));
+	$s.push("Rand::int");
+	var $spos = $s.length;
+	var $tmp = Std["int"](from + Math.random() * (to - from));
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Rand.bool = function(chance) {
-	return Math.random() < chance;
+	$s.push("Rand::bool");
+	var $spos = $s.length;
+	var $tmp = Math.random() < chance;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Rand.list = function(list) {
-	return list[Std["int"](Math.random() * list.length)];
+	$s.push("Rand::list");
+	var $spos = $s.length;
+	var $tmp = list[Std["int"](Math.random() * list.length)];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Rand.prototype.__class__ = Rand;
 if(typeof kumite=='undefined') kumite = {}
@@ -84,24 +191,39 @@ kumite.scene.LayerLifecycle.prototype.render = null;
 kumite.scene.LayerLifecycle.prototype.renderTransition = null;
 kumite.scene.LayerLifecycle.prototype.__class__ = kumite.scene.LayerLifecycle;
 kumite.scene.Layer = function(p) {
+	$s.push("kumite.scene.Layer::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.scene.Layer.__name__ = ["kumite","scene","Layer"];
 kumite.scene.Layer.prototype.layerId = null;
 kumite.scene.Layer.prototype.state = null;
 kumite.scene.Layer.prototype.init = function() {
+	$s.push("kumite.scene.Layer::init");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.scene.Layer.prototype.render = function(renderContext) {
+	$s.push("kumite.scene.Layer::render");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.scene.Layer.prototype.renderTransition = function(transitionContext) {
+	$s.push("kumite.scene.Layer::renderTransition");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.scene.Layer.prototype.__class__ = kumite.scene.Layer;
 kumite.scene.Layer.__interfaces__ = [kumite.scene.LayerLifecycle];
 kumite.scene.DelegateLayer = function(lifecycle,layerId) {
 	if( lifecycle === $_ ) return;
+	$s.push("kumite.scene.DelegateLayer::new");
+	var $spos = $s.length;
 	kumite.scene.Layer.call(this);
 	this.lifecycle = lifecycle;
 	this.layerId = layerId;
 	this.createParams();
+	$s.pop();
 }
 kumite.scene.DelegateLayer.__name__ = ["kumite","scene","DelegateLayer"];
 kumite.scene.DelegateLayer.__super__ = kumite.scene.Layer;
@@ -109,9 +231,14 @@ for(var k in kumite.scene.Layer.prototype ) kumite.scene.DelegateLayer.prototype
 kumite.scene.DelegateLayer.prototype.lifecycle = null;
 kumite.scene.DelegateLayer.prototype.params = null;
 kumite.scene.DelegateLayer.prototype.init = function() {
+	$s.push("kumite.scene.DelegateLayer::init");
+	var $spos = $s.length;
 	try {
 		this.lifecycle.init();
 	} catch( e ) {
+		$e = [];
+		while($s.length >= $spos) $e.unshift($s.pop());
+		$s.push($e[0]);
 		{
 			Log.posInfo = { fileName : "DelegateLayer.hx", lineNumber : 28, className : "kumite.scene.DelegateLayer", methodName : "init"};
 			if(Log.filter(LogLevel.ERROR)) {
@@ -121,11 +248,17 @@ kumite.scene.DelegateLayer.prototype.init = function() {
 			}
 		}
 	}
+	$s.pop();
 }
 kumite.scene.DelegateLayer.prototype.render = function(renderContext) {
+	$s.push("kumite.scene.DelegateLayer::render");
+	var $spos = $s.length;
 	try {
 		this.lifecycle.render(renderContext);
 	} catch( e ) {
+		$e = [];
+		while($s.length >= $spos) $e.unshift($s.pop());
+		$s.push($e[0]);
 		{
 			Log.posInfo = { fileName : "DelegateLayer.hx", lineNumber : 40, className : "kumite.scene.DelegateLayer", methodName : "render"};
 			if(Log.filter(LogLevel.ERROR)) {
@@ -135,11 +268,17 @@ kumite.scene.DelegateLayer.prototype.render = function(renderContext) {
 			}
 		}
 	}
+	$s.pop();
 }
 kumite.scene.DelegateLayer.prototype.renderTransition = function(transitionContext) {
+	$s.push("kumite.scene.DelegateLayer::renderTransition");
+	var $spos = $s.length;
 	try {
 		this.lifecycle.renderTransition(transitionContext);
 	} catch( e ) {
+		$e = [];
+		while($s.length >= $spos) $e.unshift($s.pop());
+		$s.push($e[0]);
 		{
 			Log.posInfo = { fileName : "DelegateLayer.hx", lineNumber : 52, className : "kumite.scene.DelegateLayer", methodName : "renderTransition"};
 			if(Log.filter(LogLevel.ERROR)) {
@@ -149,11 +288,19 @@ kumite.scene.DelegateLayer.prototype.renderTransition = function(transitionConte
 			}
 		}
 	}
+	$s.pop();
 }
 kumite.scene.DelegateLayer.prototype.toString = function() {
-	return "[DelegateLayer " + reflect.ClassInfo.forInstance(this.lifecycle).name + "]";
+	$s.push("kumite.scene.DelegateLayer::toString");
+	var $spos = $s.length;
+	var $tmp = "[DelegateLayer " + reflect.ClassInfo.forInstance(this.lifecycle).name + "]";
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 kumite.scene.DelegateLayer.prototype.createParams = function() {
+	$s.push("kumite.scene.DelegateLayer::createParams");
+	var $spos = $s.length;
 	this.params = new Array();
 	var ci = reflect.ClassInfo.forInstance(this.lifecycle);
 	var _g = 0, _g1 = ci.getProperties();
@@ -167,10 +314,13 @@ kumite.scene.DelegateLayer.prototype.createParams = function() {
 			this.params.push(param);
 		}
 	}
+	$s.pop();
 }
 kumite.scene.DelegateLayer.prototype.__class__ = kumite.scene.DelegateLayer;
 GLDisplayObject = function(p) {
 	if( p === $_ ) return;
+	$s.push("GLDisplayObject::new");
+	var $spos = $s.length;
 	if(GLDisplayObject.nextId == null) GLDisplayObject.nextId = 0;
 	this.id = GLDisplayObject.nextId;
 	GLDisplayObject.nextId++;
@@ -188,6 +338,7 @@ GLDisplayObject = function(p) {
 	this.transformIsInvalid = true;
 	this.graphic.setWidth(this.width);
 	this.graphic.setHeight(this.height);
+	$s.pop();
 }
 GLDisplayObject.__name__ = ["GLDisplayObject"];
 GLDisplayObject.nextId = null;
@@ -207,6 +358,8 @@ GLDisplayObject.prototype.matrix = null;
 GLDisplayObject.prototype.enterFrameSignaler = null;
 GLDisplayObject.prototype.graphic = null;
 GLDisplayObject.prototype.validateTransform = function() {
+	$s.push("GLDisplayObject::validateTransform");
+	var $spos = $s.length;
 	if(this.transformIsInvalid) {
 		this.graphic.setWidth(this.width);
 		this.graphic.setHeight(this.height);
@@ -215,73 +368,118 @@ GLDisplayObject.prototype.validateTransform = function() {
 		this.matrix.appendTranslation(this.x,this.y,0);
 		this.matrix.appendScale(this.scaleX,this.scaleY,1);
 	}
+	$s.pop();
 }
 GLDisplayObject.prototype.validateGraphics = function() {
+	$s.push("GLDisplayObject::validateGraphics");
+	var $spos = $s.length;
 	this.setGraphicIsInvalid(false);
+	$s.pop();
 }
 GLDisplayObject.prototype.toString = function() {
-	return "DisplayObject: " + this.id;
+	$s.push("GLDisplayObject::toString");
+	var $spos = $s.length;
+	var $tmp = "DisplayObject: " + this.id;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GLDisplayObject.prototype.setX = function(value) {
+	$s.push("GLDisplayObject::setX");
+	var $spos = $s.length;
 	if(this.x != value) {
 		this.x = value;
 		this.transformIsInvalid = true;
 	}
+	$s.pop();
 	return value;
+	$s.pop();
 }
 GLDisplayObject.prototype.setY = function(value) {
+	$s.push("GLDisplayObject::setY");
+	var $spos = $s.length;
 	if(this.y != value) {
 		this.y = value;
 		this.transformIsInvalid = true;
 	}
+	$s.pop();
 	return value;
+	$s.pop();
 }
 GLDisplayObject.prototype.setScaleX = function(value) {
+	$s.push("GLDisplayObject::setScaleX");
+	var $spos = $s.length;
 	if(this.scaleX != value) {
 		this.scaleX = value;
 		this.transformIsInvalid = true;
 	}
+	$s.pop();
 	return value;
+	$s.pop();
 }
 GLDisplayObject.prototype.setScaleY = function(value) {
+	$s.push("GLDisplayObject::setScaleY");
+	var $spos = $s.length;
 	if(this.scaleY != value) {
 		this.scaleY = value;
 		this.transformIsInvalid = true;
 	}
+	$s.pop();
 	return value;
+	$s.pop();
 }
 GLDisplayObject.prototype.setWidth = function(value) {
+	$s.push("GLDisplayObject::setWidth");
+	var $spos = $s.length;
 	if(this.width != value) {
 		this.width = value;
 		this.graphic.setWidth(this.width);
 		this.transformIsInvalid = true;
 	}
+	$s.pop();
 	return value;
+	$s.pop();
 }
 GLDisplayObject.prototype.setHeight = function(value) {
+	$s.push("GLDisplayObject::setHeight");
+	var $spos = $s.length;
 	if(this.height != value) {
 		this.height = value;
 		this.graphic.setHeight(this.height);
 		this.transformIsInvalid = true;
 	}
+	$s.pop();
 	return value;
+	$s.pop();
 }
 GLDisplayObject.prototype.getGraphicIsInvalid = function() {
-	return this.graphic.isInvalid;
+	$s.push("GLDisplayObject::getGraphicIsInvalid");
+	var $spos = $s.length;
+	var $tmp = this.graphic.isInvalid;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GLDisplayObject.prototype.setGraphicIsInvalid = function(value) {
+	$s.push("GLDisplayObject::setGraphicIsInvalid");
+	var $spos = $s.length;
 	this.graphic.isInvalid = value;
+	$s.pop();
 	return value;
+	$s.pop();
 }
 GLDisplayObject.prototype.__class__ = GLDisplayObject;
 GLInteractiveObject = function(p) {
 	if( p === $_ ) return;
+	$s.push("GLInteractiveObject::new");
+	var $spos = $s.length;
 	this.mouseEnabled = false;
 	this.hitarea = new GLHitarea();
 	this.hitarea.position.x = 0;
 	this.hitarea.position.y = 0;
 	GLDisplayObject.call(this);
 	GLDisplayList.getDefault().initInteractiveObject(this);
+	$s.pop();
 }
 GLInteractiveObject.__name__ = ["GLInteractiveObject"];
 GLInteractiveObject.__super__ = GLDisplayObject;
@@ -291,28 +489,43 @@ GLInteractiveObject.prototype.mouseEnabled = null;
 GLInteractiveObject.prototype.mouseDownSignaler = null;
 GLInteractiveObject.prototype.mouseUpSignaler = null;
 GLInteractiveObject.prototype.setWidth = function(value) {
+	$s.push("GLInteractiveObject::setWidth");
+	var $spos = $s.length;
 	var result = GLDisplayObject.prototype.setWidth.call(this,value);
 	this.hitarea.size.x = result;
+	$s.pop();
 	return result;
+	$s.pop();
 }
 GLInteractiveObject.prototype.setHeight = function(value) {
+	$s.push("GLInteractiveObject::setHeight");
+	var $spos = $s.length;
 	var result = GLDisplayObject.prototype.setHeight.call(this,value);
 	this.hitarea.size.y = result;
+	$s.pop();
 	return result;
+	$s.pop();
 }
 GLInteractiveObject.prototype.__class__ = GLInteractiveObject;
 if(typeof haxe=='undefined') haxe = {}
 if(!haxe.rtti) haxe.rtti = {}
 haxe.rtti.XmlParser = function(p) {
 	if( p === $_ ) return;
+	$s.push("haxe.rtti.XmlParser::new");
+	var $spos = $s.length;
 	this.root = new Array();
+	$s.pop();
 }
 haxe.rtti.XmlParser.__name__ = ["haxe","rtti","XmlParser"];
 haxe.rtti.XmlParser.prototype.root = null;
 haxe.rtti.XmlParser.prototype.curplatform = null;
 haxe.rtti.XmlParser.prototype.sort = function(l) {
+	$s.push("haxe.rtti.XmlParser::sort");
+	var $spos = $s.length;
 	if(l == null) l = this.root;
 	l.sort(function(e1,e2) {
+		$s.push("haxe.rtti.XmlParser::sort@40");
+		var $spos = $s.length;
 		var n1 = (function($this) {
 			var $r;
 			var $e = (e1);
@@ -339,8 +552,13 @@ haxe.rtti.XmlParser.prototype.sort = function(l) {
 			}
 			return $r;
 		}(this));
-		if(n1 > n2) return 1;
+		if(n1 > n2) {
+			$s.pop();
+			return 1;
+		}
+		$s.pop();
 		return -1;
+		$s.pop();
 	});
 	var _g = 0;
 	while(_g < l.length) {
@@ -364,38 +582,81 @@ haxe.rtti.XmlParser.prototype.sort = function(l) {
 			break;
 		}
 	}
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.sortFields = function(fl) {
+	$s.push("haxe.rtti.XmlParser::sortFields");
+	var $spos = $s.length;
 	var a = Lambda.array(fl);
 	a.sort(function(f1,f2) {
+		$s.push("haxe.rtti.XmlParser::sortFields@66");
+		var $spos = $s.length;
 		var v1 = haxe.rtti.TypeApi.isVar(f1.type);
 		var v2 = haxe.rtti.TypeApi.isVar(f2.type);
-		if(v1 && !v2) return -1;
-		if(v2 && !v1) return 1;
-		if(f1.name == "new") return -1;
-		if(f2.name == "new") return 1;
-		if(f1.name > f2.name) return 1;
+		if(v1 && !v2) {
+			$s.pop();
+			return -1;
+		}
+		if(v2 && !v1) {
+			$s.pop();
+			return 1;
+		}
+		if(f1.name == "new") {
+			$s.pop();
+			return -1;
+		}
+		if(f2.name == "new") {
+			$s.pop();
+			return 1;
+		}
+		if(f1.name > f2.name) {
+			$s.pop();
+			return 1;
+		}
+		$s.pop();
 		return -1;
+		$s.pop();
 	});
-	return Lambda.list(a);
+	var $tmp = Lambda.list(a);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.process = function(x,platform) {
+	$s.push("haxe.rtti.XmlParser::process");
+	var $spos = $s.length;
 	this.curplatform = platform;
 	this.xroot(new haxe.xml.Fast(x));
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.mergeRights = function(f1,f2) {
+	$s.push("haxe.rtti.XmlParser::mergeRights");
+	var $spos = $s.length;
 	if(f1.get == haxe.rtti.Rights.RInline && f1.set == haxe.rtti.Rights.RNo && f2.get == haxe.rtti.Rights.RNormal && f2.set == haxe.rtti.Rights.RMethod) {
 		f1.get = haxe.rtti.Rights.RNormal;
 		f1.set = haxe.rtti.Rights.RMethod;
+		$s.pop();
 		return true;
 	}
+	$s.pop();
 	return false;
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.mergeFields = function(f,f2) {
-	return haxe.rtti.TypeApi.fieldEq(f,f2) || f.name == f2.name && (this.mergeRights(f,f2) || this.mergeRights(f2,f)) && haxe.rtti.TypeApi.fieldEq(f,f2);
+	$s.push("haxe.rtti.XmlParser::mergeFields");
+	var $spos = $s.length;
+	var $tmp = haxe.rtti.TypeApi.fieldEq(f,f2) || f.name == f2.name && (this.mergeRights(f,f2) || this.mergeRights(f2,f)) && haxe.rtti.TypeApi.fieldEq(f,f2);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.mergeClasses = function(c,c2) {
-	if(c.isInterface != c2.isInterface) return false;
+	$s.push("haxe.rtti.XmlParser::mergeClasses");
+	var $spos = $s.length;
+	if(c.isInterface != c2.isInterface) {
+		$s.pop();
+		return false;
+	}
 	if(this.curplatform != null) c.platforms.add(this.curplatform);
 	if(c.isExtern != c2.isExtern) c.isExtern = false;
 	var $it0 = c2.fields.iterator();
@@ -426,10 +687,17 @@ haxe.rtti.XmlParser.prototype.mergeClasses = function(c,c2) {
 		}
 		if(found == null) c.statics.add(f2); else if(this.curplatform != null) found.platforms.add(this.curplatform);
 	}
+	$s.pop();
 	return true;
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.mergeEnums = function(e,e2) {
-	if(e.isExtern != e2.isExtern) return false;
+	$s.push("haxe.rtti.XmlParser::mergeEnums");
+	var $spos = $s.length;
+	if(e.isExtern != e2.isExtern) {
+		$s.pop();
+		return false;
+	}
 	if(this.curplatform != null) e.platforms.add(this.curplatform);
 	var $it0 = e2.constructors.iterator();
 	while( $it0.hasNext() ) {
@@ -443,18 +711,32 @@ haxe.rtti.XmlParser.prototype.mergeEnums = function(e,e2) {
 				break;
 			}
 		}
-		if(found == null) return false;
+		if(found == null) {
+			$s.pop();
+			return false;
+		}
 		if(this.curplatform != null) found.platforms.add(this.curplatform);
 	}
+	$s.pop();
 	return true;
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.mergeTypedefs = function(t,t2) {
-	if(this.curplatform == null) return false;
+	$s.push("haxe.rtti.XmlParser::mergeTypedefs");
+	var $spos = $s.length;
+	if(this.curplatform == null) {
+		$s.pop();
+		return false;
+	}
 	t.platforms.add(this.curplatform);
 	t.types.set(this.curplatform,t2.type);
+	$s.pop();
 	return true;
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.merge = function(t) {
+	$s.push("haxe.rtti.XmlParser::merge");
+	var $spos = $s.length;
 	var inf = haxe.rtti.TypeApi.typeInfos(t);
 	var pack = inf.path.split(".");
 	var cur = this.root;
@@ -500,6 +782,9 @@ haxe.rtti.XmlParser.prototype.merge = function(t) {
 		try {
 			tinf = haxe.rtti.TypeApi.typeInfos(ct);
 		} catch( e ) {
+			$e = [];
+			while($s.length >= $spos) $e.unshift($s.pop());
+			$s.push($e[0]);
 			continue;
 		}
 		if(tinf.path == inf.path) {
@@ -513,7 +798,10 @@ haxe.rtti.XmlParser.prototype.merge = function(t) {
 					switch( $e[1] ) {
 					case 1:
 						var c2 = $e[2];
-						if(this.mergeClasses(c,c2)) return;
+						if(this.mergeClasses(c,c2)) {
+							$s.pop();
+							return;
+						}
 						break;
 					default:
 						sameType = false;
@@ -525,7 +813,10 @@ haxe.rtti.XmlParser.prototype.merge = function(t) {
 					switch( $e[1] ) {
 					case 2:
 						var e2 = $e[2];
-						if(this.mergeEnums(e,e2)) return;
+						if(this.mergeEnums(e,e2)) {
+							$s.pop();
+							return;
+						}
 						break;
 					default:
 						sameType = false;
@@ -537,7 +828,10 @@ haxe.rtti.XmlParser.prototype.merge = function(t) {
 					switch( $e[1] ) {
 					case 3:
 						var td2 = $e[2];
-						if(this.mergeTypedefs(td,td2)) return;
+						if(this.mergeTypedefs(td,td2)) {
+							$s.pop();
+							return;
+						}
 						break;
 					default:
 					}
@@ -552,17 +846,32 @@ haxe.rtti.XmlParser.prototype.merge = function(t) {
 		}
 	}
 	cur.push(t);
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.mkPath = function(p) {
+	$s.push("haxe.rtti.XmlParser::mkPath");
+	var $spos = $s.length;
+	$s.pop();
 	return p;
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.mkTypeParams = function(p) {
+	$s.push("haxe.rtti.XmlParser::mkTypeParams");
+	var $spos = $s.length;
 	var pl = p.split(":");
-	if(pl[0] == "") return new Array();
+	if(pl[0] == "") {
+		var $tmp = new Array();
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
 	return pl;
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.mkRights = function(r) {
-	return (function($this) {
+	$s.push("haxe.rtti.XmlParser::mkRights");
+	var $spos = $s.length;
+	var $tmp = (function($this) {
 		var $r;
 		switch(r) {
 		case "null":
@@ -582,24 +891,37 @@ haxe.rtti.XmlParser.prototype.mkRights = function(r) {
 		}
 		return $r;
 	}(this));
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.xerror = function(c) {
-	return (function($this) {
+	$s.push("haxe.rtti.XmlParser::xerror");
+	var $spos = $s.length;
+	var $tmp = (function($this) {
 		var $r;
 		throw "Invalid " + c.getName();
 		return $r;
 	}(this));
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.xroot = function(x) {
+	$s.push("haxe.rtti.XmlParser::xroot");
+	var $spos = $s.length;
 	var $it0 = x.x.elements();
 	while( $it0.hasNext() ) {
 		var c = $it0.next();
 		this.merge(this.processElement(c));
 	}
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.processElement = function(x) {
+	$s.push("haxe.rtti.XmlParser::processElement");
+	var $spos = $s.length;
 	var c = new haxe.xml.Fast(x);
-	return (function($this) {
+	var $tmp = (function($this) {
 		var $r;
 		switch(c.getName()) {
 		case "class":
@@ -616,8 +938,13 @@ haxe.rtti.XmlParser.prototype.processElement = function(x) {
 		}
 		return $r;
 	}(this));
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.xpath = function(x) {
+	$s.push("haxe.rtti.XmlParser::xpath");
+	var $spos = $s.length;
 	var path = this.mkPath(x.att.resolve("path"));
 	var params = new List();
 	var $it0 = x.getElements();
@@ -625,9 +952,14 @@ haxe.rtti.XmlParser.prototype.xpath = function(x) {
 		var c = $it0.next();
 		params.add(this.xtype(c));
 	}
-	return { path : path, params : params};
+	var $tmp = { path : path, params : params};
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.xclass = function(x) {
+	$s.push("haxe.rtti.XmlParser::xclass");
+	var $spos = $s.length;
 	var csuper = null;
 	var doc = null;
 	var tdynamic = null;
@@ -654,9 +986,14 @@ haxe.rtti.XmlParser.prototype.xclass = function(x) {
 			if(c.x.exists("static")) statics.add(this.xclassfield(c)); else fields.add(this.xclassfield(c));
 		}
 	}
-	return { path : this.mkPath(x.att.resolve("path")), module : x.has.resolve("module")?this.mkPath(x.att.resolve("module")):null, doc : doc, isPrivate : x.x.exists("private"), isExtern : x.x.exists("extern"), isInterface : x.x.exists("interface"), params : this.mkTypeParams(x.att.resolve("params")), superClass : csuper, interfaces : interfaces, fields : fields, statics : statics, tdynamic : tdynamic, platforms : this.defplat()};
+	var $tmp = { path : this.mkPath(x.att.resolve("path")), module : x.has.resolve("module")?this.mkPath(x.att.resolve("module")):null, doc : doc, isPrivate : x.x.exists("private"), isExtern : x.x.exists("extern"), isInterface : x.x.exists("interface"), params : this.mkTypeParams(x.att.resolve("params")), superClass : csuper, interfaces : interfaces, fields : fields, statics : statics, tdynamic : tdynamic, platforms : this.defplat()};
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.xclassfield = function(x) {
+	$s.push("haxe.rtti.XmlParser::xclassfield");
+	var $spos = $s.length;
 	var e = x.getElements();
 	var t = this.xtype(e.next());
 	var doc = null;
@@ -670,9 +1007,14 @@ haxe.rtti.XmlParser.prototype.xclassfield = function(x) {
 			this.xerror(c);
 		}
 	}
-	return { name : x.getName(), type : t, isPublic : x.x.exists("public"), isOverride : x.x.exists("override"), doc : doc, get : x.has.resolve("get")?this.mkRights(x.att.resolve("get")):haxe.rtti.Rights.RNormal, set : x.has.resolve("set")?this.mkRights(x.att.resolve("set")):haxe.rtti.Rights.RNormal, params : x.has.resolve("params")?this.mkTypeParams(x.att.resolve("params")):null, platforms : this.defplat()};
+	var $tmp = { name : x.getName(), type : t, isPublic : x.x.exists("public"), isOverride : x.x.exists("override"), doc : doc, get : x.has.resolve("get")?this.mkRights(x.att.resolve("get")):haxe.rtti.Rights.RNormal, set : x.has.resolve("set")?this.mkRights(x.att.resolve("set")):haxe.rtti.Rights.RNormal, params : x.has.resolve("params")?this.mkTypeParams(x.att.resolve("params")):null, platforms : this.defplat()};
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.xenum = function(x) {
+	$s.push("haxe.rtti.XmlParser::xenum");
+	var $spos = $s.length;
 	var cl = new List();
 	var doc = null;
 	var $it0 = x.getElements();
@@ -680,9 +1022,14 @@ haxe.rtti.XmlParser.prototype.xenum = function(x) {
 		var c = $it0.next();
 		if(c.getName() == "haxe_doc") doc = c.getInnerData(); else cl.add(this.xenumfield(c));
 	}
-	return { path : this.mkPath(x.att.resolve("path")), module : x.has.resolve("module")?this.mkPath(x.att.resolve("module")):null, doc : doc, isPrivate : x.x.exists("private"), isExtern : x.x.exists("extern"), params : this.mkTypeParams(x.att.resolve("params")), constructors : cl, platforms : this.defplat()};
+	var $tmp = { path : this.mkPath(x.att.resolve("path")), module : x.has.resolve("module")?this.mkPath(x.att.resolve("module")):null, doc : doc, isPrivate : x.x.exists("private"), isExtern : x.x.exists("extern"), params : this.mkTypeParams(x.att.resolve("params")), constructors : cl, platforms : this.defplat()};
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.xenumfield = function(x) {
+	$s.push("haxe.rtti.XmlParser::xenumfield");
+	var $spos = $s.length;
 	var args = null;
 	var xdoc = x.x.elementsNamed("haxe_doc").next();
 	if(x.has.resolve("a")) {
@@ -701,9 +1048,14 @@ haxe.rtti.XmlParser.prototype.xenumfield = function(x) {
 			args.add({ name : c, opt : opt, t : this.xtype(elts.next())});
 		}
 	}
-	return { name : x.getName(), args : args, doc : xdoc == null?null:new haxe.xml.Fast(xdoc).getInnerData(), platforms : this.defplat()};
+	var $tmp = { name : x.getName(), args : args, doc : xdoc == null?null:new haxe.xml.Fast(xdoc).getInnerData(), platforms : this.defplat()};
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.xtypedef = function(x) {
+	$s.push("haxe.rtti.XmlParser::xtypedef");
+	var $spos = $s.length;
 	var doc = null;
 	var t = null;
 	var $it0 = x.getElements();
@@ -713,10 +1065,15 @@ haxe.rtti.XmlParser.prototype.xtypedef = function(x) {
 	}
 	var types = new Hash();
 	if(this.curplatform != null) types.set(this.curplatform,t);
-	return { path : this.mkPath(x.att.resolve("path")), module : x.has.resolve("module")?this.mkPath(x.att.resolve("module")):null, doc : doc, isPrivate : x.x.exists("private"), params : this.mkTypeParams(x.att.resolve("params")), type : t, types : types, platforms : this.defplat()};
+	var $tmp = { path : this.mkPath(x.att.resolve("path")), module : x.has.resolve("module")?this.mkPath(x.att.resolve("module")):null, doc : doc, isPrivate : x.x.exists("private"), params : this.mkTypeParams(x.att.resolve("params")), type : t, types : types, platforms : this.defplat()};
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.xtype = function(x) {
-	return (function($this) {
+	$s.push("haxe.rtti.XmlParser::xtype");
+	var $spos = $s.length;
+	var $tmp = (function($this) {
 		var $r;
 		switch(x.getName()) {
 		case "unknown":
@@ -783,20 +1140,31 @@ haxe.rtti.XmlParser.prototype.xtype = function(x) {
 		}
 		return $r;
 	}(this));
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.xtypeparams = function(x) {
+	$s.push("haxe.rtti.XmlParser::xtypeparams");
+	var $spos = $s.length;
 	var p = new List();
 	var $it0 = x.getElements();
 	while( $it0.hasNext() ) {
 		var c = $it0.next();
 		p.add(this.xtype(c));
 	}
+	$s.pop();
 	return p;
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.defplat = function() {
+	$s.push("haxe.rtti.XmlParser::defplat");
+	var $spos = $s.length;
 	var l = new List();
 	if(this.curplatform != null) l.add(this.curplatform);
+	$s.pop();
 	return l;
+	$s.pop();
 }
 haxe.rtti.XmlParser.prototype.__class__ = haxe.rtti.XmlParser;
 Log = function() { }
@@ -804,71 +1172,127 @@ Log.__name__ = ["Log"];
 Log.posInfo = null;
 Log.errorDiv = null;
 Log["debugger"] = function() {
+	$s.push("Log::debugger");
+	var $spos = $s.length;
 	debugger;
+	$s.pop();
 }
 Log.profile = function(title) {
+	$s.push("Log::profile");
+	var $spos = $s.length;
 	console.profile(title);
+	$s.pop();
 }
 Log.profileEnd = function() {
+	$s.push("Log::profileEnd");
+	var $spos = $s.length;
 	console.profileEnd();
+	$s.pop();
 }
 Log.init = function() {
+	$s.push("Log::init");
+	var $spos = $s.length;
 	if(!window.console) console = { };
 	console.info = console.info || function() {
+		$s.push("Log::init@32");
+		var $spos = $s.length;
+		$s.pop();
 	};
 	console.warn = console.warn || function() {
+		$s.push("Log::init@33");
+		var $spos = $s.length;
+		$s.pop();
 	};
 	console.error = console.error || function() {
+		$s.push("Log::init@34");
+		var $spos = $s.length;
+		$s.pop();
 	};
 	haxe.Log.trace = Log.infoConsole;
+	$s.pop();
 }
 Log.addFilter = function(filter) {
+	$s.push("Log::addFilter");
+	var $spos = $s.length;
 	Log.filters.push(filter);
+	$s.pop();
 }
 Log.info = function(m0,m1,m2,m3,m4,m5,m6,i) {
+	$s.push("Log::info");
+	var $spos = $s.length;
 	Log.posInfo = i;
 	if(Log.filter(LogLevel.INFO)) {
 		Log.fetchInput(m0,m1,m2,m3,m4,m5,m6);
 		console.info(Log.createMessage());
 	}
+	$s.pop();
 }
 Log.warn = function(m0,m1,m2,m3,m4,m5,m6,i) {
+	$s.push("Log::warn");
+	var $spos = $s.length;
 	Log.posInfo = i;
 	if(Log.filter(LogLevel.WARN)) {
 		Log.fetchInput(m0,m1,m2,m3,m4,m5,m6);
 		console.warn(Log.createMessage());
 	}
+	$s.pop();
 }
 Log.error = function(m0,m1,m2,m3,m4,m5,m6,i) {
+	$s.push("Log::error");
+	var $spos = $s.length;
 	Log.posInfo = i;
 	if(Log.filter(LogLevel.ERROR)) {
 		Log.fetchInput(m0,m1,m2,m3,m4,m5,m6);
 		console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
 		Log.displayError(Log.createErrorMessage());
 	}
+	$s.pop();
 }
 Log.infoEnabled = function(i) {
+	$s.push("Log::infoEnabled");
+	var $spos = $s.length;
 	Log.posInfo = i;
-	return Log.filter(LogLevel.INFO);
+	var $tmp = Log.filter(LogLevel.INFO);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Log.warnEnabled = function(i) {
+	$s.push("Log::warnEnabled");
+	var $spos = $s.length;
 	Log.posInfo = i;
-	return Log.filter(LogLevel.WARN);
+	var $tmp = Log.filter(LogLevel.WARN);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Log.errorEnabled = function(i) {
+	$s.push("Log::errorEnabled");
+	var $spos = $s.length;
 	Log.posInfo = i;
-	return Log.filter(LogLevel.ERROR);
+	var $tmp = Log.filter(LogLevel.ERROR);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Log.groupCollapsed = function(m0,m1,m2,m3,m4,m5,m6,i) {
+	$s.push("Log::groupCollapsed");
+	var $spos = $s.length;
 	if(Log.infoEnabled(i)) {
 		Log.fetchInput(m0,m1,m2,m3,m4,m5,m6);
 		console.groupCollapsed(Log.createMessage());
 	}
+	$s.pop();
 }
 Log.groupEnd = function(i) {
+	$s.push("Log::groupEnd");
+	var $spos = $s.length;
 	if(Log.infoEnabled(i)) console.groupEnd();
+	$s.pop();
 }
 Log.fetchInput = function(m0,m1,m2,m3,m4,m5,m6) {
+	$s.push("Log::fetchInput");
+	var $spos = $s.length;
 	Log.args = new Array();
 	if(m0 != null) Log.args.push(m0);
 	if(m1 != null) Log.args.push(m1);
@@ -877,19 +1301,43 @@ Log.fetchInput = function(m0,m1,m2,m3,m4,m5,m6) {
 	if(m4 != null) Log.args.push(m4);
 	if(m5 != null) Log.args.push(m5);
 	if(m6 != null) Log.args.push(m6);
+	$s.pop();
 }
 Log.createMessage = function() {
-	if(Log.posInfo == null) return Log.args.join(" ");
+	$s.push("Log::createMessage");
+	var $spos = $s.length;
+	if(Log.posInfo == null) {
+		var $tmp = Log.args.join(" ");
+		$s.pop();
+		return $tmp;
+	}
 	var from = Log.posInfo.className + "." + Log.posInfo.methodName;
-	return "[" + from + "] " + Log.args.join(" ");
+	var $tmp = "[" + from + "] " + Log.args.join(" ");
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Log.createErrorMessage = function() {
-	if(Log.posInfo == null) return Log.args.join(" ");
+	$s.push("Log::createErrorMessage");
+	var $spos = $s.length;
+	if(Log.posInfo == null) {
+		var $tmp = Log.args.join(" ");
+		$s.pop();
+		return $tmp;
+	}
 	var from = Log.posInfo.className + "." + Log.posInfo.methodName;
-	return "[" + from + "]\n" + Log.args.join(" ");
+	var $tmp = "[" + from + "]\n" + Log.args.join(" ");
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Log.filter = function(level) {
-	if(Log.posInfo == null) return true;
+	$s.push("Log::filter");
+	var $spos = $s.length;
+	if(Log.posInfo == null) {
+		$s.pop();
+		return true;
+	}
 	var result = true;
 	var _g = 0, _g1 = Log.filters;
 	while(_g < _g1.length) {
@@ -897,15 +1345,25 @@ Log.filter = function(level) {
 		++_g;
 		result = filter.enabled(result,Log.posInfo,level);
 	}
+	$s.pop();
 	return result;
+	$s.pop();
 }
 Log.infoConsole = function(v,i) {
+	$s.push("Log::infoConsole");
+	var $spos = $s.length;
 	Log.posInfo = i;
 	Log.fetchInput(v);
 	console.log("" + Log.createMessage() + " (trace)");
+	$s.pop();
 }
 Log.displayError = function(message) {
-	if($closure(js.Lib.document,"createElement") == null) return;
+	$s.push("Log::displayError");
+	var $spos = $s.length;
+	if($closure(js.Lib.document,"createElement") == null) {
+		$s.pop();
+		return;
+	}
 	if(Log.errorDiv == null) {
 		Log.errorDiv = js.Lib.document.createElement("div");
 		Log.errorDiv.className = "Error";
@@ -916,13 +1374,20 @@ Log.displayError = function(message) {
 		Log.errors.push(message);
 		Log.errorDiv.innerHTML += message + "\n";
 	}
+	$s.pop();
 }
 Log.prototype.errorFilter = function() {
+	$s.push("Log::errorFilter");
+	var $spos = $s.length;
+	$s.pop();
 }
 Log.prototype.__class__ = Log;
 GLDisplayListRenderer = function(p) {
 	if( p === $_ ) return;
+	$s.push("GLDisplayListRenderer::new");
+	var $spos = $s.length;
 	this.textures = new IntHash();
+	$s.pop();
 }
 GLDisplayListRenderer.__name__ = ["GLDisplayListRenderer"];
 GLDisplayListRenderer.prototype.shaderProgram = null;
@@ -935,6 +1400,8 @@ GLDisplayListRenderer.prototype.sizeUniform = null;
 GLDisplayListRenderer.prototype.alphaUniform = null;
 GLDisplayListRenderer.prototype.textures = null;
 GLDisplayListRenderer.prototype.init = function() {
+	$s.push("GLDisplayListRenderer::init");
+	var $spos = $s.length;
 	var gl = GL.gl;
 	this.shaderProgram = GL.createProgram(shader.DisplayObjectVertex,shader.DisplayObjectFragment);
 	this.vertexPositionAttribute = gl.getAttribLocation(this.shaderProgram,"vertexPosition");
@@ -947,8 +1414,11 @@ GLDisplayListRenderer.prototype.init = function() {
 	this.objectMatrixUniform = GL.getUniformLocation("objectMatrix");
 	this.sizeUniform = GL.getUniformLocation("size");
 	this.alphaUniform = GL.getUniformLocation("alpha");
+	$s.pop();
 }
 GLDisplayListRenderer.prototype.render = function(width,height) {
+	$s.push("GLDisplayListRenderer::render");
+	var $spos = $s.length;
 	var gl = GL.gl;
 	GL.useProgram(this.shaderProgram);
 	gl.viewport(0,0,width,height);
@@ -966,8 +1436,11 @@ GLDisplayListRenderer.prototype.render = function(width,height) {
 	gl.uniform1i(this.textureUniform.location,0);
 	this.renderRecursive(stage,new Matrix4(),stage.alpha);
 	gl.disable(gl.BLEND);
+	$s.pop();
 }
 GLDisplayListRenderer.prototype.renderRecursive = function(displayObjectContainer,parentMatrix,alpha) {
+	$s.push("GLDisplayListRenderer::renderRecursive");
+	var $spos = $s.length;
 	var _g = 0, _g1 = displayObjectContainer.children;
 	while(_g < _g1.length) {
 		var displayObject = _g1[_g];
@@ -978,14 +1451,20 @@ GLDisplayListRenderer.prototype.renderRecursive = function(displayObjectContaine
 			this.renderRecursive(displayObject,matrix,alpha);
 		}
 	}
+	$s.pop();
 }
 GLDisplayListRenderer.prototype.renderDisplayObject = function(displayObject,parentMatrix,alpha) {
+	$s.push("GLDisplayListRenderer::renderDisplayObject");
+	var $spos = $s.length;
 	var gl = GL.gl;
 	displayObject.validateTransform();
 	var result = new Matrix4();
 	result.append(parentMatrix);
 	result.append(displayObject.matrix);
-	if(displayObject.skipDraw) return result;
+	if(displayObject.skipDraw) {
+		$s.pop();
+		return result;
+	}
 	var texture;
 	if(!this.textures.exists(displayObject.id)) {
 		texture = gl.createTexture();
@@ -1005,11 +1484,15 @@ GLDisplayListRenderer.prototype.renderDisplayObject = function(displayObject,par
 	gl.uniform2f(this.sizeUniform.location,displayObject.graphic.canvas.width,displayObject.graphic.canvas.height);
 	gl.uniform1f(this.alphaUniform.location,displayObject.alpha * alpha);
 	gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+	$s.pop();
 	return result;
+	$s.pop();
 }
 GLDisplayListRenderer.prototype.__class__ = GLDisplayListRenderer;
-if(typeof bpmjs=='undefined') bpmjs = {}
 bpmjs.TaskError = function(p) {
+	$s.push("bpmjs.TaskError::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 bpmjs.TaskError.__name__ = ["bpmjs","TaskError"];
 bpmjs.TaskError.prototype.task = null;
@@ -1020,6 +1503,8 @@ haxe.rtti.Infos.__name__ = ["haxe","rtti","Infos"];
 haxe.rtti.Infos.prototype.__class__ = haxe.rtti.Infos;
 Color = function(r,g,b,a) {
 	if( r === $_ ) return;
+	$s.push("Color::new");
+	var $spos = $s.length;
 	if(a == null) a = 1.0;
 	if(b == null) b = 1.0;
 	if(g == null) g = 0.0;
@@ -1028,6 +1513,7 @@ Color = function(r,g,b,a) {
 	this.g = g;
 	this.b = b;
 	this.a = a;
+	$s.pop();
 }
 Color.__name__ = ["Color"];
 Color.prototype.r = null;
@@ -1035,60 +1521,104 @@ Color.prototype.g = null;
 Color.prototype.b = null;
 Color.prototype.a = null;
 Color.prototype.fromHex = function(hex) {
+	$s.push("Color::fromHex");
+	var $spos = $s.length;
 	this.r = (hex >> 16 & 255) / 255;
 	this.g = (hex >> 8 & 255) / 255;
 	this.b = (hex & 255) / 255;
 	this.a = 1.0;
+	$s.pop();
 	return this;
+	$s.pop();
 }
 Color.prototype.scaleRGB = function(factor) {
+	$s.push("Color::scaleRGB");
+	var $spos = $s.length;
 	this.r *= factor;
 	this.g *= factor;
 	this.b *= factor;
+	$s.pop();
 }
 Color.prototype.mixFrom = function(color1,color2,color1Mix) {
+	$s.push("Color::mixFrom");
+	var $spos = $s.length;
 	if(color1Mix < 0) color1Mix = 0;
 	if(color1Mix > 1) color1Mix = 1;
 	var color2Mix = 1 - color1Mix;
 	this.r = color1.r * color1Mix + color2.r * color2Mix;
 	this.g = color1.g * color1Mix + color2.g * color2Mix;
 	this.b = color1.b * color1Mix + color2.b * color2Mix;
+	$s.pop();
 }
 Color.prototype.toContextRGB = function() {
-	return "rgb(" + this.r * 255 + "," + this.g * 255 + "," + this.b * 255 + ")";
+	$s.push("Color::toContextRGB");
+	var $spos = $s.length;
+	var $tmp = "rgb(" + this.r * 255 + "," + this.g * 255 + "," + this.b * 255 + ")";
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Color.prototype.toContextRGBA = function() {
-	return "rgba(" + Std["int"](this.r * 255) + "," + Std["int"](this.g * 255) + "," + Std["int"](this.b * 255) + "," + this.a + ")";
+	$s.push("Color::toContextRGBA");
+	var $spos = $s.length;
+	var $tmp = "rgba(" + Std["int"](this.r * 255) + "," + Std["int"](this.g * 255) + "," + Std["int"](this.b * 255) + "," + this.a + ")";
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Color.prototype.clone = function() {
-	return new Color(this.r,this.g,this.b,this.a);
+	$s.push("Color::clone");
+	var $spos = $s.length;
+	var $tmp = new Color(this.r,this.g,this.b,this.a);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Color.prototype.toString = function() {
-	return "Color: " + this.r + "," + this.g + "," + this.b + "," + this.a;
+	$s.push("Color::toString");
+	var $spos = $s.length;
+	var $tmp = "Color: " + this.r + "," + this.g + "," + this.b + "," + this.a;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Color.prototype.__class__ = Color;
 Color.__interfaces__ = [haxe.rtti.Infos];
 GLDisplayObjectContainer = function(p) {
 	if( p === $_ ) return;
+	$s.push("GLDisplayObjectContainer::new");
+	var $spos = $s.length;
 	GLDisplayObject.call(this);
 	this.children = new Array();
+	$s.pop();
 }
 GLDisplayObjectContainer.__name__ = ["GLDisplayObjectContainer"];
 GLDisplayObjectContainer.__super__ = GLDisplayObject;
 for(var k in GLDisplayObject.prototype ) GLDisplayObjectContainer.prototype[k] = GLDisplayObject.prototype[k];
 GLDisplayObjectContainer.prototype.children = null;
 GLDisplayObjectContainer.prototype.addChild = function(child) {
+	$s.push("GLDisplayObjectContainer::addChild");
+	var $spos = $s.length;
 	this.children.push(child);
+	$s.pop();
 }
 GLDisplayObjectContainer.prototype.removeChild = function(child) {
+	$s.push("GLDisplayObjectContainer::removeChild");
+	var $spos = $s.length;
 	this.children.remove(child);
+	$s.pop();
 }
 GLDisplayObjectContainer.prototype.removeAllChildren = function() {
+	$s.push("GLDisplayObjectContainer::removeAllChildren");
+	var $spos = $s.length;
 	this.children = new Array();
+	$s.pop();
 }
 GLDisplayObjectContainer.prototype.__class__ = GLDisplayObjectContainer;
 GLSliderH = function(p) {
 	if( p === $_ ) return;
+	$s.push("GLSliderH::new");
+	var $spos = $s.length;
 	this.binding = new reflect.NullBinding();
 	this.label = new GLLabel();
 	this.dragH = new GLDragH();
@@ -1108,6 +1638,7 @@ GLSliderH = function(p) {
 	this.addChild(this.dragH);
 	this.addChild(this.label);
 	this.updateChildren();
+	$s.pop();
 }
 GLSliderH.__name__ = ["GLSliderH"];
 GLSliderH.__super__ = GLDisplayObjectContainer;
@@ -1120,93 +1651,161 @@ GLSliderH.prototype.value = null;
 GLSliderH.prototype.precision = null;
 GLSliderH.prototype.binding = null;
 GLSliderH.prototype.bind = function(binding) {
+	$s.push("GLSliderH::bind");
+	var $spos = $s.length;
 	this.binding.change.unbind($closure(this,"handleBindChange"));
 	this.binding = binding;
 	this.binding.change.bind($closure(this,"handleBindChange"));
+	$s.pop();
 }
 GLSliderH.prototype.handleBindChange = function(binding) {
+	$s.push("GLSliderH::handleBindChange");
+	var $spos = $s.length;
 	this.value = binding.getValue();
 	this.updateDragValue();
 	this.updateLabel();
+	$s.pop();
 }
 GLSliderH.prototype.setWidth = function(value) {
+	$s.push("GLSliderH::setWidth");
+	var $spos = $s.length;
 	var result = GLDisplayObjectContainer.prototype.setWidth.call(this,value);
 	this.label.setWidth(result);
 	this.dragH.max = result - this.dragH.width;
 	this.updateChildren();
+	$s.pop();
 	return result;
+	$s.pop();
 }
 GLSliderH.prototype.setMin = function(value) {
+	$s.push("GLSliderH::setMin");
+	var $spos = $s.length;
 	this.min = value;
 	if(this.value < this.min) this.value = this.min;
 	this.updateChildren();
-	return this.min;
+	var $tmp = this.min;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GLSliderH.prototype.setMax = function(value) {
+	$s.push("GLSliderH::setMax");
+	var $spos = $s.length;
 	this.max = value;
 	if(this.value > this.max) this.value = this.max;
 	this.updateChildren();
-	return this.max;
+	var $tmp = this.max;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GLSliderH.prototype.dragChanged = function(value) {
+	$s.push("GLSliderH::dragChanged");
+	var $spos = $s.length;
 	this.value = Map.linear(value,this.dragH.min,this.dragH.max,this.min,this.max);
 	this.updateChildren();
+	$s.pop();
 }
 GLSliderH.prototype.updateChildren = function() {
+	$s.push("GLSliderH::updateChildren");
+	var $spos = $s.length;
 	this.updateDragValue();
 	this.updateLabel();
 	this.binding.setValue(this.value);
+	$s.pop();
 }
 GLSliderH.prototype.updateLabel = function() {
+	$s.push("GLSliderH::updateLabel");
+	var $spos = $s.length;
 	this.label.setText(Std.string(Math.round(this.value * this.precision) / this.precision));
+	$s.pop();
 }
 GLSliderH.prototype.updateDragValue = function() {
+	$s.push("GLSliderH::updateDragValue");
+	var $spos = $s.length;
 	this.dragH.setX(Map.linear(this.value,this.min,this.max,this.dragH.min,this.dragH.max));
+	$s.pop();
 }
 GLSliderH.prototype.__class__ = GLSliderH;
 List = function(p) {
 	if( p === $_ ) return;
+	$s.push("List::new");
+	var $spos = $s.length;
 	this.length = 0;
+	$s.pop();
 }
 List.__name__ = ["List"];
 List.prototype.h = null;
 List.prototype.q = null;
 List.prototype.length = null;
 List.prototype.add = function(item) {
+	$s.push("List::add");
+	var $spos = $s.length;
 	var x = [item];
 	if(this.h == null) this.h = x; else this.q[1] = x;
 	this.q = x;
 	this.length++;
+	$s.pop();
 }
 List.prototype.push = function(item) {
+	$s.push("List::push");
+	var $spos = $s.length;
 	var x = [item,this.h];
 	this.h = x;
 	if(this.q == null) this.q = x;
 	this.length++;
+	$s.pop();
 }
 List.prototype.first = function() {
-	return this.h == null?null:this.h[0];
+	$s.push("List::first");
+	var $spos = $s.length;
+	var $tmp = this.h == null?null:this.h[0];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 List.prototype.last = function() {
-	return this.q == null?null:this.q[0];
+	$s.push("List::last");
+	var $spos = $s.length;
+	var $tmp = this.q == null?null:this.q[0];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 List.prototype.pop = function() {
-	if(this.h == null) return null;
+	$s.push("List::pop");
+	var $spos = $s.length;
+	if(this.h == null) {
+		$s.pop();
+		return null;
+	}
 	var x = this.h[0];
 	this.h = this.h[1];
 	if(this.h == null) this.q = null;
 	this.length--;
+	$s.pop();
 	return x;
+	$s.pop();
 }
 List.prototype.isEmpty = function() {
-	return this.h == null;
+	$s.push("List::isEmpty");
+	var $spos = $s.length;
+	var $tmp = this.h == null;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 List.prototype.clear = function() {
+	$s.push("List::clear");
+	var $spos = $s.length;
 	this.h = null;
 	this.q = null;
 	this.length = 0;
+	$s.pop();
 }
 List.prototype.remove = function(v) {
+	$s.push("List::remove");
+	var $spos = $s.length;
 	var prev = null;
 	var l = this.h;
 	while(l != null) {
@@ -1214,24 +1813,46 @@ List.prototype.remove = function(v) {
 			if(prev == null) this.h = l[1]; else prev[1] = l[1];
 			if(this.q == l) this.q = prev;
 			this.length--;
+			$s.pop();
 			return true;
 		}
 		prev = l;
 		l = l[1];
 	}
+	$s.pop();
 	return false;
+	$s.pop();
 }
 List.prototype.iterator = function() {
-	return { h : this.h, hasNext : function() {
-		return this.h != null;
+	$s.push("List::iterator");
+	var $spos = $s.length;
+	var $tmp = { h : this.h, hasNext : function() {
+		$s.push("List::iterator@155");
+		var $spos = $s.length;
+		var $tmp = this.h != null;
+		$s.pop();
+		return $tmp;
+		$s.pop();
 	}, next : function() {
-		if(this.h == null) return null;
+		$s.push("List::iterator@158");
+		var $spos = $s.length;
+		if(this.h == null) {
+			$s.pop();
+			return null;
+		}
 		var x = this.h[0];
 		this.h = this.h[1];
+		$s.pop();
 		return x;
+		$s.pop();
 	}};
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 List.prototype.toString = function() {
+	$s.push("List::toString");
+	var $spos = $s.length;
 	var s = new StringBuf();
 	var first = true;
 	var l = this.h;
@@ -1242,9 +1863,14 @@ List.prototype.toString = function() {
 		l = l[1];
 	}
 	s.b[s.b.length] = "}" == null?"null":"}";
-	return s.b.join("");
+	var $tmp = s.b.join("");
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 List.prototype.join = function(sep) {
+	$s.push("List::join");
+	var $spos = $s.length;
 	var s = new StringBuf();
 	var first = true;
 	var l = this.h;
@@ -1253,9 +1879,14 @@ List.prototype.join = function(sep) {
 		s.add(l[0]);
 		l = l[1];
 	}
-	return s.b.join("");
+	var $tmp = s.b.join("");
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 List.prototype.filter = function(f) {
+	$s.push("List::filter");
+	var $spos = $s.length;
 	var l2 = new List();
 	var l = this.h;
 	while(l != null) {
@@ -1263,9 +1894,13 @@ List.prototype.filter = function(f) {
 		l = l[1];
 		if(f(v)) l2.add(v);
 	}
+	$s.pop();
 	return l2;
+	$s.pop();
 }
 List.prototype.map = function(f) {
+	$s.push("List::map");
+	var $spos = $s.length;
 	var b = new List();
 	var l = this.h;
 	while(l != null) {
@@ -1273,10 +1908,15 @@ List.prototype.map = function(f) {
 		l = l[1];
 		b.add(f(v));
 	}
+	$s.pop();
 	return b;
+	$s.pop();
 }
 List.prototype.__class__ = List;
 GLAttribLocation = function(p) {
+	$s.push("GLAttribLocation::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 GLAttribLocation.__name__ = ["GLAttribLocation"];
 GLAttribLocation.prototype.location = null;
@@ -1285,36 +1925,54 @@ GLAttribLocation.prototype.type = null;
 GLAttribLocation.prototype.buffer = null;
 GLAttribLocation.prototype.currentLength = null;
 GLAttribLocation.prototype.updateBuffer = function(arrayBufferView,type) {
+	$s.push("GLAttribLocation::updateBuffer");
+	var $spos = $s.length;
 	if(type == null) type = 35044;
 	if(this.buffer != null) GL.gl.deleteBuffer(this.buffer);
 	this.currentLength = arrayBufferView.byteLength;
 	this.buffer = GL.createArrayBuffer(arrayBufferView,type);
+	$s.pop();
 }
 GLAttribLocation.prototype.updateBuffer2 = function(arrayBufferView,type) {
+	$s.push("GLAttribLocation::updateBuffer2");
+	var $spos = $s.length;
 	if(type == null) type = 35044;
 	GL.gl.bindBuffer(34962,this.buffer);
 	GL.gl.bufferData(34962,arrayBufferView,type);
+	$s.pop();
 }
 GLAttribLocation.prototype.updateBuffer3 = function(arrayBufferView) {
+	$s.push("GLAttribLocation::updateBuffer3");
+	var $spos = $s.length;
 	GL.gl.bindBuffer(34962,this.buffer);
 	GL.gl.bufferSubData(34962,0,arrayBufferView);
+	$s.pop();
 }
 GLAttribLocation.prototype.vertexAttribPointer = function() {
+	$s.push("GLAttribLocation::vertexAttribPointer");
+	var $spos = $s.length;
 	GL.gl.bindBuffer(34962,this.buffer);
 	GL.gl.enableVertexAttribArray(this.location);
 	GL.gl.vertexAttribPointer(this.location,this.size,this.type,false,0,0);
+	$s.pop();
 }
 GLAttribLocation.prototype.drawArrays = function(mode,first,count) {
+	$s.push("GLAttribLocation::drawArrays");
+	var $spos = $s.length;
 	if(first == null) first = 0;
 	if(count == null) {
 		count = this.currentLength / this.size;
 		if(this.type == 5126) count /= 4;
 	}
 	GL.gl.drawArrays(mode,first,count);
+	$s.pop();
 }
 GLAttribLocation.prototype.__class__ = GLAttribLocation;
 if(!kumite.blobs) kumite.blobs = {}
 kumite.blobs.Blob = function(p) {
+	$s.push("kumite.blobs.Blob::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.blobs.Blob.__name__ = ["kumite","blobs","Blob"];
 kumite.blobs.Blob.prototype.blobId = null;
@@ -1326,31 +1984,50 @@ kumite.blobs.Blob.prototype.speed = null;
 kumite.blobs.Blob.prototype.__class__ = kumite.blobs.Blob;
 IntIter = function(min,max) {
 	if( min === $_ ) return;
+	$s.push("IntIter::new");
+	var $spos = $s.length;
 	this.min = min;
 	this.max = max;
+	$s.pop();
 }
 IntIter.__name__ = ["IntIter"];
 IntIter.prototype.min = null;
 IntIter.prototype.max = null;
 IntIter.prototype.hasNext = function() {
-	return this.min < this.max;
+	$s.push("IntIter::hasNext");
+	var $spos = $s.length;
+	var $tmp = this.min < this.max;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 IntIter.prototype.next = function() {
-	return this.min++;
+	$s.push("IntIter::next");
+	var $spos = $s.length;
+	var $tmp = this.min++;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 IntIter.prototype.__class__ = IntIter;
 if(!kumite.canvas) kumite.canvas = {}
 kumite.canvas.CanvasCase = function(p) {
+	$s.push("kumite.canvas.CanvasCase::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.canvas.CanvasCase.__name__ = ["kumite","canvas","CanvasCase"];
 kumite.canvas.CanvasCase.prototype.itself = null;
 kumite.canvas.CanvasCase.prototype.__class__ = kumite.canvas.CanvasCase;
 bpmjs.Task = function(p) {
 	if( p === $_ ) return;
+	$s.push("bpmjs.Task::new");
+	var $spos = $s.length;
 	this.startSignaler = new hsl.haxe.DirectSignaler(this);
 	this.completeSignaler = new hsl.haxe.DirectSignaler(this);
 	this.errorSignaler = new hsl.haxe.DirectSignaler(this);
 	this.setMonitor(new bpmjs.ProgressMonitor());
+	$s.pop();
 }
 bpmjs.Task.__name__ = ["bpmjs","Task"];
 bpmjs.Task.prototype.startSignaler = null;
@@ -1358,11 +2035,16 @@ bpmjs.Task.prototype.completeSignaler = null;
 bpmjs.Task.prototype.errorSignaler = null;
 bpmjs.Task.prototype.monitor = null;
 bpmjs.Task.prototype.start = function() {
+	$s.push("bpmjs.Task::start");
+	var $spos = $s.length;
 	try {
 		var t = this;
 		this.startSignaler.dispatch(t,null,{ fileName : "Task.hx", lineNumber : 29, className : "bpmjs.Task", methodName : "start"});
 		this.doStart();
 	} catch( e ) {
+		$e = [];
+		while($s.length >= $spos) $e.unshift($s.pop());
+		$s.push($e[0]);
 		{
 			Log.posInfo = { fileName : "Task.hx", lineNumber : 34, className : "bpmjs.Task", methodName : "start"};
 			if(Log.filter(LogLevel.ERROR)) {
@@ -1372,31 +2054,53 @@ bpmjs.Task.prototype.start = function() {
 			}
 		}
 	}
+	$s.pop();
 }
 bpmjs.Task.prototype.doStart = function() {
+	$s.push("bpmjs.Task::doStart");
+	var $spos = $s.length;
+	$s.pop();
 }
 bpmjs.Task.prototype.complete = function() {
+	$s.push("bpmjs.Task::complete");
+	var $spos = $s.length;
 	this.getMonitor().setCurrent(1);
 	var t = this;
 	this.completeSignaler.dispatch(t,null,{ fileName : "Task.hx", lineNumber : 46, className : "bpmjs.Task", methodName : "complete"});
+	$s.pop();
 }
 bpmjs.Task.prototype.error = function(result,error) {
+	$s.push("bpmjs.Task::error");
+	var $spos = $s.length;
 	var taskError = new bpmjs.TaskError();
 	taskError.task = result;
 	taskError.error = error;
 	this.errorSignaler.dispatch(taskError,null,{ fileName : "Task.hx", lineNumber : 54, className : "bpmjs.Task", methodName : "error"});
+	$s.pop();
 }
 bpmjs.Task.prototype.getMonitor = function() {
-	return this.monitor;
+	$s.push("bpmjs.Task::getMonitor");
+	var $spos = $s.length;
+	var $tmp = this.monitor;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 bpmjs.Task.prototype.setMonitor = function(monitor) {
+	$s.push("bpmjs.Task::setMonitor");
+	var $spos = $s.length;
 	this.monitor = monitor;
+	$s.pop();
 	return monitor;
+	$s.pop();
 }
 bpmjs.Task.prototype.__class__ = bpmjs.Task;
 bpmjs.HTTPTask = function(p) {
 	if( p === $_ ) return;
+	$s.push("bpmjs.HTTPTask::new");
+	var $spos = $s.length;
 	bpmjs.Task.call(this);
+	$s.pop();
 }
 bpmjs.HTTPTask.__name__ = ["bpmjs","HTTPTask"];
 bpmjs.HTTPTask.__super__ = bpmjs.Task;
@@ -1404,24 +2108,36 @@ for(var k in bpmjs.Task.prototype ) bpmjs.HTTPTask.prototype[k] = bpmjs.Task.pro
 bpmjs.HTTPTask.prototype.location = null;
 bpmjs.HTTPTask.prototype.data = null;
 bpmjs.HTTPTask.prototype.doStart = function() {
+	$s.push("bpmjs.HTTPTask::doStart");
+	var $spos = $s.length;
 	var r = new haxe.Http(this.location);
 	r.onError = $closure(this,"onError");
 	r.onData = $closure(this,"onData");
 	r.request(false);
+	$s.pop();
 }
 bpmjs.HTTPTask.prototype.onError = function(errorData) {
+	$s.push("bpmjs.HTTPTask::onError");
+	var $spos = $s.length;
 	this.error(this,errorData);
+	$s.pop();
 }
 bpmjs.HTTPTask.prototype.onData = function(data) {
+	$s.push("bpmjs.HTTPTask::onData");
+	var $spos = $s.length;
 	this.data = data;
 	this.complete();
+	$s.pop();
 }
 bpmjs.HTTPTask.prototype.__class__ = bpmjs.HTTPTask;
 if(!kumite.stage) kumite.stage = {}
 kumite.stage.Config = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.stage.Config::new");
+	var $spos = $s.length;
 	this.stage = new kumite.stage.Stage();
 	this.stageResizeAction = new kumite.stage.StageResizeAction();
+	$s.pop();
 }
 kumite.stage.Config.__name__ = ["kumite","stage","Config"];
 kumite.stage.Config.prototype.stage = null;
@@ -1430,10 +2146,15 @@ kumite.stage.Config.prototype.__class__ = kumite.stage.Config;
 kumite.stage.Config.__interfaces__ = [haxe.rtti.Infos];
 Matrix4 = function(p) {
 	if( p === $_ ) return;
+	$s.push("Matrix4::new");
+	var $spos = $s.length;
 	this.buffer = new Float32Array(Matrix4.IDENTITY_BUFFER);
+	$s.pop();
 }
 Matrix4.__name__ = ["Matrix4"];
 Matrix4.createIdentityBuffer = function() {
+	$s.push("Matrix4::createIdentityBuffer");
+	var $spos = $s.length;
 	var buffer = new Float32Array(16);
 	buffer[0] = 1;
 	buffer[1] = 0;
@@ -1451,7 +2172,9 @@ Matrix4.createIdentityBuffer = function() {
 	buffer[13] = 0;
 	buffer[14] = 0;
 	buffer[15] = 1;
+	$s.pop();
 	return buffer;
+	$s.pop();
 }
 Matrix4.prototype.buffer = null;
 Matrix4.prototype.n11 = null;
@@ -1471,10 +2194,16 @@ Matrix4.prototype.n42 = null;
 Matrix4.prototype.n43 = null;
 Matrix4.prototype.n44 = null;
 Matrix4.prototype.setIdentity = function() {
+	$s.push("Matrix4::setIdentity");
+	var $spos = $s.length;
 	this.buffer.set(Matrix4.IDENTITY_BUFFER);
+	$s.pop();
 	return this;
+	$s.pop();
 }
 Matrix4.prototype.set = function(n11,n12,n13,n14,n21,n22,n23,n24,n31,n32,n33,n34,n41,n42,n43,n44) {
+	$s.push("Matrix4::set");
+	var $spos = $s.length;
 	this.buffer[0] = n11;
 	this.buffer[1] = n21;
 	this.buffer[2] = n31;
@@ -1491,41 +2220,73 @@ Matrix4.prototype.set = function(n11,n12,n13,n14,n21,n22,n23,n24,n31,n32,n33,n34
 	this.buffer[13] = n24;
 	this.buffer[14] = n34;
 	this.buffer[15] = n44;
+	$s.pop();
 	return this;
+	$s.pop();
 }
 Matrix4.prototype.setFrom = function(from) {
+	$s.push("Matrix4::setFrom");
+	var $spos = $s.length;
 	this.buffer.set(from.buffer);
+	$s.pop();
 	return this;
+	$s.pop();
 }
 Matrix4.prototype.setTranslation = function(x,y,z) {
+	$s.push("Matrix4::setTranslation");
+	var $spos = $s.length;
 	this.set(1,0,0,x,0,1,0,y,0,0,1,z,0,0,0,1);
+	$s.pop();
 	return this;
+	$s.pop();
 }
 Matrix4.prototype.setScale = function(x,y,z) {
+	$s.push("Matrix4::setScale");
+	var $spos = $s.length;
 	this.set(x,0,0,0,0,y,0,0,0,0,z,0,0,0,0,1);
+	$s.pop();
 	return this;
+	$s.pop();
 }
 Matrix4.prototype.setRotationX = function(angle) {
+	$s.push("Matrix4::setRotationX");
+	var $spos = $s.length;
 	var c = Math.cos(angle), s = Math.sin(angle);
 	this.set(1,0,0,0,0,c,-s,0,0,s,c,0,0,0,0,1);
+	$s.pop();
 	return this;
+	$s.pop();
 }
 Matrix4.prototype.setRotationY = function(angle) {
+	$s.push("Matrix4::setRotationY");
+	var $spos = $s.length;
 	var c = Math.cos(angle), s = Math.sin(angle);
 	this.set(c,0,s,0,0,1,0,0,-s,0,c,0,0,0,0,1);
+	$s.pop();
 	return this;
+	$s.pop();
 }
 Matrix4.prototype.setRotationZ = function(angle) {
+	$s.push("Matrix4::setRotationZ");
+	var $spos = $s.length;
 	var c = Math.cos(angle), s = Math.sin(angle);
 	this.set(c,-s,0,0,s,c,0,0,0,0,1,0,0,0,0,1);
+	$s.pop();
 	return this;
+	$s.pop();
 }
 Matrix4.prototype.setRotation = function(angle,axis) {
+	$s.push("Matrix4::setRotation");
+	var $spos = $s.length;
 	var c = Math.cos(angle), s = Math.sin(angle), t = 1 - c, x = axis.x, y = axis.y, z = axis.z, tx = t * x, ty = t * y;
 	this.set(tx * x + c,tx * y - s * z,tx * z + s * y,0,tx * y + s * z,ty * y + c,ty * z - s * x,0,tx * z - s * y,ty * z + s * x,t * z * z + c,0,0,0,0,1);
+	$s.pop();
 	return this;
+	$s.pop();
 }
 Matrix4.prototype.setLookAt = function(eye,at,up) {
+	$s.push("Matrix4::setLookAt");
+	var $spos = $s.length;
 	var eyex = eye.x, eyey = eye.y, eyez = eye.z, upx = up.x, upy = up.y, upz = up.z, atx = at.x, aty = at.y, atz = at.z;
 	if(eyex == atx && eyey == aty && eyez == atz) this.setIdentity();
 	var z0 = eyex - at.x;
@@ -1579,8 +2340,11 @@ Matrix4.prototype.setLookAt = function(eye,at,up) {
 	this.buffer[13] = -(y0 * eyex + y1 * eyey + y2 * eyez);
 	this.buffer[14] = -(z0 * eyex + z1 * eyey + z2 * eyez);
 	this.buffer[15] = 1;
+	$s.pop();
 }
 Matrix4.prototype.setOrtho = function(left,right,bottom,top,near,far) {
+	$s.push("Matrix4::setOrtho");
+	var $spos = $s.length;
 	var rl = right - left;
 	var tb = top - bottom;
 	var fn = far - near;
@@ -1600,13 +2364,19 @@ Matrix4.prototype.setOrtho = function(left,right,bottom,top,near,far) {
 	this.buffer[13] = -(top + bottom) / tb;
 	this.buffer[14] = -(far + near) / fn;
 	this.buffer[15] = 1;
+	$s.pop();
 }
 Matrix4.prototype.setPerspective = function(fovy,aspect,near,far) {
+	$s.push("Matrix4::setPerspective");
+	var $spos = $s.length;
 	var top = near * Math.tan(fovy * Math.PI / 360);
 	var right = top * aspect;
 	this.setFrustum(-right,right,-top,top,near,far);
+	$s.pop();
 }
 Matrix4.prototype.setFrustum = function(left,right,bottom,top,near,far) {
+	$s.push("Matrix4::setFrustum");
+	var $spos = $s.length;
 	var rl = right - left;
 	var tb = top - bottom;
 	var fn = far - near;
@@ -1626,8 +2396,11 @@ Matrix4.prototype.setFrustum = function(left,right,bottom,top,near,far) {
 	this.buffer[13] = 0;
 	this.buffer[14] = -(far * near * 2) / fn;
 	this.buffer[15] = 0;
+	$s.pop();
 }
 Matrix4.prototype.append = function(a) {
+	$s.push("Matrix4::append");
+	var $spos = $s.length;
 	var b = this;
 	var a11 = a.buffer[0], a21 = a.buffer[1], a31 = a.buffer[2], a41 = a.buffer[3], a12 = a.buffer[4], a22 = a.buffer[5], a32 = a.buffer[6], a42 = a.buffer[7], a13 = a.buffer[8], a23 = a.buffer[9], a33 = a.buffer[10], a43 = a.buffer[11], a14 = a.buffer[12], a24 = a.buffer[13], a34 = a.buffer[14], a44 = a.buffer[15], b11 = b.buffer[0], b21 = b.buffer[1], b31 = b.buffer[2], b41 = b.buffer[3], b12 = b.buffer[4], b22 = b.buffer[5], b32 = b.buffer[6], b42 = b.buffer[7], b13 = b.buffer[8], b23 = b.buffer[9], b33 = b.buffer[10], b43 = b.buffer[11], b14 = b.buffer[12], b24 = b.buffer[13], b34 = b.buffer[14], b44 = b.buffer[15];
 	this.buffer[0] = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
@@ -1646,8 +2419,11 @@ Matrix4.prototype.append = function(a) {
 	this.buffer[13] = a21 * b14 + a22 * b24 + a23 * b34 + a24 * b44;
 	this.buffer[14] = a31 * b14 + a32 * b24 + a33 * b34 + a34 * b44;
 	this.buffer[15] = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
+	$s.pop();
 }
 Matrix4.prototype.appendAffine = function(a) {
+	$s.push("Matrix4::appendAffine");
+	var $spos = $s.length;
 	var a11 = a.buffer[0], a21 = a.buffer[1], a31 = a.buffer[2], a12 = a.buffer[4], a22 = a.buffer[5], a32 = a.buffer[6], a13 = a.buffer[8], a23 = a.buffer[9], a33 = a.buffer[10], b11 = this.buffer[0], b21 = this.buffer[1], b31 = this.buffer[2], b12 = this.buffer[4], b22 = this.buffer[5], b32 = this.buffer[6], b13 = this.buffer[8], b23 = this.buffer[9], b33 = this.buffer[10], b14 = this.buffer[12], b24 = this.buffer[13], b34 = this.buffer[14];
 	this.buffer[0] = a11 * b11 + a12 * b21 + a13 * b31;
 	this.buffer[1] = a21 * b11 + a22 * b21 + a23 * b31;
@@ -1661,189 +2437,427 @@ Matrix4.prototype.appendAffine = function(a) {
 	this.buffer[12] = a11 * b14 + a12 * b24 + a13 * b34 + a.buffer[12];
 	this.buffer[13] = a21 * b14 + a22 * b24 + a23 * b34 + a.buffer[13];
 	this.buffer[14] = a31 * b14 + a32 * b24 + a33 * b34 + a.buffer[14];
+	$s.pop();
 }
 Matrix4.prototype.appendTranslation = function(x,y,z) {
+	$s.push("Matrix4::appendTranslation");
+	var $spos = $s.length;
 	Matrix4.tempMatrix1.setTranslation(x,y,z);
 	this.append(Matrix4.tempMatrix1);
+	$s.pop();
 }
 Matrix4.prototype.appendTranslationAffine = function(x,y,z) {
+	$s.push("Matrix4::appendTranslationAffine");
+	var $spos = $s.length;
 	Matrix4.tempMatrix1.setTranslation(x,y,z);
 	this.appendAffine(Matrix4.tempMatrix1);
+	$s.pop();
 }
 Matrix4.prototype.appendScale = function(x,y,z) {
+	$s.push("Matrix4::appendScale");
+	var $spos = $s.length;
 	Matrix4.tempMatrix1.setScale(x,y,z);
 	this.append(Matrix4.tempMatrix1);
+	$s.pop();
 }
 Matrix4.prototype.appendRotation = function(angle,axis) {
+	$s.push("Matrix4::appendRotation");
+	var $spos = $s.length;
 	Matrix4.tempMatrix1.setRotation(angle,axis);
 	this.append(Matrix4.tempMatrix1);
+	$s.pop();
 }
 Matrix4.prototype.appendRotationZ = function(angle) {
+	$s.push("Matrix4::appendRotationZ");
+	var $spos = $s.length;
 	Matrix4.tempMatrix1.setRotationZ(angle);
 	this.append(Matrix4.tempMatrix1);
+	$s.pop();
 }
 Matrix4.prototype.appendScaleAffine = function(x,y,z) {
+	$s.push("Matrix4::appendScaleAffine");
+	var $spos = $s.length;
 	Matrix4.tempMatrix1.setScale(x,y,z);
 	this.appendAffine(Matrix4.tempMatrix1);
+	$s.pop();
 }
 Matrix4.prototype.appendRotationAffine = function(angle,axis) {
+	$s.push("Matrix4::appendRotationAffine");
+	var $spos = $s.length;
 	Matrix4.tempMatrix1.setRotation(angle,axis);
 	this.appendAffine(Matrix4.tempMatrix1);
+	$s.pop();
 }
 Matrix4.prototype.appendRotationZAffine = function(angle) {
+	$s.push("Matrix4::appendRotationZAffine");
+	var $spos = $s.length;
 	Matrix4.tempMatrix1.setRotationZ(angle);
 	this.appendAffine(Matrix4.tempMatrix1);
+	$s.pop();
 }
 Matrix4.prototype.toString = function() {
+	$s.push("Matrix4::toString");
+	var $spos = $s.length;
 	var result = "[Matrix4: ";
 	result += " | " + this.buffer[0] + "," + this.buffer[4] + "," + this.buffer[8] + "," + this.buffer[12];
 	result += " | " + this.buffer[1] + "," + this.buffer[5] + "," + this.buffer[9] + "," + this.buffer[13];
 	result += " | " + this.buffer[2] + "," + this.buffer[6] + "," + this.buffer[10] + "," + this.buffer[14];
 	result += " | " + this.buffer[3] + "," + this.buffer[7] + "," + this.buffer[11] + "," + this.buffer[15];
 	result += " | ]";
+	$s.pop();
 	return result;
+	$s.pop();
 }
 Matrix4.prototype.get11 = function() {
-	return this.buffer[0];
+	$s.push("Matrix4::get11");
+	var $spos = $s.length;
+	var $tmp = this.buffer[0];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.set11 = function(v) {
-	return this.buffer[0] = v;
+	$s.push("Matrix4::set11");
+	var $spos = $s.length;
+	var $tmp = this.buffer[0] = v;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.get12 = function() {
-	return this.buffer[4];
+	$s.push("Matrix4::get12");
+	var $spos = $s.length;
+	var $tmp = this.buffer[4];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.set12 = function(v) {
-	return this.buffer[4] = v;
+	$s.push("Matrix4::set12");
+	var $spos = $s.length;
+	var $tmp = this.buffer[4] = v;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.get13 = function() {
-	return this.buffer[8];
+	$s.push("Matrix4::get13");
+	var $spos = $s.length;
+	var $tmp = this.buffer[8];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.set13 = function(v) {
-	return this.buffer[8] = v;
+	$s.push("Matrix4::set13");
+	var $spos = $s.length;
+	var $tmp = this.buffer[8] = v;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.get14 = function() {
-	return this.buffer[12];
+	$s.push("Matrix4::get14");
+	var $spos = $s.length;
+	var $tmp = this.buffer[12];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.set14 = function(v) {
-	return this.buffer[12] = v;
+	$s.push("Matrix4::set14");
+	var $spos = $s.length;
+	var $tmp = this.buffer[12] = v;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.get21 = function() {
-	return this.buffer[1];
+	$s.push("Matrix4::get21");
+	var $spos = $s.length;
+	var $tmp = this.buffer[1];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.set21 = function(v) {
-	return this.buffer[1] = v;
+	$s.push("Matrix4::set21");
+	var $spos = $s.length;
+	var $tmp = this.buffer[1] = v;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.get22 = function() {
-	return this.buffer[5];
+	$s.push("Matrix4::get22");
+	var $spos = $s.length;
+	var $tmp = this.buffer[5];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.set22 = function(v) {
-	return this.buffer[5] = v;
+	$s.push("Matrix4::set22");
+	var $spos = $s.length;
+	var $tmp = this.buffer[5] = v;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.get23 = function() {
-	return this.buffer[9];
+	$s.push("Matrix4::get23");
+	var $spos = $s.length;
+	var $tmp = this.buffer[9];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.set23 = function(v) {
-	return this.buffer[9] = v;
+	$s.push("Matrix4::set23");
+	var $spos = $s.length;
+	var $tmp = this.buffer[9] = v;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.get24 = function() {
-	return this.buffer[13];
+	$s.push("Matrix4::get24");
+	var $spos = $s.length;
+	var $tmp = this.buffer[13];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.set24 = function(v) {
-	return this.buffer[13] = v;
+	$s.push("Matrix4::set24");
+	var $spos = $s.length;
+	var $tmp = this.buffer[13] = v;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.get31 = function() {
-	return this.buffer[2];
+	$s.push("Matrix4::get31");
+	var $spos = $s.length;
+	var $tmp = this.buffer[2];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.set31 = function(v) {
-	return this.buffer[2] = v;
+	$s.push("Matrix4::set31");
+	var $spos = $s.length;
+	var $tmp = this.buffer[2] = v;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.get32 = function() {
-	return this.buffer[6];
+	$s.push("Matrix4::get32");
+	var $spos = $s.length;
+	var $tmp = this.buffer[6];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.set32 = function(v) {
-	return this.buffer[6] = v;
+	$s.push("Matrix4::set32");
+	var $spos = $s.length;
+	var $tmp = this.buffer[6] = v;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.get33 = function() {
-	return this.buffer[10];
+	$s.push("Matrix4::get33");
+	var $spos = $s.length;
+	var $tmp = this.buffer[10];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.set33 = function(v) {
-	return this.buffer[10] = v;
+	$s.push("Matrix4::set33");
+	var $spos = $s.length;
+	var $tmp = this.buffer[10] = v;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.get34 = function() {
-	return this.buffer[14];
+	$s.push("Matrix4::get34");
+	var $spos = $s.length;
+	var $tmp = this.buffer[14];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.set34 = function(v) {
-	return this.buffer[14] = v;
+	$s.push("Matrix4::set34");
+	var $spos = $s.length;
+	var $tmp = this.buffer[14] = v;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.get41 = function() {
-	return this.buffer[3];
+	$s.push("Matrix4::get41");
+	var $spos = $s.length;
+	var $tmp = this.buffer[3];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.set41 = function(v) {
-	return this.buffer[3] = v;
+	$s.push("Matrix4::set41");
+	var $spos = $s.length;
+	var $tmp = this.buffer[3] = v;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.get42 = function() {
-	return this.buffer[7];
+	$s.push("Matrix4::get42");
+	var $spos = $s.length;
+	var $tmp = this.buffer[7];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.set42 = function(v) {
-	return this.buffer[7] = v;
+	$s.push("Matrix4::set42");
+	var $spos = $s.length;
+	var $tmp = this.buffer[7] = v;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.get43 = function() {
-	return this.buffer[11];
+	$s.push("Matrix4::get43");
+	var $spos = $s.length;
+	var $tmp = this.buffer[11];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.set43 = function(v) {
-	return this.buffer[11] = v;
+	$s.push("Matrix4::set43");
+	var $spos = $s.length;
+	var $tmp = this.buffer[11] = v;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.get44 = function() {
-	return this.buffer[15];
+	$s.push("Matrix4::get44");
+	var $spos = $s.length;
+	var $tmp = this.buffer[15];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.set44 = function(v) {
-	return this.buffer[15] = v;
+	$s.push("Matrix4::set44");
+	var $spos = $s.length;
+	var $tmp = this.buffer[15] = v;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix4.prototype.__class__ = Matrix4;
 Hash = function(p) {
 	if( p === $_ ) return;
+	$s.push("Hash::new");
+	var $spos = $s.length;
 	this.h = {}
 	if(this.h.__proto__ != null) {
 		this.h.__proto__ = null;
 		delete(this.h.__proto__);
 	}
+	$s.pop();
 }
 Hash.__name__ = ["Hash"];
 Hash.prototype.h = null;
 Hash.prototype.set = function(key,value) {
+	$s.push("Hash::set");
+	var $spos = $s.length;
 	this.h["$" + key] = value;
+	$s.pop();
 }
 Hash.prototype.get = function(key) {
-	return this.h["$" + key];
+	$s.push("Hash::get");
+	var $spos = $s.length;
+	var $tmp = this.h["$" + key];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Hash.prototype.exists = function(key) {
+	$s.push("Hash::exists");
+	var $spos = $s.length;
 	try {
 		key = "$" + key;
-		return this.hasOwnProperty.call(this.h,key);
+		var $tmp = this.hasOwnProperty.call(this.h,key);
+		$s.pop();
+		return $tmp;
 	} catch( e ) {
+		$e = [];
+		while($s.length >= $spos) $e.unshift($s.pop());
+		$s.push($e[0]);
 		for(var i in this.h) if( i == key ) return true;
+		$s.pop();
 		return false;
 	}
+	$s.pop();
 }
 Hash.prototype.remove = function(key) {
-	if(!this.exists(key)) return false;
+	$s.push("Hash::remove");
+	var $spos = $s.length;
+	if(!this.exists(key)) {
+		$s.pop();
+		return false;
+	}
 	delete(this.h["$" + key]);
+	$s.pop();
 	return true;
+	$s.pop();
 }
 Hash.prototype.keys = function() {
+	$s.push("Hash::keys");
+	var $spos = $s.length;
 	var a = new Array();
 	for(var i in this.h) a.push(i.substr(1));
-	return a.iterator();
+	var $tmp = a.iterator();
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Hash.prototype.iterator = function() {
-	return { ref : this.h, it : this.keys(), hasNext : function() {
-		return this.it.hasNext();
+	$s.push("Hash::iterator");
+	var $spos = $s.length;
+	var $tmp = { ref : this.h, it : this.keys(), hasNext : function() {
+		$s.push("Hash::iterator@75");
+		var $spos = $s.length;
+		var $tmp = this.it.hasNext();
+		$s.pop();
+		return $tmp;
+		$s.pop();
 	}, next : function() {
+		$s.push("Hash::iterator@76");
+		var $spos = $s.length;
 		var i = this.it.next();
-		return this.ref["$" + i];
+		var $tmp = this.ref["$" + i];
+		$s.pop();
+		return $tmp;
+		$s.pop();
 	}};
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Hash.prototype.toString = function() {
+	$s.push("Hash::toString");
+	var $spos = $s.length;
 	var s = new StringBuf();
 	s.b[s.b.length] = "{" == null?"null":"{";
 	var it = this.keys();
@@ -1855,28 +2869,47 @@ Hash.prototype.toString = function() {
 		if(it.hasNext()) s.b[s.b.length] = ", " == null?"null":", ";
 	}
 	s.b[s.b.length] = "}" == null?"null":"}";
-	return s.b.join("");
+	var $tmp = s.b.join("");
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Hash.prototype.__class__ = Hash;
 if(!kumite.musicdraw) kumite.musicdraw = {}
 kumite.musicdraw.SquareEffectWorkerHandler = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.musicdraw.SquareEffectWorkerHandler::new");
+	var $spos = $s.length;
 	this.rasterX = 0;
+	this.roundtripSynchronizer = new bpmjs.RoundtripSynchronizer();
+	this.roundtripSynchronizer.targetMs = 1000 / 60;
+	$s.pop();
 }
 kumite.musicdraw.SquareEffectWorkerHandler.__name__ = ["kumite","musicdraw","SquareEffectWorkerHandler"];
 kumite.musicdraw.SquareEffectWorkerHandler.prototype.textureRegistry = null;
 kumite.musicdraw.SquareEffectWorkerHandler.prototype.analyzer = null;
 kumite.musicdraw.SquareEffectWorkerHandler.prototype.stage = null;
 kumite.musicdraw.SquareEffectWorkerHandler.prototype.texture = null;
+kumite.musicdraw.SquareEffectWorkerHandler.prototype.workerService = null;
 kumite.musicdraw.SquareEffectWorkerHandler.prototype.rasterX = null;
-kumite.musicdraw.SquareEffectWorkerHandler.prototype.workerRPC = null;
+kumite.musicdraw.SquareEffectWorkerHandler.prototype.label = null;
+kumite.musicdraw.SquareEffectWorkerHandler.prototype.roundtripSynchronizer = null;
 kumite.musicdraw.SquareEffectWorkerHandler.prototype.createTexture = function() {
+	$s.push("kumite.musicdraw.SquareEffectWorkerHandler::createTexture");
+	var $spos = $s.length;
 	this.texture = this.textureRegistry.createGLArrayTexture(512,1024,9729);
-	return this.texture;
+	var $tmp = this.texture;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 kumite.musicdraw.SquareEffectWorkerHandler.prototype.start = function() {
-	this.workerRPC = bpmjs.WorkerRPC.initForHandler(this,"bin/kumite.musicdraw.SquareEffectWorker.js");
-	this.workerRPC.sendCommand("init",this.analyzer);
+	$s.push("kumite.musicdraw.SquareEffectWorkerHandler::start");
+	var $spos = $s.length;
+	this.workerService = new bpmjs.WorkerService();
+	this.workerService.debug = false;
+	this.workerService.init("bin/kumite.musicdraw.SquareEffectWorker.js");
+	this.workerService.call("init",[this.analyzer],$closure(this,"loop"));
 	var binding = reflect.Binding.createForInstanceAndName(this,"rasterX");
 	var sliderH = new GLSliderH();
 	sliderH.setMin(-200);
@@ -1887,19 +2920,40 @@ kumite.musicdraw.SquareEffectWorkerHandler.prototype.start = function() {
 	sliderH.setWidth(200);
 	sliderH.bind(binding);
 	this.stage.addChild(sliderH);
+	this.label = new GLLabel();
+	this.label.setText("Huhu");
+	this.label.setX(10);
+	this.label.setY(75);
+	this.label.setWidth(200);
+	this.label.setHeight(20);
+	this.stage.addChild(this.label);
+	$s.pop();
 }
-kumite.musicdraw.SquareEffectWorkerHandler.prototype.setResult = function(data) {
-	this.texture.array.set(new Uint8Array(data));
+kumite.musicdraw.SquareEffectWorkerHandler.prototype.loop = function() {
+	$s.push("kumite.musicdraw.SquareEffectWorkerHandler::loop");
+	var $spos = $s.length;
+	this.label.setText(this.roundtripSynchronizer.getInfo());
+	this.roundtripSynchronizer.workStart();
+	this.workerService.callTransfer("render",this.texture.array.buffer,$closure(this,"handleRender"));
+	$s.pop();
+}
+kumite.musicdraw.SquareEffectWorkerHandler.prototype.handleRender = function(buffer) {
+	$s.push("kumite.musicdraw.SquareEffectWorkerHandler::handleRender");
+	var $spos = $s.length;
+	this.roundtripSynchronizer.workComplete();
+	this.texture.array = new Uint8Array(buffer);
 	this.textureRegistry.updateGLArrayTexture(this.texture);
-	this.workerRPC.sendTransferableCommand("returnBuffer",data);
-	this.workerRPC.sendCommand("setRasterX",this.rasterX);
-	this.workerRPC.sendCommand("render");
+	this.roundtripSynchronizer.delay($closure(this,"loop"));
+	$s.pop();
 }
 kumite.musicdraw.SquareEffectWorkerHandler.prototype.__class__ = kumite.musicdraw.SquareEffectWorkerHandler;
 kumite.musicdraw.SquareEffectWorkerHandler.__interfaces__ = [haxe.rtti.Infos];
 GLStage = function(p) {
 	if( p === $_ ) return;
+	$s.push("GLStage::new");
+	var $spos = $s.length;
 	GLDisplayObjectContainer.call(this);
+	$s.pop();
 }
 GLStage.__name__ = ["GLStage"];
 GLStage.__super__ = GLDisplayObjectContainer;
@@ -1909,42 +2963,87 @@ GLStage.prototype.stageHeight = null;
 GLStage.prototype.__class__ = GLStage;
 IntHash = function(p) {
 	if( p === $_ ) return;
+	$s.push("IntHash::new");
+	var $spos = $s.length;
 	this.h = {}
 	if(this.h.__proto__ != null) {
 		this.h.__proto__ = null;
 		delete(this.h.__proto__);
 	}
+	$s.pop();
 }
 IntHash.__name__ = ["IntHash"];
 IntHash.prototype.h = null;
 IntHash.prototype.set = function(key,value) {
+	$s.push("IntHash::set");
+	var $spos = $s.length;
 	this.h[key] = value;
+	$s.pop();
 }
 IntHash.prototype.get = function(key) {
-	return this.h[key];
+	$s.push("IntHash::get");
+	var $spos = $s.length;
+	var $tmp = this.h[key];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 IntHash.prototype.exists = function(key) {
-	return this.h[key] != null;
+	$s.push("IntHash::exists");
+	var $spos = $s.length;
+	var $tmp = this.h[key] != null;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 IntHash.prototype.remove = function(key) {
-	if(this.h[key] == null) return false;
+	$s.push("IntHash::remove");
+	var $spos = $s.length;
+	if(this.h[key] == null) {
+		$s.pop();
+		return false;
+	}
 	delete(this.h[key]);
+	$s.pop();
 	return true;
+	$s.pop();
 }
 IntHash.prototype.keys = function() {
+	$s.push("IntHash::keys");
+	var $spos = $s.length;
 	var a = new Array();
 	for( x in this.h ) a.push(x);
-	return a.iterator();
+	var $tmp = a.iterator();
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 IntHash.prototype.iterator = function() {
-	return { ref : this.h, it : this.keys(), hasNext : function() {
-		return this.it.hasNext();
+	$s.push("IntHash::iterator");
+	var $spos = $s.length;
+	var $tmp = { ref : this.h, it : this.keys(), hasNext : function() {
+		$s.push("IntHash::iterator@66");
+		var $spos = $s.length;
+		var $tmp = this.it.hasNext();
+		$s.pop();
+		return $tmp;
+		$s.pop();
 	}, next : function() {
+		$s.push("IntHash::iterator@67");
+		var $spos = $s.length;
 		var i = this.it.next();
-		return this.ref[i];
+		var $tmp = this.ref[i];
+		$s.pop();
+		return $tmp;
+		$s.pop();
 	}};
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 IntHash.prototype.toString = function() {
+	$s.push("IntHash::toString");
+	var $spos = $s.length;
 	var s = new StringBuf();
 	s.b[s.b.length] = "{" == null?"null":"{";
 	var it = this.keys();
@@ -1956,153 +3055,142 @@ IntHash.prototype.toString = function() {
 		if(it.hasNext()) s.b[s.b.length] = ", " == null?"null":", ";
 	}
 	s.b[s.b.length] = "}" == null?"null":"}";
-	return s.b.join("");
+	var $tmp = s.b.join("");
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 IntHash.prototype.__class__ = IntHash;
-bpmjs.WorkerRPC = function(p) {
-}
-bpmjs.WorkerRPC.__name__ = ["bpmjs","WorkerRPC"];
-bpmjs.WorkerRPC.initForHandler = function(receiver,workerUrl) {
-	var worker = new Worker(workerUrl + "?cache=" + Date.now().getTime());
-	var workerRPC = new bpmjs.WorkerRPC();
-	workerRPC.isWorker = false;
-	workerRPC.postMessage = $closure(worker,"webkitPostMessage");
-	workerRPC.receiver = receiver;
-	workerRPC.init();
-	worker.onmessage = function(e) {
-		workerRPC.processMessageEvent(e);
-	};
-	return workerRPC;
-}
-bpmjs.WorkerRPC.initForWorker = function(receiver) {
-	var workerRPC = new bpmjs.WorkerRPC();
-	workerRPC.isWorker = true;
-	workerRPC.receiver = receiver;
-	workerRPC.init();
-	
-			onmessage = function(event)
-			{
-				var f = function(data)
-				{
-					webkitPostMessage(data);
-				}
-				workerRPC.postMessage = f;
-				workerRPC.processMessageEvent(event);
-			}
-		;
-	console = { };
-	console.info = function(message) {
-		workerRPC.sendCommand("Log.info",message);
-	};
-	console.warn = function(message) {
-		workerRPC.sendCommand("Log.warn",message);
-	};
-	console.error = function(message) {
-		workerRPC.sendCommand("Log.error",message);
-	};
-	return workerRPC;
-}
-bpmjs.WorkerRPC.prototype.receiver = null;
-bpmjs.WorkerRPC.prototype.postMessage = null;
-bpmjs.WorkerRPC.prototype.isWorker = null;
-bpmjs.WorkerRPC.prototype.command = null;
-bpmjs.WorkerRPC.prototype.receiverClassInfo = null;
-bpmjs.WorkerRPC.prototype.init = function() {
-	this.command = null;
-	this.receiverClassInfo = reflect.ClassInfo.forInstance(this.receiver);
-}
-bpmjs.WorkerRPC.prototype.sendCommand = function(type,param) {
-	this.postMessage(new bpmjs.WorkerCommand(type));
-	this.postMessage(param);
-}
-bpmjs.WorkerRPC.prototype.sendTransferableCommand = function(type,param) {
-	this.postMessage(new bpmjs.WorkerCommand(type));
-	this.postMessage(param,[param]);
-}
-bpmjs.WorkerRPC.prototype.processMessageEvent = function(event) {
-	var data = event.data;
-	if(this.command == null) this.command = new bpmjs.WorkerCommand(data.type); else {
-		var method = Reflect.field(this.receiver,this.command.type);
-		if(method != null) method.apply(this.receiver,[data]); else {
-			var staticMethod = null;
-			try {
-				staticMethod = js.Lib.eval(this.command.type);
-				if(staticMethod == null) throw "";
-				staticMethod(data);
-			} catch( e ) {
-				{
-					Log.posInfo = { fileName : "WorkerRPC.hx", lineNumber : 123, className : "bpmjs.WorkerRPC", methodName : "processMessageEvent"};
-					if(Log.filter(LogLevel.ERROR)) {
-						Log.fetchInput("No method: " + this.command.type + " exists in object: " + this.receiver + " of class: " + this.receiverClassInfo.name,null,null,null,null,null,null);
-						console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
-						Log.displayError(Log.createErrorMessage());
-					}
-				}
-			}
-		}
-		this.command = null;
-	}
-}
-bpmjs.WorkerRPC.prototype.__class__ = bpmjs.WorkerRPC;
 kumite.scene.LayerState = function(name) {
 	if( name === $_ ) return;
+	$s.push("kumite.scene.LayerState::new");
+	var $spos = $s.length;
 	this.name = name;
+	$s.pop();
 }
 kumite.scene.LayerState.__name__ = ["kumite","scene","LayerState"];
 kumite.scene.LayerState.prototype.name = null;
 kumite.scene.LayerState.prototype.__class__ = kumite.scene.LayerState;
 if(!kumite.mouse) kumite.mouse = {}
 kumite.mouse.MouseController = function(p) {
+	$s.push("kumite.mouse.MouseController::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.mouse.MouseController.__name__ = ["kumite","mouse","MouseController"];
 kumite.mouse.MouseController.prototype.canvas = null;
 kumite.mouse.MouseController.prototype.start = function() {
+	$s.push("kumite.mouse.MouseController::start");
+	var $spos = $s.length;
 	GLMouseRegistry.getInstance().init(this.canvas.itself);
+	$s.pop();
 }
 kumite.mouse.MouseController.prototype.__class__ = kumite.mouse.MouseController;
 kumite.mouse.MouseController.__interfaces__ = [haxe.rtti.Infos];
 StringTools = function() { }
 StringTools.__name__ = ["StringTools"];
 StringTools.urlEncode = function(s) {
-	return encodeURIComponent(s);
+	$s.push("StringTools::urlEncode");
+	var $spos = $s.length;
+	var $tmp = encodeURIComponent(s);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 StringTools.urlDecode = function(s) {
-	return decodeURIComponent(s.split("+").join(" "));
+	$s.push("StringTools::urlDecode");
+	var $spos = $s.length;
+	var $tmp = decodeURIComponent(s.split("+").join(" "));
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 StringTools.htmlEscape = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+	$s.push("StringTools::htmlEscape");
+	var $spos = $s.length;
+	var $tmp = s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 StringTools.htmlUnescape = function(s) {
-	return s.split("&gt;").join(">").split("&lt;").join("<").split("&amp;").join("&");
+	$s.push("StringTools::htmlUnescape");
+	var $spos = $s.length;
+	var $tmp = s.split("&gt;").join(">").split("&lt;").join("<").split("&amp;").join("&");
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 StringTools.startsWith = function(s,start) {
-	return s.length >= start.length && s.substr(0,start.length) == start;
+	$s.push("StringTools::startsWith");
+	var $spos = $s.length;
+	var $tmp = s.length >= start.length && s.substr(0,start.length) == start;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 StringTools.endsWith = function(s,end) {
+	$s.push("StringTools::endsWith");
+	var $spos = $s.length;
 	var elen = end.length;
 	var slen = s.length;
-	return slen >= elen && s.substr(slen - elen,elen) == end;
+	var $tmp = slen >= elen && s.substr(slen - elen,elen) == end;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 StringTools.isSpace = function(s,pos) {
+	$s.push("StringTools::isSpace");
+	var $spos = $s.length;
 	var c = s.charCodeAt(pos);
-	return c >= 9 && c <= 13 || c == 32;
+	var $tmp = c >= 9 && c <= 13 || c == 32;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 StringTools.ltrim = function(s) {
+	$s.push("StringTools::ltrim");
+	var $spos = $s.length;
 	var l = s.length;
 	var r = 0;
 	while(r < l && StringTools.isSpace(s,r)) r++;
-	if(r > 0) return s.substr(r,l - r); else return s;
+	if(r > 0) {
+		var $tmp = s.substr(r,l - r);
+		$s.pop();
+		return $tmp;
+	} else {
+		$s.pop();
+		return s;
+	}
+	$s.pop();
 }
 StringTools.rtrim = function(s) {
+	$s.push("StringTools::rtrim");
+	var $spos = $s.length;
 	var l = s.length;
 	var r = 0;
 	while(r < l && StringTools.isSpace(s,l - r - 1)) r++;
-	if(r > 0) return s.substr(0,l - r); else return s;
+	if(r > 0) {
+		var $tmp = s.substr(0,l - r);
+		$s.pop();
+		return $tmp;
+	} else {
+		$s.pop();
+		return s;
+	}
+	$s.pop();
 }
 StringTools.trim = function(s) {
-	return StringTools.ltrim(StringTools.rtrim(s));
+	$s.push("StringTools::trim");
+	var $spos = $s.length;
+	var $tmp = StringTools.ltrim(StringTools.rtrim(s));
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 StringTools.rpad = function(s,c,l) {
+	$s.push("StringTools::rpad");
+	var $spos = $s.length;
 	var sl = s.length;
 	var cl = c.length;
 	while(sl < l) if(l - sl < cl) {
@@ -2112,12 +3200,19 @@ StringTools.rpad = function(s,c,l) {
 		s += c;
 		sl += cl;
 	}
+	$s.pop();
 	return s;
+	$s.pop();
 }
 StringTools.lpad = function(s,c,l) {
+	$s.push("StringTools::lpad");
+	var $spos = $s.length;
 	var ns = "";
 	var sl = s.length;
-	if(sl >= l) return s;
+	if(sl >= l) {
+		$s.pop();
+		return s;
+	}
 	var cl = c.length;
 	while(sl < l) if(l - sl < cl) {
 		ns += c.substr(0,l - sl);
@@ -2126,12 +3221,22 @@ StringTools.lpad = function(s,c,l) {
 		ns += c;
 		sl += cl;
 	}
-	return ns + s;
+	var $tmp = ns + s;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 StringTools.replace = function(s,sub,by) {
-	return s.split(sub).join(by);
+	$s.push("StringTools::replace");
+	var $spos = $s.length;
+	var $tmp = s.split(sub).join(by);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 StringTools.hex = function(n,digits) {
+	$s.push("StringTools::hex");
+	var $spos = $s.length;
 	var s = "";
 	var hexChars = "0123456789ABCDEF";
 	do {
@@ -2139,16 +3244,31 @@ StringTools.hex = function(n,digits) {
 		n >>>= 4;
 	} while(n > 0);
 	if(digits != null) while(s.length < digits) s = "0" + s;
+	$s.pop();
 	return s;
+	$s.pop();
 }
 StringTools.fastCodeAt = function(s,index) {
-	return s.cca(index);
+	$s.push("StringTools::fastCodeAt");
+	var $spos = $s.length;
+	var $tmp = s.cca(index);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 StringTools.isEOF = function(c) {
-	return c != c;
+	$s.push("StringTools::isEOF");
+	var $spos = $s.length;
+	var $tmp = c != c;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 StringTools.prototype.__class__ = StringTools;
 GLFrame = function(p) {
+	$s.push("GLFrame::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 GLFrame.__name__ = ["GLFrame"];
 GLFrame.prototype.time = null;
@@ -2157,26 +3277,37 @@ GLFrame.prototype.frameTime = null;
 GLFrame.prototype.__class__ = GLFrame;
 GLCursorClient = function(p) {
 	if( p === $_ ) return;
+	$s.push("GLCursorClient::new");
+	var $spos = $s.length;
 	this.lastCursor = "";
+	$s.pop();
 }
 GLCursorClient.__name__ = ["GLCursorClient"];
 GLCursorClient.prototype.lastCursor = null;
 GLCursorClient.prototype.defaultCursor = function() {
+	$s.push("GLCursorClient::defaultCursor");
+	var $spos = $s.length;
 	if(this.lastCursor != GLCursorClient.DEFAULT) {
 		this.lastCursor = GLCursorClient.DEFAULT;
 		GLMouseRegistry.getInstance().setCursor(this.lastCursor);
 	}
+	$s.pop();
 }
 GLCursorClient.prototype.handCursor = function(message) {
+	$s.push("GLCursorClient::handCursor");
+	var $spos = $s.length;
 	if(this.lastCursor != GLCursorClient.HAND) {
 		this.lastCursor = GLCursorClient.HAND;
 		GLMouseRegistry.getInstance().setCursor(this.lastCursor);
 		if(message != null) js.Lib.window.status = message;
 	}
+	$s.pop();
 }
 GLCursorClient.prototype.__class__ = GLCursorClient;
 GLDragH = function(p) {
 	if( p === $_ ) return;
+	$s.push("GLDragH::new");
+	var $spos = $s.length;
 	GLInteractiveObject.call(this);
 	this.changeSignaler = new hsl.haxe.DirectSignaler(this);
 	this.mouseEnabled = true;
@@ -2186,6 +3317,7 @@ GLDragH = function(p) {
 	this.mouseUpSignaler.bind($closure(this,"stopSlide"));
 	GLMouseRegistry.getInstance().mouseMoveSignaler.bind($closure(this,"handleMouseMove"));
 	GLMouseRegistry.getInstance().mouseUpSignaler.bind($closure(this,"handleMouseUpGlobal"));
+	$s.pop();
 }
 GLDragH.__name__ = ["GLDragH"];
 GLDragH.__super__ = GLInteractiveObject;
@@ -2197,35 +3329,56 @@ GLDragH.prototype.mouseX = null;
 GLDragH.prototype.dragStartMouseX = null;
 GLDragH.prototype.dragStartX = null;
 GLDragH.prototype.validateGraphics = function() {
+	$s.push("GLDragH::validateGraphics");
+	var $spos = $s.length;
 	if(this.getGraphicIsInvalid()) {
 		this.renderText();
 		GLInteractiveObject.prototype.validateGraphics.call(this);
 	}
+	$s.pop();
 }
 GLDragH.prototype.renderText = function() {
+	$s.push("GLDragH::renderText");
+	var $spos = $s.length;
 	this.graphic.clear(new Color(0.3,0.3,0.3,0.8));
 	this.graphic.setFillStyle(new Color(1,1,1,0.8));
+	$s.pop();
 }
 GLDragH.prototype.startSlide = function(slider) {
+	$s.push("GLDragH::startSlide");
+	var $spos = $s.length;
 	this.stopSlide(this);
 	this.dragStartX = this.x;
 	this.dragStartMouseX = this.mouseX;
 	GLMouseRegistry.getInstance().mouseMoveSignaler.bind($closure(this,"handleMouseMove2"));
+	$s.pop();
 }
 GLDragH.prototype.stopSlide = function(slider) {
+	$s.push("GLDragH::stopSlide");
+	var $spos = $s.length;
 	GLMouseRegistry.getInstance().mouseMoveSignaler.unbind($closure(this,"handleMouseMove2"));
+	$s.pop();
 }
 GLDragH.prototype.handleMouseUpGlobal = function(position) {
+	$s.push("GLDragH::handleMouseUpGlobal");
+	var $spos = $s.length;
 	this.stopSlide(this);
+	$s.pop();
 }
 GLDragH.prototype.handleMouseMove = function(position) {
+	$s.push("GLDragH::handleMouseMove");
+	var $spos = $s.length;
 	this.mouseX = position.x * this.stage.stageWidth;
+	$s.pop();
 }
 GLDragH.prototype.handleMouseMove2 = function(position) {
+	$s.push("GLDragH::handleMouseMove2");
+	var $spos = $s.length;
 	this.setX(this.dragStartX + (this.mouseX - this.dragStartMouseX));
 	if(this.x < this.min) this.setX(this.min);
 	if(this.x > this.max) this.setX(this.max);
 	this.changeSignaler.dispatch(this.x,null,{ fileName : "GLDragH.hx", lineNumber : 82, className : "GLDragH", methodName : "handleMouseMove2"});
+	$s.pop();
 }
 GLDragH.prototype.__class__ = GLDragH;
 if(typeof hsl=='undefined') hsl = {}
@@ -2249,10 +3402,13 @@ hsl.haxe.Signaler.prototype.unbindVoid = null;
 hsl.haxe.Signaler.prototype.__class__ = hsl.haxe.Signaler;
 hsl.haxe.DirectSignaler = function(subject,rejectNullData) {
 	if( subject === $_ ) return;
+	$s.push("hsl.haxe.DirectSignaler::new");
+	var $spos = $s.length;
 	if(null == subject) throw new haxe.exception.ArgumentNullException("subject",1);
 	this.subject = subject;
 	this.rejectNullData = rejectNullData;
 	this.sentinel = new hsl.haxe._DirectSignaler.SentinelBond();
+	$s.pop();
 }
 hsl.haxe.DirectSignaler.__name__ = ["hsl","haxe","DirectSignaler"];
 hsl.haxe.DirectSignaler.prototype.bubblingTargets = null;
@@ -2263,26 +3419,49 @@ hsl.haxe.DirectSignaler.prototype.sentinel = null;
 hsl.haxe.DirectSignaler.prototype.subject = null;
 hsl.haxe.DirectSignaler.prototype.subjectClassNames = null;
 hsl.haxe.DirectSignaler.prototype.addBubblingTarget = function(value) {
+	$s.push("hsl.haxe.DirectSignaler::addBubblingTarget");
+	var $spos = $s.length;
 	if(null == this.bubblingTargets) this.bubblingTargets = new List();
 	this.bubblingTargets.add(value);
+	$s.pop();
 }
 hsl.haxe.DirectSignaler.prototype.addNotificationTarget = function(value) {
+	$s.push("hsl.haxe.DirectSignaler::addNotificationTarget");
+	var $spos = $s.length;
 	if(null == this.notificationTargets) this.notificationTargets = new List();
 	this.notificationTargets.add(value);
+	$s.pop();
 }
 hsl.haxe.DirectSignaler.prototype.bind = function(listener) {
+	$s.push("hsl.haxe.DirectSignaler::bind");
+	var $spos = $s.length;
 	if(null == listener) throw new haxe.exception.ArgumentNullException("listener",1);
-	return this.sentinel.add(new hsl.haxe._DirectSignaler.RegularBond(listener));
+	var $tmp = this.sentinel.add(new hsl.haxe._DirectSignaler.RegularBond(listener));
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hsl.haxe.DirectSignaler.prototype.bindAdvanced = function(listener) {
+	$s.push("hsl.haxe.DirectSignaler::bindAdvanced");
+	var $spos = $s.length;
 	if(null == listener) throw new haxe.exception.ArgumentNullException("listener",1);
-	return this.sentinel.add(new hsl.haxe._DirectSignaler.AdvancedBond(listener));
+	var $tmp = this.sentinel.add(new hsl.haxe._DirectSignaler.AdvancedBond(listener));
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hsl.haxe.DirectSignaler.prototype.bindVoid = function(listener) {
+	$s.push("hsl.haxe.DirectSignaler::bindVoid");
+	var $spos = $s.length;
 	if(null == listener) throw new haxe.exception.ArgumentNullException("listener",1);
-	return this.sentinel.add(new hsl.haxe._DirectSignaler.NiladicBond(listener));
+	var $tmp = this.sentinel.add(new hsl.haxe._DirectSignaler.NiladicBond(listener));
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hsl.haxe.DirectSignaler.prototype.bubble = function(data,origin) {
+	$s.push("hsl.haxe.DirectSignaler::bubble");
+	var $spos = $s.length;
 	if(null != this.bubblingTargets) {
 		var $it0 = this.bubblingTargets.iterator();
 		while( $it0.hasNext() ) {
@@ -2297,8 +3476,11 @@ hsl.haxe.DirectSignaler.prototype.bubble = function(data,origin) {
 			notificationTarget.dispatch(null,origin,{ fileName : "DirectSignaler.hx", lineNumber : 114, className : "hsl.haxe.DirectSignaler", methodName : "bubble"});
 		}
 	}
+	$s.pop();
 }
 hsl.haxe.DirectSignaler.prototype.dispatch = function(data,origin,positionInformation) {
+	$s.push("hsl.haxe.DirectSignaler::dispatch");
+	var $spos = $s.length;
 	if("dispatchNative" != positionInformation.methodName && "bubble" != positionInformation.methodName) this.verifyCaller(positionInformation);
 	if(this.rejectNullData && null == data) throw new haxe.exception.Exception("Some data that was passed is null, but this signaler has been set to reject null data.",null,1);
 	origin = null == origin?this.subject:origin;
@@ -2318,64 +3500,130 @@ hsl.haxe.DirectSignaler.prototype.dispatch = function(data,origin,positionInform
 			}
 		}
 	}
+	$s.pop();
 }
 hsl.haxe.DirectSignaler.prototype.getIsListenedTo = function() {
-	return this.sentinel.getIsConnected();
+	$s.push("hsl.haxe.DirectSignaler::getIsListenedTo");
+	var $spos = $s.length;
+	var $tmp = this.sentinel.getIsConnected();
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hsl.haxe.DirectSignaler.prototype.getOrigin = function(origin) {
-	return null == origin?this.subject:origin;
+	$s.push("hsl.haxe.DirectSignaler::getOrigin");
+	var $spos = $s.length;
+	var $tmp = null == origin?this.subject:origin;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hsl.haxe.DirectSignaler.prototype.verifyCaller = function(positionInformation) {
+	$s.push("hsl.haxe.DirectSignaler::verifyCaller");
+	var $spos = $s.length;
 	if(null == this.subjectClassNames) this.subjectClassNames = haxe.TypeTools.getClassNames(this.subject);
 	var $it0 = this.subjectClassNames.iterator();
 	while( $it0.hasNext() ) {
 		var subjectClassName = $it0.next();
-		if(subjectClassName == positionInformation.className) return;
+		if(subjectClassName == positionInformation.className) {
+			$s.pop();
+			return;
+		}
 	}
 	throw new haxe.exception.Exception("This method may only be called by the subject of the signaler.",null,2);
+	$s.pop();
 }
 hsl.haxe.DirectSignaler.prototype.removeBubblingTarget = function(value) {
+	$s.push("hsl.haxe.DirectSignaler::removeBubblingTarget");
+	var $spos = $s.length;
 	if(null != this.bubblingTargets) this.bubblingTargets.remove(value);
+	$s.pop();
 }
 hsl.haxe.DirectSignaler.prototype.removeNotificationTarget = function(value) {
+	$s.push("hsl.haxe.DirectSignaler::removeNotificationTarget");
+	var $spos = $s.length;
 	if(null != this.notificationTargets) this.notificationTargets.remove(value);
+	$s.pop();
+}
+hsl.haxe.DirectSignaler.prototype.toString = function() {
+	$s.push("hsl.haxe.DirectSignaler::toString");
+	var $spos = $s.length;
+	var $tmp = "[Signaler isListenedTo=" + this.getIsListenedTo() + "]";
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hsl.haxe.DirectSignaler.prototype.unbind = function(listener) {
+	$s.push("hsl.haxe.DirectSignaler::unbind");
+	var $spos = $s.length;
 	this.sentinel.remove(new hsl.haxe._DirectSignaler.RegularBond(listener));
+	$s.pop();
 }
 hsl.haxe.DirectSignaler.prototype.unbindAdvanced = function(listener) {
+	$s.push("hsl.haxe.DirectSignaler::unbindAdvanced");
+	var $spos = $s.length;
 	this.sentinel.remove(new hsl.haxe._DirectSignaler.AdvancedBond(listener));
+	$s.pop();
 }
 hsl.haxe.DirectSignaler.prototype.unbindVoid = function(listener) {
+	$s.push("hsl.haxe.DirectSignaler::unbindVoid");
+	var $spos = $s.length;
 	this.sentinel.remove(new hsl.haxe._DirectSignaler.NiladicBond(listener));
+	$s.pop();
 }
 hsl.haxe.DirectSignaler.prototype.__class__ = hsl.haxe.DirectSignaler;
 hsl.haxe.DirectSignaler.__interfaces__ = [hsl.haxe.Signaler];
 hsl.haxe.Bond = function(p) {
 	if( p === $_ ) return;
+	$s.push("hsl.haxe.Bond::new");
+	var $spos = $s.length;
 	this.halted = false;
+	$s.pop();
 }
 hsl.haxe.Bond.__name__ = ["hsl","haxe","Bond"];
 hsl.haxe.Bond.prototype.halted = null;
 hsl.haxe.Bond.prototype.willDestroyOnUse = null;
 hsl.haxe.Bond.prototype.destroy = function() {
+	$s.push("hsl.haxe.Bond::destroy");
+	var $spos = $s.length;
+	$s.pop();
 }
 hsl.haxe.Bond.prototype.destroyOnUse = function() {
+	$s.push("hsl.haxe.Bond::destroyOnUse");
+	var $spos = $s.length;
 	this.willDestroyOnUse = true;
+	$s.pop();
 	return this;
+	$s.pop();
 }
 hsl.haxe.Bond.prototype.halt = function() {
+	$s.push("hsl.haxe.Bond::halt");
+	var $spos = $s.length;
 	this.halted = true;
+	$s.pop();
 }
 hsl.haxe.Bond.prototype.resume = function() {
+	$s.push("hsl.haxe.Bond::resume");
+	var $spos = $s.length;
 	this.halted = false;
+	$s.pop();
+}
+hsl.haxe.Bond.prototype.toString = function() {
+	$s.push("hsl.haxe.Bond::toString");
+	var $spos = $s.length;
+	$s.pop();
+	return "[Bond]";
+	$s.pop();
 }
 hsl.haxe.Bond.prototype.__class__ = hsl.haxe.Bond;
 if(!hsl.haxe._DirectSignaler) hsl.haxe._DirectSignaler = {}
 hsl.haxe._DirectSignaler.LinkedBond = function(p) {
 	if( p === $_ ) return;
+	$s.push("hsl.haxe._DirectSignaler.LinkedBond::new");
+	var $spos = $s.length;
 	hsl.haxe.Bond.call(this);
 	this.destroyed = false;
+	$s.pop();
 }
 hsl.haxe._DirectSignaler.LinkedBond.__name__ = ["hsl","haxe","_DirectSignaler","LinkedBond"];
 hsl.haxe._DirectSignaler.LinkedBond.__super__ = hsl.haxe.Bond;
@@ -2384,52 +3632,85 @@ hsl.haxe._DirectSignaler.LinkedBond.prototype.destroyed = null;
 hsl.haxe._DirectSignaler.LinkedBond.prototype.next = null;
 hsl.haxe._DirectSignaler.LinkedBond.prototype.previous = null;
 hsl.haxe._DirectSignaler.LinkedBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
+	$s.push("hsl.haxe._DirectSignaler.LinkedBond::callListener");
+	var $spos = $s.length;
+	$s.pop();
 	return 0;
+	$s.pop();
 }
 hsl.haxe._DirectSignaler.LinkedBond.prototype.determineEquals = function(value) {
+	$s.push("hsl.haxe._DirectSignaler.LinkedBond::determineEquals");
+	var $spos = $s.length;
+	$s.pop();
 	return false;
+	$s.pop();
 }
 hsl.haxe._DirectSignaler.LinkedBond.prototype.destroy = function() {
+	$s.push("hsl.haxe._DirectSignaler.LinkedBond::destroy");
+	var $spos = $s.length;
 	if(false == this.destroyed) {
 		this.previous.next = this.next;
 		this.next.previous = this.previous;
 		this.destroyed = true;
 	}
+	$s.pop();
 }
 hsl.haxe._DirectSignaler.LinkedBond.prototype.unlink = function() {
+	$s.push("hsl.haxe._DirectSignaler.LinkedBond::unlink");
+	var $spos = $s.length;
 	if(false == this.destroyed) {
 		this.previous.next = this.next;
 		this.next.previous = this.previous;
 		this.destroyed = true;
 	}
+	$s.pop();
 }
 hsl.haxe._DirectSignaler.LinkedBond.prototype.__class__ = hsl.haxe._DirectSignaler.LinkedBond;
 hsl.haxe._DirectSignaler.SentinelBond = function(p) {
 	if( p === $_ ) return;
+	$s.push("hsl.haxe._DirectSignaler.SentinelBond::new");
+	var $spos = $s.length;
 	hsl.haxe._DirectSignaler.LinkedBond.call(this);
 	this.next = this.previous = this;
+	$s.pop();
 }
 hsl.haxe._DirectSignaler.SentinelBond.__name__ = ["hsl","haxe","_DirectSignaler","SentinelBond"];
 hsl.haxe._DirectSignaler.SentinelBond.__super__ = hsl.haxe._DirectSignaler.LinkedBond;
 for(var k in hsl.haxe._DirectSignaler.LinkedBond.prototype ) hsl.haxe._DirectSignaler.SentinelBond.prototype[k] = hsl.haxe._DirectSignaler.LinkedBond.prototype[k];
 hsl.haxe._DirectSignaler.SentinelBond.prototype.isConnected = null;
 hsl.haxe._DirectSignaler.SentinelBond.prototype.add = function(value) {
+	$s.push("hsl.haxe._DirectSignaler.SentinelBond::add");
+	var $spos = $s.length;
 	value.next = this;
 	value.previous = this.previous;
-	return this.previous = this.previous.next = value;
+	var $tmp = this.previous = this.previous.next = value;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hsl.haxe._DirectSignaler.SentinelBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
+	$s.push("hsl.haxe._DirectSignaler.SentinelBond::callListener");
+	var $spos = $s.length;
 	var node = this.next;
 	while(node != this && 1 != propagationStatus) {
 		propagationStatus = node.callListener(data,currentTarget,origin,propagationStatus);
 		node = node.next;
 	}
+	$s.pop();
 	return propagationStatus;
+	$s.pop();
 }
 hsl.haxe._DirectSignaler.SentinelBond.prototype.getIsConnected = function() {
-	return this.next != this;
+	$s.push("hsl.haxe._DirectSignaler.SentinelBond::getIsConnected");
+	var $spos = $s.length;
+	var $tmp = this.next != this;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hsl.haxe._DirectSignaler.SentinelBond.prototype.remove = function(value) {
+	$s.push("hsl.haxe._DirectSignaler.SentinelBond::remove");
+	var $spos = $s.length;
 	var node = this.next;
 	while(node != this) {
 		if(node.determineEquals(value)) {
@@ -2442,18 +3723,24 @@ hsl.haxe._DirectSignaler.SentinelBond.prototype.remove = function(value) {
 		}
 		node = node.next;
 	}
+	$s.pop();
 }
 hsl.haxe._DirectSignaler.SentinelBond.prototype.__class__ = hsl.haxe._DirectSignaler.SentinelBond;
 hsl.haxe._DirectSignaler.RegularBond = function(listener) {
 	if( listener === $_ ) return;
+	$s.push("hsl.haxe._DirectSignaler.RegularBond::new");
+	var $spos = $s.length;
 	hsl.haxe._DirectSignaler.LinkedBond.call(this);
 	this.listener = listener;
+	$s.pop();
 }
 hsl.haxe._DirectSignaler.RegularBond.__name__ = ["hsl","haxe","_DirectSignaler","RegularBond"];
 hsl.haxe._DirectSignaler.RegularBond.__super__ = hsl.haxe._DirectSignaler.LinkedBond;
 for(var k in hsl.haxe._DirectSignaler.LinkedBond.prototype ) hsl.haxe._DirectSignaler.RegularBond.prototype[k] = hsl.haxe._DirectSignaler.LinkedBond.prototype[k];
 hsl.haxe._DirectSignaler.RegularBond.prototype.listener = null;
 hsl.haxe._DirectSignaler.RegularBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
+	$s.push("hsl.haxe._DirectSignaler.RegularBond::callListener");
+	var $spos = $s.length;
 	if(false == this.halted) {
 		this.listener(data);
 		if(this.willDestroyOnUse) if(false == this.destroyed) {
@@ -2462,22 +3749,34 @@ hsl.haxe._DirectSignaler.RegularBond.prototype.callListener = function(data,curr
 			this.destroyed = true;
 		}
 	}
+	$s.pop();
 	return propagationStatus;
+	$s.pop();
 }
 hsl.haxe._DirectSignaler.RegularBond.prototype.determineEquals = function(value) {
-	return Std["is"](value,hsl.haxe._DirectSignaler.RegularBond) && Reflect.compareMethods(value.listener,this.listener);
+	$s.push("hsl.haxe._DirectSignaler.RegularBond::determineEquals");
+	var $spos = $s.length;
+	var $tmp = Std["is"](value,hsl.haxe._DirectSignaler.RegularBond) && Reflect.compareMethods(value.listener,this.listener);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hsl.haxe._DirectSignaler.RegularBond.prototype.__class__ = hsl.haxe._DirectSignaler.RegularBond;
 hsl.haxe._DirectSignaler.NiladicBond = function(listener) {
 	if( listener === $_ ) return;
+	$s.push("hsl.haxe._DirectSignaler.NiladicBond::new");
+	var $spos = $s.length;
 	hsl.haxe._DirectSignaler.LinkedBond.call(this);
 	this.listener = listener;
+	$s.pop();
 }
 hsl.haxe._DirectSignaler.NiladicBond.__name__ = ["hsl","haxe","_DirectSignaler","NiladicBond"];
 hsl.haxe._DirectSignaler.NiladicBond.__super__ = hsl.haxe._DirectSignaler.LinkedBond;
 for(var k in hsl.haxe._DirectSignaler.LinkedBond.prototype ) hsl.haxe._DirectSignaler.NiladicBond.prototype[k] = hsl.haxe._DirectSignaler.LinkedBond.prototype[k];
 hsl.haxe._DirectSignaler.NiladicBond.prototype.listener = null;
 hsl.haxe._DirectSignaler.NiladicBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
+	$s.push("hsl.haxe._DirectSignaler.NiladicBond::callListener");
+	var $spos = $s.length;
 	if(false == this.halted) {
 		this.listener();
 		if(this.willDestroyOnUse) if(false == this.destroyed) {
@@ -2486,22 +3785,34 @@ hsl.haxe._DirectSignaler.NiladicBond.prototype.callListener = function(data,curr
 			this.destroyed = true;
 		}
 	}
+	$s.pop();
 	return propagationStatus;
+	$s.pop();
 }
 hsl.haxe._DirectSignaler.NiladicBond.prototype.determineEquals = function(value) {
-	return Std["is"](value,hsl.haxe._DirectSignaler.NiladicBond) && Reflect.compareMethods(value.listener,this.listener);
+	$s.push("hsl.haxe._DirectSignaler.NiladicBond::determineEquals");
+	var $spos = $s.length;
+	var $tmp = Std["is"](value,hsl.haxe._DirectSignaler.NiladicBond) && Reflect.compareMethods(value.listener,this.listener);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hsl.haxe._DirectSignaler.NiladicBond.prototype.__class__ = hsl.haxe._DirectSignaler.NiladicBond;
 hsl.haxe._DirectSignaler.AdvancedBond = function(listener) {
 	if( listener === $_ ) return;
+	$s.push("hsl.haxe._DirectSignaler.AdvancedBond::new");
+	var $spos = $s.length;
 	hsl.haxe._DirectSignaler.LinkedBond.call(this);
 	this.listener = listener;
+	$s.pop();
 }
 hsl.haxe._DirectSignaler.AdvancedBond.__name__ = ["hsl","haxe","_DirectSignaler","AdvancedBond"];
 hsl.haxe._DirectSignaler.AdvancedBond.__super__ = hsl.haxe._DirectSignaler.LinkedBond;
 for(var k in hsl.haxe._DirectSignaler.LinkedBond.prototype ) hsl.haxe._DirectSignaler.AdvancedBond.prototype[k] = hsl.haxe._DirectSignaler.LinkedBond.prototype[k];
 hsl.haxe._DirectSignaler.AdvancedBond.prototype.listener = null;
 hsl.haxe._DirectSignaler.AdvancedBond.prototype.callListener = function(data,currentTarget,origin,propagationStatus) {
+	$s.push("hsl.haxe._DirectSignaler.AdvancedBond::callListener");
+	var $spos = $s.length;
 	if(this.halted == false) {
 		var signal = new hsl.haxe.Signal(data,this,currentTarget,origin);
 		this.listener(signal);
@@ -2510,12 +3821,25 @@ hsl.haxe._DirectSignaler.AdvancedBond.prototype.callListener = function(data,cur
 			this.next.previous = this.previous;
 			this.destroyed = true;
 		}
-		if(signal.immediatePropagationStopped) return 1; else if(signal.propagationStopped) return 2;
+		if(signal.immediatePropagationStopped) {
+			$s.pop();
+			return 1;
+		} else if(signal.propagationStopped) {
+			$s.pop();
+			return 2;
+		}
 	}
+	$s.pop();
 	return propagationStatus;
+	$s.pop();
 }
 hsl.haxe._DirectSignaler.AdvancedBond.prototype.determineEquals = function(value) {
-	return Std["is"](value,hsl.haxe._DirectSignaler.AdvancedBond) && Reflect.compareMethods(value.listener,this.listener);
+	$s.push("hsl.haxe._DirectSignaler.AdvancedBond::determineEquals");
+	var $spos = $s.length;
+	var $tmp = Std["is"](value,hsl.haxe._DirectSignaler.AdvancedBond) && Reflect.compareMethods(value.listener,this.listener);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hsl.haxe._DirectSignaler.AdvancedBond.prototype.__class__ = hsl.haxe._DirectSignaler.AdvancedBond;
 hsl.haxe._DirectSignaler.PropagationStatus = function() { }
@@ -2523,12 +3847,15 @@ hsl.haxe._DirectSignaler.PropagationStatus.__name__ = ["hsl","haxe","_DirectSign
 hsl.haxe._DirectSignaler.PropagationStatus.prototype.__class__ = hsl.haxe._DirectSignaler.PropagationStatus;
 hsl.haxe.Signal = function(data,currentBond,currentTarget,origin) {
 	if( data === $_ ) return;
+	$s.push("hsl.haxe.Signal::new");
+	var $spos = $s.length;
 	this.data = data;
 	this.currentBond = currentBond;
 	this.currentTarget = currentTarget;
 	this.origin = origin;
 	this.immediatePropagationStopped = false;
 	this.propagationStopped = false;
+	$s.pop();
 }
 hsl.haxe.Signal.__name__ = ["hsl","haxe","Signal"];
 hsl.haxe.Signal.prototype.currentBond = null;
@@ -2539,20 +3866,44 @@ hsl.haxe.Signal.prototype.immediatePropagationStopped = null;
 hsl.haxe.Signal.prototype.origin = null;
 hsl.haxe.Signal.prototype.propagationStopped = null;
 hsl.haxe.Signal.prototype.getData = function() {
-	return this.data;
+	$s.push("hsl.haxe.Signal::getData");
+	var $spos = $s.length;
+	var $tmp = this.data;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hsl.haxe.Signal.prototype.stopImmediatePropagation = function() {
+	$s.push("hsl.haxe.Signal::stopImmediatePropagation");
+	var $spos = $s.length;
 	this.immediatePropagationStopped = true;
+	$s.pop();
 }
 hsl.haxe.Signal.prototype.stopPropagation = function() {
+	$s.push("hsl.haxe.Signal::stopPropagation");
+	var $spos = $s.length;
 	this.propagationStopped = true;
+	$s.pop();
+}
+hsl.haxe.Signal.prototype.toString = function() {
+	$s.push("hsl.haxe.Signal::toString");
+	var $spos = $s.length;
+	var $tmp = "[GenericSignal data=" + this.data + "]";
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hsl.haxe.Signal.prototype.__class__ = hsl.haxe.Signal;
 bpmjs.Sequencer = function(p) {
+	$s.push("bpmjs.Sequencer::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 bpmjs.Sequencer.__name__ = ["bpmjs","Sequencer"];
 bpmjs.Sequencer.prototype.context = null;
 bpmjs.Sequencer.prototype.start = function(name) {
+	$s.push("bpmjs.Sequencer::start");
+	var $spos = $s.length;
 	var sequence = new bpmjs.Sequence(name);
 	sequence.objects = this.context.objects;
 	sequence.addExecuteTask("initPrepare");
@@ -2564,22 +3915,31 @@ bpmjs.Sequencer.prototype.start = function(name) {
 	sequence.addExecuteTask("startComplete");
 	sequence.addExecuteTask("finish");
 	sequence.start();
+	$s.pop();
 }
 bpmjs.Sequencer.prototype.__class__ = bpmjs.Sequencer;
 bpmjs.Sequencer.__interfaces__ = [haxe.rtti.Infos];
 bpmjs.TaskGroup = function(p) {
 	if( p === $_ ) return;
+	$s.push("bpmjs.TaskGroup::new");
+	var $spos = $s.length;
 	bpmjs.Task.call(this);
 	this.tasks = new Array();
+	$s.pop();
 }
 bpmjs.TaskGroup.__name__ = ["bpmjs","TaskGroup"];
 bpmjs.TaskGroup.__super__ = bpmjs.Task;
 for(var k in bpmjs.Task.prototype ) bpmjs.TaskGroup.prototype[k] = bpmjs.Task.prototype[k];
 bpmjs.TaskGroup.prototype.tasks = null;
 bpmjs.TaskGroup.prototype.add = function(task) {
+	$s.push("bpmjs.TaskGroup::add");
+	var $spos = $s.length;
 	this.tasks.push(task);
+	$s.pop();
 }
 bpmjs.TaskGroup.prototype.doStart = function() {
+	$s.push("bpmjs.TaskGroup::doStart");
+	var $spos = $s.length;
 	var _g = 0, _g1 = this.tasks;
 	while(_g < _g1.length) {
 		var task = _g1[_g];
@@ -2587,30 +3947,43 @@ bpmjs.TaskGroup.prototype.doStart = function() {
 		this.getMonitor().append(task.getMonitor(),1 / this.tasks.length);
 	}
 	this.nextTask();
+	$s.pop();
 }
 bpmjs.TaskGroup.prototype.nextTask = function() {
+	$s.push("bpmjs.TaskGroup::nextTask");
+	var $spos = $s.length;
 	if(this.tasks.length > 0) {
 		var task = this.tasks.shift();
 		task.completeSignaler.bind($closure(this,"handleTaskComplete"));
 		task.errorSignaler.bind($closure(this,"handleTaskError"));
 		task.start();
 	} else this.complete();
+	$s.pop();
 }
 bpmjs.TaskGroup.prototype.handleTaskComplete = function(task) {
+	$s.push("bpmjs.TaskGroup::handleTaskComplete");
+	var $spos = $s.length;
 	this.nextTask();
+	$s.pop();
 }
 bpmjs.TaskGroup.prototype.handleTaskError = function(taskError) {
+	$s.push("bpmjs.TaskGroup::handleTaskError");
+	var $spos = $s.length;
 	this.error(this,taskError.error);
+	$s.pop();
 }
 bpmjs.TaskGroup.prototype.__class__ = bpmjs.TaskGroup;
 bpmjs.Sequence = function(name) {
 	if( name === $_ ) return;
+	$s.push("bpmjs.Sequence::new");
+	var $spos = $s.length;
 	bpmjs.TaskGroup.call(this);
 	this.getMonitor().name = name;
 	this.name = name;
 	this.timer = new haxe.Timer(100);
 	this.completeSignaler.bind($closure(this,"handleComplete"));
 	this.errorSignaler.bind($closure(this,"handleError"));
+	$s.pop();
 }
 bpmjs.Sequence.__name__ = ["bpmjs","Sequence"];
 bpmjs.Sequence.__super__ = bpmjs.TaskGroup;
@@ -2620,18 +3993,29 @@ bpmjs.Sequence.prototype.objects = null;
 bpmjs.Sequence.prototype.loadingTaskGroup = null;
 bpmjs.Sequence.prototype.timer = null;
 bpmjs.Sequence.prototype.addExecuteTask = function(phase) {
+	$s.push("bpmjs.Sequence::addExecuteTask");
+	var $spos = $s.length;
 	this.add(new bpmjs.ExecutePhaseTask(this,phase));
+	$s.pop();
 }
 bpmjs.Sequence.prototype.addLoadingTask = function() {
+	$s.push("bpmjs.Sequence::addLoadingTask");
+	var $spos = $s.length;
 	this.loadingTaskGroup = new bpmjs.LoadingTaskGroup(this);
 	this.loadingTaskGroup.getMonitor().weight = 1000;
 	this.add(this.loadingTaskGroup);
+	$s.pop();
 }
 bpmjs.Sequence.prototype.start = function() {
+	$s.push("bpmjs.Sequence::start");
+	var $spos = $s.length;
 	this.timer.run = $closure(this,"handleProgress");
 	bpmjs.TaskGroup.prototype.start.call(this);
+	$s.pop();
 }
 bpmjs.Sequence.prototype.execute = function(phase) {
+	$s.push("bpmjs.Sequence::execute");
+	var $spos = $s.length;
 	var _g = 0, _g1 = this.objects;
 	while(_g < _g1.length) {
 		var contextObject = _g1[_g];
@@ -2667,14 +4051,20 @@ bpmjs.Sequence.prototype.execute = function(phase) {
 							this.loadingTaskGroup.add(result);
 						}
 					} catch( e ) {
+						$e = [];
+						while($s.length >= $spos) $e.unshift($s.pop());
+						$s.push($e[0]);
 						throw "Phase '" + localPhase + "' " + Type.getClassName(contextObject.type) + "#" + fieldName + " created an error:\n" + Std.string(e);
 					}
 				}
 			}
 		}
 	}
+	$s.pop();
 }
 bpmjs.Sequence.prototype.handleProgress = function() {
+	$s.push("bpmjs.Sequence::handleProgress");
+	var $spos = $s.length;
 	var _g = 0, _g1 = this.objects;
 	while(_g < _g1.length) {
 		var contextObject = _g1[_g];
@@ -2695,12 +4085,18 @@ bpmjs.Sequence.prototype.handleProgress = function() {
 			}
 		}
 	}
+	$s.pop();
 }
 bpmjs.Sequence.prototype.handleComplete = function(task) {
+	$s.push("bpmjs.Sequence::handleComplete");
+	var $spos = $s.length;
 	this.handleProgress();
 	this.timer.stop();
+	$s.pop();
 }
 bpmjs.Sequence.prototype.handleError = function(error) {
+	$s.push("bpmjs.Sequence::handleError");
+	var $spos = $s.length;
 	var _g = 0, _g1 = this.objects;
 	while(_g < _g1.length) {
 		var contextObject = _g1[_g];
@@ -2722,14 +4118,18 @@ bpmjs.Sequence.prototype.handleError = function(error) {
 		}
 	}
 	this.timer.stop();
+	$s.pop();
 }
 bpmjs.Sequence.prototype.__class__ = bpmjs.Sequence;
 bpmjs.ExecutePhaseTask = function(sequence,phase) {
 	if( sequence === $_ ) return;
+	$s.push("bpmjs.ExecutePhaseTask::new");
+	var $spos = $s.length;
 	bpmjs.Task.call(this);
 	this.getMonitor().name = "execute: " + phase;
 	this.sequence = sequence;
 	this.phase = phase;
+	$s.pop();
 }
 bpmjs.ExecutePhaseTask.__name__ = ["bpmjs","ExecutePhaseTask"];
 bpmjs.ExecutePhaseTask.__super__ = bpmjs.Task;
@@ -2737,19 +4137,29 @@ for(var k in bpmjs.Task.prototype ) bpmjs.ExecutePhaseTask.prototype[k] = bpmjs.
 bpmjs.ExecutePhaseTask.prototype.sequence = null;
 bpmjs.ExecutePhaseTask.prototype.phase = null;
 bpmjs.ExecutePhaseTask.prototype.doStart = function() {
+	$s.push("bpmjs.ExecutePhaseTask::doStart");
+	var $spos = $s.length;
 	try {
 		this.sequence.execute(this.phase);
 	} catch( e ) {
+		$e = [];
+		while($s.length >= $spos) $e.unshift($s.pop());
+		$s.push($e[0]);
 		this.error(this,Std.string(e));
+		$s.pop();
 		return;
 	}
 	this.complete();
+	$s.pop();
 }
 bpmjs.ExecutePhaseTask.prototype.__class__ = bpmjs.ExecutePhaseTask;
 bpmjs.LoadingTaskGroup = function(sequence) {
 	if( sequence === $_ ) return;
+	$s.push("bpmjs.LoadingTaskGroup::new");
+	var $spos = $s.length;
 	bpmjs.TaskGroup.call(this);
 	this.getMonitor().name = "loading";
+	$s.pop();
 }
 bpmjs.LoadingTaskGroup.__name__ = ["bpmjs","LoadingTaskGroup"];
 bpmjs.LoadingTaskGroup.__super__ = bpmjs.TaskGroup;
@@ -2757,49 +4167,82 @@ for(var k in bpmjs.TaskGroup.prototype ) bpmjs.LoadingTaskGroup.prototype[k] = b
 bpmjs.LoadingTaskGroup.prototype.__class__ = bpmjs.LoadingTaskGroup;
 Vec2 = function(x,y) {
 	if( x === $_ ) return;
+	$s.push("Vec2::new");
+	var $spos = $s.length;
 	this.x = x;
 	this.y = y;
+	$s.pop();
 }
 Vec2.__name__ = ["Vec2"];
 Vec2.prototype.x = null;
 Vec2.prototype.y = null;
 Vec2.prototype.set = function(x,y) {
+	$s.push("Vec2::set");
+	var $spos = $s.length;
 	this.x = x;
 	this.y = y;
+	$s.pop();
 }
 Vec2.prototype.scale = function(factor) {
+	$s.push("Vec2::scale");
+	var $spos = $s.length;
 	this.x *= factor;
 	this.y *= factor;
+	$s.pop();
 }
 Vec2.prototype.multiply = function(x,y) {
+	$s.push("Vec2::multiply");
+	var $spos = $s.length;
 	this.x *= x;
 	this.y *= y;
+	$s.pop();
 }
 Vec2.prototype.subtract = function(x,y) {
+	$s.push("Vec2::subtract");
+	var $spos = $s.length;
 	this.x -= x;
 	this.y -= y;
+	$s.pop();
 }
 Vec2.prototype.normalize = function() {
+	$s.push("Vec2::normalize");
+	var $spos = $s.length;
 	var invLength = 1 / Math.sqrt(this.x * this.x + this.y * this.y);
 	this.x *= invLength;
 	this.y *= invLength;
+	$s.pop();
 }
 Vec2.prototype.getLength = function() {
-	return Math.sqrt(this.x * this.x + this.y * this.y);
+	$s.push("Vec2::getLength");
+	var $spos = $s.length;
+	var $tmp = Math.sqrt(this.x * this.x + this.y * this.y);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Vec2.prototype.transform = function(matrix) {
+	$s.push("Vec2::transform");
+	var $spos = $s.length;
 	var x1 = this.x, y1 = this.y, z1 = 0, w1 = 1;
 	var mat = matrix.buffer;
 	this.x = mat[0] * x1 + mat[4] * y1 + mat[8] * z1 + mat[12] * w1;
 	this.y = mat[1] * x1 + mat[5] * y1 + mat[9] * z1 + mat[13] * w1;
+	$s.pop();
 }
 Vec2.prototype.clone = function() {
-	return new Vec2(this.x,this.y);
+	$s.push("Vec2::clone");
+	var $spos = $s.length;
+	var $tmp = new Vec2(this.x,this.y);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Vec2.prototype.__class__ = Vec2;
 Math2 = function() { }
 Math2.__name__ = ["Math2"];
 Math2.nextPowerOf2 = function(value) {
+	$s.push("Math2::nextPowerOf2");
+	var $spos = $s.length;
 	var val = Std["int"](value);
 	val--;
 	val = val >> 1 | val;
@@ -2808,30 +4251,58 @@ Math2.nextPowerOf2 = function(value) {
 	val = val >> 8 | val;
 	val = val >> 16 | val;
 	val++;
+	$s.pop();
 	return val;
+	$s.pop();
 }
 Math2.signum = function(value) {
-	if(value > 0) return 1; else if(value < 0) return -1;
+	$s.push("Math2::signum");
+	var $spos = $s.length;
+	if(value > 0) {
+		$s.pop();
+		return 1;
+	} else if(value < 0) {
+		$s.pop();
+		return -1;
+	}
+	$s.pop();
 	return 0;
+	$s.pop();
 }
 Math2.sin1 = function(rad1) {
-	return Math.sin(rad1 * Math.PI * 2) * 0.5 + 0.5;
+	$s.push("Math2::sin1");
+	var $spos = $s.length;
+	var $tmp = Math.sin(rad1 * Math.PI * 2) * 0.5 + 0.5;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Math2.prototype.__class__ = Math2;
 LogLevel = function(value) {
 	if( value === $_ ) return;
+	$s.push("LogLevel::new");
+	var $spos = $s.length;
 	this.value = value;
+	$s.pop();
 }
 LogLevel.__name__ = ["LogLevel"];
 LogLevel.prototype.value = null;
 LogLevel.prototype.isSmallerOrEqual = function(level) {
-	return this.value <= level.value;
+	$s.push("LogLevel::isSmallerOrEqual");
+	var $spos = $s.length;
+	var $tmp = this.value <= level.value;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 LogLevel.prototype.__class__ = LogLevel;
 kumite.canvas.Config = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.canvas.Config::new");
+	var $spos = $s.length;
 	this.canvasCase = new kumite.canvas.CanvasCase();
 	this.canvasController = new kumite.canvas.CanvasController();
+	$s.pop();
 }
 kumite.canvas.Config.__name__ = ["kumite","canvas","Config"];
 kumite.canvas.Config.prototype.canvasCase = null;
@@ -2840,42 +4311,63 @@ kumite.canvas.Config.prototype.__class__ = kumite.canvas.Config;
 kumite.canvas.Config.__interfaces__ = [haxe.rtti.Infos];
 bpmjs.Messenger = function(p) {
 	if( p === $_ ) return;
+	$s.push("bpmjs.Messenger::new");
+	var $spos = $s.length;
 	this.receivers = new Array();
+	$s.pop();
 }
 bpmjs.Messenger.__name__ = ["bpmjs","Messenger"];
 bpmjs.Messenger.prototype.receivers = null;
 bpmjs.Messenger.prototype.addReceiver = function(type,listener) {
+	$s.push("bpmjs.Messenger::addReceiver");
+	var $spos = $s.length;
 	this.removeReceiver(type,listener);
 	this.receivers.push(new bpmjs._Messenger.ReceiverForType(type,listener));
+	$s.pop();
 }
 bpmjs.Messenger.prototype.removeReceiver = function(type,listener) {
+	$s.push("bpmjs.Messenger::removeReceiver");
+	var $spos = $s.length;
 	var _g = 0, _g1 = this.receivers;
 	while(_g < _g1.length) {
 		var receiver = _g1[_g];
 		++_g;
 		if(receiver.type == type && Reflect.compareMethods(listener,receiver.method)) {
 			this.receivers.remove(receiver);
+			$s.pop();
 			return;
 		}
 	}
+	$s.pop();
 }
 bpmjs.Messenger.prototype.send = function(message) {
+	$s.push("bpmjs.Messenger::send");
+	var $spos = $s.length;
 	var _g = 0, _g1 = this.receivers;
 	while(_g < _g1.length) {
 		var receiver = _g1[_g];
 		++_g;
 		if(receiver.type == null || receiver.type == Type.getClass(message)) receiver.method(message);
 	}
+	$s.pop();
 }
 bpmjs.Messenger.prototype.toString = function() {
-	return Type.getClassName(Type.getClass(this));
+	$s.push("bpmjs.Messenger::toString");
+	var $spos = $s.length;
+	var $tmp = Type.getClassName(Type.getClass(this));
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 bpmjs.Messenger.prototype.__class__ = bpmjs.Messenger;
 if(!bpmjs._Messenger) bpmjs._Messenger = {}
 bpmjs._Messenger.ReceiverForType = function(type,method) {
 	if( type === $_ ) return;
+	$s.push("bpmjs._Messenger.ReceiverForType::new");
+	var $spos = $s.length;
 	this.type = type;
 	this.method = method;
+	$s.pop();
 }
 bpmjs._Messenger.ReceiverForType.__name__ = ["bpmjs","_Messenger","ReceiverForType"];
 bpmjs._Messenger.ReceiverForType.prototype.type = null;
@@ -2883,7 +4375,10 @@ bpmjs._Messenger.ReceiverForType.prototype.method = null;
 bpmjs._Messenger.ReceiverForType.prototype.__class__ = bpmjs._Messenger.ReceiverForType;
 kumite.scene.RenderContext = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.scene.RenderContext::new");
+	var $spos = $s.length;
 	this.viewports = new Array();
+	$s.pop();
 }
 kumite.scene.RenderContext.__name__ = ["kumite","scene","RenderContext"];
 kumite.scene.RenderContext.prototype.width = null;
@@ -2891,33 +4386,60 @@ kumite.scene.RenderContext.prototype.height = null;
 kumite.scene.RenderContext.prototype.aspect = null;
 kumite.scene.RenderContext.prototype.viewports = null;
 kumite.scene.RenderContext.prototype.resetViewport = function(width,height) {
+	$s.push("kumite.scene.RenderContext::resetViewport");
+	var $spos = $s.length;
 	this.viewports = new Array();
 	this.pushViewport(width,height);
+	$s.pop();
 }
 kumite.scene.RenderContext.prototype.pushViewport = function(width,height) {
+	$s.push("kumite.scene.RenderContext::pushViewport");
+	var $spos = $s.length;
 	var viewport = new kumite.scene._RenderContext.Viewport();
 	viewport.width = width;
 	viewport.height = height;
 	this.width = viewport.width;
 	this.height = viewport.height;
 	this.viewports.push(viewport);
+	$s.pop();
 }
 kumite.scene.RenderContext.prototype.popViewport = function() {
+	$s.push("kumite.scene.RenderContext::popViewport");
+	var $spos = $s.length;
 	var viewport = this.viewports.pop();
+	$s.pop();
 }
 kumite.scene.RenderContext.prototype.getWidth = function() {
-	return this.viewports[this.viewports.length - 1].width;
+	$s.push("kumite.scene.RenderContext::getWidth");
+	var $spos = $s.length;
+	var $tmp = this.viewports[this.viewports.length - 1].width;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 kumite.scene.RenderContext.prototype.getHeight = function() {
-	return this.viewports[this.viewports.length - 1].height;
+	$s.push("kumite.scene.RenderContext::getHeight");
+	var $spos = $s.length;
+	var $tmp = this.viewports[this.viewports.length - 1].height;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 kumite.scene.RenderContext.prototype.getAspect = function() {
-	return this.getWidth() / this.getHeight();
+	$s.push("kumite.scene.RenderContext::getAspect");
+	var $spos = $s.length;
+	var $tmp = this.getWidth() / this.getHeight();
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 kumite.scene.RenderContext.prototype.__class__ = kumite.scene.RenderContext;
 kumite.scene.TransitionContext = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.scene.TransitionContext::new");
+	var $spos = $s.length;
 	kumite.scene.RenderContext.call(this);
+	$s.pop();
 }
 kumite.scene.TransitionContext.__name__ = ["kumite","scene","TransitionContext"];
 kumite.scene.TransitionContext.__super__ = kumite.scene.RenderContext;
@@ -2928,34 +4450,56 @@ kumite.scene.TransitionContext.prototype.inScene = null;
 kumite.scene.TransitionContext.prototype.outScene = null;
 kumite.scene.TransitionContext.prototype.direction = null;
 kumite.scene.TransitionContext.prototype.toIn = function() {
+	$s.push("kumite.scene.TransitionContext::toIn");
+	var $spos = $s.length;
 	this.direction = kumite.scene.TransitionDirection.IN;
+	$s.pop();
 	return this;
+	$s.pop();
 }
 kumite.scene.TransitionContext.prototype.toOut = function() {
+	$s.push("kumite.scene.TransitionContext::toOut");
+	var $spos = $s.length;
 	this.direction = kumite.scene.TransitionDirection.OUT;
+	$s.pop();
 	return this;
+	$s.pop();
 }
 kumite.scene.TransitionContext.prototype.getTransition = function() {
+	$s.push("kumite.scene.TransitionContext::getTransition");
+	var $spos = $s.length;
 	switch( (this.direction)[1] ) {
 	case 0:
-		return this.transition;
+		var $tmp = this.transition;
+		$s.pop();
+		return $tmp;
 	case 1:
-		return 1 - this.transition;
+		var $tmp = 1 - this.transition;
+		$s.pop();
+		return $tmp;
 	}
+	$s.pop();
 }
 kumite.scene.TransitionContext.prototype.setTransition = function(value) {
+	$s.push("kumite.scene.TransitionContext::setTransition");
+	var $spos = $s.length;
 	this.direction = kumite.scene.TransitionDirection.IN;
 	this.transition = value;
+	$s.pop();
 	return value;
+	$s.pop();
 }
 kumite.scene.TransitionContext.prototype.__class__ = kumite.scene.TransitionContext;
 if(typeof hxjson2=='undefined') hxjson2 = {}
 hxjson2.JSONTokenizer = function(s,strict) {
 	if( s === $_ ) return;
+	$s.push("hxjson2.JSONTokenizer::new");
+	var $spos = $s.length;
 	this.jsonString = s;
 	this.strict = strict;
 	this.loc = 0;
 	this.nextChar();
+	$s.pop();
 }
 hxjson2.JSONTokenizer.__name__ = ["hxjson2","JSONTokenizer"];
 hxjson2.JSONTokenizer.prototype.obj = null;
@@ -2964,6 +4508,8 @@ hxjson2.JSONTokenizer.prototype.loc = null;
 hxjson2.JSONTokenizer.prototype.ch = null;
 hxjson2.JSONTokenizer.prototype.strict = null;
 hxjson2.JSONTokenizer.prototype.getNextToken = function() {
+	$s.push("hxjson2.JSONTokenizer::getNextToken");
+	var $spos = $s.length;
 	var token = new hxjson2.JSONToken();
 	this.skipIgnored();
 	switch(this.ch) {
@@ -3033,11 +4579,18 @@ hxjson2.JSONTokenizer.prototype.getNextToken = function() {
 		token = this.readString();
 		break;
 	default:
-		if(this.isDigit(this.ch) || this.ch == "-") token = this.readNumber(); else if(this.ch == "") return null; else this.parseError("Unexpected " + this.ch + " encountered");
+		if(this.isDigit(this.ch) || this.ch == "-") token = this.readNumber(); else if(this.ch == "") {
+			$s.pop();
+			return null;
+		} else this.parseError("Unexpected " + this.ch + " encountered");
 	}
+	$s.pop();
 	return token;
+	$s.pop();
 }
 hxjson2.JSONTokenizer.prototype.readString = function() {
+	$s.push("hxjson2.JSONTokenizer::readString");
+	var $spos = $s.length;
 	var string = "";
 	this.nextChar();
 	while(this.ch != "\"" && this.ch != "") {
@@ -3086,9 +4639,13 @@ hxjson2.JSONTokenizer.prototype.readString = function() {
 	var token = new hxjson2.JSONToken();
 	token.type = hxjson2.JSONTokenType.tSTRING;
 	token.value = string;
+	$s.pop();
 	return token;
+	$s.pop();
 }
 hxjson2.JSONTokenizer.prototype.hexValToInt = function(hexVal) {
+	$s.push("hxjson2.JSONTokenizer::hexValToInt");
+	var $spos = $s.length;
 	var ret = 0;
 	var _g1 = 0, _g = hexVal.length;
 	while(_g1 < _g) {
@@ -3142,9 +4699,13 @@ hxjson2.JSONTokenizer.prototype.hexValToInt = function(hexVal) {
 			break;
 		}
 	}
+	$s.pop();
 	return ret;
+	$s.pop();
 }
 hxjson2.JSONTokenizer.prototype.readNumber = function() {
+	$s.push("hxjson2.JSONTokenizer::readNumber");
+	var $spos = $s.length;
 	var input = "";
 	if(this.ch == "-") {
 		input += "-";
@@ -3198,22 +4759,35 @@ hxjson2.JSONTokenizer.prototype.readNumber = function() {
 		var token = new hxjson2.JSONToken();
 		token.type = hxjson2.JSONTokenType.tNUMBER;
 		token.value = num;
+		$s.pop();
 		return token;
 	} else this.parseError("Number " + num + " is not valid!");
+	$s.pop();
 	return null;
+	$s.pop();
 }
 hxjson2.JSONTokenizer.prototype.nextChar = function() {
-	return this.ch = this.jsonString.charAt(this.loc++);
+	$s.push("hxjson2.JSONTokenizer::nextChar");
+	var $spos = $s.length;
+	var $tmp = this.ch = this.jsonString.charAt(this.loc++);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hxjson2.JSONTokenizer.prototype.skipIgnored = function() {
+	$s.push("hxjson2.JSONTokenizer::skipIgnored");
+	var $spos = $s.length;
 	var originalLoc;
 	do {
 		originalLoc = this.loc;
 		this.skipWhite();
 		this.skipComments();
 	} while(originalLoc != this.loc);
+	$s.pop();
 }
 hxjson2.JSONTokenizer.prototype.skipComments = function() {
+	$s.push("hxjson2.JSONTokenizer::skipComments");
+	var $spos = $s.length;
 	if(this.ch == "/") {
 		this.nextChar();
 		switch(this.ch) {
@@ -3238,29 +4812,54 @@ hxjson2.JSONTokenizer.prototype.skipComments = function() {
 			this.parseError("Unexpected " + this.ch + " encountered (expecting '/' or '*' )");
 		}
 	}
+	$s.pop();
 }
 hxjson2.JSONTokenizer.prototype.skipWhite = function() {
+	$s.push("hxjson2.JSONTokenizer::skipWhite");
+	var $spos = $s.length;
 	while(this.isWhiteSpace(this.ch)) this.nextChar();
+	$s.pop();
 }
 hxjson2.JSONTokenizer.prototype.isWhiteSpace = function(ch) {
-	return ch == " " || ch == "\t" || ch == "\n" || ch == "\r";
+	$s.push("hxjson2.JSONTokenizer::isWhiteSpace");
+	var $spos = $s.length;
+	var $tmp = ch == " " || ch == "\t" || ch == "\n" || ch == "\r";
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hxjson2.JSONTokenizer.prototype.isDigit = function(ch) {
-	return ch >= "0" && ch <= "9";
+	$s.push("hxjson2.JSONTokenizer::isDigit");
+	var $spos = $s.length;
+	var $tmp = ch >= "0" && ch <= "9";
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hxjson2.JSONTokenizer.prototype.isHexDigit = function(ch) {
+	$s.push("hxjson2.JSONTokenizer::isHexDigit");
+	var $spos = $s.length;
 	var uc = ch.toUpperCase();
-	return this.isDigit(ch) || uc >= "A" && uc <= "F";
+	var $tmp = this.isDigit(ch) || uc >= "A" && uc <= "F";
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hxjson2.JSONTokenizer.prototype.parseError = function(message) {
+	$s.push("hxjson2.JSONTokenizer::parseError");
+	var $spos = $s.length;
 	throw new hxjson2.JSONParseError(message,this.loc,this.jsonString);
+	$s.pop();
 }
 hxjson2.JSONTokenizer.prototype.__class__ = hxjson2.JSONTokenizer;
 if(!kumite.displaylist) kumite.displaylist = {}
 kumite.displaylist.ConfigAsLayer = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.displaylist.ConfigAsLayer::new");
+	var $spos = $s.length;
 	this.displayListLayer = new kumite.displaylist.DisplayListLayer();
 	this.stage = GLDisplayList.getDefault().stage;
+	$s.pop();
 }
 kumite.displaylist.ConfigAsLayer.__name__ = ["kumite","displaylist","ConfigAsLayer"];
 kumite.displaylist.ConfigAsLayer.prototype.displayListLayer = null;
@@ -3270,8 +4869,11 @@ kumite.displaylist.ConfigAsLayer.__interfaces__ = [haxe.rtti.Infos];
 if(!kumite.time) kumite.time = {}
 kumite.time.Config = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.time.Config::new");
+	var $spos = $s.length;
 	this.time = new kumite.time.Time();
 	this.timeController = new kumite.time.TimeController();
+	$s.pop();
 }
 kumite.time.Config.__name__ = ["kumite","time","Config"];
 kumite.time.Config.prototype.time = null;
@@ -3282,38 +4884,73 @@ if(typeof js=='undefined') js = {}
 js.Boot = function() { }
 js.Boot.__name__ = ["js","Boot"];
 js.Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+	$s.push("js.Boot::__unhtml");
+	var $spos = $s.length;
+	var $tmp = s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 js.Boot.__trace = function(v,i) {
+	$s.push("js.Boot::__trace");
+	var $spos = $s.length;
 	var msg = i != null?i.fileName + ":" + i.lineNumber + ": ":"";
 	msg += js.Boot.__unhtml(js.Boot.__string_rec(v,"")) + "<br/>";
 	var d = document.getElementById("haxe:trace");
 	if(d == null) alert("No haxe:trace element defined\n" + msg); else d.innerHTML += msg;
+	$s.pop();
 }
 js.Boot.__clear_trace = function() {
+	$s.push("js.Boot::__clear_trace");
+	var $spos = $s.length;
 	var d = document.getElementById("haxe:trace");
 	if(d != null) d.innerHTML = "";
+	$s.pop();
 }
 js.Boot.__closure = function(o,f) {
+	$s.push("js.Boot::__closure");
+	var $spos = $s.length;
 	var m = o[f];
-	if(m == null) return null;
+	if(m == null) {
+		$s.pop();
+		return null;
+	}
 	var f1 = function() {
-		return m.apply(o,arguments);
+		$s.push("js.Boot::__closure@67");
+		var $spos = $s.length;
+		var $tmp = m.apply(o,arguments);
+		$s.pop();
+		return $tmp;
+		$s.pop();
 	};
 	f1.scope = o;
 	f1.method = m;
+	$s.pop();
 	return f1;
+	$s.pop();
 }
 js.Boot.__string_rec = function(o,s) {
-	if(o == null) return "null";
-	if(s.length >= 5) return "<...>";
+	$s.push("js.Boot::__string_rec");
+	var $spos = $s.length;
+	if(o == null) {
+		$s.pop();
+		return "null";
+	}
+	if(s.length >= 5) {
+		$s.pop();
+		return "<...>";
+	}
 	var t = typeof(o);
 	if(t == "function" && (o.__name__ != null || o.__ename__ != null)) t = "object";
 	switch(t) {
 	case "object":
 		if(o instanceof Array) {
 			if(o.__enum__ != null) {
-				if(o.length == 2) return o[0];
+				if(o.length == 2) {
+					var $tmp = o[0];
+					$s.pop();
+					return $tmp;
+				}
 				var str = o[0] + "(";
 				s += "\t";
 				var _g1 = 2, _g = o.length;
@@ -3321,7 +4958,9 @@ js.Boot.__string_rec = function(o,s) {
 					var i = _g1++;
 					if(i != 2) str += "," + js.Boot.__string_rec(o[i],s); else str += js.Boot.__string_rec(o[i],s);
 				}
-				return str + ")";
+				var $tmp = str + ")";
+				$s.pop();
+				return $tmp;
 			}
 			var l = o.length;
 			var i;
@@ -3333,17 +4972,25 @@ js.Boot.__string_rec = function(o,s) {
 				str += (i1 > 0?",":"") + js.Boot.__string_rec(o[i1],s);
 			}
 			str += "]";
+			$s.pop();
 			return str;
 		}
 		var tostr;
 		try {
 			tostr = o.toString;
 		} catch( e ) {
+			$e = [];
+			while($s.length >= $spos) $e.unshift($s.pop());
+			$s.push($e[0]);
+			$s.pop();
 			return "???";
 		}
 		if(tostr != null && tostr != Object.toString) {
 			var s2 = o.toString();
-			if(s2 != "[object Object]") return s2;
+			if(s2 != "[object Object]") {
+				$s.pop();
+				return s2;
+			}
 		}
 		var k = null;
 		var str = "{\n";
@@ -3361,111 +5008,213 @@ js.Boot.__string_rec = function(o,s) {
 		}
 		s = s.substring(1);
 		str += "\n" + s + "}";
+		$s.pop();
 		return str;
 	case "function":
+		$s.pop();
 		return "<function>";
 	case "string":
+		$s.pop();
 		return o;
 	default:
-		return String(o);
+		var $tmp = String(o);
+		$s.pop();
+		return $tmp;
 	}
+	$s.pop();
 }
 js.Boot.__interfLoop = function(cc,cl) {
-	if(cc == null) return false;
-	if(cc == cl) return true;
+	$s.push("js.Boot::__interfLoop");
+	var $spos = $s.length;
+	if(cc == null) {
+		$s.pop();
+		return false;
+	}
+	if(cc == cl) {
+		$s.pop();
+		return true;
+	}
 	var intf = cc.__interfaces__;
 	if(intf != null) {
 		var _g1 = 0, _g = intf.length;
 		while(_g1 < _g) {
 			var i = _g1++;
 			var i1 = intf[i];
-			if(i1 == cl || js.Boot.__interfLoop(i1,cl)) return true;
+			if(i1 == cl || js.Boot.__interfLoop(i1,cl)) {
+				$s.pop();
+				return true;
+			}
 		}
 	}
-	return js.Boot.__interfLoop(cc.__super__,cl);
+	var $tmp = js.Boot.__interfLoop(cc.__super__,cl);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 js.Boot.__instanceof = function(o,cl) {
+	$s.push("js.Boot::__instanceof");
+	var $spos = $s.length;
 	try {
 		if(o instanceof cl) {
-			if(cl == Array) return o.__enum__ == null;
+			if(cl == Array) {
+				var $tmp = o.__enum__ == null;
+				$s.pop();
+				return $tmp;
+			}
+			$s.pop();
 			return true;
 		}
-		if(js.Boot.__interfLoop(o.__class__,cl)) return true;
+		if(js.Boot.__interfLoop(o.__class__,cl)) {
+			$s.pop();
+			return true;
+		}
 	} catch( e ) {
-		if(cl == null) return false;
+		$e = [];
+		while($s.length >= $spos) $e.unshift($s.pop());
+		$s.push($e[0]);
+		if(cl == null) {
+			$s.pop();
+			return false;
+		}
 	}
 	switch(cl) {
 	case Int:
-		return Math.ceil(o%2147483648.0) === o;
+		var $tmp = Math.ceil(o%2147483648.0) === o;
+		$s.pop();
+		return $tmp;
 	case Float:
-		return typeof(o) == "number";
+		var $tmp = typeof(o) == "number";
+		$s.pop();
+		return $tmp;
 	case Bool:
-		return o === true || o === false;
+		var $tmp = o === true || o === false;
+		$s.pop();
+		return $tmp;
 	case String:
-		return typeof(o) == "string";
+		var $tmp = typeof(o) == "string";
+		$s.pop();
+		return $tmp;
 	case Dynamic:
+		$s.pop();
 		return true;
 	default:
-		if(o == null) return false;
-		return o.__enum__ == cl || cl == Class && o.__name__ != null || cl == Enum && o.__ename__ != null;
+		if(o == null) {
+			$s.pop();
+			return false;
+		}
+		var $tmp = o.__enum__ == cl || cl == Class && o.__name__ != null || cl == Enum && o.__ename__ != null;
+		$s.pop();
+		return $tmp;
 	}
+	$s.pop();
 }
 js.Boot.__init = function() {
+	$s.push("js.Boot::__init");
+	var $spos = $s.length;
 	try	{ document;	} catch(e) { document = {};	}
 	try { window; } catch(e) { window = {};	}
 	js.Lib.isIE = typeof document!='undefined' && document.all != null && typeof window!='undefined' && window.opera == null;
 	js.Lib.isOpera = typeof window!='undefined' && window.opera != null;
 	Array.prototype.copy = Array.prototype.slice;
 	Array.prototype.insert = function(i,x) {
+		$s.push("js.Boot::__init@208");
+		var $spos = $s.length;
 		this.splice(i,0,x);
+		$s.pop();
 	};
 	Array.prototype.remove = Array.prototype.indexOf?function(obj) {
+		$s.push("js.Boot::__init@211");
+		var $spos = $s.length;
 		var idx = this.indexOf(obj);
-		if(idx == -1) return false;
+		if(idx == -1) {
+			$s.pop();
+			return false;
+		}
 		this.splice(idx,1);
+		$s.pop();
 		return true;
+		$s.pop();
 	}:function(obj) {
+		$s.push("js.Boot::__init@216");
+		var $spos = $s.length;
 		var i = 0;
 		var l = this.length;
 		while(i < l) {
 			if(this[i] == obj) {
 				this.splice(i,1);
+				$s.pop();
 				return true;
 			}
 			i++;
 		}
+		$s.pop();
 		return false;
+		$s.pop();
 	};
 	Array.prototype.iterator = function() {
-		return { cur : 0, arr : this, hasNext : function() {
-			return this.cur < this.arr.length;
+		$s.push("js.Boot::__init@228");
+		var $spos = $s.length;
+		var $tmp = { cur : 0, arr : this, hasNext : function() {
+			$s.push("js.Boot::__init@228@232");
+			var $spos = $s.length;
+			var $tmp = this.cur < this.arr.length;
+			$s.pop();
+			return $tmp;
+			$s.pop();
 		}, next : function() {
-			return this.arr[this.cur++];
+			$s.push("js.Boot::__init@228@235");
+			var $spos = $s.length;
+			var $tmp = this.arr[this.cur++];
+			$s.pop();
+			return $tmp;
+			$s.pop();
 		}};
+		$s.pop();
+		return $tmp;
+		$s.pop();
 	};
 	if(String.prototype.cca == null) String.prototype.cca = String.prototype.charCodeAt;
 	String.prototype.charCodeAt = function(i) {
+		$s.push("js.Boot::__init@242");
+		var $spos = $s.length;
 		var x = this.cca(i);
-		if(x != x) return null;
+		if(x != x) {
+			$s.pop();
+			return null;
+		}
+		$s.pop();
 		return x;
+		$s.pop();
 	};
 	var oldsub = String.prototype.substr;
 	String.prototype.substr = function(pos,len) {
-		if(pos != null && pos != 0 && len != null && len < 0) return "";
+		$s.push("js.Boot::__init@249");
+		var $spos = $s.length;
+		if(pos != null && pos != 0 && len != null && len < 0) {
+			$s.pop();
+			return "";
+		}
 		if(len == null) len = this.length;
 		if(pos < 0) {
 			pos = this.length + pos;
 			if(pos < 0) pos = 0;
 		} else if(len < 0) len = this.length + len - pos;
-		return oldsub.apply(this,[pos,len]);
+		var $tmp = oldsub.apply(this,[pos,len]);
+		$s.pop();
+		return $tmp;
+		$s.pop();
 	};
 	$closure = js.Boot.__closure;
+	$s.pop();
 }
 js.Boot.prototype.__class__ = js.Boot;
 kumite.scene.SceneEnter = function(lastScene,currentScene) {
 	if( lastScene === $_ ) return;
+	$s.push("kumite.scene.SceneEnter::new");
+	var $spos = $s.length;
 	this.lastScene = lastScene;
 	this.currentScene = currentScene;
+	$s.pop();
 }
 kumite.scene.SceneEnter.__name__ = ["kumite","scene","SceneEnter"];
 kumite.scene.SceneEnter.prototype.lastScene = null;
@@ -3473,18 +5222,31 @@ kumite.scene.SceneEnter.prototype.currentScene = null;
 kumite.scene.SceneEnter.prototype.__class__ = kumite.scene.SceneEnter;
 GLTextureRegistry = function(p) {
 	if( p === $_ ) return;
+	$s.push("GLTextureRegistry::new");
+	var $spos = $s.length;
 	this.images = new Hash();
+	$s.pop();
 }
 GLTextureRegistry.__name__ = ["GLTextureRegistry"];
 GLTextureRegistry.prototype.images = null;
 GLTextureRegistry.prototype.register = function(key,texture) {
+	$s.push("GLTextureRegistry::register");
+	var $spos = $s.length;
 	this.images.set(key.textureId,texture);
+	$s.pop();
 }
 GLTextureRegistry.prototype.get = function(key) {
+	$s.push("GLTextureRegistry::get");
+	var $spos = $s.length;
 	if(!this.images.exists(key.textureId)) throw "Cannot find Texture with key: " + key.textureId;
-	return this.images.get(key.textureId);
+	var $tmp = this.images.get(key.textureId);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GLTextureRegistry.prototype.createGLTextureFromImage = function(image,filter) {
+	$s.push("GLTextureRegistry::createGLTextureFromImage");
+	var $spos = $s.length;
 	var testPowerOfTwoWidth = Std["int"](Math2.nextPowerOf2(image.width));
 	var testPowerOfTwoHeight = Std["int"](Math2.nextPowerOf2(image.height));
 	if(testPowerOfTwoWidth != image.width || testPowerOfTwoHeight != image.height) throw "Image size must be a valid texture size!";
@@ -3500,9 +5262,13 @@ GLTextureRegistry.prototype.createGLTextureFromImage = function(image,filter) {
 	result.width = image.width;
 	result.height = image.height;
 	result.texture = texture;
+	$s.pop();
 	return result;
+	$s.pop();
 }
 GLTextureRegistry.prototype.createGLTextureFromCanvas = function(canvas,filter) {
+	$s.push("GLTextureRegistry::createGLTextureFromCanvas");
+	var $spos = $s.length;
 	var testPowerOfTwoWidth = Std["int"](Math2.nextPowerOf2(canvas.width));
 	var testPowerOfTwoHeight = Std["int"](Math2.nextPowerOf2(canvas.height));
 	if(testPowerOfTwoWidth != canvas.width || testPowerOfTwoHeight != canvas.height) throw "Canvas size must be a valid texture size!";
@@ -3518,9 +5284,13 @@ GLTextureRegistry.prototype.createGLTextureFromCanvas = function(canvas,filter) 
 	result.width = canvas.width;
 	result.height = canvas.height;
 	result.texture = texture;
+	$s.pop();
 	return result;
+	$s.pop();
 }
 GLTextureRegistry.prototype.updateGLTextureFromCanvas = function(texture,canvas) {
+	$s.push("GLTextureRegistry::updateGLTextureFromCanvas");
+	var $spos = $s.length;
 	var testPowerOfTwoWidth = Std["int"](Math2.nextPowerOf2(canvas.width));
 	var testPowerOfTwoHeight = Std["int"](Math2.nextPowerOf2(canvas.height));
 	if(testPowerOfTwoWidth != canvas.width || testPowerOfTwoHeight != canvas.height) throw "Canvas size must be a valid texture size!";
@@ -3528,8 +5298,11 @@ GLTextureRegistry.prototype.updateGLTextureFromCanvas = function(texture,canvas)
 	GL.gl.texImage2D(3553,0,6408,6408,5121,canvas);
 	texture.width = canvas.width;
 	texture.height = canvas.height;
+	$s.pop();
 }
 GLTextureRegistry.prototype.createGLArrayTexture = function(width,height,filter) {
+	$s.push("GLTextureRegistry::createGLArrayTexture");
+	var $spos = $s.length;
 	var testPowerOfTwoWidth = Std["int"](Math2.nextPowerOf2(width));
 	var testPowerOfTwoHeight = Std["int"](Math2.nextPowerOf2(height));
 	if(testPowerOfTwoWidth != width || testPowerOfTwoHeight != height) throw "Canvas size must be a valid texture size!";
@@ -3547,53 +5320,86 @@ GLTextureRegistry.prototype.createGLArrayTexture = function(width,height,filter)
 	result.height = height;
 	result.texture = texture;
 	result.array = array;
+	$s.pop();
 	return result;
+	$s.pop();
 }
 GLTextureRegistry.prototype.updateGLArrayTexture = function(texture) {
+	$s.push("GLTextureRegistry::updateGLArrayTexture");
+	var $spos = $s.length;
 	GL.gl.bindTexture(3553,texture.texture);
 	GL.gl.texImage2D(3553,0,6408,texture.width,texture.height,0,6408,5121,texture.array);
+	$s.pop();
 }
 GLTextureRegistry.prototype.__class__ = GLTextureRegistry;
 bpmjs.ContextBuilder = function(p) {
 	if( p === $_ ) return;
+	$s.push("bpmjs.ContextBuilder::new");
+	var $spos = $s.length;
 	this.context = new bpmjs.Context();
+	$s.pop();
 }
 bpmjs.ContextBuilder.__name__ = ["bpmjs","ContextBuilder"];
 bpmjs.ContextBuilder.defaultContext = null;
 bpmjs.ContextBuilder.build = function(configClass,contextConfig) {
-	return bpmjs.ContextBuilder.buildAll([configClass],contextConfig);
+	$s.push("bpmjs.ContextBuilder::build");
+	var $spos = $s.length;
+	var $tmp = bpmjs.ContextBuilder.buildAll([configClass],contextConfig);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 bpmjs.ContextBuilder.buildAll = function(configClasses,contextConfig) {
+	$s.push("bpmjs.ContextBuilder::buildAll");
+	var $spos = $s.length;
 	var builder = new bpmjs.ContextBuilder();
 	bpmjs.ContextBuilder.defaultContext = builder.context;
 	builder.contextConfig = contextConfig == null?bpmjs.ContextBuilder.createDefaultContextConfig():contextConfig;
 	builder.buildInternal(configClasses);
-	return bpmjs.ContextBuilder.defaultContext;
+	var $tmp = bpmjs.ContextBuilder.defaultContext;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 bpmjs.ContextBuilder.configure = function(object) {
+	$s.push("bpmjs.ContextBuilder::configure");
+	var $spos = $s.length;
 	var builder = new bpmjs.ContextBuilder();
 	if(bpmjs.ContextBuilder.defaultContext == null) throw builder.createError("Cannot configure Object as no context is available!");
 	builder.contextConfig = bpmjs.ContextBuilder.defaultContext.contextConfig;
 	builder.context = bpmjs.ContextBuilder.defaultContext;
 	builder.configureInternal(object);
+	$s.pop();
 }
 bpmjs.ContextBuilder.createDefaultContextConfig = function() {
+	$s.push("bpmjs.ContextBuilder::createDefaultContextConfig");
+	var $spos = $s.length;
 	var defaultContextConfig = new bpmjs.ContextConfig();
 	defaultContextConfig.frontMessenger = new bpmjs.DefaultFrontMessenger();
+	$s.pop();
 	return defaultContextConfig;
+	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.context = null;
 bpmjs.ContextBuilder.prototype.contextConfig = null;
 bpmjs.ContextBuilder.prototype.configureInternal = function(object) {
+	$s.push("bpmjs.ContextBuilder::configureInternal");
+	var $spos = $s.length;
 	var contextObject = this.context.addObject("configured",reflect.ClassInfo.forInstance(object),object);
 	this.configureDynamicObjects([contextObject]);
+	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.buildInternal = function(configClasses) {
+	$s.push("bpmjs.ContextBuilder::buildInternal");
+	var $spos = $s.length;
 	this.context.contextConfig = this.contextConfig;
 	Lambda.iter(configClasses,$closure(this,"createObjects"));
 	this.configureDynamicObjects(this.context.objects);
+	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.createObjects = function(configClass) {
+	$s.push("bpmjs.ContextBuilder::createObjects");
+	var $spos = $s.length;
 	var config = Type.createInstance(configClass,[]);
 	var ci = reflect.ClassInfo.forClass(configClass);
 	if(!ci.hasRtti) {
@@ -3605,29 +5411,39 @@ bpmjs.ContextBuilder.prototype.createObjects = function(configClass) {
 	while(_g < _g1.length) {
 		var property = _g1[_g];
 		++_g;
-		if(property.hasMetadata("Inject")) continue;
-		var instance = Reflect.field(config,property.field.name);
-		if(instance == null) {
-			Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 92, className : "bpmjs.ContextBuilder", methodName : "createObjects"};
-			if(Log.filter(LogLevel.WARN)) {
-				Log.fetchInput("Found property",property.field.name,"in config",ci.name,"but was null",null,null);
-				console.warn(Log.createMessage());
+		try {
+			if(property.hasMetadata("Inject")) continue;
+			var instance = Reflect.field(config,property.field.name);
+			if(instance == null) throw "Found property " + property.field.name + " in config " + ci.name + " but was null "; else {
+				this.context.addObject(property.field.name,reflect.ClassInfo.forCType(property.field.type),instance);
+				if(property.getClass() == Array) {
+					var list = instance;
+					var _g2 = 0;
+					while(_g2 < list.length) {
+						var listInstance = list[_g2];
+						++_g2;
+						this.context.addObject("dynamic",reflect.ClassInfo.forInstance(listInstance),listInstance);
+					}
+				}
 			}
-		} else {
-			this.context.addObject(property.field.name,reflect.ClassInfo.forCType(property.field.type),instance);
-			if(property.getClass() == Array) {
-				var list = instance;
-				var _g2 = 0;
-				while(_g2 < list.length) {
-					var listInstance = list[_g2];
-					++_g2;
-					this.context.addObject("dynamic",reflect.ClassInfo.forInstance(listInstance),listInstance);
+		} catch( e ) {
+			$e = [];
+			while($s.length >= $spos) $e.unshift($s.pop());
+			$s.push($e[0]);
+			{
+				Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 112, className : "bpmjs.ContextBuilder", methodName : "createObjects"};
+				if(Log.filter(LogLevel.WARN)) {
+					Log.fetchInput(e,null,null,null,null,null,null);
+					console.warn(Log.createMessage());
 				}
 			}
 		}
 	}
+	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.configureDynamicObjects = function(objects) {
+	$s.push("bpmjs.ContextBuilder::configureDynamicObjects");
+	var $spos = $s.length;
 	Lambda.iter(objects,$closure(this,"wireContextObject"));
 	Lambda.iter(objects,$closure(this,"findObservers"));
 	Lambda.iter(objects,$closure(this,"registerMessengerByObjectType"));
@@ -3636,10 +5452,13 @@ bpmjs.ContextBuilder.prototype.configureDynamicObjects = function(objects) {
 	Lambda.iter(objects,$closure(this,"doObserve"));
 	Lambda.iter(objects,$closure(this,"doCompleteCall"));
 	Lambda.iter(objects,$closure(this,"doPostCompleteCall"));
+	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
+	$s.push("bpmjs.ContextBuilder::wireContextObject");
+	var $spos = $s.length;
 	if(!contextObject.classInfo.hasRtti) {
-		Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 127, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
+		Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 134, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
 		if(Log.filter(LogLevel.WARN)) {
 			Log.fetchInput("No RTTI for: ",contextObject.name,contextObject.classInfo.name,null,null,null,null);
 			console.warn(Log.createMessage());
@@ -3653,7 +5472,7 @@ bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
 			if(property.getClass() == bpmjs.Context) contextObject.object[property.field.name] = this.context; else {
 				var objects = this.context.getDynamicObjectsByType(property.getClass());
 				if(objects.length == 0) {
-					Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 141, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
+					Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 148, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
 					if(Log.filter(LogLevel.WARN)) {
 						Log.fetchInput("Found [Inject] at object " + Type.getClassName(contextObject.type) + "#" + property.field.name + " but could not find object to inject.",null,null,null,null,null,null);
 						console.warn(Log.createMessage());
@@ -3671,7 +5490,7 @@ bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
 					}
 					if(!found && Reflect.field(contextObject.object,property.field.name) == null) {
 						{
-							Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 162, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
+							Log.posInfo = { fileName : "ContextBuilder.hx", lineNumber : 169, className : "bpmjs.ContextBuilder", methodName : "wireContextObject"};
 							if(Log.filter(LogLevel.INFO)) {
 								Log.fetchInput("value: " + Reflect.field(contextObject.object,property.field.name),null,null,null,null,null,null);
 								console.info(Log.createMessage());
@@ -3683,8 +5502,11 @@ bpmjs.ContextBuilder.prototype.wireContextObject = function(contextObject) {
 			}
 		}
 	}
+	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.findObservers = function(contextObject) {
+	$s.push("bpmjs.ContextBuilder::findObservers");
+	var $spos = $s.length;
 	var _g = 0, _g1 = contextObject.classInfo.getMethods();
 	while(_g < _g1.length) {
 		var method = _g1[_g];
@@ -3693,11 +5515,17 @@ bpmjs.ContextBuilder.prototype.findObservers = function(contextObject) {
 			if(method.getParameters().length == 1) this.context.addObserver(contextObject,method.field.name,reflect.ClassInfo.forCType(method.getParameters()[0].def.t)); else throw "Method to observe: " + contextObject.classInfo.name + "." + method.field.name + " needs exactly one parameter";
 		}
 	}
+	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.registerMessengerByObjectType = function(contextObject) {
+	$s.push("bpmjs.ContextBuilder::registerMessengerByObjectType");
+	var $spos = $s.length;
 	if(Std["is"](contextObject.object,bpmjs.Messenger)) this.contextConfig.frontMessenger.addMessenger(contextObject.object);
+	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.registerMessengers = function(contextObject) {
+	$s.push("bpmjs.ContextBuilder::registerMessengers");
+	var $spos = $s.length;
 	var _g = 0, _g1 = contextObject.classInfo.getProperties();
 	while(_g < _g1.length) {
 		var property = _g1[_g];
@@ -3708,8 +5536,11 @@ bpmjs.ContextBuilder.prototype.registerMessengers = function(contextObject) {
 			this.contextConfig.frontMessenger.addMessenger(messenger);
 		}
 	}
+	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.registerReceivers = function(contextObject) {
+	$s.push("bpmjs.ContextBuilder::registerReceivers");
+	var $spos = $s.length;
 	var _g = 0, _g1 = contextObject.classInfo.getMethods();
 	while(_g < _g1.length) {
 		var method = _g1[_g];
@@ -3718,23 +5549,38 @@ bpmjs.ContextBuilder.prototype.registerReceivers = function(contextObject) {
 			if(method.getParameters().length == 1) this.contextConfig.frontMessenger.addReceiver(contextObject.object,method.field.name,reflect.ClassInfo.forCType(method.getParameters()[0].def.t).type); else throw "Message: " + contextObject.classInfo.name + "." + method.field.name + " needs exactly one parameter";
 		}
 	}
+	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.doObserve = function(contextObject) {
+	$s.push("bpmjs.ContextBuilder::doObserve");
+	var $spos = $s.length;
 	var _g = 0, _g1 = this.context.observers;
 	while(_g < _g1.length) {
 		var observer = _g1[_g];
 		++_g;
 		observer.observe(contextObject);
 	}
+	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.doCompleteCall = function(contextObject) {
+	$s.push("bpmjs.ContextBuilder::doCompleteCall");
+	var $spos = $s.length;
 	bpmjs.ReflectUtil.callMethodWithMetadata(contextObject.object,contextObject.type,"Complete",[]);
+	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.doPostCompleteCall = function(contextObject) {
+	$s.push("bpmjs.ContextBuilder::doPostCompleteCall");
+	var $spos = $s.length;
 	bpmjs.ReflectUtil.callMethodWithMetadata(contextObject.object,contextObject.type,"PostComplete",[]);
+	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.createError = function(message) {
-	return "ContextBuilder ERROR: " + message;
+	$s.push("bpmjs.ContextBuilder::createError");
+	var $spos = $s.length;
+	var $tmp = "ContextBuilder ERROR: " + message;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 bpmjs.ContextBuilder.prototype.__class__ = bpmjs.ContextBuilder;
 bpmjs.FrontMessenger = function() { }
@@ -3744,11 +5590,16 @@ bpmjs.FrontMessenger.prototype.addReceiver = null;
 bpmjs.FrontMessenger.prototype.__class__ = bpmjs.FrontMessenger;
 bpmjs.DefaultFrontMessenger = function(p) {
 	if( p === $_ ) return;
+	$s.push("bpmjs.DefaultFrontMessenger::new");
+	var $spos = $s.length;
 	this.receivers = new Array();
+	$s.pop();
 }
 bpmjs.DefaultFrontMessenger.__name__ = ["bpmjs","DefaultFrontMessenger"];
 bpmjs.DefaultFrontMessenger.prototype.receivers = null;
 bpmjs.DefaultFrontMessenger.prototype.addMessenger = function(messenger) {
+	$s.push("bpmjs.DefaultFrontMessenger::addMessenger");
+	var $spos = $s.length;
 	{
 		Log.posInfo = { fileName : "FrontMessenger.hx", lineNumber : 21, className : "bpmjs.DefaultFrontMessenger", methodName : "addMessenger"};
 		if(Log.filter(LogLevel.INFO)) {
@@ -3757,8 +5608,11 @@ bpmjs.DefaultFrontMessenger.prototype.addMessenger = function(messenger) {
 		}
 	}
 	messenger.addReceiver(null,$closure(this,"handleMessage"));
+	$s.pop();
 }
 bpmjs.DefaultFrontMessenger.prototype.addReceiver = function(receivingObject,methodName,type) {
+	$s.push("bpmjs.DefaultFrontMessenger::addReceiver");
+	var $spos = $s.length;
 	{
 		Log.posInfo = { fileName : "FrontMessenger.hx", lineNumber : 27, className : "bpmjs.DefaultFrontMessenger", methodName : "addReceiver"};
 		if(Log.filter(LogLevel.INFO)) {
@@ -3767,8 +5621,11 @@ bpmjs.DefaultFrontMessenger.prototype.addReceiver = function(receivingObject,met
 		}
 	}
 	this.receivers.push(new bpmjs._FrontMessenger.Receiver(receivingObject,methodName,type));
+	$s.pop();
 }
 bpmjs.DefaultFrontMessenger.prototype.handleMessage = function(message) {
+	$s.push("bpmjs.DefaultFrontMessenger::handleMessage");
+	var $spos = $s.length;
 	{
 		Log.posInfo = { fileName : "FrontMessenger.hx", lineNumber : 33, className : "bpmjs.DefaultFrontMessenger", methodName : "handleMessage"};
 		if(Log.filter(LogLevel.INFO)) {
@@ -3791,16 +5648,20 @@ bpmjs.DefaultFrontMessenger.prototype.handleMessage = function(message) {
 			receiver.method.apply(receiver.receiver,[message]);
 		}
 	}
+	$s.pop();
 }
 bpmjs.DefaultFrontMessenger.prototype.__class__ = bpmjs.DefaultFrontMessenger;
 bpmjs.DefaultFrontMessenger.__interfaces__ = [bpmjs.FrontMessenger];
 if(!bpmjs._FrontMessenger) bpmjs._FrontMessenger = {}
 bpmjs._FrontMessenger.Receiver = function(receiver,methodName,type) {
 	if( receiver === $_ ) return;
+	$s.push("bpmjs._FrontMessenger.Receiver::new");
+	var $spos = $s.length;
 	this.receiver = receiver;
 	this.type = type;
 	this.method = Reflect.field(receiver,methodName);
 	this.methodName = methodName;
+	$s.pop();
 }
 bpmjs._FrontMessenger.Receiver.__name__ = ["bpmjs","_FrontMessenger","Receiver"];
 bpmjs._FrontMessenger.Receiver.prototype.receiver = null;
@@ -3808,9 +5669,16 @@ bpmjs._FrontMessenger.Receiver.prototype.method = null;
 bpmjs._FrontMessenger.Receiver.prototype.methodName = null;
 bpmjs._FrontMessenger.Receiver.prototype.type = null;
 bpmjs._FrontMessenger.Receiver.prototype.matches = function(message) {
-	return Type.getClass(message) == this.type;
+	$s.push("bpmjs._FrontMessenger.Receiver::matches");
+	var $spos = $s.length;
+	var $tmp = Type.getClass(message) == this.type;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 bpmjs._FrontMessenger.Receiver.prototype.execute = function(message) {
+	$s.push("bpmjs._FrontMessenger.Receiver::execute");
+	var $spos = $s.length;
 	{
 		Log.posInfo = { fileName : "FrontMessenger.hx", lineNumber : 66, className : "bpmjs._FrontMessenger.Receiver", methodName : "execute"};
 		if(Log.filter(LogLevel.INFO)) {
@@ -3819,14 +5687,20 @@ bpmjs._FrontMessenger.Receiver.prototype.execute = function(message) {
 		}
 	}
 	this.method.apply(this.receiver,[message]);
+	$s.pop();
 }
 bpmjs._FrontMessenger.Receiver.prototype.__class__ = bpmjs._FrontMessenger.Receiver;
 kumite.scene.SceneMixer = function(p) {
+	$s.push("kumite.scene.SceneMixer::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.scene.SceneMixer.__name__ = ["kumite","scene","SceneMixer"];
 kumite.scene.SceneMixer.prototype.from = null;
 kumite.scene.SceneMixer.prototype.to = null;
 kumite.scene.SceneMixer.prototype.mix = function(from,to) {
+	$s.push("kumite.scene.SceneMixer::mix");
+	var $spos = $s.length;
 	this.from = from;
 	this.to = to;
 	var result = new kumite.scene.Scene();
@@ -3847,13 +5721,21 @@ kumite.scene.SceneMixer.prototype.mix = function(from,to) {
 		}
 	}
 	result.layers.sort($closure(this,"sorter"));
+	$s.pop();
 	return result;
+	$s.pop();
 }
 kumite.scene.SceneMixer.prototype.sorter = function(a,b) {
+	$s.push("kumite.scene.SceneMixer::sorter");
+	var $spos = $s.length;
 	var from = this.from;
 	var to = this.to;
 	var result = function(value,i) {
+		$s.push("kumite.scene.SceneMixer::sorter@46");
+		var $spos = $s.length;
+		$s.pop();
 		return value;
+		$s.pop();
 	};
 	var aInFrom = from.containsLayer(a);
 	var aInTo = to.containsLayer(a);
@@ -3861,34 +5743,74 @@ kumite.scene.SceneMixer.prototype.sorter = function(a,b) {
 	var bInTo = to.containsLayer(b);
 	if(aInTo && bInTo) {
 		var bOverA = to.getLayerIndex(b) > to.getLayerIndex(a);
-		if(bOverA) return result(-1,{ fileName : "SceneMixer.hx", lineNumber : 62, className : "kumite.scene.SceneMixer", methodName : "sorter"}); else return result(1,{ fileName : "SceneMixer.hx", lineNumber : 64, className : "kumite.scene.SceneMixer", methodName : "sorter"});
+		if(bOverA) {
+			var $tmp = result(-1,{ fileName : "SceneMixer.hx", lineNumber : 62, className : "kumite.scene.SceneMixer", methodName : "sorter"});
+			$s.pop();
+			return $tmp;
+		} else {
+			var $tmp = result(1,{ fileName : "SceneMixer.hx", lineNumber : 64, className : "kumite.scene.SceneMixer", methodName : "sorter"});
+			$s.pop();
+			return $tmp;
+		}
 	}
 	if(aInFrom && bInFrom) {
 		var bOverA = from.getLayerIndex(b) > from.getLayerIndex(a);
-		if(bOverA) return result(-1,{ fileName : "SceneMixer.hx", lineNumber : 71, className : "kumite.scene.SceneMixer", methodName : "sorter"}); else return result(1,{ fileName : "SceneMixer.hx", lineNumber : 73, className : "kumite.scene.SceneMixer", methodName : "sorter"});
+		if(bOverA) {
+			var $tmp = result(-1,{ fileName : "SceneMixer.hx", lineNumber : 71, className : "kumite.scene.SceneMixer", methodName : "sorter"});
+			$s.pop();
+			return $tmp;
+		} else {
+			var $tmp = result(1,{ fileName : "SceneMixer.hx", lineNumber : 73, className : "kumite.scene.SceneMixer", methodName : "sorter"});
+			$s.pop();
+			return $tmp;
+		}
 	}
 	if(aInFrom && !aInTo && !bInFrom && bInTo) {
 		var computeHasAPredecessorThatIsOverB = function() {
+			$s.push("kumite.scene.SceneMixer::sorter@78");
+			var $spos = $s.length;
 			var aIndex = from.getLayerIndex(a) - 1;
 			while(aIndex >= 0) {
 				var bIndex = to.getLayerIndex(b) + 1;
 				while(bIndex < to.layers.length) {
-					if(to.layers[bIndex].layerId == from.layers[aIndex].layerId) return true;
+					if(to.layers[bIndex].layerId == from.layers[aIndex].layerId) {
+						$s.pop();
+						return true;
+					}
 					bIndex++;
 				}
 				aIndex--;
 			}
+			$s.pop();
 			return false;
+			$s.pop();
 		};
 		var hasAPredecessorThatIsOverB = computeHasAPredecessorThatIsOverB();
-		if(hasAPredecessorThatIsOverB) return result(1,{ fileName : "SceneMixer.hx", lineNumber : 98, className : "kumite.scene.SceneMixer", methodName : "sorter"}); else return result(-1,{ fileName : "SceneMixer.hx", lineNumber : 100, className : "kumite.scene.SceneMixer", methodName : "sorter"});
+		if(hasAPredecessorThatIsOverB) {
+			var $tmp = result(1,{ fileName : "SceneMixer.hx", lineNumber : 98, className : "kumite.scene.SceneMixer", methodName : "sorter"});
+			$s.pop();
+			return $tmp;
+		} else {
+			var $tmp = result(-1,{ fileName : "SceneMixer.hx", lineNumber : 100, className : "kumite.scene.SceneMixer", methodName : "sorter"});
+			$s.pop();
+			return $tmp;
+		}
 	}
-	if(aInTo && !aInFrom && !bInTo && bInFrom) return result(1,{ fileName : "SceneMixer.hx", lineNumber : 104, className : "kumite.scene.SceneMixer", methodName : "sorter"});
-	return result(0,{ fileName : "SceneMixer.hx", lineNumber : 106, className : "kumite.scene.SceneMixer", methodName : "sorter"});
+	if(aInTo && !aInFrom && !bInTo && bInFrom) {
+		var $tmp = result(1,{ fileName : "SceneMixer.hx", lineNumber : 104, className : "kumite.scene.SceneMixer", methodName : "sorter"});
+		$s.pop();
+		return $tmp;
+	}
+	var $tmp = result(0,{ fileName : "SceneMixer.hx", lineNumber : 106, className : "kumite.scene.SceneMixer", methodName : "sorter"});
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 kumite.scene.SceneMixer.prototype.__class__ = kumite.scene.SceneMixer;
 GLDisplayList = function(p) {
 	if( p === $_ ) return;
+	$s.push("GLDisplayList::new");
+	var $spos = $s.length;
 	this.lastFrameTime = Date.now().getTime();
 	this.startTime = this.lastFrameTime;
 	this.enterFrameSignaler = new hsl.haxe.DirectSignaler(this);
@@ -3897,16 +5819,22 @@ GLDisplayList = function(p) {
 	GLMouseRegistry.getInstance().mouseDownSignaler.bind($closure(this,"handleMouseDown"));
 	GLMouseRegistry.getInstance().mouseMoveSignaler.bind($closure(this,"handleMouseMove"));
 	this.cursorClient = GLMouseRegistry.getInstance().createCursorClient();
+	$s.pop();
 }
 GLDisplayList.__name__ = ["GLDisplayList"];
 GLDisplayList.instance = null;
 GLDisplayList.getDefault = function() {
+	$s.push("GLDisplayList::getDefault");
+	var $spos = $s.length;
 	if(GLDisplayList.instance == null) {
 		GLDisplayList.instance = new GLDisplayList();
 		GLDisplayList.instance.stage = new GLStage();
 		GLDisplayList.instance.initDisplayObject(GLDisplayList.instance.stage);
 	}
-	return GLDisplayList.instance;
+	var $tmp = GLDisplayList.instance;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GLDisplayList.prototype.stage = null;
 GLDisplayList.prototype.hitareaPicker = null;
@@ -3915,18 +5843,29 @@ GLDisplayList.prototype.startTime = null;
 GLDisplayList.prototype.cursorClient = null;
 GLDisplayList.prototype.enterFrameSignaler = null;
 GLDisplayList.prototype.initDisplayObject = function(displayObject) {
+	$s.push("GLDisplayList::initDisplayObject");
+	var $spos = $s.length;
 	displayObject.stage = this.stage;
 	displayObject.enterFrameSignaler = this.enterFrameSignaler;
+	$s.pop();
 }
 GLDisplayList.prototype.initInteractiveObject = function(interactiveObject) {
+	$s.push("GLDisplayList::initInteractiveObject");
+	var $spos = $s.length;
 	interactiveObject.mouseUpSignaler = new hsl.haxe.DirectSignaler(this);
 	interactiveObject.mouseDownSignaler = new hsl.haxe.DirectSignaler(this);
+	$s.pop();
 }
 GLDisplayList.prototype.setStageSize = function(width,height) {
+	$s.push("GLDisplayList::setStageSize");
+	var $spos = $s.length;
 	this.stage.stageWidth = width;
 	this.stage.stageHeight = height;
+	$s.pop();
 }
 GLDisplayList.prototype.dispatchEnterFrame = function() {
+	$s.push("GLDisplayList::dispatchEnterFrame");
+	var $spos = $s.length;
 	var time = Date.now().getTime();
 	var frame = new GLFrame();
 	frame.time = time;
@@ -3934,28 +5873,45 @@ GLDisplayList.prototype.dispatchEnterFrame = function() {
 	frame.frameTime = time - this.lastFrameTime;
 	this.lastFrameTime = time;
 	this.enterFrameSignaler.dispatch(frame,null,{ fileName : "GLDisplayList.hx", lineNumber : 71, className : "GLDisplayList", methodName : "dispatchEnterFrame"});
+	$s.pop();
 }
 GLDisplayList.prototype.handleMouseDown = function(position) {
+	$s.push("GLDisplayList::handleMouseDown");
+	var $spos = $s.length;
 	var result = this.hitareaPicker.pick(this.stage,position);
 	if(result != null) result.mouseDownSignaler.dispatch(result,null,{ fileName : "GLDisplayList.hx", lineNumber : 79, className : "GLDisplayList", methodName : "handleMouseDown"});
+	$s.pop();
 }
 GLDisplayList.prototype.handleMouseUp = function(position) {
+	$s.push("GLDisplayList::handleMouseUp");
+	var $spos = $s.length;
 	var result = this.hitareaPicker.pick(this.stage,position);
 	if(result != null) result.mouseUpSignaler.dispatch(result,null,{ fileName : "GLDisplayList.hx", lineNumber : 88, className : "GLDisplayList", methodName : "handleMouseUp"});
+	$s.pop();
 }
 GLDisplayList.prototype.handleMouseMove = function(position) {
+	$s.push("GLDisplayList::handleMouseMove");
+	var $spos = $s.length;
 	var result = this.hitareaPicker.pick(this.stage,position);
 	if(result != null) this.cursorClient.handCursor(); else this.cursorClient.defaultCursor();
+	$s.pop();
 }
 GLDisplayList.prototype.__class__ = GLDisplayList;
 GLAnimationFrame = function() { }
 GLAnimationFrame.__name__ = ["GLAnimationFrame"];
 GLAnimationFrame.run = function(method,ms) {
+	$s.push("GLAnimationFrame::run");
+	var $spos = $s.length;
 	if(ms == null) ms = 0;
 	var secureMethod = function() {
+		$s.push("GLAnimationFrame::run@8");
+		var $spos = $s.length;
 		try {
 			method();
 		} catch( e ) {
+			$e = [];
+			while($s.length >= $spos) $e.unshift($s.pop());
+			$s.push($e[0]);
 			{
 				Log.posInfo = { fileName : "GLAnimationFrame.hx", lineNumber : 16, className : "GLAnimationFrame", methodName : "run"};
 				if(Log.filter(LogLevel.ERROR)) {
@@ -3965,6 +5921,7 @@ GLAnimationFrame.run = function(method,ms) {
 				}
 			}
 		}
+		$s.pop();
 	};
 	if(ms == 0) {
 		var window = js.Lib.window;
@@ -3974,8 +5931,11 @@ GLAnimationFrame.run = function(method,ms) {
 				var $r;
 				var requester = null;
 				requester = function() {
+					$s.push("GLAnimationFrame::run@30");
+					var $spos = $s.length;
 					requestAnimationFrame(requester);
 					secureMethod();
+					$s.pop();
 				};
 				$r = requester;
 				return $r;
@@ -3989,58 +5949,97 @@ GLAnimationFrame.run = function(method,ms) {
 		var timer = new haxe.Timer(Std["int"](1000 / ms));
 		timer.run = secureMethod;
 	}
+	$s.pop();
 }
 GLAnimationFrame.prototype.__class__ = GLAnimationFrame;
 reflect.Binding = function(object,property) {
 	if( object === $_ ) return;
+	$s.push("reflect.Binding::new");
+	var $spos = $s.length;
 	this.object = object;
 	this.property = property;
 	this.change = new hsl.haxe.DirectSignaler(this);
+	$s.pop();
 }
 reflect.Binding.__name__ = ["reflect","Binding"];
 reflect.Binding.createForInstanceAndName = function(instance,name) {
+	$s.push("reflect.Binding::createForInstanceAndName");
+	var $spos = $s.length;
 	var classInfo = reflect.ClassInfo.forInstance(instance);
-	return new reflect.Binding(instance,classInfo.getProperty(name));
+	var $tmp = new reflect.Binding(instance,classInfo.getProperty(name));
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 reflect.Binding.prototype.object = null;
 reflect.Binding.prototype.property = null;
 reflect.Binding.prototype.change = null;
 reflect.Binding.prototype.getValue = function() {
-	return Reflect.field(this.object,this.property.field.name);
+	$s.push("reflect.Binding::getValue");
+	var $spos = $s.length;
+	var $tmp = Reflect.field(this.object,this.property.field.name);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 reflect.Binding.prototype.setValue = function(value) {
+	$s.push("reflect.Binding::setValue");
+	var $spos = $s.length;
 	this.object[this.property.field.name] = value;
+	$s.pop();
 }
 reflect.Binding.prototype.watch = function() {
+	$s.push("reflect.Binding::watch");
+	var $spos = $s.length;
 	this.change.dispatch(this,null,{ fileName : "Binding.hx", lineNumber : 39, className : "reflect.Binding", methodName : "watch"});
+	$s.pop();
 }
 reflect.Binding.prototype.__class__ = reflect.Binding;
 reflect.NullBinding = function(p) {
 	if( p === $_ ) return;
+	$s.push("reflect.NullBinding::new");
+	var $spos = $s.length;
 	reflect.Binding.call(this,null,null);
+	$s.pop();
 }
 reflect.NullBinding.__name__ = ["reflect","NullBinding"];
 reflect.NullBinding.__super__ = reflect.Binding;
 for(var k in reflect.Binding.prototype ) reflect.NullBinding.prototype[k] = reflect.Binding.prototype[k];
 reflect.NullBinding.prototype.getValue = function() {
+	$s.push("reflect.NullBinding::getValue");
+	var $spos = $s.length;
+	$s.pop();
 	return null;
+	$s.pop();
 }
 reflect.NullBinding.prototype.setValue = function(value) {
+	$s.push("reflect.NullBinding::setValue");
+	var $spos = $s.length;
+	$s.pop();
 }
 reflect.NullBinding.prototype.__class__ = reflect.NullBinding;
 kumite.musicdraw.BandsReader = function(p) {
+	$s.push("kumite.musicdraw.BandsReader::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.musicdraw.BandsReader.__name__ = ["kumite","musicdraw","BandsReader"];
 kumite.musicdraw.BandsReader.prototype.analyzer = null;
 kumite.musicdraw.BandsReader.prototype.location = null;
 kumite.musicdraw.BandsReader.prototype.read = function(location) {
+	$s.push("kumite.musicdraw.BandsReader::read");
+	var $spos = $s.length;
 	this.location = location;
 	var task = new bpmjs.HTTPTask();
 	task.completeSignaler.bind($closure(this,"handleHTTPComplete"));
 	task.location = location;
+	$s.pop();
 	return task;
+	$s.pop();
 }
 kumite.musicdraw.BandsReader.prototype.handleHTTPComplete = function(task) {
+	$s.push("kumite.musicdraw.BandsReader::handleHTTPComplete");
+	var $spos = $s.length;
 	var data = new hxjson2.JSONDecoder(task.data,true).getValue();
 	this.analyzer.bands = data.bands;
 	{
@@ -4057,11 +6056,15 @@ kumite.musicdraw.BandsReader.prototype.handleHTTPComplete = function(task) {
 			console.info(Log.createMessage());
 		}
 	}
+	$s.pop();
 }
 kumite.musicdraw.BandsReader.prototype.__class__ = kumite.musicdraw.BandsReader;
 kumite.musicdraw.BandsReader.__interfaces__ = [haxe.rtti.Infos];
 if(!kumite.projection) kumite.projection = {}
 kumite.projection.ProjectionController = function(p) {
+	$s.push("kumite.projection.ProjectionController::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.projection.ProjectionController.__name__ = ["kumite","projection","ProjectionController"];
 kumite.projection.ProjectionController.prototype.projection = null;
@@ -4070,44 +6073,74 @@ kumite.projection.ProjectionController.prototype.fov = null;
 kumite.projection.ProjectionController.prototype.near = null;
 kumite.projection.ProjectionController.prototype.far = null;
 kumite.projection.ProjectionController.prototype.init = function() {
+	$s.push("kumite.projection.ProjectionController::init");
+	var $spos = $s.length;
 	this.projection.matrix = new Matrix4();
 	this.updateProjectionSizeFromStage();
+	$s.pop();
 }
 kumite.projection.ProjectionController.prototype.updateProjectionSizeFromStage = function(message) {
+	$s.push("kumite.projection.ProjectionController::updateProjectionSizeFromStage");
+	var $spos = $s.length;
 	this.projection.matrix.setPerspective(this.fov,this.stage.getAspect(),this.near,this.far);
+	$s.pop();
 }
 kumite.projection.ProjectionController.prototype.__class__ = kumite.projection.ProjectionController;
 kumite.projection.ProjectionController.__interfaces__ = [haxe.rtti.Infos];
 kumite.scene.Scenes = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.scene.Scenes::new");
+	var $spos = $s.length;
 	this.all = new Array();
+	$s.pop();
 }
 kumite.scene.Scenes.__name__ = ["kumite","scene","Scenes"];
 kumite.scene.Scenes.prototype.all = null;
 kumite.scene.Scenes.prototype.getFirstScene = function() {
-	return this.all[0];
+	$s.push("kumite.scene.Scenes::getFirstScene");
+	var $spos = $s.length;
+	var $tmp = this.all[0];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 kumite.scene.Scenes.prototype.getRandomScene = function() {
-	return this.all[Std["int"](Math.random() * this.all.length)];
+	$s.push("kumite.scene.Scenes::getRandomScene");
+	var $spos = $s.length;
+	var $tmp = this.all[Std["int"](Math.random() * this.all.length)];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 kumite.scene.Scenes.prototype.getSceneById = function(id) {
+	$s.push("kumite.scene.Scenes::getSceneById");
+	var $spos = $s.length;
 	var _g = 0, _g1 = this.all;
 	while(_g < _g1.length) {
 		var result = _g1[_g];
 		++_g;
-		if(result.scene.id == id) return result;
+		if(result.scene.id == id) {
+			$s.pop();
+			return result;
+		}
 	}
 	throw "Cannot find scene: " + id;
+	$s.pop();
 }
 kumite.scene.Scenes.prototype.__class__ = kumite.scene.Scenes;
 if(!kumite.vjinterface) kumite.vjinterface = {}
 kumite.vjinterface.VJStats = function(p) {
+	$s.push("kumite.vjinterface.VJStats::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.vjinterface.VJStats.__name__ = ["kumite","vjinterface","VJStats"];
 kumite.vjinterface.VJStats.prototype.stage = null;
 kumite.vjinterface.VJStats.prototype.mouseLabel = null;
 kumite.vjinterface.VJStats.prototype.debugLabel = null;
 kumite.vjinterface.VJStats.prototype.start = function() {
+	$s.push("kumite.vjinterface.VJStats::start");
+	var $spos = $s.length;
 	var stage = GLDisplayList.getDefault().stage;
 	stage.addChild(new GLStats());
 	GLMouseRegistry.getInstance().mouseMoveSignaler.bind($closure(this,"updateMouse"));
@@ -4124,20 +6157,167 @@ kumite.vjinterface.VJStats.prototype.start = function() {
 	this.debugLabel.setText("DEBUG");
 	this.debugLabel.setWidth(200);
 	this.debugLabel.setHeight(200);
+	$s.pop();
 }
 kumite.vjinterface.VJStats.prototype.tick = function(tick) {
+	$s.push("kumite.vjinterface.VJStats::tick");
+	var $spos = $s.length;
 	var result = new Array();
 	this.debugLabel.setText(result.join(", "));
+	$s.pop();
 }
 kumite.vjinterface.VJStats.prototype.updateMouse = function(position) {
+	$s.push("kumite.vjinterface.VJStats::updateMouse");
+	var $spos = $s.length;
 	this.mouseLabel.setX(position.x * this.stage.width - 30);
 	this.mouseLabel.setY(position.y * this.stage.height - 25);
 	var x = (position.x - 0.5) * this.stage.width;
 	var y = (position.y - 0.5) * this.stage.height;
 	this.mouseLabel.setText(Std["int"](x) + ", " + Std["int"](y));
+	$s.pop();
 }
 kumite.vjinterface.VJStats.prototype.__class__ = kumite.vjinterface.VJStats;
 kumite.vjinterface.VJStats.__interfaces__ = [haxe.rtti.Infos];
+bpmjs.WorkerService = function(p) {
+	if( p === $_ ) return;
+	$s.push("bpmjs.WorkerService::new");
+	var $spos = $s.length;
+	this.debug = false;
+	this.queue = new Array();
+	this.pendingCall = null;
+	$s.pop();
+}
+bpmjs.WorkerService.__name__ = ["bpmjs","WorkerService"];
+bpmjs.WorkerService.prototype.debug = null;
+bpmjs.WorkerService.prototype.worker = null;
+bpmjs.WorkerService.prototype.queue = null;
+bpmjs.WorkerService.prototype.pendingCall = null;
+bpmjs.WorkerService.prototype.init = function(workerScript) {
+	$s.push("bpmjs.WorkerService::init");
+	var $spos = $s.length;
+	this.worker = new Worker(workerScript);
+	this.worker.onmessage = $closure(this,"onMessage");
+	$s.pop();
+}
+bpmjs.WorkerService.prototype.call = function(method,args,completeCallback) {
+	$s.push("bpmjs.WorkerService::call");
+	var $spos = $s.length;
+	if(args == null) args = [];
+	if(completeCallback == null) completeCallback = function() {
+		$s.push("bpmjs.WorkerService::call@30");
+		var $spos = $s.length;
+		$s.pop();
+	};
+	this.addQueue(new bpmjs.Call(method,args,completeCallback));
+	$s.pop();
+}
+bpmjs.WorkerService.prototype.callTransfer = function(method,buffer,completeCallback) {
+	$s.push("bpmjs.WorkerService::callTransfer");
+	var $spos = $s.length;
+	this.addQueue(new bpmjs.Call("__prepareTransfer__",[method],function() {
+		$s.push("bpmjs.WorkerService::callTransfer@37");
+		var $spos = $s.length;
+		$s.pop();
+	}));
+	this.addQueue(new bpmjs.TransferCall(method,[buffer],completeCallback));
+	$s.pop();
+}
+bpmjs.WorkerService.prototype.addQueue = function(call) {
+	$s.push("bpmjs.WorkerService::addQueue");
+	var $spos = $s.length;
+	if(this.debug) {
+		Log.posInfo = { fileName : "WorkerService.hx", lineNumber : 44, className : "bpmjs.WorkerService", methodName : "addQueue"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput(call,null,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
+	this.queue.push(call);
+	this.checkQueue();
+	$s.pop();
+}
+bpmjs.WorkerService.prototype.checkQueue = function() {
+	$s.push("bpmjs.WorkerService::checkQueue");
+	var $spos = $s.length;
+	if(this.debug) {
+		Log.posInfo = { fileName : "WorkerService.hx", lineNumber : 52, className : "bpmjs.WorkerService", methodName : "checkQueue"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput(this.queue.length,null,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
+	if(this.pendingCall == null && this.queue.length > 0) {
+		var call = this.queue.shift();
+		this.executeCall(call);
+	}
+	$s.pop();
+}
+bpmjs.WorkerService.prototype.executeCall = function(call) {
+	$s.push("bpmjs.WorkerService::executeCall");
+	var $spos = $s.length;
+	if(this.debug) {
+		Log.posInfo = { fileName : "WorkerService.hx", lineNumber : 64, className : "bpmjs.WorkerService", methodName : "executeCall"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput(call,null,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
+	this.pendingCall = call;
+	if(this.pendingCall.transfer) this.worker.webkitPostMessage(call.args[0],[call.args[0]]); else this.worker.webkitPostMessage({ method : call.method, args : call.args});
+	$s.pop();
+}
+bpmjs.WorkerService.prototype.onMessage = function(event) {
+	$s.push("bpmjs.WorkerService::onMessage");
+	var $spos = $s.length;
+	if(this.debug) {
+		Log.posInfo = { fileName : "WorkerService.hx", lineNumber : 76, className : "bpmjs.WorkerService", methodName : "onMessage"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput("Result: " + this.pendingCall + " -> " + Std.string(event.data),null,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
+	if(this.pendingCall.transfer) this.pendingCall.completeCallback(event.data); else this.pendingCall.completeCallback(event.data.result);
+	this.pendingCall = null;
+	this.checkQueue();
+	$s.pop();
+}
+bpmjs.WorkerService.prototype.__class__ = bpmjs.WorkerService;
+bpmjs.Call = function(method,args,completeCallback) {
+	if( method === $_ ) return;
+	$s.push("bpmjs.Call::new");
+	var $spos = $s.length;
+	this.method = method;
+	this.args = args;
+	this.completeCallback = completeCallback;
+	this.transfer = false;
+	$s.pop();
+}
+bpmjs.Call.__name__ = ["bpmjs","Call"];
+bpmjs.Call.prototype.method = null;
+bpmjs.Call.prototype.args = null;
+bpmjs.Call.prototype.completeCallback = null;
+bpmjs.Call.prototype.transfer = null;
+bpmjs.Call.prototype.toString = function() {
+	$s.push("bpmjs.Call::toString");
+	var $spos = $s.length;
+	var $tmp = "[Call: " + this.method + " transfer:" + this.transfer + "]";
+	$s.pop();
+	return $tmp;
+	$s.pop();
+}
+bpmjs.Call.prototype.__class__ = bpmjs.Call;
+bpmjs.TransferCall = function(method,args,completeCallback) {
+	if( method === $_ ) return;
+	$s.push("bpmjs.TransferCall::new");
+	var $spos = $s.length;
+	bpmjs.Call.call(this,method,args,completeCallback);
+	this.transfer = true;
+	$s.pop();
+}
+bpmjs.TransferCall.__name__ = ["bpmjs","TransferCall"];
+bpmjs.TransferCall.__super__ = bpmjs.Call;
+for(var k in bpmjs.Call.prototype ) bpmjs.TransferCall.prototype[k] = bpmjs.Call.prototype[k];
+bpmjs.TransferCall.prototype.__class__ = bpmjs.TransferCall;
 haxe.StackItem = { __ename__ : ["haxe","StackItem"], __constructs__ : ["CFunction","Module","FilePos","Method","Lambda"] }
 haxe.StackItem.CFunction = ["CFunction",0];
 haxe.StackItem.CFunction.toString = $estr;
@@ -4149,12 +6329,24 @@ haxe.StackItem.Lambda = function(v) { var $x = ["Lambda",4,v]; $x.__enum__ = hax
 haxe.Stack = function() { }
 haxe.Stack.__name__ = ["haxe","Stack"];
 haxe.Stack.callStack = function() {
-	return haxe.Stack.makeStack("$s");
+	$s.push("haxe.Stack::callStack");
+	var $spos = $s.length;
+	var $tmp = haxe.Stack.makeStack("$s");
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.Stack.exceptionStack = function() {
-	return haxe.Stack.makeStack("$e");
+	$s.push("haxe.Stack::exceptionStack");
+	var $spos = $s.length;
+	var $tmp = haxe.Stack.makeStack("$e");
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.Stack.toString = function(stack) {
+	$s.push("haxe.Stack::toString");
+	var $spos = $s.length;
 	var b = new StringBuf();
 	var _g = 0;
 	while(_g < stack.length) {
@@ -4163,9 +6355,14 @@ haxe.Stack.toString = function(stack) {
 		b.b[b.b.length] = "\nCalled from " == null?"null":"\nCalled from ";
 		haxe.Stack.itemToString(b,s);
 	}
-	return b.b.join("");
+	var $tmp = b.b.join("");
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.Stack.itemToString = function(b,s) {
+	$s.push("haxe.Stack::itemToString");
+	var $spos = $s.length;
 	var $e = (s);
 	switch( $e[1] ) {
 	case 0:
@@ -4199,14 +6396,24 @@ haxe.Stack.itemToString = function(b,s) {
 		b.b[b.b.length] = n == null?"null":n;
 		break;
 	}
+	$s.pop();
 }
 haxe.Stack.makeStack = function(s) {
+	$s.push("haxe.Stack::makeStack");
+	var $spos = $s.length;
 	var a = (function($this) {
 		var $r;
 		try {
 			$r = eval(s);
 		} catch( e ) {
-			$r = [];
+			$r = (function($this) {
+				var $r;
+				$e = [];
+				while($s.length >= $spos) $e.unshift($s.pop());
+				$s.push($e[0]);
+				$r = [];
+				return $r;
+			}($this));
 		}
 		return $r;
 	}(this));
@@ -4217,12 +6424,17 @@ haxe.Stack.makeStack = function(s) {
 		var d = a[i].split("::");
 		m.unshift(haxe.StackItem.Method(d[0],d[1]));
 	}
+	$s.pop();
 	return m;
+	$s.pop();
 }
 haxe.Stack.prototype.__class__ = haxe.Stack;
 kumite.scene.SceneNavigator = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.scene.SceneNavigator::new");
+	var $spos = $s.length;
 	this.transitionTime = 1000;
+	$s.pop();
 }
 kumite.scene.SceneNavigator.__name__ = ["kumite","scene","SceneNavigator"];
 kumite.scene.SceneNavigator.prototype.messenger = null;
@@ -4239,6 +6451,8 @@ kumite.scene.SceneNavigator.prototype.currentScene = null;
 kumite.scene.SceneNavigator.prototype.lastScene = null;
 kumite.scene.SceneNavigator.prototype.state = null;
 kumite.scene.SceneNavigator.prototype.init = function() {
+	$s.push("kumite.scene.SceneNavigator::init");
+	var $spos = $s.length;
 	this.currentScene = new kumite.scene.SceneAndLifecycle();
 	this.currentScene.scene = new kumite.scene.Scene();
 	this.currentScene.scene.id = "";
@@ -4250,15 +6464,21 @@ kumite.scene.SceneNavigator.prototype.init = function() {
 	this.idleState = new kumite.scene.IdleState(this);
 	this.transitionState = new kumite.scene.TransitionState(this);
 	this.setState(this.initState);
+	$s.pop();
 }
 kumite.scene.SceneNavigator.prototype.handleSceneLifecycleAdded = function(lifecycle) {
+	$s.push("kumite.scene.SceneNavigator::handleSceneLifecycleAdded");
+	var $spos = $s.length;
 	var scene = new kumite.scene.Scene();
 	var sceneAndLifecycle = new kumite.scene.SceneAndLifecycle();
 	sceneAndLifecycle.scene = scene;
 	sceneAndLifecycle.lifecycle = lifecycle;
 	this.scenes.all.push(sceneAndLifecycle);
+	$s.pop();
 }
 kumite.scene.SceneNavigator.prototype.start = function() {
+	$s.push("kumite.scene.SceneNavigator::start");
+	var $spos = $s.length;
 	if(this.scenes.all.length == 0) {
 		{
 			Log.posInfo = { fileName : "SceneNavigator.hx", lineNumber : 81, className : "kumite.scene.SceneNavigator", methodName : "start"};
@@ -4267,18 +6487,28 @@ kumite.scene.SceneNavigator.prototype.start = function() {
 				console.warn(Log.createMessage());
 			}
 		}
+		$s.pop();
 		return;
 	}
 	this.initAllLayers();
 	this.enterScene(this.scenes.getFirstScene());
+	$s.pop();
 }
 kumite.scene.SceneNavigator.prototype.handleSceneChangeRequest = function(message) {
+	$s.push("kumite.scene.SceneNavigator::handleSceneChangeRequest");
+	var $spos = $s.length;
 	this.enterScene(this.scenes.getSceneById(message.sceneId));
+	$s.pop();
 }
 kumite.scene.SceneNavigator.prototype.render = function(tick) {
+	$s.push("kumite.scene.SceneNavigator::render");
+	var $spos = $s.length;
 	this.state.render();
+	$s.pop();
 }
 kumite.scene.SceneNavigator.prototype.renderTransition = function() {
+	$s.push("kumite.scene.SceneNavigator::renderTransition");
+	var $spos = $s.length;
 	var mixer = new kumite.scene.SceneMixer();
 	var mixedScene = mixer.mix(this.lastScene.scene,this.currentScene.scene);
 	this.transitionContext.resetViewport(this.stage.width,this.stage.height);
@@ -4301,12 +6531,18 @@ kumite.scene.SceneNavigator.prototype.renderTransition = function() {
 			break;
 		}
 	}
+	$s.pop();
 }
 kumite.scene.SceneNavigator.prototype.initTransition = function() {
+	$s.push("kumite.scene.SceneNavigator::initTransition");
+	var $spos = $s.length;
 	this.lastScene.lifecycle.initTransition(this.transitionContext.toOut());
 	this.currentScene.lifecycle.initTransition(this.transitionContext.toIn());
+	$s.pop();
 }
 kumite.scene.SceneNavigator.prototype.renderNormal = function() {
+	$s.push("kumite.scene.SceneNavigator::renderNormal");
+	var $spos = $s.length;
 	this.renderContext.resetViewport(this.stage.width,this.stage.height);
 	this.currentScene.lifecycle.render();
 	var _g = 0, _g1 = this.currentScene.scene.layers;
@@ -4315,20 +6551,29 @@ kumite.scene.SceneNavigator.prototype.renderNormal = function() {
 		++_g;
 		layer.render(this.renderContext);
 	}
+	$s.pop();
 }
 kumite.scene.SceneNavigator.prototype.enterScene = function(newScene) {
+	$s.push("kumite.scene.SceneNavigator::enterScene");
+	var $spos = $s.length;
 	if(this.state.allowsScreenChange && newScene != this.currentScene) {
 		this.lastScene = this.currentScene;
 		this.currentScene = newScene;
 		this.messenger.send(new kumite.scene.SceneEnter(this.lastScene,this.currentScene));
 		this.setState(this.transitionState);
 	}
+	$s.pop();
 }
 kumite.scene.SceneNavigator.prototype.setState = function(state) {
+	$s.push("kumite.scene.SceneNavigator::setState");
+	var $spos = $s.length;
 	this.state = state;
 	state.enter();
+	$s.pop();
 }
 kumite.scene.SceneNavigator.prototype.initAllLayers = function() {
+	$s.push("kumite.scene.SceneNavigator::initAllLayers");
+	var $spos = $s.length;
 	{
 		Log.posInfo = { fileName : "SceneNavigator.hx", lineNumber : 163, className : "kumite.scene.SceneNavigator", methodName : "initAllLayers"};
 		if(Log.filter(LogLevel.INFO)) {
@@ -4407,15 +6652,19 @@ kumite.scene.SceneNavigator.prototype.initAllLayers = function() {
 			layer.init();
 		}
 	}
+	$s.pop();
 }
 kumite.scene.SceneNavigator.prototype.__class__ = kumite.scene.SceneNavigator;
 kumite.scene.SceneNavigator.__interfaces__ = [haxe.rtti.Infos];
 kumite.scene.State = function(navigator) {
 	if( navigator === $_ ) return;
+	$s.push("kumite.scene.State::new");
+	var $spos = $s.length;
 	this.navigator = navigator;
 	this.time = navigator.time;
 	this.transitionContext = navigator.transitionContext;
 	this.configure();
+	$s.pop();
 }
 kumite.scene.State.__name__ = ["kumite","scene","State"];
 kumite.scene.State.prototype.allowsScreenChange = null;
@@ -4423,41 +6672,68 @@ kumite.scene.State.prototype.transitionContext = null;
 kumite.scene.State.prototype.navigator = null;
 kumite.scene.State.prototype.time = null;
 kumite.scene.State.prototype.enter = function() {
+	$s.push("kumite.scene.State::enter");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.scene.State.prototype.render = function() {
+	$s.push("kumite.scene.State::render");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.scene.State.prototype.configure = function() {
+	$s.push("kumite.scene.State::configure");
+	var $spos = $s.length;
 	this.allowsScreenChange = false;
+	$s.pop();
 }
 kumite.scene.State.prototype.__class__ = kumite.scene.State;
 kumite.scene.InitState = function(navigator) {
 	if( navigator === $_ ) return;
+	$s.push("kumite.scene.InitState::new");
+	var $spos = $s.length;
 	kumite.scene.State.call(this,navigator);
+	$s.pop();
 }
 kumite.scene.InitState.__name__ = ["kumite","scene","InitState"];
 kumite.scene.InitState.__super__ = kumite.scene.State;
 for(var k in kumite.scene.State.prototype ) kumite.scene.InitState.prototype[k] = kumite.scene.State.prototype[k];
 kumite.scene.InitState.prototype.configure = function() {
+	$s.push("kumite.scene.InitState::configure");
+	var $spos = $s.length;
 	this.allowsScreenChange = true;
+	$s.pop();
 }
 kumite.scene.InitState.prototype.__class__ = kumite.scene.InitState;
 kumite.scene.IdleState = function(navigator) {
 	if( navigator === $_ ) return;
+	$s.push("kumite.scene.IdleState::new");
+	var $spos = $s.length;
 	kumite.scene.State.call(this,navigator);
+	$s.pop();
 }
 kumite.scene.IdleState.__name__ = ["kumite","scene","IdleState"];
 kumite.scene.IdleState.__super__ = kumite.scene.State;
 for(var k in kumite.scene.State.prototype ) kumite.scene.IdleState.prototype[k] = kumite.scene.State.prototype[k];
 kumite.scene.IdleState.prototype.configure = function() {
+	$s.push("kumite.scene.IdleState::configure");
+	var $spos = $s.length;
 	this.allowsScreenChange = true;
+	$s.pop();
 }
 kumite.scene.IdleState.prototype.render = function() {
+	$s.push("kumite.scene.IdleState::render");
+	var $spos = $s.length;
 	this.navigator.renderNormal();
+	$s.pop();
 }
 kumite.scene.IdleState.prototype.__class__ = kumite.scene.IdleState;
 kumite.scene.TransitionState = function(navigator) {
 	if( navigator === $_ ) return;
+	$s.push("kumite.scene.TransitionState::new");
+	var $spos = $s.length;
 	kumite.scene.State.call(this,navigator);
+	$s.pop();
 }
 kumite.scene.TransitionState.__name__ = ["kumite","scene","TransitionState"];
 kumite.scene.TransitionState.__super__ = kumite.scene.State;
@@ -4465,20 +6741,26 @@ for(var k in kumite.scene.State.prototype ) kumite.scene.TransitionState.prototy
 kumite.scene.TransitionState.prototype.enterTime = null;
 kumite.scene.TransitionState.prototype.exitTime = null;
 kumite.scene.TransitionState.prototype.enter = function() {
+	$s.push("kumite.scene.TransitionState::enter");
+	var $spos = $s.length;
 	this.enterTime = this.time.ms;
 	this.exitTime = this.time.ms + this.navigator.transitionTime;
 	this.transitionContext.setTransition(0);
 	this.transitionContext.outScene = this.navigator.lastScene;
 	this.transitionContext.inScene = this.navigator.currentScene;
 	this.navigator.initTransition();
+	$s.pop();
 }
 kumite.scene.TransitionState.prototype.render = function() {
+	$s.push("kumite.scene.TransitionState::render");
+	var $spos = $s.length;
 	this.transitionContext.setTransition(Map.linear(this.time.ms,this.enterTime,this.exitTime,0,1));
 	if(this.transitionContext.getTransition() >= 1) {
 		this.transitionContext.setTransition(1);
 		this.navigator.setState(this.navigator.idleState);
 	}
 	this.navigator.renderTransition();
+	$s.pop();
 }
 kumite.scene.TransitionState.prototype.__class__ = kumite.scene.TransitionState;
 kumite.scene.SceneLifecycle = function() { }
@@ -4489,19 +6771,37 @@ kumite.scene.SceneLifecycle.prototype.renderTransition = null;
 kumite.scene.SceneLifecycle.prototype.render = null;
 kumite.scene.SceneLifecycle.prototype.__class__ = kumite.scene.SceneLifecycle;
 kumite.scene.NullSceneLifecycle = function(p) {
+	$s.push("kumite.scene.NullSceneLifecycle::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.scene.NullSceneLifecycle.__name__ = ["kumite","scene","NullSceneLifecycle"];
 kumite.scene.NullSceneLifecycle.prototype.sceneInit = function(scene) {
+	$s.push("kumite.scene.NullSceneLifecycle::sceneInit");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.scene.NullSceneLifecycle.prototype.initTransition = function(transitionContext) {
+	$s.push("kumite.scene.NullSceneLifecycle::initTransition");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.scene.NullSceneLifecycle.prototype.renderTransition = function(transitionContext) {
+	$s.push("kumite.scene.NullSceneLifecycle::renderTransition");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.scene.NullSceneLifecycle.prototype.render = function() {
+	$s.push("kumite.scene.NullSceneLifecycle::render");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.scene.NullSceneLifecycle.prototype.__class__ = kumite.scene.NullSceneLifecycle;
 kumite.scene.NullSceneLifecycle.__interfaces__ = [kumite.scene.SceneLifecycle];
 kumite.time.Tick = function(p) {
+	$s.push("kumite.time.Tick::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.time.Tick.__name__ = ["kumite","time","Tick"];
 kumite.time.Tick.prototype.__class__ = kumite.time.Tick;
@@ -4512,13 +6812,24 @@ js.Lib.isOpera = null;
 js.Lib.document = null;
 js.Lib.window = null;
 js.Lib.alert = function(v) {
+	$s.push("js.Lib::alert");
+	var $spos = $s.length;
 	alert(js.Boot.__string_rec(v,""));
+	$s.pop();
 }
 js.Lib.eval = function(code) {
-	return eval(code);
+	$s.push("js.Lib::eval");
+	var $spos = $s.length;
+	var $tmp = eval(code);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 js.Lib.setErrorHandler = function(f) {
+	$s.push("js.Lib::setErrorHandler");
+	var $spos = $s.length;
 	js.Lib.onerror = f;
+	$s.pop();
 }
 js.Lib.prototype.__class__ = js.Lib;
 ValueType = { __ename__ : ["ValueType"], __constructs__ : ["TNull","TInt","TFloat","TBool","TObject","TFunction","TClass","TEnum","TUnknown"] }
@@ -4548,162 +6859,346 @@ ValueType.TUnknown.__enum__ = ValueType;
 Type = function() { }
 Type.__name__ = ["Type"];
 Type.getClass = function(o) {
-	if(o == null) return null;
-	if(o.__enum__ != null) return null;
-	return o.__class__;
+	$s.push("Type::getClass");
+	var $spos = $s.length;
+	if(o == null) {
+		$s.pop();
+		return null;
+	}
+	if(o.__enum__ != null) {
+		$s.pop();
+		return null;
+	}
+	var $tmp = o.__class__;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Type.getEnum = function(o) {
-	if(o == null) return null;
-	return o.__enum__;
+	$s.push("Type::getEnum");
+	var $spos = $s.length;
+	if(o == null) {
+		$s.pop();
+		return null;
+	}
+	var $tmp = o.__enum__;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Type.getSuperClass = function(c) {
-	return c.__super__;
+	$s.push("Type::getSuperClass");
+	var $spos = $s.length;
+	var $tmp = c.__super__;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Type.getClassName = function(c) {
+	$s.push("Type::getClassName");
+	var $spos = $s.length;
 	var a = c.__name__;
-	return a.join(".");
+	var $tmp = a.join(".");
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Type.getEnumName = function(e) {
+	$s.push("Type::getEnumName");
+	var $spos = $s.length;
 	var a = e.__ename__;
-	return a.join(".");
+	var $tmp = a.join(".");
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Type.resolveClass = function(name) {
+	$s.push("Type::resolveClass");
+	var $spos = $s.length;
 	var cl;
 	try {
 		cl = eval(name);
 	} catch( e ) {
+		$e = [];
+		while($s.length >= $spos) $e.unshift($s.pop());
+		$s.push($e[0]);
 		cl = null;
 	}
-	if(cl == null || cl.__name__ == null) return null;
+	if(cl == null || cl.__name__ == null) {
+		$s.pop();
+		return null;
+	}
+	$s.pop();
 	return cl;
+	$s.pop();
 }
 Type.resolveEnum = function(name) {
+	$s.push("Type::resolveEnum");
+	var $spos = $s.length;
 	var e;
 	try {
 		e = eval(name);
 	} catch( err ) {
+		$e = [];
+		while($s.length >= $spos) $e.unshift($s.pop());
+		$s.push($e[0]);
 		e = null;
 	}
-	if(e == null || e.__ename__ == null) return null;
+	if(e == null || e.__ename__ == null) {
+		$s.pop();
+		return null;
+	}
+	$s.pop();
 	return e;
+	$s.pop();
 }
 Type.createInstance = function(cl,args) {
-	if(args.length <= 3) return new cl(args[0],args[1],args[2]);
+	$s.push("Type::createInstance");
+	var $spos = $s.length;
+	if(args.length <= 3) {
+		var $tmp = new cl(args[0],args[1],args[2]);
+		$s.pop();
+		return $tmp;
+	}
 	if(args.length > 8) throw "Too many arguments";
-	return new cl(args[0],args[1],args[2],args[3],args[4],args[5],args[6],args[7]);
+	var $tmp = new cl(args[0],args[1],args[2],args[3],args[4],args[5],args[6],args[7]);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Type.createEmptyInstance = function(cl) {
-	return new cl($_);
+	$s.push("Type::createEmptyInstance");
+	var $spos = $s.length;
+	var $tmp = new cl($_);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Type.createEnum = function(e,constr,params) {
+	$s.push("Type::createEnum");
+	var $spos = $s.length;
 	var f = Reflect.field(e,constr);
 	if(f == null) throw "No such constructor " + constr;
 	if(Reflect.isFunction(f)) {
 		if(params == null) throw "Constructor " + constr + " need parameters";
-		return f.apply(e,params);
+		var $tmp = f.apply(e,params);
+		$s.pop();
+		return $tmp;
 	}
 	if(params != null && params.length != 0) throw "Constructor " + constr + " does not need parameters";
+	$s.pop();
 	return f;
+	$s.pop();
 }
 Type.createEnumIndex = function(e,index,params) {
+	$s.push("Type::createEnumIndex");
+	var $spos = $s.length;
 	var c = e.__constructs__[index];
 	if(c == null) throw index + " is not a valid enum constructor index";
-	return Type.createEnum(e,c,params);
+	var $tmp = Type.createEnum(e,c,params);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Type.getInstanceFields = function(c) {
+	$s.push("Type::getInstanceFields");
+	var $spos = $s.length;
 	var a = Reflect.fields(c.prototype);
 	a.remove("__class__");
+	$s.pop();
 	return a;
+	$s.pop();
 }
 Type.getClassFields = function(c) {
+	$s.push("Type::getClassFields");
+	var $spos = $s.length;
 	var a = Reflect.fields(c);
 	a.remove("__name__");
 	a.remove("__interfaces__");
 	a.remove("__super__");
 	a.remove("prototype");
+	$s.pop();
 	return a;
+	$s.pop();
 }
 Type.getEnumConstructs = function(e) {
+	$s.push("Type::getEnumConstructs");
+	var $spos = $s.length;
 	var a = e.__constructs__;
-	return a.copy();
+	var $tmp = a.copy();
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Type["typeof"] = function(v) {
+	$s.push("Type::typeof");
+	var $spos = $s.length;
 	switch(typeof(v)) {
 	case "boolean":
-		return ValueType.TBool;
+		var $tmp = ValueType.TBool;
+		$s.pop();
+		return $tmp;
 	case "string":
-		return ValueType.TClass(String);
+		var $tmp = ValueType.TClass(String);
+		$s.pop();
+		return $tmp;
 	case "number":
-		if(Math.ceil(v) == v % 2147483648.0) return ValueType.TInt;
-		return ValueType.TFloat;
+		if(Math.ceil(v) == v % 2147483648.0) {
+			var $tmp = ValueType.TInt;
+			$s.pop();
+			return $tmp;
+		}
+		var $tmp = ValueType.TFloat;
+		$s.pop();
+		return $tmp;
 	case "object":
-		if(v == null) return ValueType.TNull;
+		if(v == null) {
+			var $tmp = ValueType.TNull;
+			$s.pop();
+			return $tmp;
+		}
 		var e = v.__enum__;
-		if(e != null) return ValueType.TEnum(e);
+		if(e != null) {
+			var $tmp = ValueType.TEnum(e);
+			$s.pop();
+			return $tmp;
+		}
 		var c = v.__class__;
-		if(c != null) return ValueType.TClass(c);
-		return ValueType.TObject;
+		if(c != null) {
+			var $tmp = ValueType.TClass(c);
+			$s.pop();
+			return $tmp;
+		}
+		var $tmp = ValueType.TObject;
+		$s.pop();
+		return $tmp;
 	case "function":
-		if(v.__name__ != null) return ValueType.TObject;
-		return ValueType.TFunction;
+		if(v.__name__ != null) {
+			var $tmp = ValueType.TObject;
+			$s.pop();
+			return $tmp;
+		}
+		var $tmp = ValueType.TFunction;
+		$s.pop();
+		return $tmp;
 	case "undefined":
-		return ValueType.TNull;
+		var $tmp = ValueType.TNull;
+		$s.pop();
+		return $tmp;
 	default:
-		return ValueType.TUnknown;
+		var $tmp = ValueType.TUnknown;
+		$s.pop();
+		return $tmp;
 	}
+	$s.pop();
 }
 Type.enumEq = function(a,b) {
-	if(a == b) return true;
+	$s.push("Type::enumEq");
+	var $spos = $s.length;
+	if(a == b) {
+		$s.pop();
+		return true;
+	}
 	try {
-		if(a[0] != b[0]) return false;
+		if(a[0] != b[0]) {
+			$s.pop();
+			return false;
+		}
 		var _g1 = 2, _g = a.length;
 		while(_g1 < _g) {
 			var i = _g1++;
-			if(!Type.enumEq(a[i],b[i])) return false;
+			if(!Type.enumEq(a[i],b[i])) {
+				$s.pop();
+				return false;
+			}
 		}
 		var e = a.__enum__;
-		if(e != b.__enum__ || e == null) return false;
+		if(e != b.__enum__ || e == null) {
+			$s.pop();
+			return false;
+		}
 	} catch( e ) {
+		$e = [];
+		while($s.length >= $spos) $e.unshift($s.pop());
+		$s.push($e[0]);
+		$s.pop();
 		return false;
 	}
+	$s.pop();
 	return true;
+	$s.pop();
 }
 Type.enumConstructor = function(e) {
-	return e[0];
+	$s.push("Type::enumConstructor");
+	var $spos = $s.length;
+	var $tmp = e[0];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Type.enumParameters = function(e) {
-	return e.slice(2);
+	$s.push("Type::enumParameters");
+	var $spos = $s.length;
+	var $tmp = e.slice(2);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Type.enumIndex = function(e) {
-	return e[1];
+	$s.push("Type::enumIndex");
+	var $spos = $s.length;
+	var $tmp = e[1];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Type.prototype.__class__ = Type;
 kumite.canvas.CanvasController = function(p) {
+	$s.push("kumite.canvas.CanvasController::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.canvas.CanvasController.__name__ = ["kumite","canvas","CanvasController"];
 kumite.canvas.CanvasController.prototype.canvas = null;
 kumite.canvas.CanvasController.prototype.stage = null;
 kumite.canvas.CanvasController.prototype.initPrepare = function() {
+	$s.push("kumite.canvas.CanvasController::initPrepare");
+	var $spos = $s.length;
 	this.canvas.itself = js.Lib.document.getElementById("content");
+	$s.pop();
 }
 kumite.canvas.CanvasController.prototype.init = function() {
+	$s.push("kumite.canvas.CanvasController::init");
+	var $spos = $s.length;
 	this.updateCanvasSizeFromStage();
+	$s.pop();
 }
 kumite.canvas.CanvasController.prototype.updateCanvasSizeFromStage = function(message) {
+	$s.push("kumite.canvas.CanvasController::updateCanvasSizeFromStage");
+	var $spos = $s.length;
 	this.canvas.itself.width = this.stage.width;
 	this.canvas.itself.height = this.stage.height;
+	$s.pop();
 }
 kumite.canvas.CanvasController.prototype.__class__ = kumite.canvas.CanvasController;
 kumite.canvas.CanvasController.__interfaces__ = [haxe.rtti.Infos];
 if(!kumite.launch) kumite.launch = {}
 kumite.launch.Launcher = function(p) {
+	$s.push("kumite.launch.Launcher::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.launch.Launcher.__name__ = ["kumite","launch","Launcher"];
 kumite.launch.Launcher.prototype.sequencer = null;
 kumite.launch.Launcher.prototype.handlePostComplete = function() {
+	$s.push("kumite.launch.Launcher::handlePostComplete");
+	var $spos = $s.length;
 	this.sequencer.start("boot");
+	$s.pop();
 }
 kumite.launch.Launcher.prototype.showError = function(message) {
+	$s.push("kumite.launch.Launcher::showError");
+	var $spos = $s.length;
 	{
 		Log.posInfo = { fileName : "Launcher.hx", lineNumber : 26, className : "kumite.launch.Launcher", methodName : "showError"};
 		if(Log.filter(LogLevel.ERROR)) {
@@ -4712,18 +7207,25 @@ kumite.launch.Launcher.prototype.showError = function(message) {
 			Log.displayError(Log.createErrorMessage());
 		}
 	}
+	$s.pop();
 }
 kumite.launch.Launcher.prototype.handleFinish = function() {
+	$s.push("kumite.launch.Launcher::handleFinish");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.launch.Launcher.prototype.__class__ = kumite.launch.Launcher;
 kumite.launch.Launcher.__interfaces__ = [haxe.rtti.Infos];
 if(!kumite.layer) kumite.layer = {}
 kumite.layer.LayerTransition = function(name) {
 	if( name === $_ ) return;
+	$s.push("kumite.layer.LayerTransition::new");
+	var $spos = $s.length;
 	this.name = name;
 	this.enabled = true;
 	this.setTransition(1);
 	this.direction = 1;
+	$s.pop();
 }
 kumite.layer.LayerTransition.__name__ = ["kumite","layer","LayerTransition"];
 kumite.layer.LayerTransition.prototype.name = null;
@@ -4732,45 +7234,96 @@ kumite.layer.LayerTransition.prototype.ease = null;
 kumite.layer.LayerTransition.prototype.direction = null;
 kumite.layer.LayerTransition.prototype.transition = null;
 kumite.layer.LayerTransition.prototype.enable = function(enabled) {
+	$s.push("kumite.layer.LayerTransition::enable");
+	var $spos = $s.length;
 	if(!enabled) this.setTransition(1);
 	this.enabled = enabled;
+	$s.pop();
 }
 kumite.layer.LayerTransition.prototype.getTransition = function() {
-	if(this.ease == null) return this.transition; else return Map.ease(this.transition,0,1,0,1,this.ease);
+	$s.push("kumite.layer.LayerTransition::getTransition");
+	var $spos = $s.length;
+	if(this.ease == null) {
+		var $tmp = this.transition;
+		$s.pop();
+		return $tmp;
+	} else {
+		var $tmp = Map.ease(this.transition,0,1,0,1,this.ease);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
 }
 kumite.layer.LayerTransition.prototype.setTransition = function(value) {
+	$s.push("kumite.layer.LayerTransition::setTransition");
+	var $spos = $s.length;
 	if(this.enabled) this.transition = value;
-	return this.getTransition();
+	var $tmp = this.getTransition();
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 kumite.layer.LayerTransition.prototype.__class__ = kumite.layer.LayerTransition;
 Reflect = function() { }
 Reflect.__name__ = ["Reflect"];
 Reflect.hasField = function(o,field) {
-	if(o.hasOwnProperty != null) return o.hasOwnProperty(field);
+	$s.push("Reflect::hasField");
+	var $spos = $s.length;
+	if(o.hasOwnProperty != null) {
+		var $tmp = o.hasOwnProperty(field);
+		$s.pop();
+		return $tmp;
+	}
 	var arr = Reflect.fields(o);
 	var $it0 = arr.iterator();
 	while( $it0.hasNext() ) {
 		var t = $it0.next();
-		if(t == field) return true;
+		if(t == field) {
+			$s.pop();
+			return true;
+		}
 	}
+	$s.pop();
 	return false;
+	$s.pop();
 }
 Reflect.field = function(o,field) {
+	$s.push("Reflect::field");
+	var $spos = $s.length;
 	var v = null;
 	try {
 		v = o[field];
 	} catch( e ) {
+		$e = [];
+		while($s.length >= $spos) $e.unshift($s.pop());
+		$s.push($e[0]);
 	}
+	$s.pop();
 	return v;
+	$s.pop();
 }
 Reflect.setField = function(o,field,value) {
+	$s.push("Reflect::setField");
+	var $spos = $s.length;
 	o[field] = value;
+	$s.pop();
 }
 Reflect.callMethod = function(o,func,args) {
-	return func.apply(o,args);
+	$s.push("Reflect::callMethod");
+	var $spos = $s.length;
+	var $tmp = func.apply(o,args);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Reflect.fields = function(o) {
-	if(o == null) return new Array();
+	$s.push("Reflect::fields");
+	var $spos = $s.length;
+	if(o == null) {
+		var $tmp = new Array();
+		$s.pop();
+		return $tmp;
+	}
 	var a = new Array();
 	if(o.hasOwnProperty) {
 		for(var i in o) if( o.hasOwnProperty(i) ) a.push(i);
@@ -4779,36 +7332,79 @@ Reflect.fields = function(o) {
 		try {
 			t = o.__proto__;
 		} catch( e ) {
+			$e = [];
+			while($s.length >= $spos) $e.unshift($s.pop());
+			$s.push($e[0]);
 			t = null;
 		}
 		if(t != null) o.__proto__ = null;
 		for(var i in o) if( i != "__proto__" ) a.push(i);
 		if(t != null) o.__proto__ = t;
 	}
+	$s.pop();
 	return a;
+	$s.pop();
 }
 Reflect.isFunction = function(f) {
-	return typeof(f) == "function" && f.__name__ == null;
+	$s.push("Reflect::isFunction");
+	var $spos = $s.length;
+	var $tmp = typeof(f) == "function" && f.__name__ == null;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Reflect.compare = function(a,b) {
-	return a == b?0:a > b?1:-1;
+	$s.push("Reflect::compare");
+	var $spos = $s.length;
+	var $tmp = a == b?0:a > b?1:-1;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Reflect.compareMethods = function(f1,f2) {
-	if(f1 == f2) return true;
-	if(!Reflect.isFunction(f1) || !Reflect.isFunction(f2)) return false;
-	return f1.scope == f2.scope && f1.method == f2.method && f1.method != null;
+	$s.push("Reflect::compareMethods");
+	var $spos = $s.length;
+	if(f1 == f2) {
+		$s.pop();
+		return true;
+	}
+	if(!Reflect.isFunction(f1) || !Reflect.isFunction(f2)) {
+		$s.pop();
+		return false;
+	}
+	var $tmp = f1.scope == f2.scope && f1.method == f2.method && f1.method != null;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Reflect.isObject = function(v) {
-	if(v == null) return false;
+	$s.push("Reflect::isObject");
+	var $spos = $s.length;
+	if(v == null) {
+		$s.pop();
+		return false;
+	}
 	var t = typeof(v);
-	return t == "string" || t == "object" && !v.__enum__ || t == "function" && v.__name__ != null;
+	var $tmp = t == "string" || t == "object" && !v.__enum__ || t == "function" && v.__name__ != null;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Reflect.deleteField = function(o,f) {
-	if(!Reflect.hasField(o,f)) return false;
+	$s.push("Reflect::deleteField");
+	var $spos = $s.length;
+	if(!Reflect.hasField(o,f)) {
+		$s.pop();
+		return false;
+	}
 	delete(o[f]);
+	$s.pop();
 	return true;
+	$s.pop();
 }
 Reflect.copy = function(o) {
+	$s.push("Reflect::copy");
+	var $spos = $s.length;
 	var o2 = { };
 	var _g = 0, _g1 = Reflect.fields(o);
 	while(_g < _g1.length) {
@@ -4816,43 +7412,69 @@ Reflect.copy = function(o) {
 		++_g;
 		o2[f] = Reflect.field(o,f);
 	}
+	$s.pop();
 	return o2;
+	$s.pop();
 }
 Reflect.makeVarArgs = function(f) {
-	return function() {
+	$s.push("Reflect::makeVarArgs");
+	var $spos = $s.length;
+	var $tmp = function() {
+		$s.push("Reflect::makeVarArgs@108");
+		var $spos = $s.length;
 		var a = new Array();
 		var _g1 = 0, _g = arguments.length;
 		while(_g1 < _g) {
 			var i = _g1++;
 			a.push(arguments[i]);
 		}
-		return f(a);
+		var $tmp = f(a);
+		$s.pop();
+		return $tmp;
+		$s.pop();
 	};
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Reflect.prototype.__class__ = Reflect;
 reflect.Parameter = function(def) {
 	if( def === $_ ) return;
+	$s.push("reflect.Parameter::new");
+	var $spos = $s.length;
 	this.def = def;
+	$s.pop();
 }
 reflect.Parameter.__name__ = ["reflect","Parameter"];
 reflect.Parameter.prototype.type = null;
 reflect.Parameter.prototype.def = null;
 reflect.Parameter.prototype.getType = function() {
-	return reflect.ClassInfo.forCType(this.def.t);
+	$s.push("reflect.Parameter::getType");
+	var $spos = $s.length;
+	var $tmp = reflect.ClassInfo.forCType(this.def.t);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 reflect.Parameter.prototype.__class__ = reflect.Parameter;
 kumite.scene.SceneChangeRequest = function(sceneId) {
 	if( sceneId === $_ ) return;
+	$s.push("kumite.scene.SceneChangeRequest::new");
+	var $spos = $s.length;
 	this.sceneId = sceneId;
+	$s.pop();
 }
 kumite.scene.SceneChangeRequest.__name__ = ["kumite","scene","SceneChangeRequest"];
 kumite.scene.SceneChangeRequest.prototype.sceneId = null;
 kumite.scene.SceneChangeRequest.prototype.__class__ = kumite.scene.SceneChangeRequest;
 reflect.Method = function(field,args,ret,definedInClass,owner) {
 	if( field === $_ ) return;
+	$s.push("reflect.Method::new");
+	var $spos = $s.length;
 	reflect.Field.call(this,field,definedInClass,owner);
 	this.args = args;
 	this.ret = ret;
+	$s.pop();
 }
 reflect.Method.__name__ = ["reflect","Method"];
 reflect.Method.__super__ = reflect.Field;
@@ -4861,7 +7483,13 @@ reflect.Method.prototype.parameters = null;
 reflect.Method.prototype.args = null;
 reflect.Method.prototype.ret = null;
 reflect.Method.prototype.getParameters = function() {
-	if(this.parameters != null) return this.parameters;
+	$s.push("reflect.Method::getParameters");
+	var $spos = $s.length;
+	if(this.parameters != null) {
+		var $tmp = this.parameters;
+		$s.pop();
+		return $tmp;
+	}
 	this.parameters = new Array();
 	var $it0 = this.args.iterator();
 	while( $it0.hasNext() ) {
@@ -4869,13 +7497,22 @@ reflect.Method.prototype.getParameters = function() {
 		var parameter = new reflect.Parameter(arg);
 		this.parameters.push(parameter);
 	}
-	return this.parameters;
+	var $tmp = this.parameters;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 reflect.Method.prototype.call = function(instance,params) {
+	$s.push("reflect.Method::call");
+	var $spos = $s.length;
 	Reflect.field(instance,this.field.name).apply(instance,params);
+	$s.pop();
 }
 reflect.Method.prototype.__class__ = reflect.Method;
 kumite.vjinterface.VJLayers = function(p) {
+	$s.push("kumite.vjinterface.VJLayers::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.vjinterface.VJLayers.__name__ = ["kumite","vjinterface","VJLayers"];
 kumite.vjinterface.VJLayers.prototype.bindings = null;
@@ -4884,19 +7521,27 @@ kumite.vjinterface.VJLayers.prototype.layerContainer = null;
 kumite.vjinterface.VJLayers.prototype.stage = null;
 kumite.vjinterface.VJLayers.prototype.currentLayer = null;
 kumite.vjinterface.VJLayers.prototype.start = function() {
+	$s.push("kumite.vjinterface.VJLayers::start");
+	var $spos = $s.length;
 	this.stage = GLDisplayList.getDefault().stage;
 	this.layersContainer = new GLDisplayObjectContainer();
 	this.layersContainer.setY(10);
 	this.stage.addChild(this.layersContainer);
 	this.layerContainer = new GLDisplayObjectContainer();
 	this.stage.addChild(this.layerContainer);
+	$s.pop();
 }
 kumite.vjinterface.VJLayers.prototype.render = function(tick) {
+	$s.push("kumite.vjinterface.VJLayers::render");
+	var $spos = $s.length;
 	this.layersContainer.setX(this.stage.stageWidth - kumite.vjinterface.VJLayers.WIDTH - 10);
 	this.layerContainer.setX(this.stage.stageWidth - kumite.vjinterface.VJLayers.WIDTH - 10);
 	if(this.currentLayer != null) this.updateBindings();
+	$s.pop();
 }
 kumite.vjinterface.VJLayers.prototype.handleSceneEnter = function(event) {
+	$s.push("kumite.vjinterface.VJLayers::handleSceneEnter");
+	var $spos = $s.length;
 	this.removeInspectionPanel();
 	this.layersContainer.removeAllChildren();
 	var scene = event.currentScene;
@@ -4927,25 +7572,45 @@ kumite.vjinterface.VJLayers.prototype.handleSceneEnter = function(event) {
 		}
 	}
 	this.layerContainer.setY(currentY + this.layersContainer.y + 10);
+	$s.pop();
 }
 kumite.vjinterface.VJLayers.prototype.registerLifecycleButton = function(button,layer) {
+	$s.push("kumite.vjinterface.VJLayers::registerLifecycleButton");
+	var $spos = $s.length;
 	button.mouseDownSignaler.bind(this.createLayerMouseDownHandler(layer));
+	$s.pop();
 }
 kumite.vjinterface.VJLayers.prototype.createLayerMouseDownHandler = function(layer) {
+	$s.push("kumite.vjinterface.VJLayers::createLayerMouseDownHandler");
+	var $spos = $s.length;
 	var inst = this;
-	return function(button) {
+	var $tmp = function(button) {
+		$s.push("kumite.vjinterface.VJLayers::createLayerMouseDownHandler@101");
+		var $spos = $s.length;
 		inst.inspectLifecycle(layer);
+		$s.pop();
 	};
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 kumite.vjinterface.VJLayers.prototype.inspectLifecycle = function(layer) {
+	$s.push("kumite.vjinterface.VJLayers::inspectLifecycle");
+	var $spos = $s.length;
 	this.currentLayer = layer;
 	this.removeInspectionPanel();
 	this.createInspectionPanel(layer);
+	$s.pop();
 }
 kumite.vjinterface.VJLayers.prototype.removeInspectionPanel = function() {
+	$s.push("kumite.vjinterface.VJLayers::removeInspectionPanel");
+	var $spos = $s.length;
 	this.layerContainer.removeAllChildren();
+	$s.pop();
 }
 kumite.vjinterface.VJLayers.prototype.createInspectionPanel = function(layer) {
+	$s.push("kumite.vjinterface.VJLayers::createInspectionPanel");
+	var $spos = $s.length;
 	this.bindings = new Array();
 	var currentY = 0;
 	var _g = 0, _g1 = layer.params;
@@ -5028,14 +7693,18 @@ kumite.vjinterface.VJLayers.prototype.createInspectionPanel = function(layer) {
 			currentY += 25;
 		}
 	}
+	$s.pop();
 }
 kumite.vjinterface.VJLayers.prototype.updateBindings = function() {
+	$s.push("kumite.vjinterface.VJLayers::updateBindings");
+	var $spos = $s.length;
 	var _g = 0, _g1 = this.bindings;
 	while(_g < _g1.length) {
 		var binding = _g1[_g];
 		++_g;
 		binding.watch();
 	}
+	$s.pop();
 }
 kumite.vjinterface.VJLayers.prototype.__class__ = kumite.vjinterface.VJLayers;
 kumite.vjinterface.VJLayers.__interfaces__ = [haxe.rtti.Infos];
@@ -5074,6 +7743,8 @@ haxe.rtti.TypeTree.TTypedecl = function(t) { var $x = ["TTypedecl",3,t]; $x.__en
 haxe.rtti.TypeApi = function() { }
 haxe.rtti.TypeApi.__name__ = ["haxe","rtti","TypeApi"];
 haxe.rtti.TypeApi.typeInfos = function(t) {
+	$s.push("haxe.rtti.TypeApi::typeInfos");
+	var $spos = $s.length;
 	var inf;
 	var $e = (t);
 	switch( $e[1] ) {
@@ -5093,10 +7764,14 @@ haxe.rtti.TypeApi.typeInfos = function(t) {
 		throw "Unexpected Package";
 		break;
 	}
+	$s.pop();
 	return inf;
+	$s.pop();
 }
 haxe.rtti.TypeApi.isVar = function(t) {
-	return (function($this) {
+	$s.push("haxe.rtti.TypeApi::isVar");
+	var $spos = $s.length;
+	var $tmp = (function($this) {
 		var $r;
 		switch( (t)[1] ) {
 		case 4:
@@ -5107,21 +7782,42 @@ haxe.rtti.TypeApi.isVar = function(t) {
 		}
 		return $r;
 	}(this));
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.rtti.TypeApi.leq = function(f,l1,l2) {
+	$s.push("haxe.rtti.TypeApi::leq");
+	var $spos = $s.length;
 	var it = l2.iterator();
 	var $it0 = l1.iterator();
 	while( $it0.hasNext() ) {
 		var e1 = $it0.next();
-		if(!it.hasNext()) return false;
+		if(!it.hasNext()) {
+			$s.pop();
+			return false;
+		}
 		var e2 = it.next();
-		if(!f(e1,e2)) return false;
+		if(!f(e1,e2)) {
+			$s.pop();
+			return false;
+		}
 	}
-	if(it.hasNext()) return false;
+	if(it.hasNext()) {
+		$s.pop();
+		return false;
+	}
+	$s.pop();
 	return true;
+	$s.pop();
 }
 haxe.rtti.TypeApi.rightsEq = function(r1,r2) {
-	if(r1 == r2) return true;
+	$s.push("haxe.rtti.TypeApi::rightsEq");
+	var $spos = $s.length;
+	if(r1 == r2) {
+		$s.pop();
+		return true;
+	}
 	var $e = (r1);
 	switch( $e[1] ) {
 	case 2:
@@ -5130,26 +7826,36 @@ haxe.rtti.TypeApi.rightsEq = function(r1,r2) {
 		switch( $e[1] ) {
 		case 2:
 			var m2 = $e[2];
-			return m1 == m2;
+			var $tmp = m1 == m2;
+			$s.pop();
+			return $tmp;
 		default:
 		}
 		break;
 	default:
 	}
+	$s.pop();
 	return false;
+	$s.pop();
 }
 haxe.rtti.TypeApi.typeEq = function(t1,t2) {
+	$s.push("haxe.rtti.TypeApi::typeEq");
+	var $spos = $s.length;
 	var $e = (t1);
 	switch( $e[1] ) {
 	case 0:
-		return t2 == haxe.rtti.CType.CUnknown;
+		var $tmp = t2 == haxe.rtti.CType.CUnknown;
+		$s.pop();
+		return $tmp;
 	case 1:
 		var params = $e[3], name = $e[2];
 		var $e = (t2);
 		switch( $e[1] ) {
 		case 1:
 			var params2 = $e[3], name2 = $e[2];
-			return name == name2 && haxe.rtti.TypeApi.leq(haxe.rtti.TypeApi.typeEq,params,params2);
+			var $tmp = name == name2 && haxe.rtti.TypeApi.leq(haxe.rtti.TypeApi.typeEq,params,params2);
+			$s.pop();
+			return $tmp;
 		default:
 		}
 		break;
@@ -5159,7 +7865,9 @@ haxe.rtti.TypeApi.typeEq = function(t1,t2) {
 		switch( $e[1] ) {
 		case 2:
 			var params2 = $e[3], name2 = $e[2];
-			return name == name2 && haxe.rtti.TypeApi.leq(haxe.rtti.TypeApi.typeEq,params,params2);
+			var $tmp = name == name2 && haxe.rtti.TypeApi.leq(haxe.rtti.TypeApi.typeEq,params,params2);
+			$s.pop();
+			return $tmp;
 		default:
 		}
 		break;
@@ -5169,7 +7877,9 @@ haxe.rtti.TypeApi.typeEq = function(t1,t2) {
 		switch( $e[1] ) {
 		case 3:
 			var params2 = $e[3], name2 = $e[2];
-			return name == name2 && haxe.rtti.TypeApi.leq(haxe.rtti.TypeApi.typeEq,params,params2);
+			var $tmp = name == name2 && haxe.rtti.TypeApi.leq(haxe.rtti.TypeApi.typeEq,params,params2);
+			$s.pop();
+			return $tmp;
 		default:
 		}
 		break;
@@ -5179,9 +7889,16 @@ haxe.rtti.TypeApi.typeEq = function(t1,t2) {
 		switch( $e[1] ) {
 		case 4:
 			var ret2 = $e[3], args2 = $e[2];
-			return haxe.rtti.TypeApi.leq(function(a,b) {
-				return a.name == b.name && a.opt == b.opt && haxe.rtti.TypeApi.typeEq(a.t,b.t);
+			var $tmp = haxe.rtti.TypeApi.leq(function(a,b) {
+				$s.push("haxe.rtti.TypeApi::typeEq@187");
+				var $spos = $s.length;
+				var $tmp = a.name == b.name && a.opt == b.opt && haxe.rtti.TypeApi.typeEq(a.t,b.t);
+				$s.pop();
+				return $tmp;
+				$s.pop();
 			},args,args2) && haxe.rtti.TypeApi.typeEq(ret,ret2);
+			$s.pop();
+			return $tmp;
 		default:
 		}
 		break;
@@ -5191,9 +7908,16 @@ haxe.rtti.TypeApi.typeEq = function(t1,t2) {
 		switch( $e[1] ) {
 		case 5:
 			var fields2 = $e[2];
-			return haxe.rtti.TypeApi.leq(function(a,b) {
-				return a.name == b.name && haxe.rtti.TypeApi.typeEq(a.t,b.t);
+			var $tmp = haxe.rtti.TypeApi.leq(function(a,b) {
+				$s.push("haxe.rtti.TypeApi::typeEq@195");
+				var $spos = $s.length;
+				var $tmp = a.name == b.name && haxe.rtti.TypeApi.typeEq(a.t,b.t);
+				$s.pop();
+				return $tmp;
+				$s.pop();
 			},fields,fields2);
+			$s.pop();
+			return $tmp;
 		default:
 		}
 		break;
@@ -5203,171 +7927,307 @@ haxe.rtti.TypeApi.typeEq = function(t1,t2) {
 		switch( $e[1] ) {
 		case 6:
 			var t21 = $e[2];
-			if(t == null != (t21 == null)) return false;
-			return t == null || haxe.rtti.TypeApi.typeEq(t,t21);
+			if(t == null != (t21 == null)) {
+				$s.pop();
+				return false;
+			}
+			var $tmp = t == null || haxe.rtti.TypeApi.typeEq(t,t21);
+			$s.pop();
+			return $tmp;
 		default:
 		}
 		break;
 	}
+	$s.pop();
 	return false;
+	$s.pop();
 }
 haxe.rtti.TypeApi.fieldEq = function(f1,f2) {
-	if(f1.name != f2.name) return false;
-	if(!haxe.rtti.TypeApi.typeEq(f1.type,f2.type)) return false;
-	if(f1.isPublic != f2.isPublic) return false;
-	if(f1.doc != f2.doc) return false;
-	if(!haxe.rtti.TypeApi.rightsEq(f1.get,f2.get)) return false;
-	if(!haxe.rtti.TypeApi.rightsEq(f1.set,f2.set)) return false;
-	if(f1.params == null != (f2.params == null)) return false;
-	if(f1.params != null && f1.params.join(":") != f2.params.join(":")) return false;
+	$s.push("haxe.rtti.TypeApi::fieldEq");
+	var $spos = $s.length;
+	if(f1.name != f2.name) {
+		$s.pop();
+		return false;
+	}
+	if(!haxe.rtti.TypeApi.typeEq(f1.type,f2.type)) {
+		$s.pop();
+		return false;
+	}
+	if(f1.isPublic != f2.isPublic) {
+		$s.pop();
+		return false;
+	}
+	if(f1.doc != f2.doc) {
+		$s.pop();
+		return false;
+	}
+	if(!haxe.rtti.TypeApi.rightsEq(f1.get,f2.get)) {
+		$s.pop();
+		return false;
+	}
+	if(!haxe.rtti.TypeApi.rightsEq(f1.set,f2.set)) {
+		$s.pop();
+		return false;
+	}
+	if(f1.params == null != (f2.params == null)) {
+		$s.pop();
+		return false;
+	}
+	if(f1.params != null && f1.params.join(":") != f2.params.join(":")) {
+		$s.pop();
+		return false;
+	}
+	$s.pop();
 	return true;
+	$s.pop();
 }
 haxe.rtti.TypeApi.constructorEq = function(c1,c2) {
-	if(c1.name != c2.name) return false;
-	if(c1.doc != c2.doc) return false;
-	if(c1.args == null != (c2.args == null)) return false;
+	$s.push("haxe.rtti.TypeApi::constructorEq");
+	var $spos = $s.length;
+	if(c1.name != c2.name) {
+		$s.pop();
+		return false;
+	}
+	if(c1.doc != c2.doc) {
+		$s.pop();
+		return false;
+	}
+	if(c1.args == null != (c2.args == null)) {
+		$s.pop();
+		return false;
+	}
 	if(c1.args != null && !haxe.rtti.TypeApi.leq(function(a,b) {
-		return a.name == b.name && a.opt == b.opt && haxe.rtti.TypeApi.typeEq(a.t,b.t);
-	},c1.args,c2.args)) return false;
+		$s.push("haxe.rtti.TypeApi::constructorEq@239");
+		var $spos = $s.length;
+		var $tmp = a.name == b.name && a.opt == b.opt && haxe.rtti.TypeApi.typeEq(a.t,b.t);
+		$s.pop();
+		return $tmp;
+		$s.pop();
+	},c1.args,c2.args)) {
+		$s.pop();
+		return false;
+	}
+	$s.pop();
 	return true;
+	$s.pop();
 }
 haxe.rtti.TypeApi.prototype.__class__ = haxe.rtti.TypeApi;
 kumite.layer.ClearLayer = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.layer.ClearLayer::new");
+	var $spos = $s.length;
 	this.color = new Color(0,0,0,0);
+	$s.pop();
 }
 kumite.layer.ClearLayer.__name__ = ["kumite","layer","ClearLayer"];
 kumite.layer.ClearLayer.prototype.color = null;
 kumite.layer.ClearLayer.prototype.init = function() {
+	$s.push("kumite.layer.ClearLayer::init");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.layer.ClearLayer.prototype.renderTransition = function(transitionContext) {
+	$s.push("kumite.layer.ClearLayer::renderTransition");
+	var $spos = $s.length;
 	this.render(transitionContext);
+	$s.pop();
 }
 kumite.layer.ClearLayer.prototype.render = function(renderContext) {
+	$s.push("kumite.layer.ClearLayer::render");
+	var $spos = $s.length;
 	GL.gl.clearColor(this.color.r,this.color.g,this.color.b,this.color.a);
 	GL.gl.clear(17664);
+	$s.pop();
 }
 kumite.layer.ClearLayer.prototype.__class__ = kumite.layer.ClearLayer;
 kumite.layer.ClearLayer.__interfaces__ = [haxe.rtti.Infos,kumite.scene.LayerLifecycle];
 GLMouseRegistry = function(p) {
 	if( p === $_ ) return;
+	$s.push("GLMouseRegistry::new");
+	var $spos = $s.length;
 	this.mouseDownSignaler = new hsl.haxe.DirectSignaler(this);
 	this.mouseUpSignaler = new hsl.haxe.DirectSignaler(this);
 	this.mouseMoveSignaler = new hsl.haxe.DirectSignaler(this);
+	$s.pop();
 }
 GLMouseRegistry.__name__ = ["GLMouseRegistry"];
 GLMouseRegistry.instance = null;
 GLMouseRegistry.getInstance = function() {
+	$s.push("GLMouseRegistry::getInstance");
+	var $spos = $s.length;
 	if(GLMouseRegistry.instance == null) GLMouseRegistry.instance = new GLMouseRegistry();
-	return GLMouseRegistry.instance;
+	var $tmp = GLMouseRegistry.instance;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GLMouseRegistry.prototype.mouseDownSignaler = null;
 GLMouseRegistry.prototype.mouseUpSignaler = null;
 GLMouseRegistry.prototype.mouseMoveSignaler = null;
 GLMouseRegistry.prototype.canvas = null;
 GLMouseRegistry.prototype.init = function(canvas) {
+	$s.push("GLMouseRegistry::init");
+	var $spos = $s.length;
 	this.canvas = canvas;
 	canvas.onmouseup = $closure(this,"onMouseUp");
 	canvas.onmousedown = $closure(this,"onMouseDown");
 	canvas.onmousemove = $closure(this,"onMouseMove");
+	$s.pop();
 }
 GLMouseRegistry.prototype.setCursor = function(cursor) {
+	$s.push("GLMouseRegistry::setCursor");
+	var $spos = $s.length;
 	this.canvas.style.cursor = cursor;
+	$s.pop();
 }
 GLMouseRegistry.prototype.createCursorClient = function() {
+	$s.push("GLMouseRegistry::createCursorClient");
+	var $spos = $s.length;
 	var client = new GLCursorClient();
+	$s.pop();
 	return client;
+	$s.pop();
 }
 GLMouseRegistry.prototype.onMouseDown = function(e) {
+	$s.push("GLMouseRegistry::onMouseDown");
+	var $spos = $s.length;
 	try {
-		this.mouseDownSignaler.dispatch(this.getMousePosition(e),null,{ fileName : "GLMouseRegistry.hx", lineNumber : 53, className : "GLMouseRegistry", methodName : "onMouseDown"});
+		this.mouseDownSignaler.dispatch(this.getMousePosition(e),null,{ fileName : "GLMouseRegistry.hx", lineNumber : 52, className : "GLMouseRegistry", methodName : "onMouseDown"});
 	} catch( e1 ) {
+		$e = [];
+		while($s.length >= $spos) $e.unshift($s.pop());
+		$s.push($e[0]);
 		{
-			Log.posInfo = { fileName : "GLMouseRegistry.hx", lineNumber : 57, className : "GLMouseRegistry", methodName : "onMouseDown"};
+			Log.posInfo = { fileName : "GLMouseRegistry.hx", lineNumber : 56, className : "GLMouseRegistry", methodName : "onMouseDown"};
 			if(Log.filter(LogLevel.WARN)) {
 				Log.fetchInput(e1,null,null,null,null,null,null);
 				console.warn(Log.createMessage());
 			}
 		}
 	}
+	$s.pop();
 }
 GLMouseRegistry.prototype.onMouseUp = function(e) {
+	$s.push("GLMouseRegistry::onMouseUp");
+	var $spos = $s.length;
 	try {
-		this.mouseUpSignaler.dispatch(this.getMousePosition(e),null,{ fileName : "GLMouseRegistry.hx", lineNumber : 65, className : "GLMouseRegistry", methodName : "onMouseUp"});
+		this.mouseUpSignaler.dispatch(this.getMousePosition(e),null,{ fileName : "GLMouseRegistry.hx", lineNumber : 64, className : "GLMouseRegistry", methodName : "onMouseUp"});
 	} catch( e1 ) {
+		$e = [];
+		while($s.length >= $spos) $e.unshift($s.pop());
+		$s.push($e[0]);
 		{
-			Log.posInfo = { fileName : "GLMouseRegistry.hx", lineNumber : 69, className : "GLMouseRegistry", methodName : "onMouseUp"};
+			Log.posInfo = { fileName : "GLMouseRegistry.hx", lineNumber : 68, className : "GLMouseRegistry", methodName : "onMouseUp"};
 			if(Log.filter(LogLevel.WARN)) {
 				Log.fetchInput(e1,null,null,null,null,null,null);
 				console.warn(Log.createMessage());
 			}
 		}
 	}
+	$s.pop();
 }
 GLMouseRegistry.prototype.onMouseMove = function(e) {
+	$s.push("GLMouseRegistry::onMouseMove");
+	var $spos = $s.length;
 	try {
-		this.mouseMoveSignaler.dispatch(this.getMousePosition(e),null,{ fileName : "GLMouseRegistry.hx", lineNumber : 77, className : "GLMouseRegistry", methodName : "onMouseMove"});
+		this.mouseMoveSignaler.dispatch(this.getMousePosition(e),null,{ fileName : "GLMouseRegistry.hx", lineNumber : 76, className : "GLMouseRegistry", methodName : "onMouseMove"});
 	} catch( e1 ) {
+		$e = [];
+		while($s.length >= $spos) $e.unshift($s.pop());
+		$s.push($e[0]);
 		{
-			Log.posInfo = { fileName : "GLMouseRegistry.hx", lineNumber : 81, className : "GLMouseRegistry", methodName : "onMouseMove"};
+			Log.posInfo = { fileName : "GLMouseRegistry.hx", lineNumber : 80, className : "GLMouseRegistry", methodName : "onMouseMove"};
 			if(Log.filter(LogLevel.WARN)) {
 				Log.fetchInput(e1,null,null,null,null,null,null);
 				console.warn(Log.createMessage());
 			}
 		}
 	}
+	$s.pop();
 }
 GLMouseRegistry.prototype.getMousePosition = function(e) {
+	$s.push("GLMouseRegistry::getMousePosition");
+	var $spos = $s.length;
 	var mouseX = e.pageX;
 	var mouseY = e.pageY;
-	return new Vec2(mouseX / this.canvas.clientWidth,mouseY / this.canvas.clientHeight);
+	var $tmp = new Vec2(mouseX / this.canvas.clientWidth,mouseY / this.canvas.clientHeight);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GLMouseRegistry.prototype.__class__ = GLMouseRegistry;
 kumite.scene.LayerParam = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.scene.LayerParam::new");
+	var $spos = $s.length;
 	this.name = "Otto";
+	$s.pop();
 }
 kumite.scene.LayerParam.__name__ = ["kumite","scene","LayerParam"];
 kumite.scene.LayerParam.prototype.name = null;
 kumite.scene.LayerParam.prototype.property = null;
 kumite.scene.LayerParam.prototype.object = null;
 kumite.scene.LayerParam.prototype.getName = function() {
-	return this.property.field.name;
+	$s.push("kumite.scene.LayerParam::getName");
+	var $spos = $s.length;
+	var $tmp = this.property.field.name;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 kumite.scene.LayerParam.prototype.getBinding = function() {
-	return new reflect.Binding(this.object,this.property);
+	$s.push("kumite.scene.LayerParam::getBinding");
+	var $spos = $s.length;
+	var $tmp = new reflect.Binding(this.object,this.property);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 kumite.scene.LayerParam.prototype.__class__ = kumite.scene.LayerParam;
 Lambda = function() { }
 Lambda.__name__ = ["Lambda"];
 Lambda.array = function(it) {
+	$s.push("Lambda::array");
+	var $spos = $s.length;
 	var a = new Array();
 	var $it0 = it.iterator();
 	while( $it0.hasNext() ) {
 		var i = $it0.next();
 		a.push(i);
 	}
+	$s.pop();
 	return a;
+	$s.pop();
 }
 Lambda.list = function(it) {
+	$s.push("Lambda::list");
+	var $spos = $s.length;
 	var l = new List();
 	var $it0 = it.iterator();
 	while( $it0.hasNext() ) {
 		var i = $it0.next();
 		l.add(i);
 	}
+	$s.pop();
 	return l;
+	$s.pop();
 }
 Lambda.map = function(it,f) {
+	$s.push("Lambda::map");
+	var $spos = $s.length;
 	var l = new List();
 	var $it0 = it.iterator();
 	while( $it0.hasNext() ) {
 		var x = $it0.next();
 		l.add(f(x));
 	}
+	$s.pop();
 	return l;
+	$s.pop();
 }
 Lambda.mapi = function(it,f) {
+	$s.push("Lambda::mapi");
+	var $spos = $s.length;
 	var l = new List();
 	var i = 0;
 	var $it0 = it.iterator();
@@ -5375,65 +8235,104 @@ Lambda.mapi = function(it,f) {
 		var x = $it0.next();
 		l.add(f(i++,x));
 	}
+	$s.pop();
 	return l;
+	$s.pop();
 }
 Lambda.has = function(it,elt,cmp) {
+	$s.push("Lambda::has");
+	var $spos = $s.length;
 	if(cmp == null) {
 		var $it0 = it.iterator();
 		while( $it0.hasNext() ) {
 			var x = $it0.next();
-			if(x == elt) return true;
+			if(x == elt) {
+				$s.pop();
+				return true;
+			}
 		}
 	} else {
 		var $it1 = it.iterator();
 		while( $it1.hasNext() ) {
 			var x = $it1.next();
-			if(cmp(x,elt)) return true;
+			if(cmp(x,elt)) {
+				$s.pop();
+				return true;
+			}
 		}
 	}
+	$s.pop();
 	return false;
+	$s.pop();
 }
 Lambda.exists = function(it,f) {
+	$s.push("Lambda::exists");
+	var $spos = $s.length;
 	var $it0 = it.iterator();
 	while( $it0.hasNext() ) {
 		var x = $it0.next();
-		if(f(x)) return true;
+		if(f(x)) {
+			$s.pop();
+			return true;
+		}
 	}
+	$s.pop();
 	return false;
+	$s.pop();
 }
 Lambda.foreach = function(it,f) {
+	$s.push("Lambda::foreach");
+	var $spos = $s.length;
 	var $it0 = it.iterator();
 	while( $it0.hasNext() ) {
 		var x = $it0.next();
-		if(!f(x)) return false;
+		if(!f(x)) {
+			$s.pop();
+			return false;
+		}
 	}
+	$s.pop();
 	return true;
+	$s.pop();
 }
 Lambda.iter = function(it,f) {
+	$s.push("Lambda::iter");
+	var $spos = $s.length;
 	var $it0 = it.iterator();
 	while( $it0.hasNext() ) {
 		var x = $it0.next();
 		f(x);
 	}
+	$s.pop();
 }
 Lambda.filter = function(it,f) {
+	$s.push("Lambda::filter");
+	var $spos = $s.length;
 	var l = new List();
 	var $it0 = it.iterator();
 	while( $it0.hasNext() ) {
 		var x = $it0.next();
 		if(f(x)) l.add(x);
 	}
+	$s.pop();
 	return l;
+	$s.pop();
 }
 Lambda.fold = function(it,f,first) {
+	$s.push("Lambda::fold");
+	var $spos = $s.length;
 	var $it0 = it.iterator();
 	while( $it0.hasNext() ) {
 		var x = $it0.next();
 		first = f(x,first);
 	}
+	$s.pop();
 	return first;
+	$s.pop();
 }
 Lambda.count = function(it,pred) {
+	$s.push("Lambda::count");
+	var $spos = $s.length;
 	var n = 0;
 	if(pred == null) {
 		var $it0 = it.iterator();
@@ -5448,22 +8347,38 @@ Lambda.count = function(it,pred) {
 			if(pred(x)) n++;
 		}
 	}
+	$s.pop();
 	return n;
+	$s.pop();
 }
 Lambda.empty = function(it) {
-	return !it.iterator().hasNext();
+	$s.push("Lambda::empty");
+	var $spos = $s.length;
+	var $tmp = !it.iterator().hasNext();
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Lambda.indexOf = function(it,v) {
+	$s.push("Lambda::indexOf");
+	var $spos = $s.length;
 	var i = 0;
 	var $it0 = it.iterator();
 	while( $it0.hasNext() ) {
 		var v2 = $it0.next();
-		if(v == v2) return i;
+		if(v == v2) {
+			$s.pop();
+			return i;
+		}
 		i++;
 	}
+	$s.pop();
 	return -1;
+	$s.pop();
 }
 Lambda.concat = function(a,b) {
+	$s.push("Lambda::concat");
+	var $spos = $s.length;
 	var l = new List();
 	var $it0 = a.iterator();
 	while( $it0.hasNext() ) {
@@ -5475,35 +8390,51 @@ Lambda.concat = function(a,b) {
 		var x = $it1.next();
 		l.add(x);
 	}
+	$s.pop();
 	return l;
+	$s.pop();
 }
 Lambda.prototype.__class__ = Lambda;
 Text = function(p) {
 	if( p === $_ ) return;
+	$s.push("Text::new");
+	var $spos = $s.length;
 	Text.init();
+	$s.pop();
 }
 Text.__name__ = ["Text"];
 Text.context = null;
 Text.init = function() {
+	$s.push("Text::init");
+	var $spos = $s.length;
 	if(Text.context == null) {
 		var canvas = js.Lib.document.createElement("canvas");
 		Text.context = canvas.getContext("2d");
 	}
+	$s.pop();
 }
 Text.prototype.text = null;
 Text.prototype.font = null;
 Text.prototype.width = null;
 Text.prototype.getWidth = function() {
+	$s.push("Text::getWidth");
+	var $spos = $s.length;
 	Text.context.font = this.font;
-	return Text.context.measureText(this.text).width;
+	var $tmp = Text.context.measureText(this.text).width;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Text.prototype.__class__ = Text;
 CanvasGraphic = function(p) {
 	if( p === $_ ) return;
+	$s.push("CanvasGraphic::new");
+	var $spos = $s.length;
 	this.canvas = js.Lib.document.createElement("canvas");
 	this.context = this.canvas.getContext("2d");
 	this.setWidth(0);
 	this.setHeight(0);
+	$s.pop();
 }
 CanvasGraphic.__name__ = ["CanvasGraphic"];
 CanvasGraphic.prototype.width = null;
@@ -5514,6 +8445,8 @@ CanvasGraphic.prototype.isInvalid = null;
 CanvasGraphic.prototype.canvas = null;
 CanvasGraphic.prototype.context = null;
 CanvasGraphic.prototype.clear = function(color) {
+	$s.push("CanvasGraphic::clear");
+	var $spos = $s.length;
 	this.canvas.width = Math2.nextPowerOf2(this.width);
 	this.canvas.height = Math2.nextPowerOf2(this.height);
 	this.context.fillStyle = "rgba(0, 0, 255, 0)";
@@ -5521,27 +8454,46 @@ CanvasGraphic.prototype.clear = function(color) {
 	this.context.fillStyle = color == null?"rgba(0, 0, 0, 0)":color.toContextRGBA();
 	this.context.fillRect(0,0,this.width,this.height);
 	this.isInvalid = true;
+	$s.pop();
 }
 CanvasGraphic.prototype.fillRect = function(x,y,width,height) {
+	$s.push("CanvasGraphic::fillRect");
+	var $spos = $s.length;
 	this.context.fillRect(x,y,width,height);
 	this.isInvalid = true;
+	$s.pop();
 }
 CanvasGraphic.prototype.fillText = function(text,x,y,maxWidth) {
+	$s.push("CanvasGraphic::fillText");
+	var $spos = $s.length;
 	if(text == null) text = "null";
 	this.context.fillText(text,x,y);
 	this.isInvalid = true;
+	$s.pop();
 }
 CanvasGraphic.prototype.drawImage = function(image,dx,dy,dw,dh) {
+	$s.push("CanvasGraphic::drawImage");
+	var $spos = $s.length;
 	this.context.drawImage(image,dx,dy,dw,dh);
+	$s.pop();
 }
 CanvasGraphic.prototype.drawImage2 = function(image,dx,dy) {
+	$s.push("CanvasGraphic::drawImage2");
+	var $spos = $s.length;
 	this.context.drawImage(image,dx,dy);
+	$s.pop();
 }
 CanvasGraphic.prototype.setFont = function(value) {
+	$s.push("CanvasGraphic::setFont");
+	var $spos = $s.length;
 	this.context.font = value;
+	$s.pop();
 	return value;
+	$s.pop();
 }
 CanvasGraphic.prototype.setFillStyle = function(value) {
+	$s.push("CanvasGraphic::setFillStyle");
+	var $spos = $s.length;
 	if(Std["is"](value,Color)) this.context.fillStyle = ((function($this) {
 		var $r;
 		var $t = value;
@@ -5549,27 +8501,46 @@ CanvasGraphic.prototype.setFillStyle = function(value) {
 		$r = $t;
 		return $r;
 	}(this))).toContextRGBA();
+	$s.pop();
 	return value;
+	$s.pop();
 }
 CanvasGraphic.prototype.setWidth = function(width) {
-	if(this.width == width) return width;
+	$s.push("CanvasGraphic::setWidth");
+	var $spos = $s.length;
+	if(this.width == width) {
+		$s.pop();
+		return width;
+	}
 	this.width = width;
 	this.clear();
+	$s.pop();
 	return width;
+	$s.pop();
 }
 CanvasGraphic.prototype.setHeight = function(height) {
-	if(this.height == height) return height;
+	$s.push("CanvasGraphic::setHeight");
+	var $spos = $s.length;
+	if(this.height == height) {
+		$s.pop();
+		return height;
+	}
 	this.height = height;
 	this.clear();
+	$s.pop();
 	return height;
+	$s.pop();
 }
 CanvasGraphic.prototype.__class__ = CanvasGraphic;
 bpmjs.ProgressMonitor = function(p) {
 	if( p === $_ ) return;
+	$s.push("bpmjs.ProgressMonitor::new");
+	var $spos = $s.length;
 	this.children = new Array();
 	this.setCurrent(0);
 	this.weight = 1;
 	this.name = "";
+	$s.pop();
 }
 bpmjs.ProgressMonitor.__name__ = ["bpmjs","ProgressMonitor"];
 bpmjs.ProgressMonitor.prototype.name = null;
@@ -5577,14 +8548,24 @@ bpmjs.ProgressMonitor.prototype.weight = null;
 bpmjs.ProgressMonitor.prototype.current = null;
 bpmjs.ProgressMonitor.prototype.children = null;
 bpmjs.ProgressMonitor.prototype.append = function(monitor,total) {
+	$s.push("bpmjs.ProgressMonitor::append");
+	var $spos = $s.length;
 	var monitorAndTotal = new bpmjs._ProgressMonitor.MonitorAndTotal();
 	monitorAndTotal.total = total;
 	monitorAndTotal.monitor = monitor;
 	this.children.push(monitorAndTotal);
+	$s.pop();
 	return monitor;
+	$s.pop();
 }
 bpmjs.ProgressMonitor.prototype.getCurrent = function() {
-	if(this.children.length == 0) return this.current; else {
+	$s.push("bpmjs.ProgressMonitor::getCurrent");
+	var $spos = $s.length;
+	if(this.children.length == 0) {
+		var $tmp = this.current;
+		$s.pop();
+		return $tmp;
+	} else {
 		var totalWeight = 0.0;
 		var _g = 0, _g1 = this.children;
 		while(_g < _g1.length) {
@@ -5599,16 +8580,25 @@ bpmjs.ProgressMonitor.prototype.getCurrent = function() {
 			++_g;
 			childCurrent += Map.linear(child.monitor.getCurrent(),0,1,0,child.monitor.weight / totalWeight);
 		}
+		$s.pop();
 		return childCurrent;
 	}
+	$s.pop();
 }
 bpmjs.ProgressMonitor.prototype.setCurrent = function(value) {
+	$s.push("bpmjs.ProgressMonitor::setCurrent");
+	var $spos = $s.length;
 	this.current = value;
+	$s.pop();
 	return value;
+	$s.pop();
 }
 bpmjs.ProgressMonitor.prototype.__class__ = bpmjs.ProgressMonitor;
 if(!bpmjs._ProgressMonitor) bpmjs._ProgressMonitor = {}
 bpmjs._ProgressMonitor.MonitorAndTotal = function(p) {
+	$s.push("bpmjs._ProgressMonitor.MonitorAndTotal::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 bpmjs._ProgressMonitor.MonitorAndTotal.__name__ = ["bpmjs","_ProgressMonitor","MonitorAndTotal"];
 bpmjs._ProgressMonitor.MonitorAndTotal.prototype.total = null;
@@ -5617,7 +8607,10 @@ bpmjs._ProgressMonitor.MonitorAndTotal.prototype.__class__ = bpmjs._ProgressMoni
 if(!kumite.textureregistry) kumite.textureregistry = {}
 kumite.textureregistry.Config = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.textureregistry.Config::new");
+	var $spos = $s.length;
 	this.textureRegistry = new GLTextureRegistry();
+	$s.pop();
 }
 kumite.textureregistry.Config.__name__ = ["kumite","textureregistry","Config"];
 kumite.textureregistry.Config.prototype.textureRegistry = null;
@@ -5625,45 +8618,69 @@ kumite.textureregistry.Config.prototype.__class__ = kumite.textureregistry.Confi
 kumite.textureregistry.Config.__interfaces__ = [haxe.rtti.Infos];
 if(!kumite.camera) kumite.camera = {}
 kumite.camera.CameraMouseMover = function(p) {
+	$s.push("kumite.camera.CameraMouseMover::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.camera.CameraMouseMover.__name__ = ["kumite","camera","CameraMouseMover"];
 kumite.camera.CameraMouseMover.prototype.camera = null;
 kumite.camera.CameraMouseMover.prototype.init = function() {
+	$s.push("kumite.camera.CameraMouseMover::init");
+	var $spos = $s.length;
 	this.camera.matrix = new Matrix4();
 	this.updateCamera();
+	$s.pop();
 }
 kumite.camera.CameraMouseMover.prototype.updateCamera = function() {
+	$s.push("kumite.camera.CameraMouseMover::updateCamera");
+	var $spos = $s.length;
 	this.camera.matrix.setIdentity();
 	this.camera.matrix.setLookAt(new Vec3(0,0,10),new Vec3(0,0,0),new Vec3(0,1,0));
+	$s.pop();
 }
 kumite.camera.CameraMouseMover.prototype.__class__ = kumite.camera.CameraMouseMover;
 kumite.camera.CameraMouseMover.__interfaces__ = [haxe.rtti.Infos];
 if(!kumite.webgl) kumite.webgl = {}
 kumite.webgl.Config = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.webgl.Config::new");
+	var $spos = $s.length;
 	this.initAction = new kumite.webgl.InitAction();
 	this.initAction.antialias = true;
+	$s.pop();
 }
 kumite.webgl.Config.__name__ = ["kumite","webgl","Config"];
 kumite.webgl.Config.prototype.initAction = null;
 kumite.webgl.Config.prototype.__class__ = kumite.webgl.Config;
 kumite.webgl.Config.__interfaces__ = [haxe.rtti.Infos];
 kumite.time.TimeController = function(p) {
+	$s.push("kumite.time.TimeController::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.time.TimeController.__name__ = ["kumite","time","TimeController"];
 kumite.time.TimeController.prototype.time = null;
 kumite.time.TimeController.prototype.messenger = null;
 kumite.time.TimeController.prototype.startComplete = function() {
+	$s.push("kumite.time.TimeController::startComplete");
+	var $spos = $s.length;
 	this.time.reset();
 	GLAnimationFrame.run($closure(this,"timerUpdate"));
+	$s.pop();
 }
 kumite.time.TimeController.prototype.timerUpdate = function() {
+	$s.push("kumite.time.TimeController::timerUpdate");
+	var $spos = $s.length;
 	this.time.tick();
 	this.messenger.send(new kumite.time.Tick());
+	$s.pop();
 }
 kumite.time.TimeController.prototype.__class__ = kumite.time.TimeController;
 kumite.time.TimeController.__interfaces__ = [haxe.rtti.Infos];
 GLTexture = function(p) {
+	$s.push("GLTexture::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 GLTexture.__name__ = ["GLTexture"];
 GLTexture.prototype.width = null;
@@ -5673,70 +8690,119 @@ GLTexture.prototype.__class__ = GLTexture;
 haxe.TypeTools = function() { }
 haxe.TypeTools.__name__ = ["haxe","TypeTools"];
 haxe.TypeTools.getClassNames = function(value) {
+	$s.push("haxe.TypeTools::getClassNames");
+	var $spos = $s.length;
 	var result = new List();
 	var valueClass = Std["is"](value,Class)?value:Type.getClass(value);
 	while(null != valueClass) {
 		result.add(Type.getClassName(valueClass));
 		valueClass = Type.getSuperClass(valueClass);
 	}
+	$s.pop();
 	return result;
+	$s.pop();
 }
 haxe.TypeTools.prototype.__class__ = haxe.TypeTools;
 reflect.ClassInfo = function(name,type) {
 	if( name === $_ ) return;
+	$s.push("reflect.ClassInfo::new");
+	var $spos = $s.length;
 	this.name = name;
 	this.type = type;
 	this.hasRtti = type.__rtti != null;
+	$s.pop();
 }
 reflect.ClassInfo.__name__ = ["reflect","ClassInfo"];
 reflect.ClassInfo.forInstance = function(instance) {
+	$s.push("reflect.ClassInfo::forInstance");
+	var $spos = $s.length;
 	if(instance == null) throw "Missing instance";
 	var type = Type.getClass(instance);
 	if(type == null) throw "Cannot resolve type for instance: " + instance;
-	return reflect.ClassInfo.forClass(type);
+	var $tmp = reflect.ClassInfo.forClass(type);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 reflect.ClassInfo.forClass = function(type) {
+	$s.push("reflect.ClassInfo::forClass");
+	var $spos = $s.length;
 	if(type == null) throw "Missing type";
 	var name = Type.getClassName(type);
-	return reflect.ClassInfo.getClassInfo(name,type);
+	var $tmp = reflect.ClassInfo.getClassInfo(name,type);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 reflect.ClassInfo.forName = function(name) {
+	$s.push("reflect.ClassInfo::forName");
+	var $spos = $s.length;
 	if(name == null) throw "Missing name";
 	var type = Type.resolveClass(name);
-	if(type != null) return reflect.ClassInfo.getClassInfo(name,type);
+	if(type != null) {
+		var $tmp = reflect.ClassInfo.getClassInfo(name,type);
+		$s.pop();
+		return $tmp;
+	}
 	var enumm = Type.resolveEnum(name);
-	if(enumm != null) return reflect.ClassInfo.getClassInfo(name,enumm);
+	if(enumm != null) {
+		var $tmp = reflect.ClassInfo.getClassInfo(name,enumm);
+		$s.pop();
+		return $tmp;
+	}
 	throw "Cannot resolve type or enum for name: " + name;
+	$s.pop();
 }
 reflect.ClassInfo.forCType = function(t) {
+	$s.push("reflect.ClassInfo::forCType");
+	var $spos = $s.length;
 	if(t == null) throw "Missing CType";
 	var $e = (t);
 	switch( $e[1] ) {
 	case 4:
 		var ret = $e[3], args = $e[2];
-		return reflect.ClassInfo.forCType(ret);
+		var $tmp = reflect.ClassInfo.forCType(ret);
+		$s.pop();
+		return $tmp;
 	case 2:
 		var params = $e[3], name = $e[2];
-		return reflect.ClassInfo.forName(name);
+		var $tmp = reflect.ClassInfo.forName(name);
+		$s.pop();
+		return $tmp;
 	case 1:
 		var params = $e[3], name = $e[2];
-		return reflect.ClassInfo.forName(name);
+		var $tmp = reflect.ClassInfo.forName(name);
+		$s.pop();
+		return $tmp;
 	default:
 	}
 	throw "Could not resolve CType: " + t;
+	$s.pop();
 }
 reflect.ClassInfo.getClassInfo = function(name,type) {
+	$s.push("reflect.ClassInfo::getClassInfo");
+	var $spos = $s.length;
 	var hash = reflect.ClassInfo.getHash(name,type);
-	if(reflect.ClassInfo.cache.exists(hash)) return reflect.ClassInfo.cache.get(hash);
+	if(reflect.ClassInfo.cache.exists(hash)) {
+		var $tmp = reflect.ClassInfo.cache.get(hash);
+		$s.pop();
+		return $tmp;
+	}
 	var result = new reflect.ClassInfo(name,type);
 	reflect.ClassInfo.cache.set(hash,result);
+	$s.pop();
 	return result;
+	$s.pop();
 }
 reflect.ClassInfo.getHash = function(name,type) {
+	$s.push("reflect.ClassInfo::getHash");
+	var $spos = $s.length;
 	var hash = name;
 	var internalNames = type.__name__;
 	if(internalNames != null) hash = internalNames.join(".");
+	$s.pop();
 	return hash;
+	$s.pop();
 }
 reflect.ClassInfo.prototype.type = null;
 reflect.ClassInfo.prototype.name = null;
@@ -5745,46 +8811,96 @@ reflect.ClassInfo.prototype.hasRtti = null;
 reflect.ClassInfo.prototype.properties = null;
 reflect.ClassInfo.prototype.methods = null;
 reflect.ClassInfo.prototype.getProperty = function(name) {
+	$s.push("reflect.ClassInfo::getProperty");
+	var $spos = $s.length;
 	var _g = 0, _g1 = this.getProperties();
 	while(_g < _g1.length) {
 		var property = _g1[_g];
 		++_g;
-		if(property.field.name == name) return property;
+		if(property.field.name == name) {
+			$s.pop();
+			return property;
+		}
 	}
+	$s.pop();
 	return null;
+	$s.pop();
 }
 reflect.ClassInfo.prototype.getMethod = function(name) {
+	$s.push("reflect.ClassInfo::getMethod");
+	var $spos = $s.length;
 	var _g = 0, _g1 = this.getMethods();
 	while(_g < _g1.length) {
 		var method = _g1[_g];
 		++_g;
-		if(method.field.name == name) return method;
+		if(method.field.name == name) {
+			$s.pop();
+			return method;
+		}
 	}
+	$s.pop();
 	return null;
+	$s.pop();
 }
 reflect.ClassInfo.prototype.toString = function() {
-	return "[ClassInfo for class: " + this.name + "]";
+	$s.push("reflect.ClassInfo::toString");
+	var $spos = $s.length;
+	var $tmp = "[ClassInfo for class: " + this.name + "]";
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 reflect.ClassInfo.prototype.getShortName = function() {
-	return this.name.substr(this.name.lastIndexOf(".") + 1);
+	$s.push("reflect.ClassInfo::getShortName");
+	var $spos = $s.length;
+	var $tmp = this.name.substr(this.name.lastIndexOf(".") + 1);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 reflect.ClassInfo.prototype.getProperties = function() {
-	if(this.properties != null) return this.properties;
+	$s.push("reflect.ClassInfo::getProperties");
+	var $spos = $s.length;
+	if(this.properties != null) {
+		var $tmp = this.properties;
+		$s.pop();
+		return $tmp;
+	}
 	this.initFields();
-	return this.properties;
+	var $tmp = this.properties;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 reflect.ClassInfo.prototype.getMethods = function() {
-	if(this.methods != null) return this.methods;
+	$s.push("reflect.ClassInfo::getMethods");
+	var $spos = $s.length;
+	if(this.methods != null) {
+		var $tmp = this.methods;
+		$s.pop();
+		return $tmp;
+	}
 	this.initFields();
-	return this.methods;
+	var $tmp = this.methods;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 reflect.ClassInfo.prototype.initFields = function() {
+	$s.push("reflect.ClassInfo::initFields");
+	var $spos = $s.length;
 	this.properties = new Array();
 	this.methods = new Array();
 	this.scanClass(this.type);
+	$s.pop();
 }
 reflect.ClassInfo.prototype.scanClass = function(type) {
-	if(type.__rtti == null) return;
+	$s.push("reflect.ClassInfo::scanClass");
+	var $spos = $s.length;
+	if(type.__rtti == null) {
+		$s.pop();
+		return;
+	}
 	var infos = new haxe.rtti.XmlParser().processElement(Xml.parse(type.__rtti).firstElement());
 	var classDef;
 	var $e = (infos);
@@ -5798,8 +8914,11 @@ reflect.ClassInfo.prototype.scanClass = function(type) {
 	}
 	this.scanFields(classDef);
 	if(classDef.superClass != null) this.scanClass(Type.resolveClass(classDef.superClass.path));
+	$s.pop();
 }
 reflect.ClassInfo.prototype.scanFields = function(classDef) {
+	$s.push("reflect.ClassInfo::scanFields");
+	var $spos = $s.length;
 	var $it0 = classDef.fields.iterator();
 	while( $it0.hasNext() ) {
 		var field = $it0.next();
@@ -5827,18 +8946,27 @@ reflect.ClassInfo.prototype.scanFields = function(classDef) {
 			}
 		}
 	}
+	$s.pop();
 }
 reflect.ClassInfo.prototype.__class__ = reflect.ClassInfo;
 kumite.launch.PreloadDisplay = function(p) {
+	$s.push("kumite.launch.PreloadDisplay::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.launch.PreloadDisplay.__name__ = ["kumite","launch","PreloadDisplay"];
 kumite.launch.PreloadDisplay.prototype.preloaderDiv = null;
 kumite.launch.PreloadDisplay.prototype.complete = function() {
+	$s.push("kumite.launch.PreloadDisplay::complete");
+	var $spos = $s.length;
 	this.preloaderDiv = js.Lib.document.createElement("div");
 	this.preloaderDiv.className = "Preloader";
 	js.Lib.document.body.appendChild(this.preloaderDiv);
+	$s.pop();
 }
 kumite.launch.PreloadDisplay.prototype.bootMonitor = function(monitor) {
+	$s.push("kumite.launch.PreloadDisplay::bootMonitor");
+	var $spos = $s.length;
 	var bar = "";
 	var count = 10;
 	var _g = 0;
@@ -5857,14 +8985,21 @@ kumite.launch.PreloadDisplay.prototype.bootMonitor = function(monitor) {
 		bar += chars4.charAt(Std["int"](diff * (chars4.length - 1)));
 	}
 	this.preloaderDiv.innerHTML = "" + bar;
+	$s.pop();
 }
 kumite.launch.PreloadDisplay.prototype.bootStartComplete = function() {
+	$s.push("kumite.launch.PreloadDisplay::bootStartComplete");
+	var $spos = $s.length;
 	this.preloaderDiv.style.opacity = 0.8;
 	GLTween.to(this.preloaderDiv.style,1000,{ opacity : 0});
 	Timeout.execute(1000,$closure(this,"removePreloader"));
+	$s.pop();
 }
 kumite.launch.PreloadDisplay.prototype.removePreloader = function() {
+	$s.push("kumite.launch.PreloadDisplay::removePreloader");
+	var $spos = $s.length;
 	js.Lib.document.body.removeChild(this.preloaderDiv);
+	$s.pop();
 }
 kumite.launch.PreloadDisplay.prototype.__class__ = kumite.launch.PreloadDisplay;
 kumite.launch.PreloadDisplay.__interfaces__ = [haxe.rtti.Infos];
@@ -5873,12 +9008,17 @@ kumite.layer.LayerId.__name__ = ["kumite","layer","LayerId"];
 kumite.layer.LayerId.prototype.__class__ = kumite.layer.LayerId;
 Matrix3 = function(cloneFrom) {
 	if( cloneFrom === $_ ) return;
+	$s.push("Matrix3::new");
+	var $spos = $s.length;
 	this.buffer = new Float32Array(9);
 	if(cloneFrom != null) this.setFrom(cloneFrom); else this.identity();
+	$s.pop();
 }
 Matrix3.__name__ = ["Matrix3"];
 Matrix3.prototype.buffer = null;
 Matrix3.prototype.identity = function() {
+	$s.push("Matrix3::identity");
+	var $spos = $s.length;
 	this.buffer[0] = 1;
 	this.buffer[1] = 0;
 	this.buffer[2] = 0;
@@ -5888,8 +9028,11 @@ Matrix3.prototype.identity = function() {
 	this.buffer[6] = 0;
 	this.buffer[7] = 0;
 	this.buffer[8] = 1;
+	$s.pop();
 }
 Matrix3.prototype.transpose = function() {
+	$s.push("Matrix3::transpose");
+	var $spos = $s.length;
 	var a01 = this.buffer[1], a02 = this.buffer[2];
 	var a12 = this.buffer[5];
 	this.buffer[1] = this.buffer[3];
@@ -5898,8 +9041,11 @@ Matrix3.prototype.transpose = function() {
 	this.buffer[5] = this.buffer[7];
 	this.buffer[6] = a02;
 	this.buffer[7] = a12;
+	$s.pop();
 }
 Matrix3.prototype.setFrom = function(from) {
+	$s.push("Matrix3::setFrom");
+	var $spos = $s.length;
 	this.buffer[0] = from.buffer[0];
 	this.buffer[1] = from.buffer[1];
 	this.buffer[2] = from.buffer[2];
@@ -5910,91 +9056,146 @@ Matrix3.prototype.setFrom = function(from) {
 	this.buffer[7] = from.buffer[7];
 	this.buffer[8] = from.buffer[8];
 	this.buffer[9] = from.buffer[9];
+	$s.pop();
 }
 Matrix3.prototype.clone = function() {
-	return new Matrix3(this);
+	$s.push("Matrix3::clone");
+	var $spos = $s.length;
+	var $tmp = new Matrix3(this);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Matrix3.prototype.toString = function() {
+	$s.push("Matrix3::toString");
+	var $spos = $s.length;
 	var result = "Matrix3:";
 	result += "\r\t" + this.buffer[0] + "," + this.buffer[1] + "," + this.buffer[2];
 	result += "\r\t" + this.buffer[3] + "," + this.buffer[4] + "," + this.buffer[5];
 	result += "\r\t" + this.buffer[6] + "," + this.buffer[7] + "," + this.buffer[8];
+	$s.pop();
 	return result;
+	$s.pop();
 }
 Matrix3.prototype.__class__ = Matrix3;
 kumite.projection.Projection = function(p) {
+	$s.push("kumite.projection.Projection::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.projection.Projection.__name__ = ["kumite","projection","Projection"];
 kumite.projection.Projection.prototype.matrix = null;
 kumite.projection.Projection.prototype.__class__ = kumite.projection.Projection;
 kumite.layer.LayerTransitions = function(name) {
 	if( name === $_ ) return;
+	$s.push("kumite.layer.LayerTransitions::new");
+	var $spos = $s.length;
 	if(name == null) name = "";
 	this.children = new Array();
 	kumite.layer.LayerTransition.call(this,name);
+	$s.pop();
 }
 kumite.layer.LayerTransitions.__name__ = ["kumite","layer","LayerTransitions"];
 kumite.layer.LayerTransitions.__super__ = kumite.layer.LayerTransition;
 for(var k in kumite.layer.LayerTransition.prototype ) kumite.layer.LayerTransitions.prototype[k] = kumite.layer.LayerTransition.prototype[k];
 kumite.layer.LayerTransitions.prototype.children = null;
 kumite.layer.LayerTransitions.prototype.add = function(child) {
+	$s.push("kumite.layer.LayerTransitions::add");
+	var $spos = $s.length;
 	this.children.push(child);
+	$s.pop();
 }
 kumite.layer.LayerTransitions.prototype.enableChild = function(name) {
+	$s.push("kumite.layer.LayerTransitions::enableChild");
+	var $spos = $s.length;
 	var _g = 0, _g1 = this.children;
 	while(_g < _g1.length) {
 		var child = _g1[_g];
 		++_g;
 		child.enable(child.name == name);
 	}
+	$s.pop();
 }
 kumite.layer.LayerTransitions.prototype.setTransition = function(value) {
+	$s.push("kumite.layer.LayerTransitions::setTransition");
+	var $spos = $s.length;
 	var _g = 0, _g1 = this.children;
 	while(_g < _g1.length) {
 		var child = _g1[_g];
 		++_g;
 		child.setTransition(value);
 	}
+	$s.pop();
 	return value;
+	$s.pop();
 }
 kumite.layer.LayerTransitions.prototype.__class__ = kumite.layer.LayerTransitions;
 kumite.webgl.InitAction = function(p) {
+	$s.push("kumite.webgl.InitAction::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.webgl.InitAction.__name__ = ["kumite","webgl","InitAction"];
 kumite.webgl.InitAction.prototype.canvas = null;
 kumite.webgl.InitAction.prototype.antialias = null;
 kumite.webgl.InitAction.prototype.init = function() {
+	$s.push("kumite.webgl.InitAction::init");
+	var $spos = $s.length;
 	GL.init(this.canvas.itself,this.antialias);
+	$s.pop();
 }
 kumite.webgl.InitAction.prototype.__class__ = kumite.webgl.InitAction;
 kumite.webgl.InitAction.__interfaces__ = [haxe.rtti.Infos];
 StringBuf = function(p) {
 	if( p === $_ ) return;
+	$s.push("StringBuf::new");
+	var $spos = $s.length;
 	this.b = new Array();
+	$s.pop();
 }
 StringBuf.__name__ = ["StringBuf"];
 StringBuf.prototype.add = function(x) {
+	$s.push("StringBuf::add");
+	var $spos = $s.length;
 	this.b[this.b.length] = x == null?"null":x;
+	$s.pop();
 }
 StringBuf.prototype.addSub = function(s,pos,len) {
+	$s.push("StringBuf::addSub");
+	var $spos = $s.length;
 	this.b[this.b.length] = s.substr(pos,len);
+	$s.pop();
 }
 StringBuf.prototype.addChar = function(c) {
+	$s.push("StringBuf::addChar");
+	var $spos = $s.length;
 	this.b[this.b.length] = String.fromCharCode(c);
+	$s.pop();
 }
 StringBuf.prototype.toString = function() {
-	return this.b.join("");
+	$s.push("StringBuf::toString");
+	var $spos = $s.length;
+	var $tmp = this.b.join("");
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 StringBuf.prototype.b = null;
 StringBuf.prototype.__class__ = StringBuf;
 kumite.stage.StageResizeMessage = function(p) {
+	$s.push("kumite.stage.StageResizeMessage::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.stage.StageResizeMessage.__name__ = ["kumite","stage","StageResizeMessage"];
 kumite.stage.StageResizeMessage.prototype.__class__ = kumite.stage.StageResizeMessage;
 bpmjs.SequencerTaskGroup = function(p) {
 	if( p === $_ ) return;
+	$s.push("bpmjs.SequencerTaskGroup::new");
+	var $spos = $s.length;
 	bpmjs.TaskGroup.call(this);
 	this.getMonitor().name = "SequencerTaskGroup";
+	$s.pop();
 }
 bpmjs.SequencerTaskGroup.__name__ = ["bpmjs","SequencerTaskGroup"];
 bpmjs.SequencerTaskGroup.__super__ = bpmjs.TaskGroup;
@@ -6002,9 +9203,14 @@ for(var k in bpmjs.TaskGroup.prototype ) bpmjs.SequencerTaskGroup.prototype[k] =
 bpmjs.SequencerTaskGroup.prototype.__class__ = bpmjs.SequencerTaskGroup;
 Main = function(canvas) {
 	if( canvas === $_ ) return;
+	$s.push("Main::new");
+	var $spos = $s.length;
 	try {
 		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.textureregistry.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.time.Config,kumite.projection.Config,kumite.camera.Config,kumite.mouse.Config,kumite.displaylist.ConfigAsLayer,kumite.vjinterface.Config,kumite.scene.SceneConfig,kumite.musicdraw.MusicDrawConfig]);
 	} catch( e ) {
+		$e = [];
+		while($s.length >= $spos) $e.unshift($s.pop());
+		$s.push($e[0]);
 		{
 			Log.posInfo = { fileName : "Main.hx", lineNumber : 60, className : "Main", methodName : "new"};
 			if(Log.filter(LogLevel.ERROR)) {
@@ -6014,9 +9220,12 @@ Main = function(canvas) {
 			}
 		}
 	}
+	$s.pop();
 }
 Main.__name__ = ["Main"];
 Main.globalErrorHandler = function(msg,stack) {
+	$s.push("Main::globalErrorHandler");
+	var $spos = $s.length;
 	haxe.Log.trace("Uncaugt error: " + msg,{ fileName : "Main.hx", lineNumber : 5, className : "Main", methodName : "globalErrorHandler"});
 	var _g = 0;
 	while(_g < stack.length) {
@@ -6024,125 +9233,223 @@ Main.globalErrorHandler = function(msg,stack) {
 		++_g;
 		haxe.Log.trace(line,{ fileName : "Main.hx", lineNumber : 7, className : "Main", methodName : "globalErrorHandler"});
 	}
+	$s.pop();
 	return true;
+	$s.pop();
 }
 Main.main = function() {
+	$s.push("Main::main");
+	var $spos = $s.length;
 	Log.init();
 	Log.addFilter(new ERegFilter(LogLevel.INFO,new EReg(".*","")));
 	Log.addFilter(new ERegFilter(LogLevel.WARN,new EReg(".*FrontMessenger\\.handleMessage.*","")));
 	Log.addFilter(new ERegFilter(LogLevel.WARN,new EReg(".*FrontMessenger\\.Receiver\\.execute.*","")));
 	Log.addFilter(new ERegFilter(LogLevel.WARN,new EReg(".*initAllLayers.*","")));
 	js.Lib.setErrorHandler(Main.globalErrorHandler);
+	$s.pop();
 }
 Main.prototype.__class__ = Main;
 haxe.Log = function() { }
 haxe.Log.__name__ = ["haxe","Log"];
 haxe.Log.trace = function(v,infos) {
+	$s.push("haxe.Log::trace");
+	var $spos = $s.length;
 	js.Boot.__trace(v,infos);
+	$s.pop();
 }
 haxe.Log.clear = function() {
+	$s.push("haxe.Log::clear");
+	var $spos = $s.length;
 	js.Boot.__clear_trace();
+	$s.pop();
 }
 haxe.Log.prototype.__class__ = haxe.Log;
 GLUniformLocation = function(p) {
+	$s.push("GLUniformLocation::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 GLUniformLocation.__name__ = ["GLUniformLocation"];
 GLUniformLocation.prototype.location = null;
 GLUniformLocation.prototype.uniform1f = function(v) {
+	$s.push("GLUniformLocation::uniform1f");
+	var $spos = $s.length;
 	GL.gl.uniform1f(this.location,v);
+	$s.pop();
 }
 GLUniformLocation.prototype.uniform1fv = function(v) {
+	$s.push("GLUniformLocation::uniform1fv");
+	var $spos = $s.length;
 	GL.gl.uniform1fv(this.location,v);
+	$s.pop();
 }
 GLUniformLocation.prototype.uniform1i = function(v) {
+	$s.push("GLUniformLocation::uniform1i");
+	var $spos = $s.length;
 	GL.gl.uniform1i(this.location,v);
+	$s.pop();
 }
 GLUniformLocation.prototype.uniform1iv = function(v) {
+	$s.push("GLUniformLocation::uniform1iv");
+	var $spos = $s.length;
 	GL.gl.uniform1iv(this.location,v);
+	$s.pop();
 }
 GLUniformLocation.prototype.uniform2f = function(x,y) {
+	$s.push("GLUniformLocation::uniform2f");
+	var $spos = $s.length;
 	GL.gl.uniform2f(this.location,x,y);
+	$s.pop();
 }
 GLUniformLocation.prototype.uniform2fv = function(v) {
+	$s.push("GLUniformLocation::uniform2fv");
+	var $spos = $s.length;
 	GL.gl.uniform2fv(this.location,v);
+	$s.pop();
 }
 GLUniformLocation.prototype.uniform2i = function(x,y) {
+	$s.push("GLUniformLocation::uniform2i");
+	var $spos = $s.length;
 	GL.gl.uniform2i(this.location,x,y);
+	$s.pop();
 }
 GLUniformLocation.prototype.uniform2iv = function(v) {
+	$s.push("GLUniformLocation::uniform2iv");
+	var $spos = $s.length;
 	GL.gl.uniform2iv(this.location,v);
+	$s.pop();
 }
 GLUniformLocation.prototype.uniform3f = function(x,y,z) {
+	$s.push("GLUniformLocation::uniform3f");
+	var $spos = $s.length;
 	GL.gl.uniform3f(this.location,x,y,z);
+	$s.pop();
 }
 GLUniformLocation.prototype.uniform3fv = function(v) {
+	$s.push("GLUniformLocation::uniform3fv");
+	var $spos = $s.length;
 	GL.gl.uniform3fv(this.location,v);
+	$s.pop();
 }
 GLUniformLocation.prototype.uniform3i = function(x,y,z) {
+	$s.push("GLUniformLocation::uniform3i");
+	var $spos = $s.length;
 	GL.gl.uniform3i(this.location,x,y,z);
+	$s.pop();
 }
 GLUniformLocation.prototype.uniform3iv = function(v) {
+	$s.push("GLUniformLocation::uniform3iv");
+	var $spos = $s.length;
 	GL.gl.uniform3iv(this.location,v);
+	$s.pop();
 }
 GLUniformLocation.prototype.uniform4f = function(x,y,z,w) {
+	$s.push("GLUniformLocation::uniform4f");
+	var $spos = $s.length;
 	GL.gl.uniform4f(this.location,x,y,z,w);
+	$s.pop();
 }
 GLUniformLocation.prototype.uniform4fv = function(v) {
+	$s.push("GLUniformLocation::uniform4fv");
+	var $spos = $s.length;
 	GL.gl.uniform4fv(this.location,v);
+	$s.pop();
 }
 GLUniformLocation.prototype.uniform4i = function(x,y,z,w) {
+	$s.push("GLUniformLocation::uniform4i");
+	var $spos = $s.length;
 	GL.gl.uniform4i(this.location,x,y,z,w);
+	$s.pop();
 }
 GLUniformLocation.prototype.uniform4iv = function(v) {
+	$s.push("GLUniformLocation::uniform4iv");
+	var $spos = $s.length;
 	GL.gl.uniform4iv(this.location,v);
+	$s.pop();
 }
 GLUniformLocation.prototype.uniformMatrix2fv = function(transpose,value) {
+	$s.push("GLUniformLocation::uniformMatrix2fv");
+	var $spos = $s.length;
 	if(transpose == null) transpose = false;
 	GL.gl.uniformMatrix2fv(this.location,transpose,value);
+	$s.pop();
 }
 GLUniformLocation.prototype.uniformMatrix3fv = function(transpose,value) {
+	$s.push("GLUniformLocation::uniformMatrix3fv");
+	var $spos = $s.length;
 	if(transpose == null) transpose = false;
 	GL.gl.uniformMatrix3fv(this.location,transpose,value);
+	$s.pop();
 }
 GLUniformLocation.prototype.uniformMatrix4fv = function(transpose,value) {
+	$s.push("GLUniformLocation::uniformMatrix4fv");
+	var $spos = $s.length;
 	if(transpose == null) transpose = false;
 	GL.gl.uniformMatrix4fv(this.location,transpose,value);
+	$s.pop();
 }
 GLUniformLocation.prototype.setFloat = function(v) {
+	$s.push("GLUniformLocation::setFloat");
+	var $spos = $s.length;
 	GL.gl.uniform1f(this.location,v);
+	$s.pop();
 }
 GLUniformLocation.prototype.setMatrix3 = function(matrix) {
+	$s.push("GLUniformLocation::setMatrix3");
+	var $spos = $s.length;
 	GL.gl.uniformMatrix3fv(this.location,false,matrix.buffer);
+	$s.pop();
 }
 GLUniformLocation.prototype.setMatrix4 = function(matrix) {
+	$s.push("GLUniformLocation::setMatrix4");
+	var $spos = $s.length;
 	GL.gl.uniformMatrix4fv(this.location,false,matrix.buffer);
+	$s.pop();
 }
 GLUniformLocation.prototype.setVec3 = function(vec) {
+	$s.push("GLUniformLocation::setVec3");
+	var $spos = $s.length;
 	GL.gl.uniform3f(this.location,vec.x,vec.y,vec.z);
+	$s.pop();
 }
 GLUniformLocation.prototype.setVec2 = function(vec) {
+	$s.push("GLUniformLocation::setVec2");
+	var $spos = $s.length;
 	GL.gl.uniform2f(this.location,vec.x,vec.y);
+	$s.pop();
 }
 GLUniformLocation.prototype.setRGB = function(color) {
+	$s.push("GLUniformLocation::setRGB");
+	var $spos = $s.length;
 	GL.gl.uniform3f(this.location,color.r,color.g,color.b);
+	$s.pop();
 }
 GLUniformLocation.prototype.setRGBA = function(color) {
+	$s.push("GLUniformLocation::setRGBA");
+	var $spos = $s.length;
 	GL.gl.uniform4f(this.location,color.r,color.g,color.b,color.a);
+	$s.pop();
 }
 GLUniformLocation.prototype.setTexture = function(texture,index) {
+	$s.push("GLUniformLocation::setTexture");
+	var $spos = $s.length;
 	if(index == null) index = 0;
 	GL.gl.activeTexture(33984 + index);
 	GL.gl.bindTexture(3553,texture.texture);
 	GL.gl.uniform1i(this.location,index);
+	$s.pop();
 }
 GLUniformLocation.prototype.__class__ = GLUniformLocation;
 kumite.projection.Config = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.projection.Config::new");
+	var $spos = $s.length;
 	this.projection = new kumite.projection.Projection();
 	this.projectionController = new kumite.projection.ProjectionController();
 	this.projectionController.fov = 40;
 	this.projectionController.near = 0.1;
 	this.projectionController.far = 500;
+	$s.pop();
 }
 kumite.projection.Config.__name__ = ["kumite","projection","Config"];
 kumite.projection.Config.prototype.projection = null;
@@ -6154,11 +9461,17 @@ LogFilter.__name__ = ["LogFilter"];
 LogFilter.prototype.enabled = null;
 LogFilter.prototype.__class__ = LogFilter;
 kumite.camera.Camera = function(p) {
+	$s.push("kumite.camera.Camera::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.camera.Camera.__name__ = ["kumite","camera","Camera"];
 kumite.camera.Camera.prototype.matrix = null;
 kumite.camera.Camera.prototype.__class__ = kumite.camera.Camera;
 kumite.vjinterface.VJInterface = function(p) {
+	$s.push("kumite.vjinterface.VJInterface::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.vjinterface.VJInterface.__name__ = ["kumite","vjinterface","VJInterface"];
 kumite.vjinterface.VJInterface.prototype.scenes = null;
@@ -6167,14 +9480,22 @@ kumite.vjinterface.VJInterface.prototype.timer = null;
 kumite.vjinterface.VJInterface.prototype.stage = null;
 kumite.vjinterface.VJInterface.prototype.sceneContainer = null;
 kumite.vjinterface.VJInterface.prototype.start = function() {
+	$s.push("kumite.vjinterface.VJInterface::start");
+	var $spos = $s.length;
 	this.stage = GLDisplayList.getDefault().stage;
 	this.timer = new haxe.Timer(12000);
 	this.addSceneButtons();
+	$s.pop();
 }
 kumite.vjinterface.VJInterface.prototype.render = function(tick) {
+	$s.push("kumite.vjinterface.VJInterface::render");
+	var $spos = $s.length;
 	this.sceneContainer.setY(this.stage.stageHeight - 180);
+	$s.pop();
 }
 kumite.vjinterface.VJInterface.prototype.addSceneButtons = function() {
+	$s.push("kumite.vjinterface.VJInterface::addSceneButtons");
+	var $spos = $s.length;
 	this.sceneContainer = new GLDisplayObjectContainer();
 	this.sceneContainer.setX(10);
 	this.stage.addChild(this.sceneContainer);
@@ -6199,17 +9520,31 @@ kumite.vjinterface.VJInterface.prototype.addSceneButtons = function() {
 			currentY += sceneButton.height + 10;
 		}
 	}
+	$s.pop();
 }
 kumite.vjinterface.VJInterface.prototype.createSceneRequest = function(scene) {
+	$s.push("kumite.vjinterface.VJInterface::createSceneRequest");
+	var $spos = $s.length;
 	var inst = this;
-	return function(button) {
+	var $tmp = function(button) {
+		$s.push("kumite.vjinterface.VJInterface::createSceneRequest@79");
+		var $spos = $s.length;
 		inst.handleButtonClick(scene);
+		$s.pop();
 	};
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 kumite.vjinterface.VJInterface.prototype.handleButtonClick = function(scene) {
+	$s.push("kumite.vjinterface.VJInterface::handleButtonClick");
+	var $spos = $s.length;
 	this.messenger.send(new kumite.scene.SceneChangeRequest(scene.id));
+	$s.pop();
 }
 kumite.vjinterface.VJInterface.prototype.navigateNext = function() {
+	$s.push("kumite.vjinterface.VJInterface::navigateNext");
+	var $spos = $s.length;
 	{
 		Log.posInfo = { fileName : "VJInterface.hx", lineNumber : 92, className : "kumite.vjinterface.VJInterface", methodName : "navigateNext"};
 		if(Log.filter(LogLevel.INFO)) {
@@ -6219,11 +9554,15 @@ kumite.vjinterface.VJInterface.prototype.navigateNext = function() {
 	}
 	var newSceneId = this.scenes.getRandomScene().scene.id;
 	this.messenger.send(new kumite.scene.SceneChangeRequest(newSceneId));
+	$s.pop();
 }
 kumite.vjinterface.VJInterface.prototype.__class__ = kumite.vjinterface.VJInterface;
 kumite.vjinterface.VJInterface.__interfaces__ = [haxe.rtti.Infos];
 if(!kumite.scene._RenderContext) kumite.scene._RenderContext = {}
 kumite.scene._RenderContext.Viewport = function(p) {
+	$s.push("kumite.scene._RenderContext.Viewport::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.scene._RenderContext.Viewport.__name__ = ["kumite","scene","_RenderContext","Viewport"];
 kumite.scene._RenderContext.Viewport.prototype.width = null;
@@ -6231,25 +9570,36 @@ kumite.scene._RenderContext.Viewport.prototype.height = null;
 kumite.scene._RenderContext.Viewport.prototype.__class__ = kumite.scene._RenderContext.Viewport;
 kumite.blobs.Blobs = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.blobs.Blobs::new");
+	var $spos = $s.length;
 	this.blobs = new Array();
+	$s.pop();
 }
 kumite.blobs.Blobs.__name__ = ["kumite","blobs","Blobs"];
 kumite.blobs.Blobs.prototype.blobs = null;
 kumite.blobs.Blobs.prototype.__class__ = kumite.blobs.Blobs;
 GLHitarea = function(p) {
 	if( p === $_ ) return;
+	$s.push("GLHitarea::new");
+	var $spos = $s.length;
 	this.position = new Vec2();
 	this.size = new Vec2();
+	$s.pop();
 }
 GLHitarea.__name__ = ["GLHitarea"];
 GLHitarea.prototype.position = null;
 GLHitarea.prototype.size = null;
 GLHitarea.prototype.isUnder = function(matrix,positionOnStage) {
+	$s.push("GLHitarea::isUnder");
+	var $spos = $s.length;
 	var tl = this.position.clone();
 	tl.transform(matrix);
 	var br = this.size.clone();
 	br.transform(matrix);
-	return tl.x <= positionOnStage.x && br.x >= positionOnStage.x && tl.y <= positionOnStage.y && br.y >= positionOnStage.y;
+	var $tmp = tl.x <= positionOnStage.x && br.x >= positionOnStage.x && tl.y <= positionOnStage.y && br.y >= positionOnStage.y;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GLHitarea.prototype.__class__ = GLHitarea;
 hxjson2.JSONTokenType = { __ename__ : ["hxjson2","JSONTokenType"], __constructs__ : ["tUNKNOWN","tCOMMA","tLEFT_BRACE","tRIGHT_BRACE","tLEFT_BRACKET","tRIGHT_BRACKET","tCOLON","tTRUE","tFALSE","tNULL","tSTRING","tNUMBER","tNAN"] }
@@ -6294,11 +9644,14 @@ hxjson2.JSONTokenType.tNAN.toString = $estr;
 hxjson2.JSONTokenType.tNAN.__enum__ = hxjson2.JSONTokenType;
 hxjson2.JSONDecoder = function(s,strict) {
 	if( s === $_ ) return;
+	$s.push("hxjson2.JSONDecoder::new");
+	var $spos = $s.length;
 	this.strict = strict;
 	this.tokenizer = new hxjson2.JSONTokenizer(s,strict);
 	this.nextToken();
 	this.value = this.parseValue();
 	if(strict && this.nextToken() != null) this.tokenizer.parseError("Unexpected characters left in input stream!");
+	$s.pop();
 }
 hxjson2.JSONDecoder.__name__ = ["hxjson2","JSONDecoder"];
 hxjson2.JSONDecoder.prototype.strict = null;
@@ -6306,37 +9659,71 @@ hxjson2.JSONDecoder.prototype.value = null;
 hxjson2.JSONDecoder.prototype.tokenizer = null;
 hxjson2.JSONDecoder.prototype.token = null;
 hxjson2.JSONDecoder.prototype.getValue = function() {
-	return this.value;
+	$s.push("hxjson2.JSONDecoder::getValue");
+	var $spos = $s.length;
+	var $tmp = this.value;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hxjson2.JSONDecoder.prototype.nextToken = function() {
-	return this.token = this.tokenizer.getNextToken();
+	$s.push("hxjson2.JSONDecoder::nextToken");
+	var $spos = $s.length;
+	var $tmp = this.token = this.tokenizer.getNextToken();
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hxjson2.JSONDecoder.prototype.parseArray = function() {
+	$s.push("hxjson2.JSONDecoder::parseArray");
+	var $spos = $s.length;
 	var a = new Array();
 	this.nextToken();
-	if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACKET) return a; else if(!this.strict && this.token.type == hxjson2.JSONTokenType.tCOMMA) {
+	if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACKET) {
+		$s.pop();
+		return a;
+	} else if(!this.strict && this.token.type == hxjson2.JSONTokenType.tCOMMA) {
 		this.nextToken();
-		if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACKET) return a; else this.tokenizer.parseError("Leading commas are not supported.  Expecting ']' but found " + this.token.value);
+		if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACKET) {
+			$s.pop();
+			return a;
+		} else this.tokenizer.parseError("Leading commas are not supported.  Expecting ']' but found " + this.token.value);
 	}
 	while(true) {
 		a.push(this.parseValue());
 		this.nextToken();
-		if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACKET) return a; else if(this.token.type == hxjson2.JSONTokenType.tCOMMA) {
+		if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACKET) {
+			$s.pop();
+			return a;
+		} else if(this.token.type == hxjson2.JSONTokenType.tCOMMA) {
 			this.nextToken();
 			if(!this.strict) {
-				if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACKET) return a;
+				if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACKET) {
+					$s.pop();
+					return a;
+				}
 			}
 		} else this.tokenizer.parseError("Expecting ] or , but found " + this.token.value);
 	}
+	$s.pop();
 	return null;
+	$s.pop();
 }
 hxjson2.JSONDecoder.prototype.parseObject = function() {
+	$s.push("hxjson2.JSONDecoder::parseObject");
+	var $spos = $s.length;
 	var o = { };
 	var key;
 	this.nextToken();
-	if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACE) return o; else if(!this.strict && this.token.type == hxjson2.JSONTokenType.tCOMMA) {
+	if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACE) {
+		$s.pop();
+		return o;
+	} else if(!this.strict && this.token.type == hxjson2.JSONTokenType.tCOMMA) {
 		this.nextToken();
-		if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACE) return o; else this.tokenizer.parseError("Leading commas are not supported.  Expecting '}' but found " + this.token.value);
+		if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACE) {
+			$s.pop();
+			return o;
+		} else this.tokenizer.parseError("Leading commas are not supported.  Expecting '}' but found " + this.token.value);
 	}
 	while(true) if(this.token.type == hxjson2.JSONTokenType.tSTRING) {
 		key = Std.string(this.token.value);
@@ -6345,58 +9732,106 @@ hxjson2.JSONDecoder.prototype.parseObject = function() {
 			this.nextToken();
 			o[key] = this.parseValue();
 			this.nextToken();
-			if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACE) return o; else if(this.token.type == hxjson2.JSONTokenType.tCOMMA) {
+			if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACE) {
+				$s.pop();
+				return o;
+			} else if(this.token.type == hxjson2.JSONTokenType.tCOMMA) {
 				this.nextToken();
 				if(!this.strict) {
-					if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACE) return o;
+					if(this.token.type == hxjson2.JSONTokenType.tRIGHT_BRACE) {
+						$s.pop();
+						return o;
+					}
 				}
 			} else this.tokenizer.parseError("Expecting } or , but found " + this.token.value);
 		} else this.tokenizer.parseError("Expecting : but found " + this.token.value);
 	} else this.tokenizer.parseError("Expecting string but found " + this.token.value);
+	$s.pop();
 	return null;
+	$s.pop();
 }
 hxjson2.JSONDecoder.prototype.parseValue = function() {
+	$s.push("hxjson2.JSONDecoder::parseValue");
+	var $spos = $s.length;
 	if(this.token == null) this.tokenizer.parseError("Unexpected end of input");
 	switch( (this.token.type)[1] ) {
 	case 2:
-		return this.parseObject();
+		var $tmp = this.parseObject();
+		$s.pop();
+		return $tmp;
 	case 4:
-		return this.parseArray();
+		var $tmp = this.parseArray();
+		$s.pop();
+		return $tmp;
 	case 10:
-		return this.token.value;
+		var $tmp = this.token.value;
+		$s.pop();
+		return $tmp;
 	case 11:
-		return this.token.value;
+		var $tmp = this.token.value;
+		$s.pop();
+		return $tmp;
 	case 7:
+		$s.pop();
 		return true;
 	case 8:
+		$s.pop();
 		return false;
 	case 9:
+		$s.pop();
 		return null;
 	case 12:
-		if(!this.strict) return this.token.value; else this.tokenizer.parseError("Unexpected " + this.token.value);
+		if(!this.strict) {
+			var $tmp = this.token.value;
+			$s.pop();
+			return $tmp;
+		} else this.tokenizer.parseError("Unexpected " + this.token.value);
 		break;
 	default:
 		this.tokenizer.parseError("Unexpected " + this.token.value);
 	}
+	$s.pop();
 	return null;
+	$s.pop();
 }
 hxjson2.JSONDecoder.prototype.__class__ = hxjson2.JSONDecoder;
 if(typeof ease=='undefined') ease = {}
 ease.Quad = function() { }
 ease.Quad.__name__ = ["ease","Quad"];
 ease.Quad.easeIn = function(t,b,c,d) {
-	return c * (t /= d) * t + b;
+	$s.push("ease.Quad::easeIn");
+	var $spos = $s.length;
+	var $tmp = c * (t /= d) * t + b;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 ease.Quad.easeOut = function(t,b,c,d) {
-	return -c * (t /= d) * (t - 2) + b;
+	$s.push("ease.Quad::easeOut");
+	var $spos = $s.length;
+	var $tmp = -c * (t /= d) * (t - 2) + b;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 ease.Quad.easeInOut = function(t,b,c,d) {
-	if((t /= d / 2) < 1) return c / 2 * t * t + b;
-	return -c / 2 * (--t * (t - 2) - 1) + b;
+	$s.push("ease.Quad::easeInOut");
+	var $spos = $s.length;
+	if((t /= d / 2) < 1) {
+		var $tmp = c / 2 * t * t + b;
+		$s.pop();
+		return $tmp;
+	}
+	var $tmp = -c / 2 * (--t * (t - 2) - 1) + b;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 ease.Quad.prototype.__class__ = ease.Quad;
 hxjson2.JSONParseError = function(message,location,text) {
 	if( message === $_ ) return;
+	$s.push("hxjson2.JSONParseError::new");
+	var $spos = $s.length;
 	if(text == null) text = "";
 	if(location == null) location = 0;
 	if(message == null) message = "";
@@ -6404,6 +9839,7 @@ hxjson2.JSONParseError = function(message,location,text) {
 	this._location = location;
 	this._text = text;
 	this.message = message;
+	$s.pop();
 }
 hxjson2.JSONParseError.__name__ = ["hxjson2","JSONParseError"];
 hxjson2.JSONParseError.prototype._location = null;
@@ -6413,76 +9849,146 @@ hxjson2.JSONParseError.prototype.text = null;
 hxjson2.JSONParseError.prototype.location = null;
 hxjson2.JSONParseError.prototype.message = null;
 hxjson2.JSONParseError.prototype.getlocation = function() {
-	return this._location;
+	$s.push("hxjson2.JSONParseError::getlocation");
+	var $spos = $s.length;
+	var $tmp = this._location;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hxjson2.JSONParseError.prototype.gettext = function() {
-	return this._text;
+	$s.push("hxjson2.JSONParseError::gettext");
+	var $spos = $s.length;
+	var $tmp = this._text;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hxjson2.JSONParseError.prototype.toString = function() {
-	return this.name + ": " + this.message + " at position: " + this._location + " near \"" + this._text + "\"";
+	$s.push("hxjson2.JSONParseError::toString");
+	var $spos = $s.length;
+	var $tmp = this.name + ": " + this.message + " at position: " + this._location + " near \"" + this._text + "\"";
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hxjson2.JSONParseError.prototype.__class__ = hxjson2.JSONParseError;
 kumite.displaylist.DisplayListLayer = function(p) {
+	$s.push("kumite.displaylist.DisplayListLayer::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.displaylist.DisplayListLayer.__name__ = ["kumite","displaylist","DisplayListLayer"];
 kumite.displaylist.DisplayListLayer.prototype.transition = null;
 kumite.displaylist.DisplayListLayer.prototype.renderer = null;
 kumite.displaylist.DisplayListLayer.prototype.init = function() {
+	$s.push("kumite.displaylist.DisplayListLayer::init");
+	var $spos = $s.length;
 	this.renderer = new GLDisplayListRenderer();
 	this.renderer.init();
+	$s.pop();
 }
 kumite.displaylist.DisplayListLayer.prototype.renderTransition = function(transitionContext) {
+	$s.push("kumite.displaylist.DisplayListLayer::renderTransition");
+	var $spos = $s.length;
 	this.transition = transitionContext.getTransition();
 	this.render(transitionContext);
+	$s.pop();
 }
 kumite.displaylist.DisplayListLayer.prototype.render = function(renderContext) {
+	$s.push("kumite.displaylist.DisplayListLayer::render");
+	var $spos = $s.length;
 	bpmjs.Stats.measureFPS();
 	GLDisplayList.getDefault().stage.alpha = this.transition;
 	GLDisplayList.getDefault().setStageSize(renderContext.getWidth(),renderContext.getHeight());
 	GLDisplayList.getDefault().dispatchEnterFrame();
 	this.renderer.render(renderContext.getWidth(),renderContext.getHeight());
+	$s.pop();
 }
 kumite.displaylist.DisplayListLayer.prototype.__class__ = kumite.displaylist.DisplayListLayer;
 kumite.displaylist.DisplayListLayer.__interfaces__ = [kumite.scene.LayerLifecycle,haxe.rtti.Infos];
 Std = function() { }
 Std.__name__ = ["Std"];
 Std["is"] = function(v,t) {
-	return js.Boot.__instanceof(v,t);
+	$s.push("Std::is");
+	var $spos = $s.length;
+	var $tmp = js.Boot.__instanceof(v,t);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Std.string = function(s) {
-	return js.Boot.__string_rec(s,"");
+	$s.push("Std::string");
+	var $spos = $s.length;
+	var $tmp = js.Boot.__string_rec(s,"");
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Std["int"] = function(x) {
-	if(x < 0) return Math.ceil(x);
-	return Math.floor(x);
+	$s.push("Std::int");
+	var $spos = $s.length;
+	if(x < 0) {
+		var $tmp = Math.ceil(x);
+		$s.pop();
+		return $tmp;
+	}
+	var $tmp = Math.floor(x);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Std.parseInt = function(x) {
+	$s.push("Std::parseInt");
+	var $spos = $s.length;
 	var v = parseInt(x,10);
 	if(v == 0 && x.charCodeAt(1) == 120) v = parseInt(x);
-	if(isNaN(v)) return null;
-	return v;
+	if(isNaN(v)) {
+		$s.pop();
+		return null;
+	}
+	var $tmp = v;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Std.parseFloat = function(x) {
-	return parseFloat(x);
+	$s.push("Std::parseFloat");
+	var $spos = $s.length;
+	var $tmp = parseFloat(x);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Std.random = function(x) {
-	return Math.floor(Math.random() * x);
+	$s.push("Std::random");
+	var $spos = $s.length;
+	var $tmp = Math.floor(Math.random() * x);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Std.prototype.__class__ = Std;
 GLArrayTexture = function(p) {
 	if( p === $_ ) return;
+	$s.push("GLArrayTexture::new");
+	var $spos = $s.length;
 	GLTexture.call(this);
+	$s.pop();
 }
 GLArrayTexture.__name__ = ["GLArrayTexture"];
 GLArrayTexture.__super__ = GLTexture;
 for(var k in GLTexture.prototype ) GLArrayTexture.prototype[k] = GLTexture.prototype[k];
 GLArrayTexture.prototype.array = null;
 GLArrayTexture.prototype.setPixel = function(x,y,r,g,b,a) {
+	$s.push("GLArrayTexture::setPixel");
+	var $spos = $s.length;
 	var index = (y * this.width + x) * 4;
 	this.array[index] = r;
 	this.array[index + 1] = g;
 	this.array[index + 2] = b;
 	this.array[index + 3] = a;
+	$s.pop();
 }
 GLArrayTexture.prototype.__class__ = GLArrayTexture;
 kumite.scene.TransitionDirection = { __ename__ : ["kumite","scene","TransitionDirection"], __constructs__ : ["IN","OUT"] }
@@ -6493,16 +9999,27 @@ kumite.scene.TransitionDirection.OUT = ["OUT",1];
 kumite.scene.TransitionDirection.OUT.toString = $estr;
 kumite.scene.TransitionDirection.OUT.__enum__ = kumite.scene.TransitionDirection;
 kumite.stage.Stage = function(p) {
+	$s.push("kumite.stage.Stage::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.stage.Stage.__name__ = ["kumite","stage","Stage"];
 kumite.stage.Stage.prototype.width = null;
 kumite.stage.Stage.prototype.height = null;
 kumite.stage.Stage.prototype.aspect = null;
 kumite.stage.Stage.prototype.getAspect = function() {
-	return this.width / this.height;
+	$s.push("kumite.stage.Stage::getAspect");
+	var $spos = $s.length;
+	var $tmp = this.width / this.height;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 kumite.stage.Stage.prototype.__class__ = kumite.stage.Stage;
 kumite.scene.SceneAndLifecycle = function(p) {
+	$s.push("kumite.scene.SceneAndLifecycle::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.scene.SceneAndLifecycle.__name__ = ["kumite","scene","SceneAndLifecycle"];
 kumite.scene.SceneAndLifecycle.prototype.scene = null;
@@ -6510,47 +10027,85 @@ kumite.scene.SceneAndLifecycle.prototype.lifecycle = null;
 kumite.scene.SceneAndLifecycle.prototype.__class__ = kumite.scene.SceneAndLifecycle;
 hxjson2.JSONEncoder = function(value) {
 	if( value === $_ ) return;
+	$s.push("hxjson2.JSONEncoder::new");
+	var $spos = $s.length;
 	this.jsonString = this.convertToString(value);
+	$s.pop();
 }
 hxjson2.JSONEncoder.__name__ = ["hxjson2","JSONEncoder"];
 hxjson2.JSONEncoder.prototype.jsonString = null;
 hxjson2.JSONEncoder.prototype.getString = function() {
-	return this.jsonString;
+	$s.push("hxjson2.JSONEncoder::getString");
+	var $spos = $s.length;
+	var $tmp = this.jsonString;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hxjson2.JSONEncoder.prototype.convertToString = function(value) {
+	$s.push("hxjson2.JSONEncoder::convertToString");
+	var $spos = $s.length;
 	if(Std["is"](value,List) || Std["is"](value,IntHash)) value = Lambda.array(value);
 	if(Std["is"](value,Hash)) value = this.mapHash(value);
-	if(Std["is"](value,String)) return this.escapeString((function($this) {
-		var $r;
-		var $t = value;
-		if(Std["is"]($t,String)) $t; else throw "Class cast error";
-		$r = $t;
-		return $r;
-	}(this))); else if(Std["is"](value,Float)) return Math.isFinite((function($this) {
-		var $r;
-		var $t = value;
-		if(Std["is"]($t,Float)) $t; else throw "Class cast error";
-		$r = $t;
-		return $r;
-	}(this)))?value + "":"null"; else if(Std["is"](value,Bool)) return value?"true":"false"; else if(Std["is"](value,Array)) return this.arrayToString((function($this) {
-		var $r;
-		var $t = value;
-		if(Std["is"]($t,Array)) $t; else throw "Class cast error";
-		$r = $t;
-		return $r;
-	}(this))); else if(Std["is"](value,Dynamic) && value != null) return this.objectToString(value);
+	if(Std["is"](value,String)) {
+		var $tmp = this.escapeString((function($this) {
+			var $r;
+			var $t = value;
+			if(Std["is"]($t,String)) $t; else throw "Class cast error";
+			$r = $t;
+			return $r;
+		}(this)));
+		$s.pop();
+		return $tmp;
+	} else if(Std["is"](value,Float)) {
+		var $tmp = Math.isFinite((function($this) {
+			var $r;
+			var $t = value;
+			if(Std["is"]($t,Float)) $t; else throw "Class cast error";
+			$r = $t;
+			return $r;
+		}(this)))?value + "":"null";
+		$s.pop();
+		return $tmp;
+	} else if(Std["is"](value,Bool)) {
+		var $tmp = value?"true":"false";
+		$s.pop();
+		return $tmp;
+	} else if(Std["is"](value,Array)) {
+		var $tmp = this.arrayToString((function($this) {
+			var $r;
+			var $t = value;
+			if(Std["is"]($t,Array)) $t; else throw "Class cast error";
+			$r = $t;
+			return $r;
+		}(this)));
+		$s.pop();
+		return $tmp;
+	} else if(Std["is"](value,Dynamic) && value != null) {
+		var $tmp = this.objectToString(value);
+		$s.pop();
+		return $tmp;
+	}
+	$s.pop();
 	return "null";
+	$s.pop();
 }
 hxjson2.JSONEncoder.prototype.mapHash = function(value) {
+	$s.push("hxjson2.JSONEncoder::mapHash");
+	var $spos = $s.length;
 	var ret = { };
 	var $it0 = value.keys();
 	while( $it0.hasNext() ) {
 		var i = $it0.next();
 		ret[i] = value.get(i);
 	}
+	$s.pop();
 	return ret;
+	$s.pop();
 }
 hxjson2.JSONEncoder.prototype.escapeString = function(str) {
+	$s.push("hxjson2.JSONEncoder::escapeString");
+	var $spos = $s.length;
 	var s = "";
 	var ch;
 	var len = str.length;
@@ -6591,9 +10146,14 @@ hxjson2.JSONEncoder.prototype.escapeString = function(str) {
 			} else s += ch;
 		}
 	}
-	return "\"" + s + "\"";
+	var $tmp = "\"" + s + "\"";
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hxjson2.JSONEncoder.prototype.arrayToString = function(a) {
+	$s.push("hxjson2.JSONEncoder::arrayToString");
+	var $spos = $s.length;
 	var s = "";
 	var _g1 = 0, _g = a.length;
 	while(_g1 < _g) {
@@ -6601,9 +10161,14 @@ hxjson2.JSONEncoder.prototype.arrayToString = function(a) {
 		if(s.length > 0) s += ",";
 		s += this.convertToString(a[i]);
 	}
-	return "[" + s + "]";
+	var $tmp = "[" + s + "]";
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hxjson2.JSONEncoder.prototype.objectToString = function(o) {
+	$s.push("hxjson2.JSONEncoder::objectToString");
+	var $spos = $s.length;
 	var s = "";
 	var value;
 	var _g = 0, _g1 = Reflect.fields(o);
@@ -6616,16 +10181,22 @@ hxjson2.JSONEncoder.prototype.objectToString = function(o) {
 			s += this.escapeString(key) + ":" + this.convertToString(value);
 		}
 	}
-	return "{" + s + "}";
+	var $tmp = "{" + s + "}";
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hxjson2.JSONEncoder.prototype.__class__ = hxjson2.JSONEncoder;
 if(!haxe.exception) haxe.exception = {}
 haxe.exception.Exception = function(message,innerException,numberOfStackTraceShifts) {
 	if( message === $_ ) return;
+	$s.push("haxe.exception.Exception::new");
+	var $spos = $s.length;
 	this.message = null == message?"Unknown exception":message;
 	this.innerException = innerException;
 	this.generateStackTrace(numberOfStackTraceShifts);
 	this.stackTrace = this.stackTraceArray;
+	$s.pop();
 }
 haxe.exception.Exception.__name__ = ["haxe","exception","Exception"];
 haxe.exception.Exception.prototype.baseException = null;
@@ -6634,51 +10205,87 @@ haxe.exception.Exception.prototype.message = null;
 haxe.exception.Exception.prototype.stackTrace = null;
 haxe.exception.Exception.prototype.stackTraceArray = null;
 haxe.exception.Exception.prototype.generateStackTrace = function(numberOfStackTraceShifts) {
+	$s.push("haxe.exception.Exception::generateStackTrace");
+	var $spos = $s.length;
 	this.stackTraceArray = haxe.Stack.callStack().slice(numberOfStackTraceShifts + 1);
 	var exceptionClass = Type.getClass(this);
 	while(haxe.exception.Exception != exceptionClass) {
 		this.stackTraceArray.shift();
 		exceptionClass = Type.getSuperClass(exceptionClass);
 	}
+	$s.pop();
 }
 haxe.exception.Exception.prototype.getBaseException = function() {
+	$s.push("haxe.exception.Exception::getBaseException");
+	var $spos = $s.length;
 	var result = this;
 	while(null != result.innerException) result = result.innerException;
+	$s.pop();
 	return result;
+	$s.pop();
 }
 haxe.exception.Exception.prototype.toString = function() {
-	return this.message + haxe.Stack.toString(this.stackTraceArray);
+	$s.push("haxe.exception.Exception::toString");
+	var $spos = $s.length;
+	var $tmp = this.message + haxe.Stack.toString(this.stackTraceArray);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.exception.Exception.prototype.__class__ = haxe.exception.Exception;
 haxe.Timer = function(time_ms) {
 	if( time_ms === $_ ) return;
+	$s.push("haxe.Timer::new");
+	var $spos = $s.length;
 	var arr = haxe_timers;
 	this.id = arr.length;
 	arr[this.id] = this;
 	this.timerId = window.setInterval("haxe_timers[" + this.id + "].run();",time_ms);
+	$s.pop();
 }
 haxe.Timer.__name__ = ["haxe","Timer"];
 haxe.Timer.delay = function(f,time_ms) {
+	$s.push("haxe.Timer::delay");
+	var $spos = $s.length;
 	var t = new haxe.Timer(time_ms);
 	t.run = function() {
+		$s.push("haxe.Timer::delay@79");
+		var $spos = $s.length;
 		t.stop();
 		f();
+		$s.pop();
 	};
+	$s.pop();
 	return t;
+	$s.pop();
 }
 haxe.Timer.measure = function(f,pos) {
+	$s.push("haxe.Timer::measure");
+	var $spos = $s.length;
 	var t0 = haxe.Timer.stamp();
 	var r = f();
 	haxe.Log.trace(haxe.Timer.stamp() - t0 + "s",pos);
+	$s.pop();
 	return r;
+	$s.pop();
 }
 haxe.Timer.stamp = function() {
-	return Date.now().getTime() / 1000;
+	$s.push("haxe.Timer::stamp");
+	var $spos = $s.length;
+	var $tmp = Date.now().getTime() / 1000;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.Timer.prototype.id = null;
 haxe.Timer.prototype.timerId = null;
 haxe.Timer.prototype.stop = function() {
-	if(this.id == null) return;
+	$s.push("haxe.Timer::stop");
+	var $spos = $s.length;
+	if(this.id == null) {
+		$s.pop();
+		return;
+	}
 	window.clearInterval(this.timerId);
 	var arr = haxe_timers;
 	arr[this.id] = null;
@@ -6688,68 +10295,114 @@ haxe.Timer.prototype.stop = function() {
 		arr = arr.slice(0,p + 1);
 	}
 	this.id = null;
+	$s.pop();
 }
 haxe.Timer.prototype.run = function() {
+	$s.push("haxe.Timer::run");
+	var $spos = $s.length;
+	$s.pop();
 }
 haxe.Timer.prototype.__class__ = haxe.Timer;
 Vec3 = function(x,y,z) {
 	if( x === $_ ) return;
+	$s.push("Vec3::new");
+	var $spos = $s.length;
 	if(z == null) z = 0;
 	if(y == null) y = 0;
 	if(x == null) x = 0;
 	this.x = x;
 	this.y = y;
 	this.z = z;
+	$s.pop();
 }
 Vec3.__name__ = ["Vec3"];
 Vec3.prototype.x = null;
 Vec3.prototype.y = null;
 Vec3.prototype.z = null;
 Vec3.prototype.scale = function(factor) {
+	$s.push("Vec3::scale");
+	var $spos = $s.length;
 	this.x *= factor;
 	this.y *= factor;
 	this.z *= factor;
+	$s.pop();
 }
 Vec3.prototype.multiply = function(x,y,z) {
+	$s.push("Vec3::multiply");
+	var $spos = $s.length;
 	this.x *= x;
 	this.y *= y;
 	this.z *= z;
+	$s.pop();
 }
 Vec3.prototype.subtract = function(x,y,z) {
+	$s.push("Vec3::subtract");
+	var $spos = $s.length;
 	this.x -= x;
 	this.y -= y;
 	this.z -= z;
+	$s.pop();
 	return this;
+	$s.pop();
 }
 Vec3.prototype.normalize = function() {
+	$s.push("Vec3::normalize");
+	var $spos = $s.length;
 	var length = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
 	this.x /= length;
 	this.y /= length;
 	this.z /= length;
+	$s.pop();
 	return this;
+	$s.pop();
 }
 Vec3.prototype.getLength = function() {
-	return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+	$s.push("Vec3::getLength");
+	var $spos = $s.length;
+	var $tmp = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Vec3.prototype.cross = function(vec) {
+	$s.push("Vec3::cross");
+	var $spos = $s.length;
 	var x = this.y * vec.z - this.z * vec.y;
 	var y = this.z * vec.x - this.x * vec.z;
 	var z = this.x * vec.y - this.y * vec.x;
-	return new Vec3(x,y,z);
+	var $tmp = new Vec3(x,y,z);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Vec3.prototype.dot = function(vec) {
-	return this.x * vec.x + this.y * vec.y + this.z * vec.z;
+	$s.push("Vec3::dot");
+	var $spos = $s.length;
+	var $tmp = this.x * vec.x + this.y * vec.y + this.z * vec.z;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Vec3.prototype.equals = function(vec) {
-	return this.x == vec.x && this.y == vec.y && this.z == vec.z;
+	$s.push("Vec3::equals");
+	var $spos = $s.length;
+	var $tmp = this.x == vec.x && this.y == vec.y && this.z == vec.z;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Vec3.prototype.transform = function(matrix) {
+	$s.push("Vec3::transform");
+	var $spos = $s.length;
 	var x1 = this.x, y1 = this.y, z1 = this.z;
 	this.x = matrix.buffer[0] * x1 + matrix.buffer[4] * y1 + matrix.buffer[8] * z1 + matrix.buffer[12];
 	this.y = matrix.buffer[1] * x1 + matrix.buffer[5] * y1 + matrix.buffer[9] * z1 + matrix.buffer[13];
 	this.z = matrix.buffer[2] * x1 + matrix.buffer[6] * y1 + matrix.buffer[10] * z1 + matrix.buffer[14];
+	$s.pop();
 }
 Vec3.prototype.setFrom = function(value,vec3) {
+	$s.push("Vec3::setFrom");
+	var $spos = $s.length;
 	if(value != null) {
 		this.x = value;
 		this.y = value;
@@ -6759,83 +10412,134 @@ Vec3.prototype.setFrom = function(value,vec3) {
 		this.y = vec3.y;
 		this.z = vec3.z;
 	}
+	$s.pop();
 }
 Vec3.prototype.clone = function() {
-	return new Vec3(this.x,this.y,this.z);
+	$s.push("Vec3::clone");
+	var $spos = $s.length;
+	var $tmp = new Vec3(this.x,this.y,this.z);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Vec3.prototype.toString = function() {
-	return "[Vec3 " + " x: " + this.x + " y: " + this.y + " z: " + this.z + "]";
+	$s.push("Vec3::toString");
+	var $spos = $s.length;
+	var $tmp = "[Vec3 " + " x: " + this.x + " y: " + this.y + " z: " + this.z + "]";
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Vec3.prototype.__class__ = Vec3;
 if(!haxe.xml) haxe.xml = {}
 if(!haxe.xml._Fast) haxe.xml._Fast = {}
 haxe.xml._Fast.NodeAccess = function(x) {
 	if( x === $_ ) return;
+	$s.push("haxe.xml._Fast.NodeAccess::new");
+	var $spos = $s.length;
 	this.__x = x;
+	$s.pop();
 }
 haxe.xml._Fast.NodeAccess.__name__ = ["haxe","xml","_Fast","NodeAccess"];
 haxe.xml._Fast.NodeAccess.prototype.__x = null;
 haxe.xml._Fast.NodeAccess.prototype.resolve = function(name) {
+	$s.push("haxe.xml._Fast.NodeAccess::resolve");
+	var $spos = $s.length;
 	var x = this.__x.elementsNamed(name).next();
 	if(x == null) {
 		var xname = this.__x.nodeType == Xml.Document?"Document":this.__x.getNodeName();
 		throw xname + " is missing element " + name;
 	}
-	return new haxe.xml.Fast(x);
+	var $tmp = new haxe.xml.Fast(x);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.xml._Fast.NodeAccess.prototype.__class__ = haxe.xml._Fast.NodeAccess;
 haxe.xml._Fast.AttribAccess = function(x) {
 	if( x === $_ ) return;
+	$s.push("haxe.xml._Fast.AttribAccess::new");
+	var $spos = $s.length;
 	this.__x = x;
+	$s.pop();
 }
 haxe.xml._Fast.AttribAccess.__name__ = ["haxe","xml","_Fast","AttribAccess"];
 haxe.xml._Fast.AttribAccess.prototype.__x = null;
 haxe.xml._Fast.AttribAccess.prototype.resolve = function(name) {
+	$s.push("haxe.xml._Fast.AttribAccess::resolve");
+	var $spos = $s.length;
 	if(this.__x.nodeType == Xml.Document) throw "Cannot access document attribute " + name;
 	var v = this.__x.get(name);
 	if(v == null) throw this.__x.getNodeName() + " is missing attribute " + name;
+	$s.pop();
 	return v;
+	$s.pop();
 }
 haxe.xml._Fast.AttribAccess.prototype.__class__ = haxe.xml._Fast.AttribAccess;
 haxe.xml._Fast.HasAttribAccess = function(x) {
 	if( x === $_ ) return;
+	$s.push("haxe.xml._Fast.HasAttribAccess::new");
+	var $spos = $s.length;
 	this.__x = x;
+	$s.pop();
 }
 haxe.xml._Fast.HasAttribAccess.__name__ = ["haxe","xml","_Fast","HasAttribAccess"];
 haxe.xml._Fast.HasAttribAccess.prototype.__x = null;
 haxe.xml._Fast.HasAttribAccess.prototype.resolve = function(name) {
+	$s.push("haxe.xml._Fast.HasAttribAccess::resolve");
+	var $spos = $s.length;
 	if(this.__x.nodeType == Xml.Document) throw "Cannot access document attribute " + name;
-	return this.__x.exists(name);
+	var $tmp = this.__x.exists(name);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.xml._Fast.HasAttribAccess.prototype.__class__ = haxe.xml._Fast.HasAttribAccess;
 haxe.xml._Fast.HasNodeAccess = function(x) {
 	if( x === $_ ) return;
+	$s.push("haxe.xml._Fast.HasNodeAccess::new");
+	var $spos = $s.length;
 	this.__x = x;
+	$s.pop();
 }
 haxe.xml._Fast.HasNodeAccess.__name__ = ["haxe","xml","_Fast","HasNodeAccess"];
 haxe.xml._Fast.HasNodeAccess.prototype.__x = null;
 haxe.xml._Fast.HasNodeAccess.prototype.resolve = function(name) {
-	return this.__x.elementsNamed(name).hasNext();
+	$s.push("haxe.xml._Fast.HasNodeAccess::resolve");
+	var $spos = $s.length;
+	var $tmp = this.__x.elementsNamed(name).hasNext();
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.xml._Fast.HasNodeAccess.prototype.__class__ = haxe.xml._Fast.HasNodeAccess;
 haxe.xml._Fast.NodeListAccess = function(x) {
 	if( x === $_ ) return;
+	$s.push("haxe.xml._Fast.NodeListAccess::new");
+	var $spos = $s.length;
 	this.__x = x;
+	$s.pop();
 }
 haxe.xml._Fast.NodeListAccess.__name__ = ["haxe","xml","_Fast","NodeListAccess"];
 haxe.xml._Fast.NodeListAccess.prototype.__x = null;
 haxe.xml._Fast.NodeListAccess.prototype.resolve = function(name) {
+	$s.push("haxe.xml._Fast.NodeListAccess::resolve");
+	var $spos = $s.length;
 	var l = new List();
 	var $it0 = this.__x.elementsNamed(name);
 	while( $it0.hasNext() ) {
 		var x = $it0.next();
 		l.add(new haxe.xml.Fast(x));
 	}
+	$s.pop();
 	return l;
+	$s.pop();
 }
 haxe.xml._Fast.NodeListAccess.prototype.__class__ = haxe.xml._Fast.NodeListAccess;
 haxe.xml.Fast = function(x) {
 	if( x === $_ ) return;
+	$s.push("haxe.xml.Fast::new");
+	var $spos = $s.length;
 	if(x.nodeType != Xml.Document && x.nodeType != Xml.Element) throw "Invalid nodeType " + x.nodeType;
 	this.x = x;
 	this.node = new haxe.xml._Fast.NodeAccess(x);
@@ -6843,6 +10547,7 @@ haxe.xml.Fast = function(x) {
 	this.att = new haxe.xml._Fast.AttribAccess(x);
 	this.has = new haxe.xml._Fast.HasAttribAccess(x);
 	this.hasNode = new haxe.xml._Fast.HasNodeAccess(x);
+	$s.pop();
 }
 haxe.xml.Fast.__name__ = ["haxe","xml","Fast"];
 haxe.xml.Fast.prototype.x = null;
@@ -6856,32 +10561,60 @@ haxe.xml.Fast.prototype.has = null;
 haxe.xml.Fast.prototype.hasNode = null;
 haxe.xml.Fast.prototype.elements = null;
 haxe.xml.Fast.prototype.getName = function() {
-	return this.x.nodeType == Xml.Document?"Document":this.x.getNodeName();
+	$s.push("haxe.xml.Fast::getName");
+	var $spos = $s.length;
+	var $tmp = this.x.nodeType == Xml.Document?"Document":this.x.getNodeName();
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.xml.Fast.prototype.getInnerData = function() {
+	$s.push("haxe.xml.Fast::getInnerData");
+	var $spos = $s.length;
 	var it = this.x.iterator();
 	if(!it.hasNext()) throw this.getName() + " does not have data";
 	var v = it.next();
 	if(it.hasNext()) throw this.getName() + " does not only have data";
 	if(v.nodeType != Xml.PCData && v.nodeType != Xml.CData) throw this.getName() + " does not have data";
-	return v.getNodeValue();
+	var $tmp = v.getNodeValue();
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.xml.Fast.prototype.getInnerHTML = function() {
+	$s.push("haxe.xml.Fast::getInnerHTML");
+	var $spos = $s.length;
 	var s = new StringBuf();
 	var $it0 = this.x.iterator();
 	while( $it0.hasNext() ) {
 		var x = $it0.next();
 		s.add(x.toString());
 	}
-	return s.b.join("");
+	var $tmp = s.b.join("");
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.xml.Fast.prototype.getElements = function() {
+	$s.push("haxe.xml.Fast::getElements");
+	var $spos = $s.length;
 	var it = this.x.elements();
-	return { hasNext : $closure(it,"hasNext"), next : function() {
+	var $tmp = { hasNext : $closure(it,"hasNext"), next : function() {
+		$s.push("haxe.xml.Fast::getElements@163");
+		var $spos = $s.length;
 		var x = it.next();
-		if(x == null) return null;
-		return new haxe.xml.Fast(x);
+		if(x == null) {
+			$s.pop();
+			return null;
+		}
+		var $tmp = new haxe.xml.Fast(x);
+		$s.pop();
+		return $tmp;
+		$s.pop();
 	}};
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.xml.Fast.prototype.__class__ = haxe.xml.Fast;
 if(typeof shader=='undefined') shader = {}
@@ -6891,43 +10624,79 @@ shader.DisplayObjectVertex.prototype.__class__ = shader.DisplayObjectVertex;
 haxe.rtti.Meta = function() { }
 haxe.rtti.Meta.__name__ = ["haxe","rtti","Meta"];
 haxe.rtti.Meta.getType = function(t) {
+	$s.push("haxe.rtti.Meta::getType");
+	var $spos = $s.length;
 	var meta = t.__meta__;
-	return meta == null || meta.obj == null?{ }:meta.obj;
+	var $tmp = meta == null || meta.obj == null?{ }:meta.obj;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.rtti.Meta.getStatics = function(t) {
+	$s.push("haxe.rtti.Meta::getStatics");
+	var $spos = $s.length;
 	var meta = t.__meta__;
-	return meta == null || meta.statics == null?{ }:meta.statics;
+	var $tmp = meta == null || meta.statics == null?{ }:meta.statics;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.rtti.Meta.getFields = function(t) {
+	$s.push("haxe.rtti.Meta::getFields");
+	var $spos = $s.length;
 	var meta = t.__meta__;
-	return meta == null || meta.fields == null?{ }:meta.fields;
+	var $tmp = meta == null || meta.fields == null?{ }:meta.fields;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 haxe.rtti.Meta.prototype.__class__ = haxe.rtti.Meta;
 kumite.stage.StageResizeAction = function(p) {
+	$s.push("kumite.stage.StageResizeAction::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.stage.StageResizeAction.__name__ = ["kumite","stage","StageResizeAction"];
 kumite.stage.StageResizeAction.prototype.messenger = null;
 kumite.stage.StageResizeAction.prototype.stage = null;
 kumite.stage.StageResizeAction.prototype.initPrepare = function() {
+	$s.push("kumite.stage.StageResizeAction::initPrepare");
+	var $spos = $s.length;
 	this.updateSize();
+	$s.pop();
 }
 kumite.stage.StageResizeAction.prototype.startComplete = function() {
+	$s.push("kumite.stage.StageResizeAction::startComplete");
+	var $spos = $s.length;
 	GLAnimationFrame.run($closure(this,"timerUpdate"));
 	js.Lib.window.onresize = $closure(this,"onResize");
+	$s.pop();
 }
 kumite.stage.StageResizeAction.prototype.timerUpdate = function() {
+	$s.push("kumite.stage.StageResizeAction::timerUpdate");
+	var $spos = $s.length;
 	if(this.stage.width != js.Lib.window.innerWidth || this.stage.height != js.Lib.window.innerHeight) this.onResize();
+	$s.pop();
 }
 kumite.stage.StageResizeAction.prototype.onResize = function(event) {
+	$s.push("kumite.stage.StageResizeAction::onResize");
+	var $spos = $s.length;
 	this.updateSize();
 	this.sendResizeMessage();
+	$s.pop();
 }
 kumite.stage.StageResizeAction.prototype.updateSize = function() {
+	$s.push("kumite.stage.StageResizeAction::updateSize");
+	var $spos = $s.length;
 	this.stage.width = Std["int"](js.Lib.window.innerWidth);
 	this.stage.height = Std["int"](js.Lib.window.innerHeight);
+	$s.pop();
 }
 kumite.stage.StageResizeAction.prototype.sendResizeMessage = function() {
+	$s.push("kumite.stage.StageResizeAction::sendResizeMessage");
+	var $spos = $s.length;
 	this.messenger.send(new kumite.stage.StageResizeMessage());
+	$s.pop();
 }
 kumite.stage.StageResizeAction.prototype.__class__ = kumite.stage.StageResizeAction;
 kumite.stage.StageResizeAction.__interfaces__ = [haxe.rtti.Infos];
@@ -6936,17 +10705,27 @@ GL.__name__ = ["GL"];
 GL.gl = null;
 GL.currentProgramm = null;
 GL.init = function(canvas,antialias) {
+	$s.push("GL::init");
+	var $spos = $s.length;
 	var params = { antialias : antialias};
 	GL.gl = canvas.getContext("webg",params);
 	if(GL.gl == null) GL.gl = canvas.getContext("experimental-webgl",params);
 	if(GL.gl == null) throw "Could not initialise WebGL.";
-	return GL.gl;
+	var $tmp = GL.gl;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GL.useProgram = function(shaderProgramm) {
+	$s.push("GL::useProgram");
+	var $spos = $s.length;
 	GL.currentProgramm = shaderProgramm;
 	GL.gl.useProgram(GL.currentProgramm);
+	$s.pop();
 }
 GL.createProgram = function(vertexSourceClass,fragmentSourceClass) {
+	$s.push("GL::createProgram");
+	var $spos = $s.length;
 	GL.currentProgramm = GL.gl.createProgram();
 	var vs = GL.gl.createShader(GL.gl.VERTEX_SHADER);
 	GL.gl.shaderSource(vs,GL.createGLSLFromClass(vertexSourceClass));
@@ -6960,9 +10739,14 @@ GL.createProgram = function(vertexSourceClass,fragmentSourceClass) {
 	GL.gl.attachShader(GL.currentProgramm,fs);
 	GL.gl.linkProgram(GL.currentProgramm);
 	if(!GL.gl.getProgramParameter(GL.currentProgramm,GL.gl.LINK_STATUS)) throw "Could not link shader!";
-	return GL.currentProgramm;
+	var $tmp = GL.currentProgramm;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GL.createFragmentProgram = function(fragmentSourceClass) {
+	$s.push("GL::createFragmentProgram");
+	var $spos = $s.length;
 	GL.currentProgramm = GL.gl.createProgram();
 	var fs = GL.gl.createShader(GL.gl.FRAGMENT_SHADER);
 	GL.gl.shaderSource(fs,GL.createGLSLFromClass(fragmentSourceClass));
@@ -6971,29 +10755,47 @@ GL.createFragmentProgram = function(fragmentSourceClass) {
 	GL.gl.attachShader(GL.currentProgramm,fs);
 	GL.gl.linkProgram(GL.currentProgramm);
 	if(!GL.gl.getProgramParameter(GL.currentProgramm,GL.gl.LINK_STATUS)) throw "Could not link shader!";
-	return GL.currentProgramm;
+	var $tmp = GL.currentProgramm;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GL.createGLSLFromClass = function(shaderClass) {
+	$s.push("GL::createGLSLFromClass");
+	var $spos = $s.length;
 	var metaDatas = haxe.rtti.Meta.getType(shaderClass);
 	var glsl = Reflect.field(metaDatas,"GLSL");
 	if(glsl.length != 1) throw "Missing GLSL metadata in shader class: " + shaderClass;
-	return glsl[0];
+	var $tmp = glsl[0];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GL.createArrayBuffer = function(array,type) {
+	$s.push("GL::createArrayBuffer");
+	var $spos = $s.length;
 	if(type == null) type = 35044;
 	var vertexBuffer = GL.gl.createBuffer();
 	GL.gl.bindBuffer(GL.gl.ARRAY_BUFFER,vertexBuffer);
 	GL.gl.bufferData(GL.gl.ARRAY_BUFFER,array,type);
+	$s.pop();
 	return vertexBuffer;
+	$s.pop();
 }
 GL.getUniformLocation = function(name) {
+	$s.push("GL::getUniformLocation");
+	var $spos = $s.length;
 	var location = GL.gl.getUniformLocation(GL.currentProgramm,name);
 	if(location == null) haxe.Log.trace("Could not find " + name + " in shader",{ fileName : "GL.hx", lineNumber : 478, className : "GL", methodName : "getUniformLocation"});
 	var result = new GLUniformLocation();
 	result.location = location;
+	$s.pop();
 	return result;
+	$s.pop();
 }
 GL.getAttribLocation2 = function(name,size,type) {
+	$s.push("GL::getAttribLocation2");
+	var $spos = $s.length;
 	var location = GL.gl.getAttribLocation(GL.currentProgramm,name);
 	if(location == null || location == -1) {
 		Log.posInfo = { fileName : "GL.hx", lineNumber : 489, className : "GL", methodName : "getAttribLocation2"};
@@ -7006,139 +10808,284 @@ GL.getAttribLocation2 = function(name,size,type) {
 	result.location = location;
 	result.size = size;
 	result.type = type;
+	$s.pop();
 	return result;
+	$s.pop();
 }
 GL.activeTexture = function(texture) {
+	$s.push("GL::activeTexture");
+	var $spos = $s.length;
 	GL.gl.activeTexture(texture);
+	$s.pop();
 }
 GL.bindBuffer = function(target,buffer) {
+	$s.push("GL::bindBuffer");
+	var $spos = $s.length;
 	GL.gl.bindBuffer(target,buffer);
+	$s.pop();
 }
 GL.bindFramebuffer = function(target,framebuffer) {
+	$s.push("GL::bindFramebuffer");
+	var $spos = $s.length;
 	GL.gl.bindFramebuffer(target,framebuffer);
+	$s.pop();
 }
 GL.bindRenderbuffer = function(target,renderbuffer) {
+	$s.push("GL::bindRenderbuffer");
+	var $spos = $s.length;
 	GL.gl.bindRenderbuffer(target,renderbuffer);
+	$s.pop();
 }
 GL.bindTexture = function(target,texture) {
+	$s.push("GL::bindTexture");
+	var $spos = $s.length;
 	GL.gl.bindTexture(target,texture);
+	$s.pop();
 }
 GL.blendFunc = function(sfactor,dfactor) {
+	$s.push("GL::blendFunc");
+	var $spos = $s.length;
 	GL.gl.blendFunc(sfactor,dfactor);
+	$s.pop();
 }
 GL.bufferData = function(target,data,usage) {
+	$s.push("GL::bufferData");
+	var $spos = $s.length;
 	GL.gl.bufferData(target,data,usage);
+	$s.pop();
 }
 GL.bufferSubData = function(target,offset,data) {
+	$s.push("GL::bufferSubData");
+	var $spos = $s.length;
 	GL.gl.bufferSubData(target,offset,data);
+	$s.pop();
 }
 GL.clear = function(mask) {
+	$s.push("GL::clear");
+	var $spos = $s.length;
 	GL.gl.clear(mask);
+	$s.pop();
 }
 GL.clearColor = function(red,green,blue,alpha) {
+	$s.push("GL::clearColor");
+	var $spos = $s.length;
 	GL.gl.clearColor(red,green,blue,alpha);
+	$s.pop();
 }
 GL.clearDepth = function(depth) {
+	$s.push("GL::clearDepth");
+	var $spos = $s.length;
 	GL.gl.clearDepth(depth);
+	$s.pop();
 }
 GL.compileShader = function(shader) {
+	$s.push("GL::compileShader");
+	var $spos = $s.length;
 	GL.gl.compileShader(shader);
+	$s.pop();
 }
 GL.createBuffer = function() {
-	return GL.gl.createBuffer();
+	$s.push("GL::createBuffer");
+	var $spos = $s.length;
+	var $tmp = GL.gl.createBuffer();
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GL.createFramebuffer = function() {
-	return GL.gl.createFramebuffer();
+	$s.push("GL::createFramebuffer");
+	var $spos = $s.length;
+	var $tmp = GL.gl.createFramebuffer();
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GL.createRenderbuffer = function() {
-	return GL.gl.createRenderbuffer();
+	$s.push("GL::createRenderbuffer");
+	var $spos = $s.length;
+	var $tmp = GL.gl.createRenderbuffer();
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GL.createTexture = function() {
-	return GL.gl.createTexture();
+	$s.push("GL::createTexture");
+	var $spos = $s.length;
+	var $tmp = GL.gl.createTexture();
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GL.createShader = function(type) {
-	return GL.gl.createShader(type);
+	$s.push("GL::createShader");
+	var $spos = $s.length;
+	var $tmp = GL.gl.createShader(type);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GL.deleteBuffer = function(buffer) {
+	$s.push("GL::deleteBuffer");
+	var $spos = $s.length;
 	GL.gl.deleteBuffer(buffer);
+	$s.pop();
 }
 GL.depthFunc = function(func) {
+	$s.push("GL::depthFunc");
+	var $spos = $s.length;
 	GL.gl.depthFunc(func);
+	$s.pop();
 }
 GL.disable = function(cap) {
+	$s.push("GL::disable");
+	var $spos = $s.length;
 	GL.gl.disable(cap);
+	$s.pop();
 }
 GL.drawArrays = function(mode,first,count) {
+	$s.push("GL::drawArrays");
+	var $spos = $s.length;
 	GL.gl.drawArrays(mode,first,count);
+	$s.pop();
 }
 GL.drawElements = function(mode,count,type,offset) {
+	$s.push("GL::drawElements");
+	var $spos = $s.length;
 	GL.gl.drawElements(mode,count,type,offset);
+	$s.pop();
 }
 GL.enable = function(cap) {
+	$s.push("GL::enable");
+	var $spos = $s.length;
 	GL.gl.enable(cap);
+	$s.pop();
 }
 GL.enableVertexAttribArray = function(index) {
+	$s.push("GL::enableVertexAttribArray");
+	var $spos = $s.length;
 	GL.gl.enableVertexAttribArray(index);
+	$s.pop();
 }
 GL.framebufferRenderbuffer = function(target,attachment,renderbuffertarget,renderbuffer) {
+	$s.push("GL::framebufferRenderbuffer");
+	var $spos = $s.length;
 	GL.gl.framebufferRenderbuffer(target,attachment,renderbuffertarget,renderbuffer);
+	$s.pop();
 }
 GL.framebufferTexture2D = function(target,attachment,textarget,texture,level) {
+	$s.push("GL::framebufferTexture2D");
+	var $spos = $s.length;
 	GL.gl.framebufferTexture2D(target,attachment,textarget,texture,level);
+	$s.pop();
 }
 GL.generateMipmap = function(target) {
+	$s.push("GL::generateMipmap");
+	var $spos = $s.length;
 	GL.gl.generateMipmap(target);
+	$s.pop();
 }
 GL.getAttribLocation = function(program,name) {
-	return GL.gl.getAttribLocation(program,name);
+	$s.push("GL::getAttribLocation");
+	var $spos = $s.length;
+	var $tmp = GL.gl.getAttribLocation(program,name);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GL.getShaderInfoLog = function(shader) {
-	return GL.gl.getShaderInfoLog(shader);
+	$s.push("GL::getShaderInfoLog");
+	var $spos = $s.length;
+	var $tmp = GL.gl.getShaderInfoLog(shader);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GL.getShaderParameter = function(shader,pname) {
+	$s.push("GL::getShaderParameter");
+	var $spos = $s.length;
 	GL.gl.getShaderParameter(shader,pname);
+	$s.pop();
 }
 GL.getProgramParameter = function(program,pname) {
+	$s.push("GL::getProgramParameter");
+	var $spos = $s.length;
 	GL.gl.getProgramParameter(program,pname);
+	$s.pop();
 }
 GL.linkProgram = function(program) {
+	$s.push("GL::linkProgram");
+	var $spos = $s.length;
 	GL.gl.linkProgram(program);
+	$s.pop();
 }
 GL.renderbufferStorage = function(target,internalformat,width,height) {
+	$s.push("GL::renderbufferStorage");
+	var $spos = $s.length;
 	GL.gl.renderbufferStorage(target,internalformat,width,height);
+	$s.pop();
 }
 GL.shaderSource = function(shader,source) {
+	$s.push("GL::shaderSource");
+	var $spos = $s.length;
 	GL.gl.shaderSource(shader,source);
+	$s.pop();
 }
 GL.texImage2DArrayBufferView = function(target,level,internalformat,width,height,border,format,type,pixels) {
+	$s.push("GL::texImage2DArrayBufferView");
+	var $spos = $s.length;
 	GL.gl.texImage2D(target,level,internalformat,width,height,border,format,type,pixels);
+	$s.pop();
 }
 GL.texImage2DImageData = function(target,level,internalformat,format,type,pixels) {
+	$s.push("GL::texImage2DImageData");
+	var $spos = $s.length;
 	GL.gl.texImage2D(target,level,internalformat,format,type,pixels);
+	$s.pop();
 }
 GL.texImage2DImage = function(target,level,internalformat,format,type,image) {
+	$s.push("GL::texImage2DImage");
+	var $spos = $s.length;
 	GL.gl.texImage2D(target,level,internalformat,format,type,image);
+	$s.pop();
 }
 GL.texImage2DCanvas = function(target,level,internalformat,format,type,canvas) {
+	$s.push("GL::texImage2DCanvas");
+	var $spos = $s.length;
 	GL.gl.texImage2D(target,level,internalformat,format,type,canvas);
+	$s.pop();
 }
 GL.texImage2DVideo = function(target,level,internalformat,format,type,video) {
+	$s.push("GL::texImage2DVideo");
+	var $spos = $s.length;
 	GL.gl.texImage2D(target,level,internalformat,format,type,video);
+	$s.pop();
 }
 GL.texParameteri = function(target,pname,param) {
+	$s.push("GL::texParameteri");
+	var $spos = $s.length;
 	GL.gl.texParameteri(target,pname,param);
+	$s.pop();
 }
 GL.vertexAttribPointer = function(indx,size,type,normalized,stride,offset) {
+	$s.push("GL::vertexAttribPointer");
+	var $spos = $s.length;
 	GL.gl.vertexAttribPointer(indx,size,type,normalized,stride,offset);
+	$s.pop();
 }
 GL.viewport = function(x,y,width,height) {
+	$s.push("GL::viewport");
+	var $spos = $s.length;
 	GL.gl.viewport(x,y,width,height);
+	$s.pop();
 }
 GL.prototype.__class__ = GL;
 hxjson2.JSONToken = function(type,value) {
 	if( type === $_ ) return;
+	$s.push("hxjson2.JSONToken::new");
+	var $spos = $s.length;
 	this.type = type == null?hxjson2.JSONTokenType.tUNKNOWN:type;
 	this.value = value;
+	$s.pop();
 }
 hxjson2.JSONToken.__name__ = ["hxjson2","JSONToken"];
 hxjson2.JSONToken.prototype.type = null;
@@ -7146,6 +11093,8 @@ hxjson2.JSONToken.prototype.value = null;
 hxjson2.JSONToken.prototype.__class__ = hxjson2.JSONToken;
 GLStats = function(p) {
 	if( p === $_ ) return;
+	$s.push("GLStats::new");
+	var $spos = $s.length;
 	GLDisplayObjectContainer.call(this);
 	this.enterFrameSignaler.bind($closure(this,"handleEnterFrame"));
 	this.label = new GLLabel();
@@ -7154,6 +11103,7 @@ GLStats = function(p) {
 	this.label.setWidth(100);
 	this.label.setHeight(20);
 	this.addChild(this.label);
+	$s.pop();
 }
 GLStats.__name__ = ["GLStats"];
 GLStats.__super__ = GLDisplayObjectContainer;
@@ -7161,6 +11111,8 @@ for(var k in GLDisplayObjectContainer.prototype ) GLStats.prototype[k] = GLDispl
 GLStats.prototype.label = null;
 GLStats.prototype.lastDraw = null;
 GLStats.prototype.handleEnterFrame = function(frame) {
+	$s.push("GLStats::handleEnterFrame");
+	var $spos = $s.length;
 	if(this.lastDraw < frame.time - 100) {
 		this.lastDraw = frame.time;
 		var line = 0;
@@ -7172,10 +11124,13 @@ GLStats.prototype.handleEnterFrame = function(frame) {
 			line++;
 		}
 	}
+	$s.pop();
 }
 GLStats.prototype.__class__ = GLStats;
 kumite.layer.TextureLayer = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.layer.TextureLayer::new");
+	var $spos = $s.length;
 	this.blend = true;
 	this.scale = 1;
 	this.position = new Vec3(0,0,0);
@@ -7184,6 +11139,7 @@ kumite.layer.TextureLayer = function(p) {
 	this.transitions.add(this.moveTransition = new kumite.layer.LayerTransition("move"));
 	this.transitions.add(this.alphaTransition = new kumite.layer.LayerTransition("alpha"));
 	this.transitions.enableChild("alpha");
+	$s.pop();
 }
 kumite.layer.TextureLayer.__name__ = ["kumite","layer","TextureLayer"];
 kumite.layer.TextureLayer.prototype.time = null;
@@ -7207,6 +11163,8 @@ kumite.layer.TextureLayer.prototype.textureUniform = null;
 kumite.layer.TextureLayer.prototype.alphaUniform = null;
 kumite.layer.TextureLayer.prototype.flipYUniform = null;
 kumite.layer.TextureLayer.prototype.init = function() {
+	$s.push("kumite.layer.TextureLayer::init");
+	var $spos = $s.length;
 	this.shaderProgram = GL.createProgram(kumite.layer._TextureLayer.Vertex,kumite.layer._TextureLayer.Fragment);
 	this.vertexPositionAttribute = GL.getAttribLocation2("vertexPosition",2,5120);
 	this.vertexPositionAttribute.updateBuffer(new Int8Array([0,0,1,0,0,1,1,1]));
@@ -7215,12 +11173,18 @@ kumite.layer.TextureLayer.prototype.init = function() {
 	this.textureUniform = GL.getUniformLocation("texture");
 	this.alphaUniform = GL.getUniformLocation("alpha");
 	this.flipYUniform = GL.getUniformLocation("flipY");
+	$s.pop();
 }
 kumite.layer.TextureLayer.prototype.renderTransition = function(transitionContext) {
+	$s.push("kumite.layer.TextureLayer::renderTransition");
+	var $spos = $s.length;
 	this.transitions.setTransition(transitionContext.getTransition());
 	this.render(transitionContext);
+	$s.pop();
 }
 kumite.layer.TextureLayer.prototype.render = function(renderContext) {
+	$s.push("kumite.layer.TextureLayer::render");
+	var $spos = $s.length;
 	GL.useProgram(this.shaderProgram);
 	GL.gl.viewport(0,0,renderContext.getWidth(),renderContext.getHeight());
 	GL.gl.disable(2929);
@@ -7246,6 +11210,7 @@ kumite.layer.TextureLayer.prototype.render = function(renderContext) {
 	GL.gl.uniform1f(this.alphaUniform.location,this.alphaTransition.getTransition());
 	GL.gl.uniform1f(this.flipYUniform.location,this.flipY?1:0);
 	this.vertexPositionAttribute.drawArrays(5);
+	$s.pop();
 }
 kumite.layer.TextureLayer.prototype.__class__ = kumite.layer.TextureLayer;
 kumite.layer.TextureLayer.__interfaces__ = [haxe.rtti.Infos,kumite.scene.LayerLifecycle];
@@ -7257,18 +11222,28 @@ kumite.layer._TextureLayer.Fragment = function() { }
 kumite.layer._TextureLayer.Fragment.__name__ = ["kumite","layer","_TextureLayer","Fragment"];
 kumite.layer._TextureLayer.Fragment.prototype.__class__ = kumite.layer._TextureLayer.Fragment;
 GLHitareaPicker = function(p) {
+	$s.push("GLHitareaPicker::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 GLHitareaPicker.__name__ = ["GLHitareaPicker"];
 GLHitareaPicker.prototype.stageMousePosition = null;
 GLHitareaPicker.prototype.result = null;
 GLHitareaPicker.prototype.pick = function(stage,mousePosition) {
+	$s.push("GLHitareaPicker::pick");
+	var $spos = $s.length;
 	this.stageMousePosition = mousePosition.clone();
 	this.stageMousePosition.multiply(stage.stageWidth,stage.stageHeight);
 	this.result = null;
 	this.pickRecursive(stage,new Matrix4());
-	return this.result;
+	var $tmp = this.result;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GLHitareaPicker.prototype.pickRecursive = function(displayObjectContainer,parentMatrix) {
+	$s.push("GLHitareaPicker::pickRecursive");
+	var $spos = $s.length;
 	var _g = 0, _g1 = displayObjectContainer.children;
 	while(_g < _g1.length) {
 		var displayObject = _g1[_g];
@@ -7286,57 +11261,90 @@ GLHitareaPicker.prototype.pickRecursive = function(displayObjectContainer,parent
 		}
 		if(Std["is"](displayObject,GLDisplayObjectContainer)) this.pickRecursive(displayObject,matrix);
 	}
+	$s.pop();
 }
 GLHitareaPicker.prototype.pickDisplayObject = function(displayObject,parentMatrix) {
+	$s.push("GLHitareaPicker::pickDisplayObject");
+	var $spos = $s.length;
 	displayObject.validateTransform();
 	var result = new Matrix4();
 	result.append(parentMatrix);
 	result.append(displayObject.matrix);
+	$s.pop();
 	return result;
+	$s.pop();
 }
 GLHitareaPicker.prototype.__class__ = GLHitareaPicker;
 GLTextureConfig = function(p) {
+	$s.push("GLTextureConfig::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 GLTextureConfig.__name__ = ["GLTextureConfig"];
 GLTextureConfig.CROP = function(width,height) {
-	return new _GLTextureConfig.CropManipulation(width,height);
+	$s.push("GLTextureConfig::CROP");
+	var $spos = $s.length;
+	var $tmp = new _GLTextureConfig.CropManipulation(width,height);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GLTextureConfig.create = function(location,filter,textureManipulation) {
+	$s.push("GLTextureConfig::create");
+	var $spos = $s.length;
 	if(filter == null) filter = 9728;
 	var result = new GLTextureConfig();
 	result.location = location;
 	result.textureId = location;
 	result.filter = filter;
 	result.textureManipulation = textureManipulation;
+	$s.pop();
 	return result;
+	$s.pop();
 }
 GLTextureConfig.createForFrameBuffer = function() {
+	$s.push("GLTextureConfig::createForFrameBuffer");
+	var $spos = $s.length;
 	var result = new GLTextureConfig();
 	result.location = "";
 	result.textureId = "FRAMEBUFFER_" + GLTextureConfig.FRAMEBUFFER_ID;
 	result.filter = 0;
 	GLTextureConfig.FRAMEBUFFER_ID++;
+	$s.pop();
 	return result;
+	$s.pop();
 }
 GLTextureConfig.prototype.location = null;
 GLTextureConfig.prototype.textureId = null;
 GLTextureConfig.prototype.filter = null;
 GLTextureConfig.prototype.textureManipulation = null;
 GLTextureConfig.prototype.toString = function() {
-	return "[GLTextureConfig: " + this.location + " ]";
+	$s.push("GLTextureConfig::toString");
+	var $spos = $s.length;
+	var $tmp = "[GLTextureConfig: " + this.location + " ]";
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GLTextureConfig.prototype.__class__ = GLTextureConfig;
 if(typeof _GLTextureConfig=='undefined') _GLTextureConfig = {}
 _GLTextureConfig.TextureManipulation = function() { }
 _GLTextureConfig.TextureManipulation.__name__ = ["_GLTextureConfig","TextureManipulation"];
 _GLTextureConfig.TextureManipulation.prototype.create = function(image) {
+	$s.push("_GLTextureConfig.TextureManipulation::create");
+	var $spos = $s.length;
+	$s.pop();
 	return null;
+	$s.pop();
 }
 _GLTextureConfig.TextureManipulation.prototype.__class__ = _GLTextureConfig.TextureManipulation;
 _GLTextureConfig.CropManipulation = function(width,height) {
 	if( width === $_ ) return;
+	$s.push("_GLTextureConfig.CropManipulation::new");
+	var $spos = $s.length;
 	this.width = width;
 	this.height = height;
+	$s.pop();
 }
 _GLTextureConfig.CropManipulation.__name__ = ["_GLTextureConfig","CropManipulation"];
 _GLTextureConfig.CropManipulation.__super__ = _GLTextureConfig.TextureManipulation;
@@ -7344,11 +11352,16 @@ for(var k in _GLTextureConfig.TextureManipulation.prototype ) _GLTextureConfig.C
 _GLTextureConfig.CropManipulation.prototype.width = null;
 _GLTextureConfig.CropManipulation.prototype.height = null;
 _GLTextureConfig.CropManipulation.prototype.create = function(image) {
+	$s.push("_GLTextureConfig.CropManipulation::create");
+	var $spos = $s.length;
 	var canvasGraphic = new CanvasGraphic();
 	canvasGraphic.setWidth(this.width);
 	canvasGraphic.setHeight(this.height);
 	canvasGraphic.drawImage2(image,0,0);
-	return canvasGraphic.canvas;
+	var $tmp = canvasGraphic.canvas;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 _GLTextureConfig.CropManipulation.prototype.__class__ = _GLTextureConfig.CropManipulation;
 shader.DisplayObjectFragment = function() { }
@@ -7356,41 +11369,65 @@ shader.DisplayObjectFragment.__name__ = ["shader","DisplayObjectFragment"];
 shader.DisplayObjectFragment.prototype.__class__ = shader.DisplayObjectFragment;
 kumite.scene.DefaultScene = function(name) {
 	if( name === $_ ) return;
+	$s.push("kumite.scene.DefaultScene::new");
+	var $spos = $s.length;
 	this.name = name;
 	this.preconfiguredLifecycles = new Array();
+	$s.pop();
 }
 kumite.scene.DefaultScene.__name__ = ["kumite","scene","DefaultScene"];
 kumite.scene.DefaultScene.prototype.name = null;
 kumite.scene.DefaultScene.prototype.preconfiguredLifecycles = null;
 kumite.scene.DefaultScene.prototype.addLayerLifecycle = function(lifecycle,layerId) {
+	$s.push("kumite.scene.DefaultScene::addLayerLifecycle");
+	var $spos = $s.length;
 	if(lifecycle == null) throw "Lifecycle for scene: " + this.name + " is null!";
 	var lifecycleAndLayerId = new kumite.scene._DefaultScene.LifecycleAndLayerId();
 	lifecycleAndLayerId.lifecycle = lifecycle;
 	lifecycleAndLayerId.layerId = layerId;
 	this.preconfiguredLifecycles.push(lifecycleAndLayerId);
+	$s.pop();
 }
 kumite.scene.DefaultScene.prototype.sceneInit = function(scene) {
+	$s.push("kumite.scene.DefaultScene::sceneInit");
+	var $spos = $s.length;
 	scene.name = this.name;
 	this.addPreconfiguredLifecycles(scene);
+	$s.pop();
 }
 kumite.scene.DefaultScene.prototype.initTransition = function(transitionContext) {
+	$s.push("kumite.scene.DefaultScene::initTransition");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.scene.DefaultScene.prototype.renderTransition = function(transitionContext) {
+	$s.push("kumite.scene.DefaultScene::renderTransition");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.scene.DefaultScene.prototype.render = function() {
+	$s.push("kumite.scene.DefaultScene::render");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.scene.DefaultScene.prototype.addPreconfiguredLifecycles = function(scene) {
+	$s.push("kumite.scene.DefaultScene::addPreconfiguredLifecycles");
+	var $spos = $s.length;
 	var _g = 0, _g1 = this.preconfiguredLifecycles;
 	while(_g < _g1.length) {
 		var lifecycle = _g1[_g];
 		++_g;
 		scene.addLayer(new kumite.scene.DelegateLayer(lifecycle.lifecycle,lifecycle.layerId));
 	}
+	$s.pop();
 }
 kumite.scene.DefaultScene.prototype.__class__ = kumite.scene.DefaultScene;
 kumite.scene.DefaultScene.__interfaces__ = [haxe.rtti.Infos,kumite.scene.SceneLifecycle];
 if(!kumite.scene._DefaultScene) kumite.scene._DefaultScene = {}
 kumite.scene._DefaultScene.LifecycleAndLayerId = function(p) {
+	$s.push("kumite.scene._DefaultScene.LifecycleAndLayerId::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.scene._DefaultScene.LifecycleAndLayerId.__name__ = ["kumite","scene","_DefaultScene","LifecycleAndLayerId"];
 kumite.scene._DefaultScene.LifecycleAndLayerId.prototype.lifecycle = null;
@@ -7398,8 +11435,11 @@ kumite.scene._DefaultScene.LifecycleAndLayerId.prototype.layerId = null;
 kumite.scene._DefaultScene.LifecycleAndLayerId.prototype.__class__ = kumite.scene._DefaultScene.LifecycleAndLayerId;
 kumite.camera.Config = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.camera.Config::new");
+	var $spos = $s.length;
 	this.camera = new kumite.camera.Camera();
 	this.cameraMouseMover = new kumite.camera.CameraMouseMover();
+	$s.pop();
 }
 kumite.camera.Config.__name__ = ["kumite","camera","Config"];
 kumite.camera.Config.prototype.camera = null;
@@ -7408,9 +11448,12 @@ kumite.camera.Config.prototype.__class__ = kumite.camera.Config;
 kumite.camera.Config.__interfaces__ = [haxe.rtti.Infos];
 kumite.vjinterface.Config = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.vjinterface.Config::new");
+	var $spos = $s.length;
 	this.vjstats = new kumite.vjinterface.VJStats();
 	this.vjinterface = new kumite.vjinterface.VJInterface();
 	this.vjlayers = new kumite.vjinterface.VJLayers();
+	$s.pop();
 }
 kumite.vjinterface.Config.__name__ = ["kumite","vjinterface","Config"];
 kumite.vjinterface.Config.prototype.vjinterface = null;
@@ -7421,34 +11464,56 @@ kumite.vjinterface.Config.__interfaces__ = [haxe.rtti.Infos];
 Timeout = function() { }
 Timeout.__name__ = ["Timeout"];
 Timeout.execute = function(ms,method) {
+	$s.push("Timeout::execute");
+	var $spos = $s.length;
 	var timer = new haxe.Timer(ms);
 	var run = function() {
+		$s.push("Timeout::execute@9");
+		var $spos = $s.length;
 		method();
 		timer.stop();
+		$s.pop();
 	};
 	timer.run = run;
+	$s.pop();
 }
 Timeout.prototype.__class__ = Timeout;
 bpmjs.ReflectUtil = function() { }
 bpmjs.ReflectUtil.__name__ = ["bpmjs","ReflectUtil"];
 bpmjs.ReflectUtil.callMethodWithMetadata = function(object,type,metadata,args) {
+	$s.push("bpmjs.ReflectUtil::callMethodWithMetadata");
+	var $spos = $s.length;
 	var metadatas = haxe.rtti.Meta.getFields(type);
 	var _g = 0, _g1 = Reflect.fields(metadatas);
 	while(_g < _g1.length) {
 		var fieldName = _g1[_g];
 		++_g;
 		var meta = Reflect.field(metadatas,fieldName);
-		if(Reflect.hasField(meta,metadata)) return Reflect.field(object,fieldName).apply(object,[]);
+		if(Reflect.hasField(meta,metadata)) {
+			var $tmp = Reflect.field(object,fieldName).apply(object,[]);
+			$s.pop();
+			return $tmp;
+		}
 	}
+	$s.pop();
 	return null;
+	$s.pop();
 }
 bpmjs.ReflectUtil.getClassName = function(object) {
-	return Type.getClassName(Type.getClass(object));
+	$s.push("bpmjs.ReflectUtil::getClassName");
+	var $spos = $s.length;
+	var $tmp = Type.getClassName(Type.getClass(object));
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 bpmjs.ReflectUtil.prototype.__class__ = bpmjs.ReflectUtil;
 haxe.exception.ArgumentNullException = function(argumentName,numberOfStackTraceShifts) {
 	if( argumentName === $_ ) return;
+	$s.push("haxe.exception.ArgumentNullException::new");
+	var $spos = $s.length;
 	haxe.exception.Exception.call(this,"Argument " + argumentName + " must be non-null",null,numberOfStackTraceShifts);
+	$s.pop();
 }
 haxe.exception.ArgumentNullException.__name__ = ["haxe","exception","ArgumentNullException"];
 haxe.exception.ArgumentNullException.__super__ = haxe.exception.Exception;
@@ -7457,22 +11522,44 @@ haxe.exception.ArgumentNullException.prototype.__class__ = haxe.exception.Argume
 hxjson2.JSON = function() { }
 hxjson2.JSON.__name__ = ["hxjson2","JSON"];
 hxjson2.JSON.encode = function(o) {
-	return new hxjson2.JSONEncoder(o).getString();
+	$s.push("hxjson2.JSON::encode");
+	var $spos = $s.length;
+	var $tmp = new hxjson2.JSONEncoder(o).getString();
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hxjson2.JSON.decode = function(s,strict) {
+	$s.push("hxjson2.JSON::decode");
+	var $spos = $s.length;
 	if(strict == null) strict = true;
-	return new hxjson2.JSONDecoder(s,strict).getValue();
+	var $tmp = new hxjson2.JSONDecoder(s,strict).getValue();
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hxjson2.JSON.stringify = function(o) {
-	return new hxjson2.JSONEncoder(o).getString();
+	$s.push("hxjson2.JSON::stringify");
+	var $spos = $s.length;
+	var $tmp = new hxjson2.JSONEncoder(o).getString();
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hxjson2.JSON.parse = function(s,strict) {
+	$s.push("hxjson2.JSON::parse");
+	var $spos = $s.length;
 	if(strict == null) strict = true;
-	return new hxjson2.JSONDecoder(s,strict).getValue();
+	var $tmp = new hxjson2.JSONDecoder(s,strict).getValue();
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 hxjson2.JSON.prototype.__class__ = hxjson2.JSON;
 kumite.musicdraw.MusicDrawConfig = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.musicdraw.MusicDrawConfig::new");
+	var $spos = $s.length;
 	this.analyzer = new kumite.musicdraw.MusicAnalyzer();
 	this.bandsReader = new kumite.musicdraw.BandsReader();
 	this.squareEffectWorkerHandler = new kumite.musicdraw.SquareEffectWorkerHandler();
@@ -7480,6 +11567,7 @@ kumite.musicdraw.MusicDrawConfig = function(p) {
 	this.clearLayer.color = new Color(0,0,0.0,1);
 	this.image1Layer = new kumite.layer.TextureLayer();
 	this.scene = new kumite.scene.DefaultScene("MUSIC DRAW");
+	$s.pop();
 }
 kumite.musicdraw.MusicDrawConfig.__name__ = ["kumite","musicdraw","MusicDrawConfig"];
 kumite.musicdraw.MusicDrawConfig.prototype.displayListLayer = null;
@@ -7491,24 +11579,34 @@ kumite.musicdraw.MusicDrawConfig.prototype.clearLayer = null;
 kumite.musicdraw.MusicDrawConfig.prototype.image1Layer = null;
 kumite.musicdraw.MusicDrawConfig.prototype.squareEffectWorkerHandler = null;
 kumite.musicdraw.MusicDrawConfig.prototype.init = function() {
+	$s.push("kumite.musicdraw.MusicDrawConfig::init");
+	var $spos = $s.length;
 	this.scene.addLayerLifecycle(this.clearLayer,kumite.layer.LayerId.CLEAR);
 	this.scene.addLayerLifecycle(this.image1Layer);
 	this.scene.addLayerLifecycle(this.displayListLayer);
 	this.image1Layer.texture = this.squareEffectWorkerHandler.createTexture();
 	var group = new bpmjs.SequencerTaskGroup();
 	group.add(this.bandsReader.read("data/bands/expo2000.json"));
+	$s.pop();
 	return group;
+	$s.pop();
 }
 kumite.musicdraw.MusicDrawConfig.prototype.start = function() {
+	$s.push("kumite.musicdraw.MusicDrawConfig::start");
+	var $spos = $s.length;
 	this.squareEffectWorkerHandler.start();
+	$s.pop();
 }
 kumite.musicdraw.MusicDrawConfig.prototype.__class__ = kumite.musicdraw.MusicDrawConfig;
 kumite.musicdraw.MusicDrawConfig.__interfaces__ = [haxe.rtti.Infos];
 kumite.scene.SceneConfig = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.scene.SceneConfig::new");
+	var $spos = $s.length;
 	this.scenes = new kumite.scene.Scenes();
 	this.sceneNavigator = new kumite.scene.SceneNavigator();
 	this.sceneNavigator.transitionTime = 1000;
+	$s.pop();
 }
 kumite.scene.SceneConfig.__name__ = ["kumite","scene","SceneConfig"];
 kumite.scene.SceneConfig.prototype.scenes = null;
@@ -7517,35 +11615,67 @@ kumite.scene.SceneConfig.prototype.__class__ = kumite.scene.SceneConfig;
 kumite.scene.SceneConfig.__interfaces__ = [haxe.rtti.Infos];
 bpmjs.Context = function(p) {
 	if( p === $_ ) return;
+	$s.push("bpmjs.Context::new");
+	var $spos = $s.length;
 	this.objects = new Array();
 	this.observers = new Array();
+	$s.pop();
 }
 bpmjs.Context.__name__ = ["bpmjs","Context"];
 bpmjs.Context.prototype.contextConfig = null;
 bpmjs.Context.prototype.objects = null;
 bpmjs.Context.prototype.observers = null;
 bpmjs.Context.prototype.addObject = function(name,classInfo,object) {
+	$s.push("bpmjs.Context::addObject");
+	var $spos = $s.length;
 	var contextObject = new bpmjs.ContextObject(name,classInfo,object);
 	this.objects.push(contextObject);
+	$s.pop();
 	return contextObject;
+	$s.pop();
 }
 bpmjs.Context.prototype.getObjectByName = function(name) {
+	$s.push("bpmjs.Context::getObjectByName");
+	var $spos = $s.length;
 	var _g = 0, _g1 = this.objects;
 	while(_g < _g1.length) {
 		var contextObject = _g1[_g];
 		++_g;
-		if(contextObject.name == name) return contextObject.object;
+		if(contextObject.name == name) {
+			var $tmp = contextObject.object;
+			$s.pop();
+			return $tmp;
+		}
 	}
+	$s.pop();
 	return null;
+	$s.pop();
 }
 bpmjs.Context.prototype.getObjectByType = function(type) {
+	$s.push("bpmjs.Context::getObjectByType");
+	var $spos = $s.length;
 	var result = Lambda.filter(this.objects,this.getFilterByType(type));
-	if(result.length == 1) return result.first().object; else if(result.length > 1) throw "Multiple objects of type: " + result.first().classInfo.name + " found"; else return null;
+	if(result.length == 1) {
+		var $tmp = result.first().object;
+		$s.pop();
+		return $tmp;
+	} else if(result.length > 1) throw "Multiple objects of type: " + result.first().classInfo.name + " found"; else {
+		$s.pop();
+		return null;
+	}
+	$s.pop();
 }
 bpmjs.Context.prototype.getDynamicObjectsByType = function(type) {
-	return Lambda.filter(this.objects,this.getFilterByType(type));
+	$s.push("bpmjs.Context::getDynamicObjectsByType");
+	var $spos = $s.length;
+	var $tmp = Lambda.filter(this.objects,this.getFilterByType(type));
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 bpmjs.Context.prototype.addObserver = function(object,methodName,type) {
+	$s.push("bpmjs.Context::addObserver");
+	var $spos = $s.length;
 	{
 		Log.posInfo = { fileName : "Context.hx", lineNumber : 54, className : "bpmjs.Context", methodName : "addObserver"};
 		if(Log.filter(LogLevel.INFO)) {
@@ -7558,19 +11688,33 @@ bpmjs.Context.prototype.addObserver = function(object,methodName,type) {
 	observer.methodName = methodName;
 	observer.type = type;
 	this.observers.push(observer);
+	$s.pop();
 }
 bpmjs.Context.prototype.getFilterByType = function(type) {
-	return function(contextObject) {
-		return contextObject.type == type;
+	$s.push("bpmjs.Context::getFilterByType");
+	var $spos = $s.length;
+	var $tmp = function(contextObject) {
+		$s.push("bpmjs.Context::getFilterByType@65");
+		var $spos = $s.length;
+		var $tmp = contextObject.type == type;
+		$s.pop();
+		return $tmp;
+		$s.pop();
 	};
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 bpmjs.Context.prototype.__class__ = bpmjs.Context;
 bpmjs.ContextObject = function(name,classInfo,object) {
 	if( name === $_ ) return;
+	$s.push("bpmjs.ContextObject::new");
+	var $spos = $s.length;
 	this.name = name;
 	this.classInfo = classInfo;
 	this.type = classInfo.type;
 	this.object = object;
+	$s.pop();
 }
 bpmjs.ContextObject.__name__ = ["bpmjs","ContextObject"];
 bpmjs.ContextObject.prototype.name = null;
@@ -7579,18 +11723,27 @@ bpmjs.ContextObject.prototype.object = null;
 bpmjs.ContextObject.prototype.classInfo = null;
 bpmjs.ContextObject.prototype.__class__ = bpmjs.ContextObject;
 bpmjs.Observer = function(p) {
+	$s.push("bpmjs.Observer::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 bpmjs.Observer.__name__ = ["bpmjs","Observer"];
 bpmjs.Observer.prototype.object = null;
 bpmjs.Observer.prototype.methodName = null;
 bpmjs.Observer.prototype.type = null;
 bpmjs.Observer.prototype.observe = function(objectToObserve) {
+	$s.push("bpmjs.Observer::observe");
+	var $spos = $s.length;
 	if(Std["is"](objectToObserve.object,this.type.type)) Reflect.field(this.object.object,this.methodName).apply(this.object.object,[objectToObserve.object]);
+	$s.pop();
 }
 bpmjs.Observer.prototype.__class__ = bpmjs.Observer;
 kumite.mouse.Config = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.mouse.Config::new");
+	var $spos = $s.length;
 	this.mouseController = new kumite.mouse.MouseController();
+	$s.pop();
 }
 kumite.mouse.Config.__name__ = ["kumite","mouse","Config"];
 kumite.mouse.Config.prototype.mouseController = null;
@@ -7598,24 +11751,37 @@ kumite.mouse.Config.prototype.__class__ = kumite.mouse.Config;
 kumite.mouse.Config.__interfaces__ = [haxe.rtti.Infos];
 haxe.Http = function(url) {
 	if( url === $_ ) return;
+	$s.push("haxe.Http::new");
+	var $spos = $s.length;
 	this.url = url;
 	this.headers = new Hash();
 	this.params = new Hash();
 	this.async = true;
+	$s.pop();
 }
 haxe.Http.__name__ = ["haxe","Http"];
 haxe.Http.requestUrl = function(url) {
+	$s.push("haxe.Http::requestUrl");
+	var $spos = $s.length;
 	var h = new haxe.Http(url);
 	h.async = false;
 	var r = null;
 	h.onData = function(d) {
+		$s.push("haxe.Http::requestUrl@636");
+		var $spos = $s.length;
 		r = d;
+		$s.pop();
 	};
 	h.onError = function(e) {
+		$s.push("haxe.Http::requestUrl@639");
+		var $spos = $s.length;
 		throw e;
+		$s.pop();
 	};
 	h.request(false);
+	$s.pop();
 	return r;
+	$s.pop();
 }
 haxe.Http.prototype.url = null;
 haxe.Http.prototype.async = null;
@@ -7623,25 +11789,48 @@ haxe.Http.prototype.postData = null;
 haxe.Http.prototype.headers = null;
 haxe.Http.prototype.params = null;
 haxe.Http.prototype.setHeader = function(header,value) {
+	$s.push("haxe.Http::setHeader");
+	var $spos = $s.length;
 	this.headers.set(header,value);
+	$s.pop();
 }
 haxe.Http.prototype.setParameter = function(param,value) {
+	$s.push("haxe.Http::setParameter");
+	var $spos = $s.length;
 	this.params.set(param,value);
+	$s.pop();
 }
 haxe.Http.prototype.setPostData = function(data) {
+	$s.push("haxe.Http::setPostData");
+	var $spos = $s.length;
 	this.postData = data;
+	$s.pop();
 }
 haxe.Http.prototype.request = function(post) {
+	$s.push("haxe.Http::request");
+	var $spos = $s.length;
 	var me = this;
 	var r = new js.XMLHttpRequest();
 	var onreadystatechange = function() {
-		if(r.readyState != 4) return;
+		$s.push("haxe.Http::request@108");
+		var $spos = $s.length;
+		if(r.readyState != 4) {
+			$s.pop();
+			return;
+		}
 		var s = (function($this) {
 			var $r;
 			try {
 				$r = r.status;
 			} catch( e ) {
-				$r = null;
+				$r = (function($this) {
+					var $r;
+					$e = [];
+					while($s.length >= $spos) $e.unshift($s.pop());
+					$s.push($e[0]);
+					$r = null;
+					return $r;
+				}($this));
 			}
 			return $r;
 		}(this));
@@ -7660,6 +11849,7 @@ haxe.Http.prototype.request = function(post) {
 		default:
 			me.onError("Http Error #" + r.status);
 		}
+		$s.pop();
 	};
 	if(this.async) r.onreadystatechange = onreadystatechange;
 	var uri = this.postData;
@@ -7678,7 +11868,11 @@ haxe.Http.prototype.request = function(post) {
 			uri = null;
 		} else r.open("GET",this.url,this.async);
 	} catch( e ) {
+		$e = [];
+		while($s.length >= $spos) $e.unshift($s.pop());
+		$s.push($e[0]);
 		this.onError(e.toString());
+		$s.pop();
 		return;
 	}
 	if(this.headers.get("Content-Type") == null && post && this.postData == null) r.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
@@ -7689,38 +11883,64 @@ haxe.Http.prototype.request = function(post) {
 	}
 	r.send(uri);
 	if(!this.async) onreadystatechange();
+	$s.pop();
 }
 haxe.Http.prototype.onData = function(data) {
+	$s.push("haxe.Http::onData");
+	var $spos = $s.length;
+	$s.pop();
 }
 haxe.Http.prototype.onError = function(msg) {
+	$s.push("haxe.Http::onError");
+	var $spos = $s.length;
+	$s.pop();
 }
 haxe.Http.prototype.onStatus = function(status) {
+	$s.push("haxe.Http::onStatus");
+	var $spos = $s.length;
+	$s.pop();
 }
 haxe.Http.prototype.__class__ = haxe.Http;
 kumite.musicdraw.MusicAnalyzer = function(p) {
+	$s.push("kumite.musicdraw.MusicAnalyzer::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 kumite.musicdraw.MusicAnalyzer.__name__ = ["kumite","musicdraw","MusicAnalyzer"];
 kumite.musicdraw.MusicAnalyzer.prototype.bands = null;
 kumite.musicdraw.MusicAnalyzer.prototype.__class__ = kumite.musicdraw.MusicAnalyzer;
 GLTweenManager = function(p) {
 	if( p === $_ ) return;
+	$s.push("GLTweenManager::new");
+	var $spos = $s.length;
 	this.time = Date.now().getTime();
 	this.tweens = new Array();
 	GLAnimationFrame.run($closure(this,"tick"));
+	$s.pop();
 }
 GLTweenManager.__name__ = ["GLTweenManager"];
 GLTweenManager.instance = null;
 GLTweenManager.getInstance = function() {
+	$s.push("GLTweenManager::getInstance");
+	var $spos = $s.length;
 	if(GLTweenManager.instance == null) GLTweenManager.instance = new GLTweenManager();
-	return GLTweenManager.instance;
+	var $tmp = GLTweenManager.instance;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 GLTweenManager.prototype.tweens = null;
 GLTweenManager.prototype.time = null;
 GLTweenManager.prototype.add = function(tween) {
+	$s.push("GLTweenManager::add");
+	var $spos = $s.length;
 	tween.init(this.time);
 	this.tweens.push(tween);
+	$s.pop();
 }
 GLTweenManager.prototype.tick = function() {
+	$s.push("GLTweenManager::tick");
+	var $spos = $s.length;
 	this.time = Date.now().getTime();
 	var _g = 0, _g1 = this.tweens;
 	while(_g < _g1.length) {
@@ -7729,71 +11949,112 @@ GLTweenManager.prototype.tick = function() {
 		tween.run(this.time);
 		if(!tween.isActive) this.tweens.remove(tween);
 	}
+	$s.pop();
 }
 GLTweenManager.prototype.__class__ = GLTweenManager;
 Map = function() { }
 Map.__name__ = ["Map"];
 Map.linear = function(value,min0,max0,min1,max1) {
+	$s.push("Map::linear");
+	var $spos = $s.length;
 	var p0 = 1 / (max0 - min0) * (value - min0);
-	return min1 + (max1 - min1) * p0;
+	var $tmp = min1 + (max1 - min1) * p0;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Map.ease = function(value,min0,max0,min1,max1,easeFunction) {
+	$s.push("Map::ease");
+	var $spos = $s.length;
 	var p0 = 1 / (max0 - min0) * (value - min0);
 	var t = p0;
 	var b = min1;
 	var c = max1;
 	var d = 1;
-	return easeFunction(t,b,c,d);
+	var $tmp = easeFunction(t,b,c,d);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Map.prototype.__class__ = Map;
 kumite.scene.Scene = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.scene.Scene::new");
+	var $spos = $s.length;
 	this.layers = new Array();
+	$s.pop();
 }
 kumite.scene.Scene.__name__ = ["kumite","scene","Scene"];
 kumite.scene.Scene.prototype.layers = null;
 kumite.scene.Scene.prototype.id = null;
 kumite.scene.Scene.prototype.name = null;
 kumite.scene.Scene.prototype.addLayer = function(layer) {
+	$s.push("kumite.scene.Scene::addLayer");
+	var $spos = $s.length;
 	this.layers.push(layer);
+	$s.pop();
 }
 kumite.scene.Scene.prototype.containsLayer = function(layer) {
+	$s.push("kumite.scene.Scene::containsLayer");
+	var $spos = $s.length;
 	var _g = 0, _g1 = this.layers;
 	while(_g < _g1.length) {
 		var sceneLayer = _g1[_g];
 		++_g;
-		if(sceneLayer.layerId == layer.layerId) return true;
+		if(sceneLayer.layerId == layer.layerId) {
+			$s.pop();
+			return true;
+		}
 	}
+	$s.pop();
 	return false;
+	$s.pop();
 }
 kumite.scene.Scene.prototype.getLayerIndex = function(layer) {
+	$s.push("kumite.scene.Scene::getLayerIndex");
+	var $spos = $s.length;
 	var _g1 = 0, _g = this.layers.length;
 	while(_g1 < _g) {
 		var i = _g1++;
-		if(this.layers[i].layerId == layer.layerId) return i;
+		if(this.layers[i].layerId == layer.layerId) {
+			$s.pop();
+			return i;
+		}
 	}
+	$s.pop();
 	return -1;
+	$s.pop();
 }
 kumite.scene.Scene.prototype.__class__ = kumite.scene.Scene;
 bpmjs.ContextConfig = function(p) {
+	$s.push("bpmjs.ContextConfig::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 bpmjs.ContextConfig.__name__ = ["bpmjs","ContextConfig"];
 bpmjs.ContextConfig.prototype.frontMessenger = null;
 bpmjs.ContextConfig.prototype.__class__ = bpmjs.ContextConfig;
 GLTween = function(o,ms,params) {
 	if( o === $_ ) return;
+	$s.push("GLTween::new");
+	var $spos = $s.length;
 	this.o = o;
 	this.ms = ms;
 	this.params = params;
 	this.isActive = true;
 	this.properties = new Array();
 	this.completeSignaler = new hsl.haxe.DirectSignaler(this);
+	$s.pop();
 }
 GLTween.__name__ = ["GLTween"];
 GLTween.to = function(o,ms,params) {
+	$s.push("GLTween::to");
+	var $spos = $s.length;
 	var result = new GLTween(o,ms,params);
 	GLTweenManager.getInstance().add(result);
+	$s.pop();
 	return result;
+	$s.pop();
 }
 GLTween.prototype.isActive = null;
 GLTween.prototype.startTime = null;
@@ -7804,10 +12065,16 @@ GLTween.prototype.properties = null;
 GLTween.prototype.easeFunction = null;
 GLTween.prototype.completeSignaler = null;
 GLTween.prototype.complete = function(method) {
+	$s.push("GLTween::complete");
+	var $spos = $s.length;
 	this.completeSignaler.bind(method);
+	$s.pop();
 	return this;
+	$s.pop();
 }
 GLTween.prototype.init = function(time) {
+	$s.push("GLTween::init");
+	var $spos = $s.length;
 	this.startTime = time;
 	this.easeFunction = ease.Quad.easeInOut;
 	var fields = Reflect.fields(this.params);
@@ -7829,8 +12096,11 @@ GLTween.prototype.init = function(time) {
 			}
 		}
 	}
+	$s.pop();
 }
 GLTween.prototype.run = function(time) {
+	$s.push("GLTween::run");
+	var $spos = $s.length;
 	var dt = time - this.startTime;
 	if(dt > this.ms) {
 		dt = this.ms;
@@ -7845,18 +12115,25 @@ GLTween.prototype.run = function(time) {
 		++_g;
 		property.ease(this,dt);
 	}
+	$s.pop();
 }
 GLTween.prototype.__class__ = GLTween;
 Property = function(p) {
+	$s.push("Property::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 Property.__name__ = ["Property"];
 Property.prototype.from = null;
 Property.prototype.to = null;
 Property.prototype.field = null;
 Property.prototype.ease = function(tween,dt) {
+	$s.push("Property::ease");
+	var $spos = $s.length;
 	var o = tween.o;
 	var value = tween.easeFunction(dt,this.from,this.to - this.from,tween.ms);
 	o[this.field] = value;
+	$s.pop();
 }
 Property.prototype.__class__ = Property;
 bpmjs.Stats = function() { }
@@ -7867,36 +12144,56 @@ bpmjs.Stats.times = null;
 bpmjs.Stats.finishedTimes = null;
 bpmjs.Stats.messages = null;
 bpmjs.Stats.init = function() {
+	$s.push("bpmjs.Stats::init");
+	var $spos = $s.length;
 	bpmjs.Stats.clear();
 	bpmjs.Stats.initialized = true;
+	$s.pop();
 }
 bpmjs.Stats.clear = function() {
+	$s.push("bpmjs.Stats::clear");
+	var $spos = $s.length;
 	bpmjs.Stats.times = new Array();
 	bpmjs.Stats.finishedTimes = new Array();
 	bpmjs.Stats.messages = new Array();
+	$s.pop();
 }
 bpmjs.Stats.measureFPS = function() {
+	$s.push("bpmjs.Stats::measureFPS");
+	var $spos = $s.length;
 	bpmjs.Stats.checkInit();
 	var time = Date.now().getTime();
 	bpmjs.Stats.fps = 1000 / (time - bpmjs.Stats.lastTime);
 	bpmjs.Stats.lastTime = time;
+	$s.pop();
 }
 bpmjs.Stats.checkStart = function(message) {
+	$s.push("bpmjs.Stats::checkStart");
+	var $spos = $s.length;
 	bpmjs.Stats.checkInit();
 	var time = Date.now().getTime();
 	bpmjs.Stats.times.push({ start : time, stop : 0.0, message : message});
+	$s.pop();
 }
 bpmjs.Stats.addMessage = function(message) {
+	$s.push("bpmjs.Stats::addMessage");
+	var $spos = $s.length;
 	bpmjs.Stats.checkInit();
 	bpmjs.Stats.messages.push(message);
+	$s.pop();
 }
 bpmjs.Stats.checkStop = function() {
+	$s.push("bpmjs.Stats::checkStop");
+	var $spos = $s.length;
 	bpmjs.Stats.checkInit();
 	var timeAndMessage = bpmjs.Stats.times.pop();
 	timeAndMessage.stop = Date.now().getTime();
 	bpmjs.Stats.finishedTimes.push(timeAndMessage);
+	$s.pop();
 }
 bpmjs.Stats.getContents = function() {
+	$s.push("bpmjs.Stats::getContents");
+	var $spos = $s.length;
 	var finalMessages = new Array();
 	finalMessages.push("FPS: " + Math.round(bpmjs.Stats.fps));
 	var _g = 0, _g1 = bpmjs.Stats.finishedTimes;
@@ -7911,33 +12208,52 @@ bpmjs.Stats.getContents = function() {
 		++_g;
 		finalMessages.push(message);
 	}
+	$s.pop();
 	return finalMessages;
+	$s.pop();
 }
 bpmjs.Stats.checkInit = function() {
+	$s.push("bpmjs.Stats::checkInit");
+	var $spos = $s.length;
 	if(!bpmjs.Stats.initialized) bpmjs.Stats.init();
+	$s.pop();
 }
 bpmjs.Stats.prototype.__class__ = bpmjs.Stats;
 ERegFilter = function(level,r) {
 	if( level === $_ ) return;
+	$s.push("ERegFilter::new");
+	var $spos = $s.length;
 	this.level = level;
 	this.r = r;
+	$s.pop();
 }
 ERegFilter.__name__ = ["ERegFilter"];
 ERegFilter.prototype.level = null;
 ERegFilter.prototype.r = null;
 ERegFilter.prototype.enabled = function(input,i,level) {
+	$s.push("ERegFilter::enabled");
+	var $spos = $s.length;
 	var sender = i.className + "." + i.methodName;
 	var matches = this.r.match(sender);
-	if(!matches) return input;
-	return matches && this.level.isSmallerOrEqual(level);
+	if(!matches) {
+		$s.pop();
+		return input;
+	}
+	var $tmp = matches && this.level.isSmallerOrEqual(level);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 ERegFilter.prototype.__class__ = ERegFilter;
 ERegFilter.__interfaces__ = [LogFilter];
 kumite.launch.Config = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.launch.Config::new");
+	var $spos = $s.length;
 	this.launcher = new kumite.launch.Launcher();
 	this.sequencer = new bpmjs.Sequencer();
 	this.preloadDisplay = new kumite.launch.PreloadDisplay();
+	$s.pop();
 }
 kumite.launch.Config.__name__ = ["kumite","launch","Config"];
 kumite.launch.Config.prototype.sequencer = null;
@@ -7945,59 +12261,98 @@ kumite.launch.Config.prototype.launcher = null;
 kumite.launch.Config.prototype.preloadDisplay = null;
 kumite.launch.Config.prototype.__class__ = kumite.launch.Config;
 kumite.launch.Config.__interfaces__ = [haxe.rtti.Infos];
-bpmjs.WorkerCommand = function(type) {
-	if( type === $_ ) return;
-	this.type = type;
-}
-bpmjs.WorkerCommand.__name__ = ["bpmjs","WorkerCommand"];
-bpmjs.WorkerCommand.prototype.type = null;
-bpmjs.WorkerCommand.prototype.__class__ = bpmjs.WorkerCommand;
 EReg = function(r,opt) {
 	if( r === $_ ) return;
+	$s.push("EReg::new");
+	var $spos = $s.length;
 	opt = opt.split("u").join("");
 	this.r = new RegExp(r,opt);
+	$s.pop();
 }
 EReg.__name__ = ["EReg"];
 EReg.prototype.r = null;
 EReg.prototype.match = function(s) {
+	$s.push("EReg::match");
+	var $spos = $s.length;
 	this.r.m = this.r.exec(s);
 	this.r.s = s;
 	this.r.l = RegExp.leftContext;
 	this.r.r = RegExp.rightContext;
-	return this.r.m != null;
+	var $tmp = this.r.m != null;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 EReg.prototype.matched = function(n) {
-	return this.r.m != null && n >= 0 && n < this.r.m.length?this.r.m[n]:(function($this) {
+	$s.push("EReg::matched");
+	var $spos = $s.length;
+	var $tmp = this.r.m != null && n >= 0 && n < this.r.m.length?this.r.m[n]:(function($this) {
 		var $r;
 		throw "EReg::matched";
 		return $r;
 	}(this));
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 EReg.prototype.matchedLeft = function() {
+	$s.push("EReg::matchedLeft");
+	var $spos = $s.length;
 	if(this.r.m == null) throw "No string matched";
-	if(this.r.l == null) return this.r.s.substr(0,this.r.m.index);
-	return this.r.l;
+	if(this.r.l == null) {
+		var $tmp = this.r.s.substr(0,this.r.m.index);
+		$s.pop();
+		return $tmp;
+	}
+	var $tmp = this.r.l;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 EReg.prototype.matchedRight = function() {
+	$s.push("EReg::matchedRight");
+	var $spos = $s.length;
 	if(this.r.m == null) throw "No string matched";
 	if(this.r.r == null) {
 		var sz = this.r.m.index + this.r.m[0].length;
-		return this.r.s.substr(sz,this.r.s.length - sz);
+		var $tmp = this.r.s.substr(sz,this.r.s.length - sz);
+		$s.pop();
+		return $tmp;
 	}
-	return this.r.r;
+	var $tmp = this.r.r;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 EReg.prototype.matchedPos = function() {
+	$s.push("EReg::matchedPos");
+	var $spos = $s.length;
 	if(this.r.m == null) throw "No string matched";
-	return { pos : this.r.m.index, len : this.r.m[0].length};
+	var $tmp = { pos : this.r.m.index, len : this.r.m[0].length};
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 EReg.prototype.split = function(s) {
+	$s.push("EReg::split");
+	var $spos = $s.length;
 	var d = "#__delim__#";
-	return s.replace(this.r,d).split(d);
+	var $tmp = s.replace(this.r,d).split(d);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 EReg.prototype.replace = function(s,by) {
-	return s.replace(this.r,by);
+	$s.push("EReg::replace");
+	var $spos = $s.length;
+	var $tmp = s.replace(this.r,by);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 EReg.prototype.customReplace = function(s,f) {
+	$s.push("EReg::customReplace");
+	var $spos = $s.length;
 	var buf = new StringBuf();
 	while(true) {
 		if(!this.match(s)) break;
@@ -8006,10 +12361,16 @@ EReg.prototype.customReplace = function(s,f) {
 		s = this.matchedRight();
 	}
 	buf.b[buf.b.length] = s == null?"null":s;
-	return buf.b.join("");
+	var $tmp = buf.b.join("");
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 EReg.prototype.__class__ = EReg;
 Xml = function(p) {
+	$s.push("Xml::new");
+	var $spos = $s.length;
+	$s.pop();
 }
 Xml.__name__ = ["Xml"];
 Xml.Element = null;
@@ -8020,6 +12381,8 @@ Xml.DocType = null;
 Xml.Prolog = null;
 Xml.Document = null;
 Xml.parse = function(str) {
+	$s.push("Xml::parse");
+	var $spos = $s.length;
 	var rules = [Xml.enode,Xml.epcdata,Xml.eend,Xml.ecdata,Xml.edoctype,Xml.ecomment,Xml.eprolog];
 	var nrules = rules.length;
 	var current = Xml.createDocument();
@@ -8123,51 +12486,81 @@ Xml.parse = function(str) {
 		}
 	}
 	if(!stack.isEmpty()) throw "Xml parse error : Unclosed " + stack.last().getNodeName();
+	$s.pop();
 	return current;
+	$s.pop();
 }
 Xml.createElement = function(name) {
+	$s.push("Xml::createElement");
+	var $spos = $s.length;
 	var r = new Xml();
 	r.nodeType = Xml.Element;
 	r._children = new Array();
 	r._attributes = new Hash();
 	r.setNodeName(name);
+	$s.pop();
 	return r;
+	$s.pop();
 }
 Xml.createPCData = function(data) {
+	$s.push("Xml::createPCData");
+	var $spos = $s.length;
 	var r = new Xml();
 	r.nodeType = Xml.PCData;
 	r.setNodeValue(data);
+	$s.pop();
 	return r;
+	$s.pop();
 }
 Xml.createCData = function(data) {
+	$s.push("Xml::createCData");
+	var $spos = $s.length;
 	var r = new Xml();
 	r.nodeType = Xml.CData;
 	r.setNodeValue(data);
+	$s.pop();
 	return r;
+	$s.pop();
 }
 Xml.createComment = function(data) {
+	$s.push("Xml::createComment");
+	var $spos = $s.length;
 	var r = new Xml();
 	r.nodeType = Xml.Comment;
 	r.setNodeValue(data);
+	$s.pop();
 	return r;
+	$s.pop();
 }
 Xml.createDocType = function(data) {
+	$s.push("Xml::createDocType");
+	var $spos = $s.length;
 	var r = new Xml();
 	r.nodeType = Xml.DocType;
 	r.setNodeValue(data);
+	$s.pop();
 	return r;
+	$s.pop();
 }
 Xml.createProlog = function(data) {
+	$s.push("Xml::createProlog");
+	var $spos = $s.length;
 	var r = new Xml();
 	r.nodeType = Xml.Prolog;
 	r.setNodeValue(data);
+	$s.pop();
 	return r;
+	$s.pop();
 }
 Xml.createDocument = function() {
+	$s.push("Xml::createDocument");
+	var $spos = $s.length;
 	var r = new Xml();
 	r.nodeType = Xml.Document;
 	r._children = new Array();
+	$s.pop();
 	return r;
+	$s.pop();
 }
 Xml.prototype.nodeType = null;
 Xml.prototype.nodeName = null;
@@ -8179,55 +12572,120 @@ Xml.prototype._attributes = null;
 Xml.prototype._children = null;
 Xml.prototype._parent = null;
 Xml.prototype.getNodeName = function() {
+	$s.push("Xml::getNodeName");
+	var $spos = $s.length;
 	if(this.nodeType != Xml.Element) throw "bad nodeType";
-	return this._nodeName;
+	var $tmp = this._nodeName;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Xml.prototype.setNodeName = function(n) {
+	$s.push("Xml::setNodeName");
+	var $spos = $s.length;
 	if(this.nodeType != Xml.Element) throw "bad nodeType";
-	return this._nodeName = n;
+	var $tmp = this._nodeName = n;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Xml.prototype.getNodeValue = function() {
+	$s.push("Xml::getNodeValue");
+	var $spos = $s.length;
 	if(this.nodeType == Xml.Element || this.nodeType == Xml.Document) throw "bad nodeType";
-	return this._nodeValue;
+	var $tmp = this._nodeValue;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Xml.prototype.setNodeValue = function(v) {
+	$s.push("Xml::setNodeValue");
+	var $spos = $s.length;
 	if(this.nodeType == Xml.Element || this.nodeType == Xml.Document) throw "bad nodeType";
-	return this._nodeValue = v;
+	var $tmp = this._nodeValue = v;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Xml.prototype.getParent = function() {
-	return this._parent;
+	$s.push("Xml::getParent");
+	var $spos = $s.length;
+	var $tmp = this._parent;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Xml.prototype.get = function(att) {
+	$s.push("Xml::get");
+	var $spos = $s.length;
 	if(this.nodeType != Xml.Element) throw "bad nodeType";
-	return this._attributes.get(att);
+	var $tmp = this._attributes.get(att);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Xml.prototype.set = function(att,value) {
+	$s.push("Xml::set");
+	var $spos = $s.length;
 	if(this.nodeType != Xml.Element) throw "bad nodeType";
 	this._attributes.set(att,value);
+	$s.pop();
 }
 Xml.prototype.remove = function(att) {
+	$s.push("Xml::remove");
+	var $spos = $s.length;
 	if(this.nodeType != Xml.Element) throw "bad nodeType";
 	this._attributes.remove(att);
+	$s.pop();
 }
 Xml.prototype.exists = function(att) {
+	$s.push("Xml::exists");
+	var $spos = $s.length;
 	if(this.nodeType != Xml.Element) throw "bad nodeType";
-	return this._attributes.exists(att);
+	var $tmp = this._attributes.exists(att);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Xml.prototype.attributes = function() {
+	$s.push("Xml::attributes");
+	var $spos = $s.length;
 	if(this.nodeType != Xml.Element) throw "bad nodeType";
-	return this._attributes.keys();
+	var $tmp = this._attributes.keys();
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Xml.prototype.iterator = function() {
+	$s.push("Xml::iterator");
+	var $spos = $s.length;
 	if(this._children == null) throw "bad nodetype";
-	return { cur : 0, x : this._children, hasNext : function() {
-		return this.cur < this.x.length;
+	var $tmp = { cur : 0, x : this._children, hasNext : function() {
+		$s.push("Xml::iterator@281");
+		var $spos = $s.length;
+		var $tmp = this.cur < this.x.length;
+		$s.pop();
+		return $tmp;
+		$s.pop();
 	}, next : function() {
-		return this.x[this.cur++];
+		$s.push("Xml::iterator@284");
+		var $spos = $s.length;
+		var $tmp = this.x[this.cur++];
+		$s.pop();
+		return $tmp;
+		$s.pop();
 	}};
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Xml.prototype.elements = function() {
+	$s.push("Xml::elements");
+	var $spos = $s.length;
 	if(this._children == null) throw "bad nodetype";
-	return { cur : 0, x : this._children, hasNext : function() {
+	var $tmp = { cur : 0, x : this._children, hasNext : function() {
+		$s.push("Xml::elements@295");
+		var $spos = $s.length;
 		var k = this.cur;
 		var l = this.x.length;
 		while(k < l) {
@@ -8235,8 +12693,13 @@ Xml.prototype.elements = function() {
 			k += 1;
 		}
 		this.cur = k;
-		return k < l;
+		var $tmp = k < l;
+		$s.pop();
+		return $tmp;
+		$s.pop();
 	}, next : function() {
+		$s.push("Xml::elements@306");
+		var $spos = $s.length;
 		var k = this.cur;
 		var l = this.x.length;
 		while(k < l) {
@@ -8244,15 +12707,25 @@ Xml.prototype.elements = function() {
 			k += 1;
 			if(n.nodeType == Xml.Element) {
 				this.cur = k;
+				$s.pop();
 				return n;
 			}
 		}
+		$s.pop();
 		return null;
+		$s.pop();
 	}};
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Xml.prototype.elementsNamed = function(name) {
+	$s.push("Xml::elementsNamed");
+	var $spos = $s.length;
 	if(this._children == null) throw "bad nodetype";
-	return { cur : 0, x : this._children, hasNext : function() {
+	var $tmp = { cur : 0, x : this._children, hasNext : function() {
+		$s.push("Xml::elementsNamed@327");
+		var $spos = $s.length;
 		var k = this.cur;
 		var l = this.x.length;
 		while(k < l) {
@@ -8261,8 +12734,13 @@ Xml.prototype.elementsNamed = function(name) {
 			k++;
 		}
 		this.cur = k;
-		return k < l;
+		var $tmp = k < l;
+		$s.pop();
+		return $tmp;
+		$s.pop();
 	}, next : function() {
+		$s.push("Xml::elementsNamed@339");
+		var $spos = $s.length;
 		var k = this.cur;
 		var l = this.x.length;
 		while(k < l) {
@@ -8270,51 +12748,101 @@ Xml.prototype.elementsNamed = function(name) {
 			k++;
 			if(n.nodeType == Xml.Element && n._nodeName == name) {
 				this.cur = k;
+				$s.pop();
 				return n;
 			}
 		}
+		$s.pop();
 		return null;
+		$s.pop();
 	}};
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Xml.prototype.firstChild = function() {
+	$s.push("Xml::firstChild");
+	var $spos = $s.length;
 	if(this._children == null) throw "bad nodetype";
-	return this._children[0];
+	var $tmp = this._children[0];
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Xml.prototype.firstElement = function() {
+	$s.push("Xml::firstElement");
+	var $spos = $s.length;
 	if(this._children == null) throw "bad nodetype";
 	var cur = 0;
 	var l = this._children.length;
 	while(cur < l) {
 		var n = this._children[cur];
-		if(n.nodeType == Xml.Element) return n;
+		if(n.nodeType == Xml.Element) {
+			$s.pop();
+			return n;
+		}
 		cur++;
 	}
+	$s.pop();
 	return null;
+	$s.pop();
 }
 Xml.prototype.addChild = function(x) {
+	$s.push("Xml::addChild");
+	var $spos = $s.length;
 	if(this._children == null) throw "bad nodetype";
 	if(x._parent != null) x._parent._children.remove(x);
 	x._parent = this;
 	this._children.push(x);
+	$s.pop();
 }
 Xml.prototype.removeChild = function(x) {
+	$s.push("Xml::removeChild");
+	var $spos = $s.length;
 	if(this._children == null) throw "bad nodetype";
 	var b = this._children.remove(x);
 	if(b) x._parent = null;
+	$s.pop();
 	return b;
+	$s.pop();
 }
 Xml.prototype.insertChild = function(x,pos) {
+	$s.push("Xml::insertChild");
+	var $spos = $s.length;
 	if(this._children == null) throw "bad nodetype";
 	if(x._parent != null) x._parent._children.remove(x);
 	x._parent = this;
 	this._children.insert(pos,x);
+	$s.pop();
 }
 Xml.prototype.toString = function() {
-	if(this.nodeType == Xml.PCData) return this._nodeValue;
-	if(this.nodeType == Xml.CData) return "<![CDATA[" + this._nodeValue + "]]>";
-	if(this.nodeType == Xml.Comment) return "<!--" + this._nodeValue + "-->";
-	if(this.nodeType == Xml.DocType) return "<!DOCTYPE " + this._nodeValue + ">";
-	if(this.nodeType == Xml.Prolog) return "<?" + this._nodeValue + "?>";
+	$s.push("Xml::toString");
+	var $spos = $s.length;
+	if(this.nodeType == Xml.PCData) {
+		var $tmp = this._nodeValue;
+		$s.pop();
+		return $tmp;
+	}
+	if(this.nodeType == Xml.CData) {
+		var $tmp = "<![CDATA[" + this._nodeValue + "]]>";
+		$s.pop();
+		return $tmp;
+	}
+	if(this.nodeType == Xml.Comment) {
+		var $tmp = "<!--" + this._nodeValue + "-->";
+		$s.pop();
+		return $tmp;
+	}
+	if(this.nodeType == Xml.DocType) {
+		var $tmp = "<!DOCTYPE " + this._nodeValue + ">";
+		$s.pop();
+		return $tmp;
+	}
+	if(this.nodeType == Xml.Prolog) {
+		var $tmp = "<?" + this._nodeValue + "?>";
+		$s.pop();
+		return $tmp;
+	}
 	var s = new StringBuf();
 	if(this.nodeType == Xml.Element) {
 		s.b[s.b.length] = "<" == null?"null":"<";
@@ -8330,7 +12858,9 @@ Xml.prototype.toString = function() {
 		}
 		if(this._children.length == 0) {
 			s.b[s.b.length] = "/>" == null?"null":"/>";
-			return s.b.join("");
+			var $tmp = s.b.join("");
+			$s.pop();
+			return $tmp;
 		}
 		s.b[s.b.length] = ">" == null?"null":">";
 	}
@@ -8344,12 +12874,18 @@ Xml.prototype.toString = function() {
 		s.add(this._nodeName);
 		s.b[s.b.length] = ">" == null?"null":">";
 	}
-	return s.b.join("");
+	var $tmp = s.b.join("");
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 Xml.prototype.__class__ = Xml;
 kumite.time.Time = function(p) {
 	if( p === $_ ) return;
+	$s.push("kumite.time.Time::new");
+	var $spos = $s.length;
 	this.reset();
+	$s.pop();
 }
 kumite.time.Time.__name__ = ["kumite","time","Time"];
 kumite.time.Time.prototype.ms = null;
@@ -8359,14 +12895,19 @@ kumite.time.Time.prototype.frame = null;
 kumite.time.Time.prototype.frameRate = null;
 kumite.time.Time.prototype.lastTime = null;
 kumite.time.Time.prototype.reset = function() {
+	$s.push("kumite.time.Time::reset");
+	var $spos = $s.length;
 	this.frameRate = 60;
 	this.ms = 0;
 	this.frameMs = Std["int"](1000 / 60);
 	this.timeScale = 1;
 	this.frame = 0;
 	this.lastTime = Date.now().getTime();
+	$s.pop();
 }
 kumite.time.Time.prototype.tick = function() {
+	$s.push("kumite.time.Time::tick");
+	var $spos = $s.length;
 	var time = Date.now().getTime();
 	this.frame++;
 	if(this.lastTime == -1) this.lastTime = time - 100;
@@ -8379,8 +12920,11 @@ kumite.time.Time.prototype.tick = function() {
 	this.ms += this.frameMs;
 	this.frameRate = 1000 / this.frameMs;
 	this.lastTime = time;
+	$s.pop();
 }
 kumite.time.Time.prototype.tickInPause = function() {
+	$s.push("kumite.time.Time::tickInPause");
+	var $spos = $s.length;
 	var time = Date.now().getTime();
 	if(this.lastTime == -1) this.lastTime = time - 100;
 	this.frameMs = time - this.lastTime;
@@ -8389,26 +12933,48 @@ kumite.time.Time.prototype.tickInPause = function() {
 	if(Math.isNaN(this.timeScale) || !Math.isFinite(this.timeScale)) this.timeScale = 100 / 1000 * 60;
 	this.frameRate = 1000 / this.frameMs;
 	this.lastTime = time;
+	$s.pop();
 }
 kumite.time.Time.prototype.summand = function(value) {
-	return value * this.timeScale;
+	$s.push("kumite.time.Time::summand");
+	var $spos = $s.length;
+	var $tmp = value * this.timeScale;
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 kumite.time.Time.prototype.factor = function(value) {
-	return Math.pow(value,this.timeScale);
+	$s.push("kumite.time.Time::factor");
+	var $spos = $s.length;
+	var $tmp = Math.pow(value,this.timeScale);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 kumite.time.Time.prototype.interpolateTo = function(from,to,f) {
-	return from * (1 - f * this.timeScale) + to * (f * this.timeScale);
+	$s.push("kumite.time.Time::interpolateTo");
+	var $spos = $s.length;
+	var $tmp = from * (1 - f * this.timeScale) + to * (f * this.timeScale);
+	$s.pop();
+	return $tmp;
+	$s.pop();
 }
 kumite.time.Time.prototype.interpolateVec3To = function(from,to,f) {
+	$s.push("kumite.time.Time::interpolateVec3To");
+	var $spos = $s.length;
 	from.x = this.interpolateTo(from.x,to.x,f);
 	from.y = this.interpolateTo(from.y,to.y,f);
 	from.z = this.interpolateTo(from.z,to.z,f);
+	$s.pop();
 }
 kumite.time.Time.prototype.__class__ = kumite.time.Time;
 GLLabel = function(p) {
 	if( p === $_ ) return;
+	$s.push("GLLabel::new");
+	var $spos = $s.length;
 	GLInteractiveObject.call(this);
 	this.setCenter(true);
+	$s.pop();
 }
 GLLabel.__name__ = ["GLLabel"];
 GLLabel.__super__ = GLInteractiveObject;
@@ -8416,12 +12982,17 @@ for(var k in GLInteractiveObject.prototype ) GLLabel.prototype[k] = GLInteractiv
 GLLabel.prototype.text = null;
 GLLabel.prototype.center = null;
 GLLabel.prototype.validateGraphics = function() {
+	$s.push("GLLabel::validateGraphics");
+	var $spos = $s.length;
 	if(this.getGraphicIsInvalid()) {
 		this.renderText();
 		GLInteractiveObject.prototype.validateGraphics.call(this);
 	}
+	$s.pop();
 }
 GLLabel.prototype.renderText = function() {
+	$s.push("GLLabel::renderText");
+	var $spos = $s.length;
 	var textMetrics = new Text();
 	textMetrics.text = this.text;
 	textMetrics.font = "12px Arial";
@@ -8429,46 +13000,76 @@ GLLabel.prototype.renderText = function() {
 	this.graphic.setFillStyle(new Color(1,1,1,0.8));
 	this.graphic.setFont(textMetrics.font);
 	if(this.center) this.graphic.fillText(textMetrics.text,(this.width - textMetrics.getWidth()) / 2,14); else this.graphic.fillText(textMetrics.text,0,14);
+	$s.pop();
 }
 GLLabel.prototype.setText = function(text) {
+	$s.push("GLLabel::setText");
+	var $spos = $s.length;
 	if(this.text != text) {
 		this.setGraphicIsInvalid(true);
 		this.text = text;
 	}
+	$s.pop();
 	return text;
+	$s.pop();
 }
 GLLabel.prototype.setCenter = function(center) {
+	$s.push("GLLabel::setCenter");
+	var $spos = $s.length;
 	if(this.center != center) {
 		this.setGraphicIsInvalid(true);
 		this.center = center;
 	}
+	$s.pop();
 	return center;
+	$s.pop();
 }
 GLLabel.prototype.__class__ = GLLabel;
 $_ = {}
 js.Boot.__res = {}
+$s = [];
+$e = [];
 js.Boot.__init();
 {
 	js.Lib.document = document;
 	js.Lib.window = window;
 	onerror = function(msg,url,line) {
+		var stack = $s.copy();
 		var f = js.Lib.onerror;
-		if( f == null )
+		$s.splice(0,$s.length);
+		if( f == null ) {
+			var i = stack.length;
+			var s = "";
+			while( --i >= 0 )
+				s += "Called from "+stack[i]+"\n";
+			alert(msg+"\n\n"+s);
 			return false;
-		return f(msg,[url+":"+line]);
+		}
+		return f(msg,stack);
 	}
 }
 {
 	var d = Date;
 	d.now = function() {
-		return new Date();
+		$s.push("GLLabel::setCenter");
+		var $spos = $s.length;
+		var $tmp = new Date();
+		$s.pop();
+		return $tmp;
+		$s.pop();
 	};
 	d.fromTime = function(t) {
+		$s.push("GLLabel::setCenter");
+		var $spos = $s.length;
 		var d1 = new Date();
 		d1["setTime"](t);
+		$s.pop();
 		return d1;
+		$s.pop();
 	};
 	d.fromString = function(s) {
+		$s.push("GLLabel::setCenter");
+		var $spos = $s.length;
 		switch(s.length) {
 		case 8:
 			var k = s.split(":");
@@ -8477,27 +13078,38 @@ js.Boot.__init();
 			d1["setUTCHours"](k[0]);
 			d1["setUTCMinutes"](k[1]);
 			d1["setUTCSeconds"](k[2]);
+			$s.pop();
 			return d1;
 		case 10:
 			var k = s.split("-");
-			return new Date(k[0],k[1] - 1,k[2],0,0,0);
+			var $tmp = new Date(k[0],k[1] - 1,k[2],0,0,0);
+			$s.pop();
+			return $tmp;
 		case 19:
 			var k = s.split(" ");
 			var y = k[0].split("-");
 			var t = k[1].split(":");
-			return new Date(y[0],y[1] - 1,y[2],t[0],t[1],t[2]);
+			var $tmp = new Date(y[0],y[1] - 1,y[2],t[0],t[1],t[2]);
+			$s.pop();
+			return $tmp;
 		default:
 			throw "Invalid date format : " + s;
 		}
+		$s.pop();
 	};
 	d.prototype["toString"] = function() {
+		$s.push("GLLabel::setCenter");
+		var $spos = $s.length;
 		var date = this;
 		var m = date.getMonth() + 1;
 		var d1 = date.getDate();
 		var h = date.getHours();
 		var mi = date.getMinutes();
 		var s = date.getSeconds();
-		return date.getFullYear() + "-" + (m < 10?"0" + m:"" + m) + "-" + (d1 < 10?"0" + d1:"" + d1) + " " + (h < 10?"0" + h:"" + h) + ":" + (mi < 10?"0" + mi:"" + mi) + ":" + (s < 10?"0" + s:"" + s);
+		var $tmp = date.getFullYear() + "-" + (m < 10?"0" + m:"" + m) + "-" + (d1 < 10?"0" + d1:"" + d1) + " " + (h < 10?"0" + h:"" + h) + ":" + (mi < 10?"0" + mi:"" + mi) + ":" + (s < 10?"0" + s:"" + s);
+		$s.pop();
+		return $tmp;
+		$s.pop();
 	};
 	d.prototype.__class__ = d;
 	d.__name__ = ["Date"];
@@ -8508,22 +13120,45 @@ js.Boot.__init();
 	Math.NEGATIVE_INFINITY = Number["NEGATIVE_INFINITY"];
 	Math.POSITIVE_INFINITY = Number["POSITIVE_INFINITY"];
 	Math.isFinite = function(i) {
-		return isFinite(i);
+		$s.push("GLLabel::setCenter");
+		var $spos = $s.length;
+		var $tmp = isFinite(i);
+		$s.pop();
+		return $tmp;
+		$s.pop();
 	};
 	Math.isNaN = function(i) {
-		return isNaN(i);
+		$s.push("GLLabel::setCenter");
+		var $spos = $s.length;
+		var $tmp = isNaN(i);
+		$s.pop();
+		return $tmp;
+		$s.pop();
 	};
 }
 js["XMLHttpRequest"] = window.XMLHttpRequest?XMLHttpRequest:window.ActiveXObject?function() {
+	$s.push("GLLabel::setCenter");
+	var $spos = $s.length;
 	try {
-		return new ActiveXObject("Msxml2.XMLHTTP");
+		var $tmp = new ActiveXObject("Msxml2.XMLHTTP");
+		$s.pop();
+		return $tmp;
 	} catch( e ) {
+		$e = [];
+		while($s.length >= $spos) $e.unshift($s.pop());
+		$s.push($e[0]);
 		try {
-			return new ActiveXObject("Microsoft.XMLHTTP");
+			var $tmp = new ActiveXObject("Microsoft.XMLHTTP");
+			$s.pop();
+			return $tmp;
 		} catch( e1 ) {
+			$e = [];
+			while($s.length >= $spos) $e.unshift($s.pop());
+			$s.push($e[0]);
 			throw "Unable to create XMLHttpRequest object.";
 		}
 	}
+	$s.pop();
 }:(function($this) {
 	var $r;
 	throw "Unable to create XMLHttpRequest object.";
@@ -8578,7 +13213,7 @@ Matrix4.i42 = 7;
 Matrix4.i43 = 11;
 Matrix4.i44 = 15;
 kumite.musicdraw.SquareEffectWorkerHandler.__meta__ = { fields : { textureRegistry : { Inject : null}, analyzer : { Inject : null}, stage : { Inject : null}}};
-kumite.musicdraw.SquareEffectWorkerHandler.__rtti = "<class path=\"kumite.musicdraw.SquareEffectWorkerHandler\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<analyzer public=\"1\"><c path=\"kumite.musicdraw.MusicAnalyzer\"/></analyzer>\n\t<stage public=\"1\"><c path=\"GLStage\"/></stage>\n\t<texture public=\"1\"><c path=\"GLArrayTexture\"/></texture>\n\t<rasterX><c path=\"Int\"/></rasterX>\n\t<workerRPC><c path=\"bpmjs.WorkerRPC\"/></workerRPC>\n\t<createTexture public=\"1\" set=\"method\" line=\"31\"><f a=\"\"><c path=\"GLArrayTexture\"/></f></createTexture>\n\t<start public=\"1\" set=\"method\" line=\"37\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<setResult public=\"1\" set=\"method\" line=\"55\"><f a=\"data\">\n\t<c path=\"ArrayBuffer\"/>\n\t<e path=\"Void\"/>\n</f></setResult>\n\t<new public=\"1\" set=\"method\" line=\"26\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.musicdraw.SquareEffectWorkerHandler.__rtti = "<class path=\"kumite.musicdraw.SquareEffectWorkerHandler\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<analyzer public=\"1\"><c path=\"kumite.musicdraw.MusicAnalyzer\"/></analyzer>\n\t<stage public=\"1\"><c path=\"GLStage\"/></stage>\n\t<texture public=\"1\"><c path=\"GLArrayTexture\"/></texture>\n\t<workerService><c path=\"bpmjs.WorkerService\"/></workerService>\n\t<rasterX><c path=\"Int\"/></rasterX>\n\t<label><c path=\"GLLabel\"/></label>\n\t<roundtripSynchronizer><c path=\"bpmjs.RoundtripSynchronizer\"/></roundtripSynchronizer>\n\t<createTexture public=\"1\" set=\"method\" line=\"36\"><f a=\"\"><c path=\"GLArrayTexture\"/></f></createTexture>\n\t<start public=\"1\" set=\"method\" line=\"42\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<loop set=\"method\" line=\"70\"><f a=\"\"><e path=\"Void\"/></f></loop>\n\t<handleRender set=\"method\" line=\"78\"><f a=\"buffer\">\n\t<c path=\"ArrayBuffer\"/>\n\t<e path=\"Void\"/>\n</f></handleRender>\n\t<new public=\"1\" set=\"method\" line=\"29\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.scene.LayerState.OUT = new kumite.scene.LayerState("OUT");
 kumite.scene.LayerState.IN = new kumite.scene.LayerState("IN");
 kumite.scene.LayerState.KEEP = new kumite.scene.LayerState("KEEP");

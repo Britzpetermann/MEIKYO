@@ -29,7 +29,6 @@ class GLMouseRegistry
 	{
 		this.canvas = canvas;
 
-
 		canvas.onmouseup = onMouseUp;
 		canvas.onmousedown = onMouseDown;
 		canvas.onmousemove = onMouseMove;

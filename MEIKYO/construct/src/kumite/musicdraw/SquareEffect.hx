@@ -15,7 +15,6 @@ class SquareEffect
 		texture = new GLArrayTexture();
 		texture.width = 512;
 		texture.height = 1024;
-		texture.array = new Uint8Array(texture.width * texture.height * 4);
 	}
 	
 	public function init()
@@ -26,7 +25,7 @@ class SquareEffect
 	public function render()
 	{
 		var ms = Date.now().getTime() - startTime;
-
+		
 		for(x in 0...texture.width)
 		{
 			for(y in 0...texture.height)

@@ -83,26 +83,33 @@ class ContextBuilder
 		
 		for (property in ci.properties)
 		{
-			if (property.hasMetadata("Inject"))
-				continue;
-				
-			var instance = property.getValue(config);
-			if (instance == null)
+			try
 			{
-				Log.warn("Found property", property.name, "in config", ci.name, "but was null");
-			}
-			else
-			{
-				context.addObject(property.name, property.type, instance);
-		
-				if (property.clazz == Array)
+				if (property.hasMetadata("Inject"))
+					continue;
+					
+				var instance = property.getValue(config);
+				if (instance == null)
 				{
-					var list : Array<Dynamic> = cast instance;
-					for(listInstance in list)
+					throw "Found property " + property.name + " in config " + ci.name + " but was null ";
+				}
+				else
+				{
+					context.addObject(property.name, property.type, instance);
+			
+					if (property.clazz == Array)
 					{
-						context.addObject("dynamic", ClassInfo.forInstance(listInstance), listInstance);
+						var list : Array<Dynamic> = cast instance;
+						for(listInstance in list)
+						{
+							context.addObject("dynamic", ClassInfo.forInstance(listInstance), listInstance);
+						}
 					}
 				}
+			}
+			catch(e:Dynamic)
+			{
+				Log.warn(e);
 			}
 		}
 	}
