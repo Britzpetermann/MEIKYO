@@ -10,17 +10,21 @@ class RasterEffectWorker
 	
 	static function main()
 	{
-		new RasterEffectWorker();
+		Log.init();
+		new WorkingInstance(new RasterEffectWorker());
 	}
 	
-	public function new()
+	function new()
 	{
-		var instance = new WorkingInstance(this);
+		effect = new RasterEffect();
+		effect.setProgress = function(progress:Float)
+		{
+			WorkingInstance.pipeMethod("setProgress", [progress]);
+		}
 	}
 	
 	function init(analyzer:Dynamic)
 	{
-		effect = new RasterEffect();
 		effect.analyzer = new MusicAnalyzer();
 		effect.analyzer.bands = analyzer.bands;
 		effect.init();

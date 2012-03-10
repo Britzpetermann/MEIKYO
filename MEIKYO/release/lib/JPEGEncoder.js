@@ -580,11 +580,9 @@ function JPEGEncoder(quality) {
 			}
 		}
 		
-		this.encode = function(image,quality) // image data object
+		this.encode = function(imageData, width, height, setProgress) // image data object
 		{
 			var time_start = new Date().getTime();
-			
-			if(quality) setQuality(quality);
 			
 			// Initialize bit writer
 			byteout = new Array();
@@ -595,7 +593,7 @@ function JPEGEncoder(quality) {
 			writeWord(0xFFD8); // SOI
 			writeAPP0();
 			writeDQT();
-			writeSOF0(image.width,image.height);
+			writeSOF0(width,height);
 			writeDHT();
 			writeSOS();
 
@@ -611,10 +609,6 @@ function JPEGEncoder(quality) {
 			
 			this.encode.displayName = "_encode_";
 
-			var imageData = image.data;
-			var width = image.width;
-			var height = image.height;
-
 			var quadWidth = width*4;
 			var tripleWidth = width*3;
 			
@@ -622,6 +616,10 @@ function JPEGEncoder(quality) {
 			var r, g, b;
 			var start,p, col,row,pos;
 			while(y < height){
+				if (setProgress != null && y % 100 == 0)
+				{
+					setProgress(y / height);
+				}
 				x = 0;
 				while(x < quadWidth){
 				start = quadWidth * y + x;
@@ -646,13 +644,6 @@ function JPEGEncoder(quality) {
 					g = imageData[ p++ ];
 					b = imageData[ p++ ];
 					
-					
-					/* // calculate YUV values dynamically
-					YDU[pos]=((( 0.29900)*r+( 0.58700)*g+( 0.11400)*b))-128; //-0x80
-					UDU[pos]=(((-0.16874)*r+(-0.33126)*g+( 0.50000)*b));
-					VDU[pos]=((( 0.50000)*r+(-0.41869)*g+(-0.08131)*b));
-					*/
-					
 					// use lookup table (slightly faster)
 					YDU[pos] = ((RGB_YUV_TABLE[r]             + RGB_YUV_TABLE[(g +  256)>>0] + RGB_YUV_TABLE[(b +  512)>>0]) >> 16)-128;
 					UDU[pos] = ((RGB_YUV_TABLE[(r +  768)>>0] + RGB_YUV_TABLE[(g + 1024)>>0] + RGB_YUV_TABLE[(b + 1280)>>0]) >> 16)-128;
@@ -668,9 +659,6 @@ function JPEGEncoder(quality) {
 				y+=8;
 			}
 			
-			
-			////////////////////////////////////////////////////////////////
-	
 			// Do the bit alignment of the EOI marker
 			if ( bytepos >= 0 ) {
 				var fillbits = [];
@@ -682,11 +670,9 @@ function JPEGEncoder(quality) {
 			writeWord(0xFFD9); //EOI
 
 			
-			// benchmarking
-			var duration = new Date().getTime() - time_start;
-			console.log('Encoding time: '+ duration + 'ms');
-			//
-			return byteout;
+			//var duration = new Date().getTime() - time_start;
+			//console.log('Encoding time: '+ duration + 'ms');
+			return new Uint8Array(byteout).buffer;
 	}
 	
 	function setQuality(quality){
@@ -708,7 +694,7 @@ function JPEGEncoder(quality) {
 		
 		initQuantTables(sf);
 		currentQuality = quality;
-		console.log('Quality set to: '+quality +'%');
+		//console.log('Quality set to: '+quality +'%');
 	}
 	
 	function init(){
@@ -722,21 +708,8 @@ function JPEGEncoder(quality) {
 		
 		setQuality(quality);
 		var duration = new Date().getTime() - time_start;
-    	console.log('Initialization '+ duration + 'ms');
+    	//console.log('Initialization '+ duration + 'ms');
 	}
 	
 	init();
-	
 };
-
-// helper function to get the imageData of an existing image on the current page.
-function getImageDataFromImage(idOrElement){
-	var theImg = (typeof(idOrElement)=='string')? document.getElementById(idOrElement):idOrElement;
-	var cvs = document.createElement('canvas');
-	cvs.width = theImg.width;
-	cvs.height = theImg.height;
-	var ctx = cvs.getContext("2d");
-	ctx.drawImage(theImg,0,0);
-	
-	return (ctx.getImageData(0, 0, cvs.width, cvs.height));
-}

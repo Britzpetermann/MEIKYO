@@ -1,7 +1,8 @@
 extern class JPEGEncoder
 {
-	public function new(quality:Int):Void;
+	function new(quality:Int):Void;
 	
-	public function encode(imageData:Dynamic):Array<Int>;
+	function encode(imageData:ArrayBufferView, width:Int, height:Int, setProgress:Float->Void):ArrayBuffer;
 	
+	var setProgress:Float->Void;
 }

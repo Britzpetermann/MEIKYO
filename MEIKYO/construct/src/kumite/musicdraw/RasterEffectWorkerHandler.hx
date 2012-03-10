@@ -4,19 +4,25 @@ import haxe.rtti.Infos;
 
 import reflect.Binding;
 
+import bpmjs.Task;
 import bpmjs.WorkerService;
 import bpmjs.RoundtripSynchronizer;
+
+import kumite.jpegservice.JPEGService;
 
 class RasterEffectWorkerHandler implements Infos
 {
 	@Inject
-	public var textureRegistry:GLTextureRegistry;
+	public var stage:GLStage;
+	
+	@Inject
+	public var jpegService:JPEGService;
 	
 	@Inject
 	public var analyzer:MusicAnalyzer;
 	
 	@Inject
-	public var stage:GLStage;
+	public var textureRegistry:GLTextureRegistry;
 	
 	public var texture:GLArrayTexture;
 
@@ -29,27 +35,18 @@ class RasterEffectWorkerHandler implements Infos
 	var width:Int;
 	var height:Int;
 	
-	var imageWidth:Int;
-	var imageHeight:Int;
-	
 	var label:GLLabel;
-	var openImageState:Int;
 
 	public function new()
 	{
-		openImageState = 0;
-		
-		width = Std.int(Math.pow(2, 10));
+		width = Std.int(Math.pow(2, 8));
 		height = width;
-		
-		imageWidth = Std.int(Math.pow(2, 13));
-		imageHeight = imageWidth;
 		
 		paramLength = 1;
 		paramPosition = 0;
 		
 		roundtripSynchronizer = new RoundtripSynchronizer();
-		roundtripSynchronizer.targetMs = 1000 / 60;
+		roundtripSynchronizer.targetMs = 1000 / 10;
 	}
 	
 	public function createTexture()
@@ -62,12 +59,12 @@ class RasterEffectWorkerHandler implements Infos
 	{
 		workerService = new WorkerService();
 		workerService.debug = false;
+		workerService.receiver = this;
 		workerService.init("bin/kumite.musicdraw.RasterEffectWorker.js");
 		
 		workerService.call("init", [analyzer], loop);
 		
 		label = new GLLabel();
-		label.text = "Huhu";
 		label.x = 10;
 		label.y = 75 + 60;
 		label.width = 200;
@@ -80,8 +77,15 @@ class RasterEffectWorkerHandler implements Infos
 	
 	public function openImage()
 	{
-		if (openImageState == 0)
-			openImageState = 1;
+		var task = new JPEGTask();
+		task.width = Std.int(Math.pow(2, 13)); 
+		task.height = task.width; 
+		task.paramLength = paramLength; 
+		task.paramPosition = paramPosition; 
+		task.jpegService = jpegService; 
+		task.analyzer = analyzer;
+		
+		return task; 
 	}		
 	
 	function loop()
@@ -92,76 +96,23 @@ class RasterEffectWorkerHandler implements Infos
 			{
 				paramLength:paramLength,
 				paramPosition:paramPosition,
-				width:openImageState == 1 ? imageWidth : width,
-				height:openImageState == 1 ? imageHeight: height
+				width:width,
+				height:height
 			}
 		]);
 		
-		if (openImageState == 1)
-		{
-			var tempArray = new Uint8Array(imageWidth * imageHeight * 4);
-			Log.info("temp: " + tempArray.length + " width:" + imageWidth + " height:" + imageHeight);
-			workerService.callTransfer("render", tempArray.buffer, handleRender);
-			openImageState = 2;
-		}
-		else
-		{
-			roundtripSynchronizer.workStart();
-			workerService.callTransfer("render", texture.array.buffer, handleRender);
-		}
+		roundtripSynchronizer.workStart();
+		workerService.callTransfer("render", texture.array.buffer, handleRender);
 	}
 	
 	function handleRender(buffer:ArrayBuffer)
 	{
-		if (openImageState == 2)
-		{
-			var array = new Uint8Array(buffer);
-			Log.info("newBuffer: " + array.length);
-			
-			openImageState = 0;
-
-			var g = new CanvasGraphic();
-			g.width = imageWidth;			
-			g.height = imageHeight;
-			g.clear(new Color(0.3, 0.3, 0.3, 0.8));
-			
-			var imageData = g.context.getImageData(0, 0, g.width, g.height);
-			Log.info(buffer.byteLength + " " + imageData.data.length);
-			
-			
-			for(i in 0...buffer.byteLength)
-				imageData.data[i] = array[i];
-			
-			var encoder = new JPEGEncoder(100);
-			var jpgdata = encoder.encode(imageData);
-			
-			untyped
-			{
-				var bb = new WebKitBlobBuilder();
-				var buffer = new Uint8Array(jpgdata.length); // allocates 8 bytes
-				
-				for(i in 0...jpgdata.length)
-				{
-					buffer[i] = jpgdata[i];
-				}
-				
-				bb.append(buffer.buffer);
-				var blob = bb.getBlob("example/binary");
-				saveAs(blob, "image_" + Date.now().getTime() + ".jpg");
-			}
-			
-			texture.array = new Uint8Array(width * height * 4);
-			loop();
-		}
-		else
-		{		
-			roundtripSynchronizer.workComplete();
-			
-			texture.array = new Uint8Array(buffer);
-			textureRegistry.updateGLArrayTexture(texture, GL.LINEAR_MIPMAP_LINEAR);
-			
-			roundtripSynchronizer.delay(loop);
-		}
+		roundtripSynchronizer.workComplete();
+		
+		texture.array = new Uint8Array(buffer);
+		textureRegistry.updateGLArrayTexture(texture, GL.LINEAR_MIPMAP_LINEAR);
+		
+		roundtripSynchronizer.delay(loop);
 	}
 	
 	function slider(field, y)
@@ -177,4 +128,48 @@ class RasterEffectWorkerHandler implements Infos
 		sliderH.bind(binding);
 		stage.addChild(sliderH);
 	}
+	
+	function setProgress(progress:Float)
+	{
+	}
+}
+
+class JPEGTask extends Task<JPEGTask>
+{
+	public var jpegService:JPEGService;
+	public var analyzer:MusicAnalyzer;
+	public var paramLength:Float;
+	public var paramPosition:Float;
+	public var width:Int;
+	public var height:Int;
+	
+	override public function doStart()
+	{
+		var workerService = new WorkerService();
+		workerService.debug = false;
+		workerService.receiver = {
+			setProgress : function(progress:Float)
+			{
+				Log.info(Math.round(progress * 100) + "%");
+			}
+		};
+		workerService.init("bin/kumite.musicdraw.RasterEffectWorker.js");
+		
+		workerService.call("init", [analyzer]);		
+		workerService.call("config", [
+			{
+				paramLength:paramLength,
+				paramPosition:paramPosition,
+				width:width,
+				height:height
+			}
+		]);
+		
+		workerService.callTransfer("render", new ArrayBuffer(width * height * 4), function(jpegBuffer:ArrayBuffer)
+		{
+			jpegService.compressAndSave(jpegBuffer, width, height, "image_" + Date.now().getTime() + ".jpg", complete);
+			workerService.terminate();
+		});
+	}		
+	
 }

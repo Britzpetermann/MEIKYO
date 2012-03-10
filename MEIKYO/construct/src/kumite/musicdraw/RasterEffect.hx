@@ -8,8 +8,11 @@ class RasterEffect
 	public var paramLength:Float;
 	public var paramPosition:Float;
 	
+	public var setProgress:Float->Void;
+	
 	public function new()
 	{
+		setProgress = function(_){};
 		texture = new GLArrayTexture();
 	}
 	
@@ -38,6 +41,9 @@ class RasterEffect
 		{
 			var bandIndexFrom = Math.floor(bandsLength / height * y + bandsPosition); 
 			
+			if (y % 100 == 0)
+				setProgress((y / height));
+				
 			for(x in 0...width)
 			{
 				var noteIndex = Math.round(noteCount / width * x);

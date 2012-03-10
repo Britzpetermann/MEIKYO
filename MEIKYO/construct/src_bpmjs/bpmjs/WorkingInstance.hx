@@ -2,27 +2,39 @@ package bpmjs;
 
 class WorkingInstance
 {
+	public static var postMessage:Dynamic;
+	
 	public function new(receiver:Dynamic)
 	{
 		Reflect;
+		initConsole();
+		
+		var instance = this;
 		untyped __js__("
 			var transferMethod = null;
 
 			onmessage = function(event)
 			{
+				bpmjs.WorkingInstance.postMessage = function(data)
+				{
+					postMessage(data)
+				}
+				
 				if (transferMethod != null)
 				{
 					var buffer = event.data;
-					Reflect.callMethod(receiver, transferMethod, [buffer]);
+					var resultBuffer = Reflect.callMethod(receiver, transferMethod, [buffer]);
+					if (resultBuffer == null)
+						resultBuffer = buffer;
 					transferMethod = null;
 					
-					if (buffer.byteLength == 0)
-						throw 'Buffer length is zero!';
+					if (resultBuffer.byteLength == 0)
+						throw 'WorkingInstance: Buffer length is zero!';
 						
-					webkitPostMessage(buffer, [buffer]);
+					webkitPostMessage(resultBuffer, [resultBuffer]);
 					
-					if (buffer.byteLength != 0)
-						throw 'Buffer length is not zero!';
+					if (resultBuffer.byteLength != 0)
+						throw 'WorkingInstance: Buffer length is not zero!';
 						
 				}
 				else
@@ -34,7 +46,7 @@ class WorkingInstance
 						var transferMethodName = event.data.args[0];
 						transferMethod = Reflect.field(receiver, transferMethodName);
 						if (transferMethod == null)
-							throw 'Method ' + transferMethodName + ' is null!';
+							throw 'WorkingInstance: Method ' + transferMethodName + ' is null!';
 						webkitPostMessage({result:null});
 					}
 					else
@@ -42,7 +54,7 @@ class WorkingInstance
 						var args = event.data.args;
 						var method = Reflect.field(receiver, methodName);
 						if (method == null)
-							throw 'Method ' + methodName + ' is null!';
+							throw 'WorkingInstance: Method ' + methodName + ' is null!';
 							
 						var result = Reflect.callMethod(receiver, method, args);
 						webkitPostMessage({result:result});
@@ -50,5 +62,38 @@ class WorkingInstance
 				}
 			}
 		");		
+	}
+	
+	public static function pipeMethod(methodName:String, args:Array<Dynamic>)
+	{
+		postMessage({type:"pipeMethod", method:methodName, args:args});
+	}
+	
+	function initConsole()
+	{
+		untyped
+		{
+			console = {};
+			
+			console.info = function(message:Dynamic)
+			{
+				pipeMethod("Log.info", [message]);
+			};
+			
+			console.warn = function(message:Dynamic)
+			{
+				pipeMethod("Log.warn", [message]);
+			};
+			
+			console.error = function(message:Dynamic)
+			{
+				pipeMethod("Log.error", [message]);
+			};
+			
+			console.log = function(message:Dynamic)
+			{
+				pipeMethod("Log.info", [message]);
+			};
+		}		
 	}
 }

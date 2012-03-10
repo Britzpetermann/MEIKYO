@@ -5,6 +5,8 @@ import haxe.rtti.Infos;
 import reflect.ClassInfo;
 import reflect.Binding;
 
+import bpmjs.TaskGroup;
+
 import kumite.displaylist.DisplayListLayer;
 import kumite.scene.DefaultScene;
 import kumite.layer.ClearLayer;
@@ -36,8 +38,14 @@ class MusicDrawConfig implements Infos
 	public var rasterLayer : TextureLayer;
 	public var rasterEffectWorkerHandler : RasterEffectWorkerHandler;
 	
+	public var jpegTasks : TaskGroup;
+	
 	public function new()
 	{
+		jpegTasks = new TaskGroup();
+		jpegTasks.autoStart = true;
+		jpegTasks.parallelTasksMax = 4;
+		
 		analyzer = new MusicAnalyzer();
 		bandsReader = new BandsReader();
 		
@@ -85,8 +93,10 @@ class MusicDrawConfig implements Infos
 		saveButton.height = 20;
 		saveButton.mouseDownSignaler.bind(function(_)
 		{
-			rasterEffectWorkerHandler.openImage();
+			jpegTasks.add(rasterEffectWorkerHandler.openImage());
 		});
 		stage.addChild(saveButton);
+		
+		Log.profileEnd();
 	}
 }

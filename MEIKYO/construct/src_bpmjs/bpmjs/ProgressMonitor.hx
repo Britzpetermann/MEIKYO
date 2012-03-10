@@ -48,12 +48,6 @@ class ProgressMonitor
 				childCurrent += Map.linear(child.monitor.current, 0, 1, 0, child.monitor.weight / totalWeight);
 			}
 			return childCurrent;
-			
-			//0.5 bei 2 > 1
-			//0.25 bei 4 > 1
-			
-			//0.25 bei 4 > 0.1
-			//0.25 bei 4 > 0.9
 		}
 	}
 	

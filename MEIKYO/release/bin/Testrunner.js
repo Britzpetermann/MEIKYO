@@ -412,14 +412,21 @@ bpmjs.Task.prototype.__class__ = bpmjs.Task;
 bpmjs.TaskGroup = function(p) {
 	if( p === $_ ) return;
 	bpmjs.Task.call(this);
+	this.pendingTasks = new haxe.FastList();
+	this.parallelTasksMax = 1;
+	this.autoStart = false;
 	this.tasks = new Array();
 }
 bpmjs.TaskGroup.__name__ = ["bpmjs","TaskGroup"];
 bpmjs.TaskGroup.__super__ = bpmjs.Task;
 for(var k in bpmjs.Task.prototype ) bpmjs.TaskGroup.prototype[k] = bpmjs.Task.prototype[k];
 bpmjs.TaskGroup.prototype.tasks = null;
+bpmjs.TaskGroup.prototype.autoStart = null;
+bpmjs.TaskGroup.prototype.parallelTasksMax = null;
+bpmjs.TaskGroup.prototype.pendingTasks = null;
 bpmjs.TaskGroup.prototype.add = function(task) {
 	this.tasks.push(task);
+	if(this.autoStart) this.nextTask();
 }
 bpmjs.TaskGroup.prototype.doStart = function() {
 	var _g = 0, _g1 = this.tasks;
@@ -431,18 +438,36 @@ bpmjs.TaskGroup.prototype.doStart = function() {
 	this.nextTask();
 }
 bpmjs.TaskGroup.prototype.nextTask = function() {
+	var pendingTaskCount = Lambda.count(this.pendingTasks);
+	{
+		Log.posInfo = { fileName : "TaskGroup.hx", lineNumber : 45, className : "bpmjs.TaskGroup", methodName : "nextTask"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput(pendingTaskCount,null,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
+	if(pendingTaskCount >= this.parallelTasksMax) return;
 	if(this.tasks.length > 0) {
-		var task = this.tasks.shift();
-		task.completeSignaler.bind($closure(this,"handleTaskComplete"));
-		task.errorSignaler.bind($closure(this,"handleTaskError"));
-		task.start();
-	} else this.complete();
+		var pendingTask = this.tasks.shift();
+		this.pendingTasks.add(pendingTask);
+		pendingTask.completeSignaler.bind($closure(this,"handleTaskComplete"));
+		pendingTask.errorSignaler.bind($closure(this,"handleTaskError"));
+		pendingTask.start();
+	} else if(!this.autoStart) this.complete();
 }
 bpmjs.TaskGroup.prototype.handleTaskComplete = function(task) {
+	this.pendingTasks.remove(task);
 	this.nextTask();
 }
 bpmjs.TaskGroup.prototype.handleTaskError = function(taskError) {
-	this.error(this,taskError.error);
+	this.pendingTasks.remove(taskError.task);
+	if(!this.autoStart) this.error(this,taskError.error); else {
+		Log.posInfo = { fileName : "TaskGroup.hx", lineNumber : 80, className : "bpmjs.TaskGroup", methodName : "handleTaskError"};
+		if(Log.filter(LogLevel.WARN)) {
+			Log.fetchInput(taskError.error,null,null,null,null,null,null);
+			console.warn(Log.createMessage());
+		}
+	}
 }
 bpmjs.TaskGroup.prototype.__class__ = bpmjs.TaskGroup;
 bpmjs.Sequence = function(name) {
@@ -2044,6 +2069,68 @@ haxe.Stack.makeStack = function(s) {
 	return m;
 }
 haxe.Stack.prototype.__class__ = haxe.Stack;
+haxe.FastCell = function(elt,next) {
+	if( elt === $_ ) return;
+	this.elt = elt;
+	this.next = next;
+}
+haxe.FastCell.__name__ = ["haxe","FastCell"];
+haxe.FastCell.prototype.elt = null;
+haxe.FastCell.prototype.next = null;
+haxe.FastCell.prototype.__class__ = haxe.FastCell;
+haxe.FastList = function(p) {
+}
+haxe.FastList.__name__ = ["haxe","FastList"];
+haxe.FastList.prototype.head = null;
+haxe.FastList.prototype.add = function(item) {
+	this.head = new haxe.FastCell(item,this.head);
+}
+haxe.FastList.prototype.first = function() {
+	return this.head == null?null:this.head.elt;
+}
+haxe.FastList.prototype.pop = function() {
+	var k = this.head;
+	if(k == null) return null; else {
+		this.head = k.next;
+		return k.elt;
+	}
+}
+haxe.FastList.prototype.isEmpty = function() {
+	return this.head == null;
+}
+haxe.FastList.prototype.remove = function(v) {
+	var prev = null;
+	var l = this.head;
+	while(l != null) {
+		if(l.elt == v) {
+			if(prev == null) this.head = l.next; else prev.next = l.next;
+			break;
+		}
+		prev = l;
+		l = l.next;
+	}
+	return l != null;
+}
+haxe.FastList.prototype.iterator = function() {
+	var l = this.head;
+	return { hasNext : function() {
+		return l != null;
+	}, next : function() {
+		var k = l;
+		l = k.next;
+		return k.elt;
+	}};
+}
+haxe.FastList.prototype.toString = function() {
+	var a = new Array();
+	var l = this.head;
+	while(l != null) {
+		a.push(l.elt);
+		l = l.next;
+	}
+	return "{" + a.join(",") + "}";
+}
+haxe.FastList.prototype.__class__ = haxe.FastList;
 bpmjs.TestFrontMessenger = function(p) {
 	if( p === $_ ) return;
 	TestCase2.call(this);
@@ -4006,6 +4093,56 @@ StringBuf.prototype.toString = function() {
 }
 StringBuf.prototype.b = null;
 StringBuf.prototype.__class__ = StringBuf;
+bpmjs.TestProgressMonitor = function(p) {
+	if( p === $_ ) return;
+	TestCase2.call(this);
+}
+bpmjs.TestProgressMonitor.__name__ = ["bpmjs","TestProgressMonitor"];
+bpmjs.TestProgressMonitor.__super__ = TestCase2;
+for(var k in TestCase2.prototype ) bpmjs.TestProgressMonitor.prototype[k] = TestCase2.prototype[k];
+bpmjs.TestProgressMonitor.prototype.monitor = null;
+bpmjs.TestProgressMonitor.prototype.setup = function() {
+	this.monitor = new bpmjs.ProgressMonitor();
+}
+bpmjs.TestProgressMonitor.prototype.testDefault = function() {
+	this.assertEquals(0.0,this.monitor.getCurrent(),{ fileName : "TestProgressMonitor.hx", lineNumber : 14, className : "bpmjs.TestProgressMonitor", methodName : "testDefault"});
+}
+bpmjs.TestProgressMonitor.prototype.testPercent = function() {
+	this.monitor.setCurrent(0.5);
+	this.assertEquals(0.5,this.monitor.getCurrent(),{ fileName : "TestProgressMonitor.hx", lineNumber : 20, className : "bpmjs.TestProgressMonitor", methodName : "testPercent"});
+}
+bpmjs.TestProgressMonitor.prototype.testChild = function() {
+	var sub1 = this.monitor.append(new bpmjs.ProgressMonitor(),1);
+	sub1.setCurrent(0.5);
+	this.assertEquals(0.5,this.monitor.getCurrent(),{ fileName : "TestProgressMonitor.hx", lineNumber : 27, className : "bpmjs.TestProgressMonitor", methodName : "testChild"});
+}
+bpmjs.TestProgressMonitor.prototype.test2ChildrenInit = function() {
+	var sub1 = this.monitor.append(new bpmjs.ProgressMonitor(),0.5);
+	var sub2 = this.monitor.append(new bpmjs.ProgressMonitor(),0.5);
+	this.assertEquals(0.0,this.monitor.getCurrent(),{ fileName : "TestProgressMonitor.hx", lineNumber : 34, className : "bpmjs.TestProgressMonitor", methodName : "test2ChildrenInit"});
+}
+bpmjs.TestProgressMonitor.prototype.test2ChildrenUpdate = function() {
+	var sub1 = this.monitor.append(new bpmjs.ProgressMonitor(),0.5);
+	var sub2 = this.monitor.append(new bpmjs.ProgressMonitor(),0.5);
+	sub2.setCurrent(0.5);
+	this.assertEquals(0.25,this.monitor.getCurrent(),{ fileName : "TestProgressMonitor.hx", lineNumber : 42, className : "bpmjs.TestProgressMonitor", methodName : "test2ChildrenUpdate"});
+}
+bpmjs.TestProgressMonitor.prototype.test2SubChildrenUpdate = function() {
+	var sub1 = this.monitor.append(new bpmjs.ProgressMonitor(),0.5);
+	var sub2 = this.monitor.append(new bpmjs.ProgressMonitor(),0.5);
+	var sub11 = sub1.append(new bpmjs.ProgressMonitor(),0.5);
+	var sub12 = sub1.append(new bpmjs.ProgressMonitor(),0.5);
+	sub12.setCurrent(0.5);
+	this.assertEquals(0.125,this.monitor.getCurrent(),{ fileName : "TestProgressMonitor.hx", lineNumber : 52, className : "bpmjs.TestProgressMonitor", methodName : "test2SubChildrenUpdate"});
+}
+bpmjs.TestProgressMonitor.prototype.test2ChildrenWeight = function() {
+	var sub1 = this.monitor.append(new bpmjs.ProgressMonitor(),0.5);
+	var sub2 = this.monitor.append(new bpmjs.ProgressMonitor(),0.5);
+	sub2.weight = 99;
+	sub2.setCurrent(0.5);
+	this.assertEquals(0.495,this.monitor.getCurrent(),{ fileName : "TestProgressMonitor.hx", lineNumber : 61, className : "bpmjs.TestProgressMonitor", methodName : "test2ChildrenWeight"});
+}
+bpmjs.TestProgressMonitor.prototype.__class__ = bpmjs.TestProgressMonitor;
 Lambda = function() { }
 Lambda.__name__ = ["Lambda"];
 Lambda.array = function(it) {
@@ -4146,56 +4283,6 @@ Lambda.concat = function(a,b) {
 	return l;
 }
 Lambda.prototype.__class__ = Lambda;
-bpmjs.TestProgressMonitor = function(p) {
-	if( p === $_ ) return;
-	TestCase2.call(this);
-}
-bpmjs.TestProgressMonitor.__name__ = ["bpmjs","TestProgressMonitor"];
-bpmjs.TestProgressMonitor.__super__ = TestCase2;
-for(var k in TestCase2.prototype ) bpmjs.TestProgressMonitor.prototype[k] = TestCase2.prototype[k];
-bpmjs.TestProgressMonitor.prototype.monitor = null;
-bpmjs.TestProgressMonitor.prototype.setup = function() {
-	this.monitor = new bpmjs.ProgressMonitor();
-}
-bpmjs.TestProgressMonitor.prototype.testDefault = function() {
-	this.assertEquals(0.0,this.monitor.getCurrent(),{ fileName : "TestProgressMonitor.hx", lineNumber : 14, className : "bpmjs.TestProgressMonitor", methodName : "testDefault"});
-}
-bpmjs.TestProgressMonitor.prototype.testPercent = function() {
-	this.monitor.setCurrent(0.5);
-	this.assertEquals(0.5,this.monitor.getCurrent(),{ fileName : "TestProgressMonitor.hx", lineNumber : 20, className : "bpmjs.TestProgressMonitor", methodName : "testPercent"});
-}
-bpmjs.TestProgressMonitor.prototype.testChild = function() {
-	var sub1 = this.monitor.append(new bpmjs.ProgressMonitor(),1);
-	sub1.setCurrent(0.5);
-	this.assertEquals(0.5,this.monitor.getCurrent(),{ fileName : "TestProgressMonitor.hx", lineNumber : 27, className : "bpmjs.TestProgressMonitor", methodName : "testChild"});
-}
-bpmjs.TestProgressMonitor.prototype.test2ChildrenInit = function() {
-	var sub1 = this.monitor.append(new bpmjs.ProgressMonitor(),0.5);
-	var sub2 = this.monitor.append(new bpmjs.ProgressMonitor(),0.5);
-	this.assertEquals(0.0,this.monitor.getCurrent(),{ fileName : "TestProgressMonitor.hx", lineNumber : 34, className : "bpmjs.TestProgressMonitor", methodName : "test2ChildrenInit"});
-}
-bpmjs.TestProgressMonitor.prototype.test2ChildrenUpdate = function() {
-	var sub1 = this.monitor.append(new bpmjs.ProgressMonitor(),0.5);
-	var sub2 = this.monitor.append(new bpmjs.ProgressMonitor(),0.5);
-	sub2.setCurrent(0.5);
-	this.assertEquals(0.25,this.monitor.getCurrent(),{ fileName : "TestProgressMonitor.hx", lineNumber : 42, className : "bpmjs.TestProgressMonitor", methodName : "test2ChildrenUpdate"});
-}
-bpmjs.TestProgressMonitor.prototype.test2SubChildrenUpdate = function() {
-	var sub1 = this.monitor.append(new bpmjs.ProgressMonitor(),0.5);
-	var sub2 = this.monitor.append(new bpmjs.ProgressMonitor(),0.5);
-	var sub11 = sub1.append(new bpmjs.ProgressMonitor(),0.5);
-	var sub12 = sub1.append(new bpmjs.ProgressMonitor(),0.5);
-	sub12.setCurrent(0.5);
-	this.assertEquals(0.125,this.monitor.getCurrent(),{ fileName : "TestProgressMonitor.hx", lineNumber : 52, className : "bpmjs.TestProgressMonitor", methodName : "test2SubChildrenUpdate"});
-}
-bpmjs.TestProgressMonitor.prototype.test2ChildrenWeight = function() {
-	var sub1 = this.monitor.append(new bpmjs.ProgressMonitor(),0.5);
-	var sub2 = this.monitor.append(new bpmjs.ProgressMonitor(),0.5);
-	sub2.weight = 99;
-	sub2.setCurrent(0.5);
-	this.assertEquals(0.495,this.monitor.getCurrent(),{ fileName : "TestProgressMonitor.hx", lineNumber : 61, className : "bpmjs.TestProgressMonitor", methodName : "test2ChildrenWeight"});
-}
-bpmjs.TestProgressMonitor.prototype.__class__ = bpmjs.TestProgressMonitor;
 haxe.rtti.Meta = function() { }
 haxe.rtti.Meta.__name__ = ["haxe","rtti","Meta"];
 haxe.rtti.Meta.getType = function(t) {
@@ -4519,6 +4606,8 @@ Log.profileEnd = function() {
 }
 Log.init = function() {
 	if(!window.console) console = { };
+	console.log = console.log || function() {
+	};
 	console.info = console.info || function() {
 	};
 	console.warn = console.warn || function() {

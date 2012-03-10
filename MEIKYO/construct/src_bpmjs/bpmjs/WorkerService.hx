@@ -3,6 +3,7 @@ package bpmjs;
 class WorkerService
 {
 	public var debug:Bool;
+	public var receiver:Dynamic;
 	
 	var worker:Worker;
 	var queue:Array<Call>;
@@ -21,6 +22,11 @@ class WorkerService
 		worker.onmessage = onMessage;
 	}
 	
+	public function terminate()
+	{
+		worker.terminate();
+	}
+	
 	public function call(method:String, ?args:Array<Dynamic>, ?completeCallback:Dynamic)
 	{
 		if (args == null)
@@ -32,8 +38,11 @@ class WorkerService
 		addQueue(new Call(method, args, completeCallback));
 	}
 	
-	public function callTransfer(method:String, buffer:ArrayBuffer, completeCallback:Dynamic)
+	public function callTransfer(method:String, ?buffer:ArrayBuffer, completeCallback:Dynamic)
 	{
+		if (buffer == null)
+			buffer = new ArrayBuffer(0);
+			
 		addQueue(new Call("__prepareTransfer__", [method], function(){}));
 		addQueue(new TransferCall(method, [buffer], completeCallback));
 	}
@@ -74,14 +83,49 @@ class WorkerService
 	{
 		if (debug)
 			Log.info("Result: " + pendingCall + " -> " + Std.string(event.data));
-
-		if (pendingCall.transfer)
-			pendingCall.completeCallback(event.data);
-		else
-			pendingCall.completeCallback(event.data.result);
 			
-		pendingCall = null;
-		checkQueue();
+		if (event.data.type == "pipeMethod")
+		{
+			handlePipedMethod(event);
+		}
+		else
+		{
+			if (pendingCall.transfer)
+				pendingCall.completeCallback(event.data);
+			else
+				pendingCall.completeCallback(event.data.result);
+				
+			pendingCall = null;
+			checkQueue();
+		}
+	}
+	
+	function handlePipedMethod(event:MessageEvent)
+	{
+		if (receiver == null)
+		{
+			try
+			{
+				var method = js.Lib.eval(event.data.method);
+				method.apply(null, event.data.args);
+			}
+			catch(e:Dynamic)
+			{
+				Log.warn("Could not execute piped method without receiver: " + event.data.method);
+			}
+		}
+		else
+		{
+			try
+			{
+				var method = Reflect.field(receiver, event.data.method);
+				method.apply(receiver, event.data.args);
+			}
+			catch(e:Dynamic)
+			{
+				Log.warn("Could not execute piped method with receiver: " + event.data.method);
+			}
+		}
 	}
 }
 

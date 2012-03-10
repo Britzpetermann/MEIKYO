@@ -199,60 +199,6 @@ js.Lib.setErrorHandler = function(f) {
 	js.Lib.onerror = f;
 }
 js.Lib.prototype.__class__ = js.Lib;
-GLTexture = function(p) {
-}
-GLTexture.__name__ = ["GLTexture"];
-GLTexture.prototype.width = null;
-GLTexture.prototype.height = null;
-GLTexture.prototype.texture = null;
-GLTexture.prototype.__class__ = GLTexture;
-GLArrayTexture = function(p) {
-	if( p === $_ ) return;
-	GLTexture.call(this);
-}
-GLArrayTexture.__name__ = ["GLArrayTexture"];
-GLArrayTexture.__super__ = GLTexture;
-for(var k in GLTexture.prototype ) GLArrayTexture.prototype[k] = GLTexture.prototype[k];
-GLArrayTexture.prototype.array = null;
-GLArrayTexture.prototype.setPixel = function(x,y,r,g,b,a) {
-	var index = (y * this.width + x) * 4;
-	this.array[index] = r;
-	this.array[index + 1] = g;
-	this.array[index + 2] = b;
-	this.array[index + 3] = a;
-}
-GLArrayTexture.prototype.__class__ = GLArrayTexture;
-if(typeof haxe=='undefined') haxe = {}
-haxe.Log = function() { }
-haxe.Log.__name__ = ["haxe","Log"];
-haxe.Log.trace = function(v,infos) {
-	js.Boot.__trace(v,infos);
-}
-haxe.Log.clear = function() {
-	js.Boot.__clear_trace();
-}
-haxe.Log.prototype.__class__ = haxe.Log;
-Math2 = function() { }
-Math2.__name__ = ["Math2"];
-Math2.nextPowerOf2 = function(value) {
-	var val = Std["int"](value);
-	val--;
-	val = val >> 1 | val;
-	val = val >> 2 | val;
-	val = val >> 4 | val;
-	val = val >> 8 | val;
-	val = val >> 16 | val;
-	val++;
-	return val;
-}
-Math2.signum = function(value) {
-	if(value > 0) return 1; else if(value < 0) return -1;
-	return 0;
-}
-Math2.sin1 = function(rad1) {
-	return Math.sin(rad1 * Math.PI * 2) * 0.5 + 0.5;
-}
-Math2.prototype.__class__ = Math2;
 Std = function() { }
 Std.__name__ = ["Std"];
 Std["is"] = function(v,t) {
@@ -358,55 +304,28 @@ bpmjs.WorkingInstance.prototype.initConsole = function() {
 	};
 }
 bpmjs.WorkingInstance.prototype.__class__ = bpmjs.WorkingInstance;
-haxe.Timer = function(time_ms) {
-	if( time_ms === $_ ) return;
-	var arr = haxe_timers;
-	this.id = arr.length;
-	arr[this.id] = this;
-	this.timerId = window.setInterval("haxe_timers[" + this.id + "].run();",time_ms);
-}
-haxe.Timer.__name__ = ["haxe","Timer"];
-haxe.Timer.delay = function(f,time_ms) {
-	var t = new haxe.Timer(time_ms);
-	t.run = function() {
-		t.stop();
-		f();
-	};
-	return t;
-}
-haxe.Timer.measure = function(f,pos) {
-	var t0 = haxe.Timer.stamp();
-	var r = f();
-	haxe.Log.trace(haxe.Timer.stamp() - t0 + "s",pos);
-	return r;
-}
-haxe.Timer.stamp = function() {
-	return Date.now().getTime() / 1000;
-}
-haxe.Timer.prototype.id = null;
-haxe.Timer.prototype.timerId = null;
-haxe.Timer.prototype.stop = function() {
-	if(this.id == null) return;
-	window.clearInterval(this.timerId);
-	var arr = haxe_timers;
-	arr[this.id] = null;
-	if(this.id > 100 && this.id == arr.length - 1) {
-		var p = this.id - 1;
-		while(p >= 0 && arr[p] == null) p--;
-		arr = arr.slice(0,p + 1);
-	}
-	this.id = null;
-}
-haxe.Timer.prototype.run = function() {
-}
-haxe.Timer.prototype.__class__ = haxe.Timer;
 if(typeof kumite=='undefined') kumite = {}
-if(!kumite.musicdraw) kumite.musicdraw = {}
-kumite.musicdraw.MusicAnalyzer = function(p) {
+if(!kumite.jpegservice) kumite.jpegservice = {}
+kumite.jpegservice.JPEGWorker = function(p) {
 }
-kumite.musicdraw.MusicAnalyzer.__name__ = ["kumite","musicdraw","MusicAnalyzer"];
-kumite.musicdraw.MusicAnalyzer.prototype.bands = null;
-kumite.musicdraw.MusicAnalyzer.prototype.__class__ = kumite.musicdraw.MusicAnalyzer;
+kumite.jpegservice.JPEGWorker.__name__ = ["kumite","jpegservice","JPEGWorker"];
+kumite.jpegservice.JPEGWorker.main = function() {
+	importScripts("../lib/JPEGEncoder.js");
+	new bpmjs.WorkingInstance(new kumite.jpegservice.JPEGWorker());
+}
+kumite.jpegservice.JPEGWorker.prototype.width = null;
+kumite.jpegservice.JPEGWorker.prototype.height = null;
+kumite.jpegservice.JPEGWorker.prototype.config = function(width,height) {
+	this.width = width;
+	this.height = height;
+}
+kumite.jpegservice.JPEGWorker.prototype.compress = function(imageBuffer) {
+	var encoder = new JPEGEncoder(100);
+	return encoder.encode(new Uint8Array(imageBuffer),this.width,this.height,function(progress) {
+		bpmjs.WorkingInstance.pipeMethod("setProgress",[progress]);
+	});
+}
+kumite.jpegservice.JPEGWorker.prototype.__class__ = kumite.jpegservice.JPEGWorker;
 Reflect = function() { }
 Reflect.__name__ = ["Reflect"];
 Reflect.hasField = function(o,field) {
@@ -494,59 +413,6 @@ Reflect.makeVarArgs = function(f) {
 	};
 }
 Reflect.prototype.__class__ = Reflect;
-kumite.musicdraw.SquareEffectWorker = function(p) {
-	if( p === $_ ) return;
-	var instance = new bpmjs.WorkingInstance(this);
-}
-kumite.musicdraw.SquareEffectWorker.__name__ = ["kumite","musicdraw","SquareEffectWorker"];
-kumite.musicdraw.SquareEffectWorker.main = function() {
-	new kumite.musicdraw.SquareEffectWorker();
-}
-kumite.musicdraw.SquareEffectWorker.prototype.effect = null;
-kumite.musicdraw.SquareEffectWorker.prototype.init = function(analyzer) {
-	this.effect = new kumite.musicdraw.SquareEffect();
-	this.effect.analyzer = new kumite.musicdraw.MusicAnalyzer();
-	this.effect.analyzer.bands = analyzer.bands;
-	this.effect.init();
-}
-kumite.musicdraw.SquareEffectWorker.prototype.config = function(rasterX) {
-	this.effect.rasterX = rasterX;
-}
-kumite.musicdraw.SquareEffectWorker.prototype.render = function(buffer) {
-	this.effect.texture.array = new Uint8Array(buffer);
-	this.effect.render();
-}
-kumite.musicdraw.SquareEffectWorker.prototype.__class__ = kumite.musicdraw.SquareEffectWorker;
-kumite.musicdraw.SquareEffect = function(p) {
-	if( p === $_ ) return;
-	this.rasterX = 0;
-	this.texture = new GLArrayTexture();
-	this.texture.width = 512;
-	this.texture.height = 1024;
-}
-kumite.musicdraw.SquareEffect.__name__ = ["kumite","musicdraw","SquareEffect"];
-kumite.musicdraw.SquareEffect.prototype.analyzer = null;
-kumite.musicdraw.SquareEffect.prototype.texture = null;
-kumite.musicdraw.SquareEffect.prototype.rasterX = null;
-kumite.musicdraw.SquareEffect.prototype.startTime = null;
-kumite.musicdraw.SquareEffect.prototype.init = function() {
-	this.startTime = Date.now().getTime();
-}
-kumite.musicdraw.SquareEffect.prototype.render = function() {
-	var ms = Date.now().getTime() - this.startTime;
-	var _g1 = 0, _g = this.texture.width;
-	while(_g1 < _g) {
-		var x = _g1++;
-		var _g3 = 0, _g2 = this.texture.height;
-		while(_g3 < _g2) {
-			var y = _g3++;
-			var x2 = x - Math.sin(ms / 176000) * this.texture.width - this.texture.width / 2 + this.rasterX;
-			var y2 = y - Math.sin(ms / 299000) * this.texture.height - this.texture.height / 2;
-			this.texture.setPixel(x,y,(Math.sin((x2 * x2 * y2 * y2 * 0.00000001 - ms / 5000) * Math.PI * 2) * 0.5 + 0.5) * 255,y,x,255);
-		}
-	}
-}
-kumite.musicdraw.SquareEffect.prototype.__class__ = kumite.musicdraw.SquareEffect;
 IntIter = function(min,max) {
 	if( min === $_ ) return;
 	this.min = min;
@@ -576,50 +442,6 @@ js.Boot.__init();
 	}
 }
 {
-	var d = Date;
-	d.now = function() {
-		return new Date();
-	};
-	d.fromTime = function(t) {
-		var d1 = new Date();
-		d1["setTime"](t);
-		return d1;
-	};
-	d.fromString = function(s) {
-		switch(s.length) {
-		case 8:
-			var k = s.split(":");
-			var d1 = new Date();
-			d1["setTime"](0);
-			d1["setUTCHours"](k[0]);
-			d1["setUTCMinutes"](k[1]);
-			d1["setUTCSeconds"](k[2]);
-			return d1;
-		case 10:
-			var k = s.split("-");
-			return new Date(k[0],k[1] - 1,k[2],0,0,0);
-		case 19:
-			var k = s.split(" ");
-			var y = k[0].split("-");
-			var t = k[1].split(":");
-			return new Date(y[0],y[1] - 1,y[2],t[0],t[1],t[2]);
-		default:
-			throw "Invalid date format : " + s;
-		}
-	};
-	d.prototype["toString"] = function() {
-		var date = this;
-		var m = date.getMonth() + 1;
-		var d1 = date.getDate();
-		var h = date.getHours();
-		var mi = date.getMinutes();
-		var s = date.getSeconds();
-		return date.getFullYear() + "-" + (m < 10?"0" + m:"" + m) + "-" + (d1 < 10?"0" + d1:"" + d1) + " " + (h < 10?"0" + h:"" + h) + ":" + (mi < 10?"0" + mi:"" + mi) + ":" + (s < 10?"0" + s:"" + s);
-	};
-	d.prototype.__class__ = d;
-	d.__name__ = ["Date"];
-}
-{
 	String.prototype.__class__ = String;
 	String.__name__ = ["String"];
 	Array.prototype.__class__ = Array;
@@ -645,6 +467,5 @@ js.Boot.__init();
 		return isNaN(i);
 	};
 }
-if(typeof(haxe_timers) == "undefined") haxe_timers = [];
 js.Lib.onerror = null;
-kumite.musicdraw.SquareEffectWorker.main()
+kumite.jpegservice.JPEGWorker.main()

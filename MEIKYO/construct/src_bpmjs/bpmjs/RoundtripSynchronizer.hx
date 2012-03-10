@@ -28,9 +28,7 @@ class RoundtripSynchronizer
 	
 	public function delay(method:Dynamic)
 	{
-		var elapsedUntilWorkStart = Date.now().getTime() - workStartTime;
-		
-		lastDelayTime = Std.int(targetMs - elapsedUntilWorkStart - 1);
+		lastDelayTime = Std.int(targetMs - getWorkElapsedTime() - 1);
 		if (lastDelayTime < 0)
 			lastDelayTime = 0;
 			
@@ -38,6 +36,11 @@ class RoundtripSynchronizer
 			haxe.Timer.delay(method, lastDelayTime);
 		else
 			method();
+	}
+	
+	public function getWorkElapsedTime()
+	{
+		return Date.now().getTime() - workStartTime;
 	}
 	
 	public function getInfo()

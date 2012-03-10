@@ -1,27 +1,38 @@
 package bpmjs;
 
+import haxe.FastList;
 import reflect.ClassInfo;
+
+using Lambda;
 
 class TaskGroup extends Task<TaskGroup>
 {
 	public var tasks : Array<Task<Dynamic>>;
+	public var autoStart : Bool;
+	public var parallelTasksMax : Int;
+	
+	var pendingTasks : FastList<Task<Dynamic>>;
 
 	public function new()
 	{
 		super();
+		pendingTasks = new FastList<Task<Dynamic>>();
+		parallelTasksMax = 1;
+		autoStart = false;
 		tasks = new Array();
 	}
 
 	public function add(task : Task<Dynamic>)
 	{
 		tasks.push(task);
+		if (autoStart)
+			nextTask();
 	}
 
 	override public function doStart()
 	{
 		for(task in tasks)
 		{
-			//TODO if monitor is zero...			
 			monitor.append(task.monitor, 1 / tasks.length);
 		}
 		
@@ -30,26 +41,42 @@ class TaskGroup extends Task<TaskGroup>
 
 	function nextTask()
 	{
+		var pendingTaskCount = pendingTasks.count();
+		Log.info(pendingTaskCount);
+		if (pendingTaskCount >= parallelTasksMax)
+			return;
+			
 		if (tasks.length > 0)
 		{
-			var task = tasks.shift();
-			task.completeSignaler.bind(handleTaskComplete);
-			task.errorSignaler.bind(handleTaskError);
-			task.start();
+			var pendingTask = tasks.shift();
+			pendingTasks.add(pendingTask);
+			
+			pendingTask.completeSignaler.bind(handleTaskComplete);
+			pendingTask.errorSignaler.bind(handleTaskError);
+			pendingTask.start();
+			
 		}
 		else
 		{
-			complete();
+			if (!autoStart)
+				complete();
 		}
 	}
 
 	function handleTaskComplete(task : Task<Dynamic>)
 	{
+		pendingTasks.remove(task);
+		
 		nextTask();
 	}
 	
 	function handleTaskError(taskError : TaskError<Dynamic>)
 	{
-		error(this, taskError.error);
+		pendingTasks.remove(taskError.task);
+		
+		if (!autoStart)
+			error(this, taskError.error);
+		else
+			Log.warn(taskError.error);
 	}
 }

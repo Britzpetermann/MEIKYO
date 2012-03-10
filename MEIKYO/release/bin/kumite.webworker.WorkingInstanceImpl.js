@@ -228,24 +228,33 @@ if(typeof bpmjs=='undefined') bpmjs = {}
 bpmjs.WorkingInstance = function(receiver) {
 	if( receiver === $_ ) return;
 	Reflect;
+	this.initConsole();
+	var instance = this;
 	
 			var transferMethod = null;
 
 			onmessage = function(event)
 			{
+				bpmjs.WorkingInstance.postMessage = function(data)
+				{
+					postMessage(data)
+				}
+				
 				if (transferMethod != null)
 				{
 					var buffer = event.data;
-					Reflect.callMethod(receiver, transferMethod, [buffer]);
+					var resultBuffer = Reflect.callMethod(receiver, transferMethod, [buffer]);
+					if (resultBuffer == null)
+						resultBuffer = buffer;
 					transferMethod = null;
 					
-					if (buffer.byteLength == 0)
-						throw 'Buffer length is zero!';
+					if (resultBuffer.byteLength == 0)
+						throw 'WorkingInstance: Buffer length is zero!';
 						
-					webkitPostMessage(buffer, [buffer]);
+					webkitPostMessage(resultBuffer, [resultBuffer]);
 					
-					if (buffer.byteLength != 0)
-						throw 'Buffer length is not zero!';
+					if (resultBuffer.byteLength != 0)
+						throw 'WorkingInstance: Buffer length is not zero!';
 						
 				}
 				else
@@ -257,7 +266,7 @@ bpmjs.WorkingInstance = function(receiver) {
 						var transferMethodName = event.data.args[0];
 						transferMethod = Reflect.field(receiver, transferMethodName);
 						if (transferMethod == null)
-							throw 'Method ' + transferMethodName + ' is null!';
+							throw 'WorkingInstance: Method ' + transferMethodName + ' is null!';
 						webkitPostMessage({result:null});
 					}
 					else
@@ -265,7 +274,7 @@ bpmjs.WorkingInstance = function(receiver) {
 						var args = event.data.args;
 						var method = Reflect.field(receiver, methodName);
 						if (method == null)
-							throw 'Method ' + methodName + ' is null!';
+							throw 'WorkingInstance: Method ' + methodName + ' is null!';
 							
 						var result = Reflect.callMethod(receiver, method, args);
 						webkitPostMessage({result:result});
@@ -275,6 +284,25 @@ bpmjs.WorkingInstance = function(receiver) {
 		;
 }
 bpmjs.WorkingInstance.__name__ = ["bpmjs","WorkingInstance"];
+bpmjs.WorkingInstance.postMessage = null;
+bpmjs.WorkingInstance.pipeMethod = function(methodName,args) {
+	bpmjs.WorkingInstance.postMessage({ type : "pipeMethod", method : methodName, args : args});
+}
+bpmjs.WorkingInstance.prototype.initConsole = function() {
+	console = { };
+	console.info = function(message) {
+		bpmjs.WorkingInstance.pipeMethod("Log.info",[message]);
+	};
+	console.warn = function(message) {
+		bpmjs.WorkingInstance.pipeMethod("Log.warn",[message]);
+	};
+	console.error = function(message) {
+		bpmjs.WorkingInstance.pipeMethod("Log.error",[message]);
+	};
+	console.log = function(message) {
+		bpmjs.WorkingInstance.pipeMethod("Log.info",[message]);
+	};
+}
 bpmjs.WorkingInstance.prototype.__class__ = bpmjs.WorkingInstance;
 if(typeof kumite=='undefined') kumite = {}
 if(!kumite.webworker) kumite.webworker = {}

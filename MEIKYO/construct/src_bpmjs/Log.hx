@@ -29,6 +29,7 @@ class Log
 		untyped
 		{
 			if (!window.console) console = {};
+			console.log = console.log || function() {};
 			console.info = console.info || function() {};
 			console.warn = console.warn || function() {};
 			console.error = console.error || function() {};

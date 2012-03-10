@@ -1,4 +1,6 @@
 extern class WebKitBlobBuilder
 {
-	public function new():Void;
+	function new():Void;
+	function append(data:Dynamic):Void;
+	function getBlob(type:String):Dynamic;
 }
