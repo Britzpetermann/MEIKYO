@@ -197,7 +197,7 @@ class SpriteMeshLayer implements LayerLifecycle, implements Infos
         var i = lo;
         var j = hi;
         var buf = spriteRenderIndexes;
-        var p = buf[(lo+hi)>>1];
+        var p:Int = buf[(lo+hi)>>1];
         while( i <= j ) {
             while( spriteRenderIndexes[i] > p ) i++;
             while( spriteRenderIndexes[j] < p ) j--;

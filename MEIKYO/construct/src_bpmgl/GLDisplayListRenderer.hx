@@ -77,11 +77,13 @@ class GLDisplayListRenderer
 	{
 		for (displayObject in displayObjectContainer.children)
 		{
+			if (!displayObject.visible)
+				continue;
+				
 			var matrix = renderDisplayObject(displayObject, parentMatrix, alpha);
 			if (Std.is(displayObject, GLDisplayObjectContainer))
 			{
-				alpha *= displayObject.alpha;
-				renderRecursive(cast displayObject, matrix, alpha);
+				renderRecursive(cast displayObject, matrix, alpha * displayObject.alpha);
 			}
 		}
 	}

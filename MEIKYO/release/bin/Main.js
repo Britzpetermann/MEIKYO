@@ -72,6 +72,7 @@ bpmjs.RoundtripSynchronizer.prototype.workMs = null;
 bpmjs.RoundtripSynchronizer.prototype.roundtripMs = null;
 bpmjs.RoundtripSynchronizer.prototype.workStartTime = null;
 bpmjs.RoundtripSynchronizer.prototype.lastDelayTime = null;
+bpmjs.RoundtripSynchronizer.prototype.delayTimer = null;
 bpmjs.RoundtripSynchronizer.prototype.workStart = function() {
 	this.roundtripMs = Date.now().getTime() - this.workStartTime;
 	this.workStartTime = Date.now().getTime();
@@ -82,13 +83,16 @@ bpmjs.RoundtripSynchronizer.prototype.workComplete = function() {
 bpmjs.RoundtripSynchronizer.prototype.delay = function(method) {
 	this.lastDelayTime = Std["int"](this.targetMs - this.getWorkElapsedTime() - 1);
 	if(this.lastDelayTime < 0) this.lastDelayTime = 0;
-	if(this.lastDelayTime > 0) haxe.Timer.delay(method,this.lastDelayTime); else method();
+	if(this.lastDelayTime > 0) this.delayTimer = haxe.Timer.delay(method,this.lastDelayTime); else method();
 }
 bpmjs.RoundtripSynchronizer.prototype.getWorkElapsedTime = function() {
 	return Date.now().getTime() - this.workStartTime;
 }
+bpmjs.RoundtripSynchronizer.prototype.stop = function() {
+	if(this.delayTimer != null) this.delayTimer.stop();
+}
 bpmjs.RoundtripSynchronizer.prototype.getInfo = function() {
-	return "WRD(ms): " + this.workMs + ", " + this.roundtripMs + ", " + this.lastDelayTime;
+	return "Work, Round(ms): " + this.workMs + ", " + this.roundtripMs;
 }
 bpmjs.RoundtripSynchronizer.prototype.__class__ = bpmjs.RoundtripSynchronizer;
 Rand = function() { }
@@ -207,6 +211,7 @@ GLDisplayObject = function(p) {
 	GLDisplayObject.nextId++;
 	GLDisplayList.getDefault().initDisplayObject(this);
 	this.skipDraw = false;
+	this.visible = true;
 	this.alpha = 1;
 	this.matrix = new Matrix4();
 	this.graphic = new CanvasGraphic();
@@ -225,6 +230,7 @@ GLDisplayObject.nextId = null;
 GLDisplayObject.prototype.id = null;
 GLDisplayObject.prototype.stage = null;
 GLDisplayObject.prototype.skipDraw = null;
+GLDisplayObject.prototype.visible = null;
 GLDisplayObject.prototype.alpha = null;
 GLDisplayObject.prototype.x = null;
 GLDisplayObject.prototype.y = null;
@@ -237,6 +243,7 @@ GLDisplayObject.prototype.graphicIsInvalid = null;
 GLDisplayObject.prototype.matrix = null;
 GLDisplayObject.prototype.enterFrameSignaler = null;
 GLDisplayObject.prototype.graphic = null;
+GLDisplayObject.prototype.parent = null;
 GLDisplayObject.prototype.validateTransform = function() {
 	if(this.transformIsInvalid) {
 		this.graphic.setWidth(this.width);
@@ -308,19 +315,38 @@ GLDisplayObject.prototype.__class__ = GLDisplayObject;
 GLInteractiveObject = function(p) {
 	if( p === $_ ) return;
 	this.mouseEnabled = false;
+	this.handCursor = true;
 	this.hitarea = new GLHitarea();
 	this.hitarea.position.x = 0;
 	this.hitarea.position.y = 0;
 	GLDisplayObject.call(this);
 	GLDisplayList.getDefault().initInteractiveObject(this);
+	GLMouseRegistry.getInstance().mouseMoveSignaler.bind($closure(this,"handleMouseMove"));
 }
 GLInteractiveObject.__name__ = ["GLInteractiveObject"];
 GLInteractiveObject.__super__ = GLDisplayObject;
 for(var k in GLDisplayObject.prototype ) GLInteractiveObject.prototype[k] = GLDisplayObject.prototype[k];
 GLInteractiveObject.prototype.hitarea = null;
 GLInteractiveObject.prototype.mouseEnabled = null;
+GLInteractiveObject.prototype.handCursor = null;
 GLInteractiveObject.prototype.mouseDownSignaler = null;
 GLInteractiveObject.prototype.mouseUpSignaler = null;
+GLInteractiveObject.prototype.mouseX = null;
+GLInteractiveObject.prototype.mouseY = null;
+GLInteractiveObject.prototype.mouseXGlobal = null;
+GLInteractiveObject.prototype.mouseYGlobal = null;
+GLInteractiveObject.prototype.handleMouseMove = function(position) {
+	this.mouseXGlobal = this.mouseX = position.x * this.stage.stageWidth;
+	this.mouseYGlobal = this.mouseY = position.y * this.stage.stageHeight;
+	this.mouseX -= this.x;
+	this.mouseY -= this.y;
+	var localParent = this.parent;
+	while(localParent != null) {
+		this.mouseX -= localParent.x;
+		this.mouseY -= localParent.y;
+		localParent = localParent.parent;
+	}
+}
 GLInteractiveObject.prototype.setWidth = function(value) {
 	var result = GLDisplayObject.prototype.setWidth.call(this,value);
 	this.hitarea.size.x = result;
@@ -830,6 +856,47 @@ haxe.rtti.XmlParser.prototype.defplat = function() {
 	return l;
 }
 haxe.rtti.XmlParser.prototype.__class__ = haxe.rtti.XmlParser;
+haxe.rtti.Infos = function() { }
+haxe.rtti.Infos.__name__ = ["haxe","rtti","Infos"];
+haxe.rtti.Infos.prototype.__class__ = haxe.rtti.Infos;
+if(!kumite.blobs) kumite.blobs = {}
+kumite.blobs.BlobReaderHTTP = function(p) {
+}
+kumite.blobs.BlobReaderHTTP.__name__ = ["kumite","blobs","BlobReaderHTTP"];
+kumite.blobs.BlobReaderHTTP.prototype.blobs = null;
+kumite.blobs.BlobReaderHTTP.prototype.start = function() {
+	this.readBlobs();
+}
+kumite.blobs.BlobReaderHTTP.prototype.readBlobs = function() {
+	var r = new haxe.Http("http://192.168.2.201/data/blobs.php");
+	r.onError = $closure(this,"onError");
+	r.onData = $closure(this,"onData");
+	r.request(false);
+}
+kumite.blobs.BlobReaderHTTP.prototype.onData = function(r) {
+	var xml = Xml.parse(r);
+	this.blobs.blobs = new Array();
+	try {
+		var $it0 = xml.elements();
+		while( $it0.hasNext() ) {
+			var p = $it0.next();
+			var fast = new haxe.xml.Fast(p);
+			var blob = new kumite.blobs.Blob();
+			blob.x = Std.parseFloat(fast.node.resolve("x").getInnerData());
+			blob.y = Std.parseFloat(fast.node.resolve("y").getInnerData());
+			blob.z = Std.parseFloat(fast.node.resolve("z").getInnerData());
+			blob.area = Std.parseFloat(fast.node.resolve("area").getInnerData());
+			this.blobs.blobs.push(blob);
+		}
+	} catch( e ) {
+	}
+	this.readBlobs();
+}
+kumite.blobs.BlobReaderHTTP.prototype.onError = function(r) {
+	this.readBlobs();
+}
+kumite.blobs.BlobReaderHTTP.prototype.__class__ = kumite.blobs.BlobReaderHTTP;
+kumite.blobs.BlobReaderHTTP.__interfaces__ = [haxe.rtti.Infos];
 Log = function() { }
 Log.__name__ = ["Log"];
 Log.posInfo = null;
@@ -953,6 +1020,56 @@ Log.displayError = function(message) {
 Log.prototype.errorFilter = function() {
 }
 Log.prototype.__class__ = Log;
+Color = function(r,g,b,a) {
+	if( r === $_ ) return;
+	if(a == null) a = 1.0;
+	if(b == null) b = 1.0;
+	if(g == null) g = 0.0;
+	if(r == null) r = 1.0;
+	this.r = r;
+	this.g = g;
+	this.b = b;
+	this.a = a;
+}
+Color.__name__ = ["Color"];
+Color.prototype.r = null;
+Color.prototype.g = null;
+Color.prototype.b = null;
+Color.prototype.a = null;
+Color.prototype.fromHex = function(hex) {
+	this.r = (hex >> 16 & 255) / 255;
+	this.g = (hex >> 8 & 255) / 255;
+	this.b = (hex & 255) / 255;
+	this.a = 1.0;
+	return this;
+}
+Color.prototype.scaleRGB = function(factor) {
+	this.r *= factor;
+	this.g *= factor;
+	this.b *= factor;
+}
+Color.prototype.mixFrom = function(color1,color2,color1Mix) {
+	if(color1Mix < 0) color1Mix = 0;
+	if(color1Mix > 1) color1Mix = 1;
+	var color2Mix = 1 - color1Mix;
+	this.r = color1.r * color1Mix + color2.r * color2Mix;
+	this.g = color1.g * color1Mix + color2.g * color2Mix;
+	this.b = color1.b * color1Mix + color2.b * color2Mix;
+}
+Color.prototype.toContextRGB = function() {
+	return "rgb(" + this.r * 255 + "," + this.g * 255 + "," + this.b * 255 + ")";
+}
+Color.prototype.toContextRGBA = function() {
+	return "rgba(" + Std["int"](this.r * 255) + "," + Std["int"](this.g * 255) + "," + Std["int"](this.b * 255) + "," + this.a + ")";
+}
+Color.prototype.clone = function() {
+	return new Color(this.r,this.g,this.b,this.a);
+}
+Color.prototype.toString = function() {
+	return "Color: " + this.r + "," + this.g + "," + this.b + "," + this.a;
+}
+Color.prototype.__class__ = Color;
+Color.__interfaces__ = [haxe.rtti.Infos];
 GLDisplayListRenderer = function(p) {
 	if( p === $_ ) return;
 	this.textures = new IntHash();
@@ -1005,11 +1122,9 @@ GLDisplayListRenderer.prototype.renderRecursive = function(displayObjectContaine
 	while(_g < _g1.length) {
 		var displayObject = _g1[_g];
 		++_g;
+		if(!displayObject.visible) continue;
 		var matrix = this.renderDisplayObject(displayObject,parentMatrix,alpha);
-		if(Std["is"](displayObject,GLDisplayObjectContainer)) {
-			alpha *= displayObject.alpha;
-			this.renderRecursive(displayObject,matrix,alpha);
-		}
+		if(Std["is"](displayObject,GLDisplayObjectContainer)) this.renderRecursive(displayObject,matrix,alpha * displayObject.alpha);
 	}
 }
 GLDisplayListRenderer.prototype.renderDisplayObject = function(displayObject,parentMatrix,alpha) {
@@ -1047,59 +1162,6 @@ bpmjs.TaskError.__name__ = ["bpmjs","TaskError"];
 bpmjs.TaskError.prototype.task = null;
 bpmjs.TaskError.prototype.error = null;
 bpmjs.TaskError.prototype.__class__ = bpmjs.TaskError;
-haxe.rtti.Infos = function() { }
-haxe.rtti.Infos.__name__ = ["haxe","rtti","Infos"];
-haxe.rtti.Infos.prototype.__class__ = haxe.rtti.Infos;
-Color = function(r,g,b,a) {
-	if( r === $_ ) return;
-	if(a == null) a = 1.0;
-	if(b == null) b = 1.0;
-	if(g == null) g = 0.0;
-	if(r == null) r = 1.0;
-	this.r = r;
-	this.g = g;
-	this.b = b;
-	this.a = a;
-}
-Color.__name__ = ["Color"];
-Color.prototype.r = null;
-Color.prototype.g = null;
-Color.prototype.b = null;
-Color.prototype.a = null;
-Color.prototype.fromHex = function(hex) {
-	this.r = (hex >> 16 & 255) / 255;
-	this.g = (hex >> 8 & 255) / 255;
-	this.b = (hex & 255) / 255;
-	this.a = 1.0;
-	return this;
-}
-Color.prototype.scaleRGB = function(factor) {
-	this.r *= factor;
-	this.g *= factor;
-	this.b *= factor;
-}
-Color.prototype.mixFrom = function(color1,color2,color1Mix) {
-	if(color1Mix < 0) color1Mix = 0;
-	if(color1Mix > 1) color1Mix = 1;
-	var color2Mix = 1 - color1Mix;
-	this.r = color1.r * color1Mix + color2.r * color2Mix;
-	this.g = color1.g * color1Mix + color2.g * color2Mix;
-	this.b = color1.b * color1Mix + color2.b * color2Mix;
-}
-Color.prototype.toContextRGB = function() {
-	return "rgb(" + this.r * 255 + "," + this.g * 255 + "," + this.b * 255 + ")";
-}
-Color.prototype.toContextRGBA = function() {
-	return "rgba(" + Std["int"](this.r * 255) + "," + Std["int"](this.g * 255) + "," + Std["int"](this.b * 255) + "," + this.a + ")";
-}
-Color.prototype.clone = function() {
-	return new Color(this.r,this.g,this.b,this.a);
-}
-Color.prototype.toString = function() {
-	return "Color: " + this.r + "," + this.g + "," + this.b + "," + this.a;
-}
-Color.prototype.__class__ = Color;
-Color.__interfaces__ = [haxe.rtti.Infos];
 GLDisplayObjectContainer = function(p) {
 	if( p === $_ ) return;
 	GLDisplayObject.call(this);
@@ -1110,6 +1172,7 @@ GLDisplayObjectContainer.__super__ = GLDisplayObject;
 for(var k in GLDisplayObject.prototype ) GLDisplayObjectContainer.prototype[k] = GLDisplayObject.prototype[k];
 GLDisplayObjectContainer.prototype.children = null;
 GLDisplayObjectContainer.prototype.addChild = function(child) {
+	child.parent = this;
 	this.children.push(child);
 }
 GLDisplayObjectContainer.prototype.removeChild = function(child) {
@@ -1132,13 +1195,16 @@ GLSliderH = function(p) {
 	this.label.setText("Text");
 	this.label.setWidth(100);
 	this.label.setHeight(20);
+	this.label.handCursor = false;
+	this.label.mouseEnabled = true;
+	this.label.mouseDownSignaler.bind($closure(this,"mouseDown"));
 	this.dragH.min = 0;
 	this.dragH.setWidth(10);
 	this.dragH.max = 100 - this.dragH.width;
 	this.dragH.setHeight(20);
 	this.dragH.changeSignaler.bind($closure(this,"dragChanged"));
-	this.addChild(this.dragH);
 	this.addChild(this.label);
+	this.addChild(this.dragH);
 	this.updateChildren();
 }
 GLSliderH.__name__ = ["GLSliderH"];
@@ -1155,6 +1221,10 @@ GLSliderH.prototype.bind = function(binding) {
 	this.binding.change.unbind($closure(this,"handleBindChange"));
 	this.binding = binding;
 	this.binding.change.bind($closure(this,"handleBindChange"));
+}
+GLSliderH.prototype.mouseDown = function(_) {
+	this.dragChanged(this.label.mouseX - this.dragH.width / 2);
+	this.dragH.startSlide(this.dragH);
 }
 GLSliderH.prototype.handleBindChange = function(binding) {
 	this.value = binding.getValue();
@@ -1345,7 +1415,6 @@ GLAttribLocation.prototype.drawArrays = function(mode,first,count) {
 	GL.gl.drawArrays(mode,first,count);
 }
 GLAttribLocation.prototype.__class__ = GLAttribLocation;
-if(!kumite.blobs) kumite.blobs = {}
 kumite.blobs.Blob = function(p) {
 }
 kumite.blobs.Blob.__name__ = ["kumite","blobs","Blob"];
@@ -1890,63 +1959,6 @@ Hash.prototype.toString = function() {
 	return s.b.join("");
 }
 Hash.prototype.__class__ = Hash;
-if(!kumite.musicdraw) kumite.musicdraw = {}
-kumite.musicdraw.SquareEffectWorkerHandler = function(p) {
-	if( p === $_ ) return;
-	this.rasterX = 0;
-	this.roundtripSynchronizer = new bpmjs.RoundtripSynchronizer();
-	this.roundtripSynchronizer.targetMs = 1000 / 60;
-}
-kumite.musicdraw.SquareEffectWorkerHandler.__name__ = ["kumite","musicdraw","SquareEffectWorkerHandler"];
-kumite.musicdraw.SquareEffectWorkerHandler.prototype.textureRegistry = null;
-kumite.musicdraw.SquareEffectWorkerHandler.prototype.analyzer = null;
-kumite.musicdraw.SquareEffectWorkerHandler.prototype.stage = null;
-kumite.musicdraw.SquareEffectWorkerHandler.prototype.texture = null;
-kumite.musicdraw.SquareEffectWorkerHandler.prototype.workerService = null;
-kumite.musicdraw.SquareEffectWorkerHandler.prototype.roundtripSynchronizer = null;
-kumite.musicdraw.SquareEffectWorkerHandler.prototype.rasterX = null;
-kumite.musicdraw.SquareEffectWorkerHandler.prototype.label = null;
-kumite.musicdraw.SquareEffectWorkerHandler.prototype.createTexture = function() {
-	this.texture = this.textureRegistry.createGLArrayTexture(512,1024,9729);
-	return this.texture;
-}
-kumite.musicdraw.SquareEffectWorkerHandler.prototype.start = function() {
-	this.workerService = new bpmjs.WorkerService();
-	this.workerService.debug = false;
-	this.workerService.init("bin/kumite.musicdraw.SquareEffectWorker.js");
-	this.workerService.call("init",[this.analyzer],$closure(this,"loop"));
-	var binding = reflect.Binding.createForInstanceAndName(this,"rasterX");
-	var sliderH = new GLSliderH();
-	sliderH.setMin(-200);
-	sliderH.setMax(200);
-	sliderH.value = binding.getValue();
-	sliderH.setX(10);
-	sliderH.setY(100);
-	sliderH.setWidth(200);
-	sliderH.bind(binding);
-	this.stage.addChild(sliderH);
-	this.label = new GLLabel();
-	this.label.setText("Huhu");
-	this.label.setX(10);
-	this.label.setY(75);
-	this.label.setWidth(200);
-	this.label.setHeight(20);
-	this.stage.addChild(this.label);
-}
-kumite.musicdraw.SquareEffectWorkerHandler.prototype.loop = function() {
-	this.label.setText(this.roundtripSynchronizer.getInfo());
-	this.workerService.call("config",[this.rasterX]);
-	this.roundtripSynchronizer.workStart();
-	this.workerService.callTransfer("render",this.texture.array.buffer,$closure(this,"handleRender"));
-}
-kumite.musicdraw.SquareEffectWorkerHandler.prototype.handleRender = function(buffer) {
-	this.roundtripSynchronizer.workComplete();
-	this.texture.array = new Uint8Array(buffer);
-	this.textureRegistry.updateGLArrayTexture(this.texture);
-	this.roundtripSynchronizer.delay($closure(this,"loop"));
-}
-kumite.musicdraw.SquareEffectWorkerHandler.prototype.__class__ = kumite.musicdraw.SquareEffectWorkerHandler;
-kumite.musicdraw.SquareEffectWorkerHandler.__interfaces__ = [haxe.rtti.Infos];
 GLStage = function(p) {
 	if( p === $_ ) return;
 	GLDisplayObjectContainer.call(this);
@@ -2009,120 +2021,6 @@ IntHash.prototype.toString = function() {
 	return s.b.join("");
 }
 IntHash.prototype.__class__ = IntHash;
-kumite.musicdraw.RasterEffectWorkerHandler = function(p) {
-	if( p === $_ ) return;
-	this.width = Std["int"](Math.pow(2,8));
-	this.height = this.width;
-	this.paramLength = 1;
-	this.paramPosition = 0;
-	this.roundtripSynchronizer = new bpmjs.RoundtripSynchronizer();
-	this.roundtripSynchronizer.targetMs = 1000 / 10;
-}
-kumite.musicdraw.RasterEffectWorkerHandler.__name__ = ["kumite","musicdraw","RasterEffectWorkerHandler"];
-kumite.musicdraw.RasterEffectWorkerHandler.prototype.stage = null;
-kumite.musicdraw.RasterEffectWorkerHandler.prototype.jpegService = null;
-kumite.musicdraw.RasterEffectWorkerHandler.prototype.analyzer = null;
-kumite.musicdraw.RasterEffectWorkerHandler.prototype.textureRegistry = null;
-kumite.musicdraw.RasterEffectWorkerHandler.prototype.texture = null;
-kumite.musicdraw.RasterEffectWorkerHandler.prototype.workerService = null;
-kumite.musicdraw.RasterEffectWorkerHandler.prototype.roundtripSynchronizer = null;
-kumite.musicdraw.RasterEffectWorkerHandler.prototype.paramLength = null;
-kumite.musicdraw.RasterEffectWorkerHandler.prototype.paramPosition = null;
-kumite.musicdraw.RasterEffectWorkerHandler.prototype.width = null;
-kumite.musicdraw.RasterEffectWorkerHandler.prototype.height = null;
-kumite.musicdraw.RasterEffectWorkerHandler.prototype.label = null;
-kumite.musicdraw.RasterEffectWorkerHandler.prototype.createTexture = function() {
-	this.texture = this.textureRegistry.createGLArrayTexture(this.width,this.height,9729);
-	return this.texture;
-}
-kumite.musicdraw.RasterEffectWorkerHandler.prototype.start = function() {
-	this.workerService = new bpmjs.WorkerService();
-	this.workerService.debug = false;
-	this.workerService.receiver = this;
-	this.workerService.init("bin/kumite.musicdraw.RasterEffectWorker.js");
-	this.workerService.call("init",[this.analyzer],$closure(this,"loop"));
-	this.label = new GLLabel();
-	this.label.setX(10);
-	this.label.setY(135);
-	this.label.setWidth(200);
-	this.label.setHeight(20);
-	this.stage.addChild(this.label);
-	this.slider("paramLength",160);
-	this.slider("paramPosition",180);
-}
-kumite.musicdraw.RasterEffectWorkerHandler.prototype.openImage = function() {
-	var task = new kumite.musicdraw.JPEGTask();
-	task.width = Std["int"](Math.pow(2,13));
-	task.height = task.width;
-	task.paramLength = this.paramLength;
-	task.paramPosition = this.paramPosition;
-	task.jpegService = this.jpegService;
-	task.analyzer = this.analyzer;
-	return task;
-}
-kumite.musicdraw.RasterEffectWorkerHandler.prototype.loop = function() {
-	this.label.setText(this.roundtripSynchronizer.getInfo());
-	this.workerService.call("config",[{ paramLength : this.paramLength, paramPosition : this.paramPosition, width : this.width, height : this.height}]);
-	this.roundtripSynchronizer.workStart();
-	this.workerService.callTransfer("render",this.texture.array.buffer,$closure(this,"handleRender"));
-}
-kumite.musicdraw.RasterEffectWorkerHandler.prototype.handleRender = function(buffer) {
-	this.roundtripSynchronizer.workComplete();
-	this.texture.array = new Uint8Array(buffer);
-	this.textureRegistry.updateGLArrayTexture(this.texture,9987);
-	this.roundtripSynchronizer.delay($closure(this,"loop"));
-}
-kumite.musicdraw.RasterEffectWorkerHandler.prototype.slider = function(field,y) {
-	var binding = reflect.Binding.createForInstanceAndName(this,field);
-	var sliderH = new GLSliderH();
-	sliderH.setMin(0);
-	sliderH.setMax(1);
-	sliderH.value = binding.getValue();
-	sliderH.setX(10);
-	sliderH.setY(y);
-	sliderH.setWidth(200);
-	sliderH.bind(binding);
-	this.stage.addChild(sliderH);
-}
-kumite.musicdraw.RasterEffectWorkerHandler.prototype.setProgress = function(progress) {
-}
-kumite.musicdraw.RasterEffectWorkerHandler.prototype.__class__ = kumite.musicdraw.RasterEffectWorkerHandler;
-kumite.musicdraw.RasterEffectWorkerHandler.__interfaces__ = [haxe.rtti.Infos];
-kumite.musicdraw.JPEGTask = function(p) {
-	if( p === $_ ) return;
-	bpmjs.Task.call(this);
-}
-kumite.musicdraw.JPEGTask.__name__ = ["kumite","musicdraw","JPEGTask"];
-kumite.musicdraw.JPEGTask.__super__ = bpmjs.Task;
-for(var k in bpmjs.Task.prototype ) kumite.musicdraw.JPEGTask.prototype[k] = bpmjs.Task.prototype[k];
-kumite.musicdraw.JPEGTask.prototype.jpegService = null;
-kumite.musicdraw.JPEGTask.prototype.analyzer = null;
-kumite.musicdraw.JPEGTask.prototype.paramLength = null;
-kumite.musicdraw.JPEGTask.prototype.paramPosition = null;
-kumite.musicdraw.JPEGTask.prototype.width = null;
-kumite.musicdraw.JPEGTask.prototype.height = null;
-kumite.musicdraw.JPEGTask.prototype.doStart = function() {
-	var me = this;
-	var workerService = new bpmjs.WorkerService();
-	workerService.debug = false;
-	workerService.receiver = { setProgress : function(progress) {
-		{
-			Log.posInfo = { fileName : "RasterEffectWorkerHandler.hx", lineNumber : 153, className : "kumite.musicdraw.JPEGTask", methodName : "doStart"};
-			if(Log.filter(LogLevel.INFO)) {
-				Log.fetchInput(Math.round(progress * 100) + "%",null,null,null,null,null,null);
-				console.info(Log.createMessage());
-			}
-		}
-	}};
-	workerService.init("bin/kumite.musicdraw.RasterEffectWorker.js");
-	workerService.call("init",[this.analyzer]);
-	workerService.call("config",[{ paramLength : this.paramLength, paramPosition : this.paramPosition, width : this.width, height : this.height}]);
-	workerService.callTransfer("render",new ArrayBuffer(this.width * this.height * 4),function(jpegBuffer) {
-		me.jpegService.compressAndSave(jpegBuffer,me.width,me.height,"image_" + Date.now().getTime() + ".jpg",$closure(me,"complete"));
-		workerService.terminate();
-	});
-}
-kumite.musicdraw.JPEGTask.prototype.__class__ = kumite.musicdraw.JPEGTask;
 kumite.scene.LayerState = function(name) {
 	if( name === $_ ) return;
 	this.name = name;
@@ -2246,14 +2144,29 @@ GLCursorClient.prototype.defaultCursor = function() {
 		GLMouseRegistry.getInstance().setCursor(this.lastCursor);
 	}
 }
-GLCursorClient.prototype.handCursor = function(message) {
+GLCursorClient.prototype.handCursor = function() {
 	if(this.lastCursor != GLCursorClient.HAND) {
 		this.lastCursor = GLCursorClient.HAND;
 		GLMouseRegistry.getInstance().setCursor(this.lastCursor);
-		if(message != null) js.Lib.window.status = message;
 	}
 }
 GLCursorClient.prototype.__class__ = GLCursorClient;
+if(!kumite.musicdraw) kumite.musicdraw = {}
+kumite.musicdraw.Parameters = function(p) {
+	if( p === $_ ) return;
+	this.params = new Array();
+}
+kumite.musicdraw.Parameters.__name__ = ["kumite","musicdraw","Parameters"];
+kumite.musicdraw.Parameters.prototype.params = null;
+kumite.musicdraw.Parameters.prototype.addFloatParam = function(name,value,min,max) {
+	var param = new kumite.musicdraw.ParameterFloat();
+	param.value = value;
+	param.name = name;
+	param.min = min;
+	param.max = max;
+	this.params.push(param);
+}
+kumite.musicdraw.Parameters.prototype.__class__ = kumite.musicdraw.Parameters;
 GLDragH = function(p) {
 	if( p === $_ ) return;
 	GLInteractiveObject.call(this);
@@ -2263,7 +2176,6 @@ GLDragH = function(p) {
 	this.max = 200;
 	this.mouseDownSignaler.bind($closure(this,"startSlide"));
 	this.mouseUpSignaler.bind($closure(this,"stopSlide"));
-	GLMouseRegistry.getInstance().mouseMoveSignaler.bind($closure(this,"handleMouseMove"));
 	GLMouseRegistry.getInstance().mouseUpSignaler.bind($closure(this,"handleMouseUpGlobal"));
 }
 GLDragH.__name__ = ["GLDragH"];
@@ -2272,7 +2184,6 @@ for(var k in GLInteractiveObject.prototype ) GLDragH.prototype[k] = GLInteractiv
 GLDragH.prototype.changeSignaler = null;
 GLDragH.prototype.min = null;
 GLDragH.prototype.max = null;
-GLDragH.prototype.mouseX = null;
 GLDragH.prototype.dragStartMouseX = null;
 GLDragH.prototype.dragStartX = null;
 GLDragH.prototype.validateGraphics = function() {
@@ -2282,13 +2193,13 @@ GLDragH.prototype.validateGraphics = function() {
 	}
 }
 GLDragH.prototype.renderText = function() {
-	this.graphic.clear(new Color(0.3,0.3,0.3,0.8));
+	this.graphic.clear(new Color(1.0,1.0,1.0,0.2));
 	this.graphic.setFillStyle(new Color(1,1,1,0.8));
 }
 GLDragH.prototype.startSlide = function(slider) {
 	this.stopSlide(this);
 	this.dragStartX = this.x;
-	this.dragStartMouseX = this.mouseX;
+	this.dragStartMouseX = this.mouseXGlobal;
 	GLMouseRegistry.getInstance().mouseMoveSignaler.bind($closure(this,"handleMouseMove2"));
 }
 GLDragH.prototype.stopSlide = function(slider) {
@@ -2297,16 +2208,30 @@ GLDragH.prototype.stopSlide = function(slider) {
 GLDragH.prototype.handleMouseUpGlobal = function(position) {
 	this.stopSlide(this);
 }
-GLDragH.prototype.handleMouseMove = function(position) {
-	this.mouseX = position.x * this.stage.stageWidth;
-}
 GLDragH.prototype.handleMouseMove2 = function(position) {
-	this.setX(this.dragStartX + (this.mouseX - this.dragStartMouseX));
+	this.setX(this.dragStartX + (this.mouseXGlobal - this.dragStartMouseX));
 	if(this.x < this.min) this.setX(this.min);
 	if(this.x > this.max) this.setX(this.max);
-	this.changeSignaler.dispatch(this.x,null,{ fileName : "GLDragH.hx", lineNumber : 82, className : "GLDragH", methodName : "handleMouseMove2"});
+	this.changeSignaler.dispatch(this.x,null,{ fileName : "GLDragH.hx", lineNumber : 75, className : "GLDragH", methodName : "handleMouseMove2"});
 }
 GLDragH.prototype.__class__ = GLDragH;
+GLProgressBar = function(p) {
+	if( p === $_ ) return;
+	GLDisplayObject.call(this);
+}
+GLProgressBar.__name__ = ["GLProgressBar"];
+GLProgressBar.__super__ = GLDisplayObject;
+for(var k in GLDisplayObject.prototype ) GLProgressBar.prototype[k] = GLDisplayObject.prototype[k];
+GLProgressBar.prototype.progress = null;
+GLProgressBar.prototype.setProgress = function(value) {
+	if(value == 0) this.graphic.clear(); else {
+		this.graphic.clear();
+		this.graphic.setFillStyle(new Color(1,1,1,0.2));
+		this.graphic.fillRect(0,0,this.width * value,this.height);
+	}
+	return value;
+}
+GLProgressBar.prototype.__class__ = GLProgressBar;
 if(typeof hsl=='undefined') hsl = {}
 if(!hsl.haxe) hsl.haxe = {}
 hsl.haxe.Signaler = function() { }
@@ -2683,15 +2608,26 @@ bpmjs.TaskGroup.prototype.doStart = function() {
 	}
 	this.nextTask();
 }
+bpmjs.TaskGroup.prototype.recomputeMonitor = function() {
+	this.getMonitor().reset();
+	var totalTasks = this.getTotalTaskCount();
+	var $it0 = this.pendingTasks.iterator();
+	while( $it0.hasNext() ) {
+		var task = $it0.next();
+		this.getMonitor().append(task.getMonitor(),1 / totalTasks);
+	}
+	var _g = 0, _g1 = this.tasks;
+	while(_g < _g1.length) {
+		var task = _g1[_g];
+		++_g;
+		this.getMonitor().append(task.getMonitor(),1 / totalTasks);
+	}
+}
+bpmjs.TaskGroup.prototype.getTotalTaskCount = function() {
+	return Lambda.count(this.pendingTasks) + Lambda.count(this.tasks);
+}
 bpmjs.TaskGroup.prototype.nextTask = function() {
 	var pendingTaskCount = Lambda.count(this.pendingTasks);
-	{
-		Log.posInfo = { fileName : "TaskGroup.hx", lineNumber : 45, className : "bpmjs.TaskGroup", methodName : "nextTask"};
-		if(Log.filter(LogLevel.INFO)) {
-			Log.fetchInput(pendingTaskCount,null,null,null,null,null,null);
-			console.info(Log.createMessage());
-		}
-	}
 	if(pendingTaskCount >= this.parallelTasksMax) return;
 	if(this.tasks.length > 0) {
 		var pendingTask = this.tasks.shift();
@@ -2708,7 +2644,7 @@ bpmjs.TaskGroup.prototype.handleTaskComplete = function(task) {
 bpmjs.TaskGroup.prototype.handleTaskError = function(taskError) {
 	this.pendingTasks.remove(taskError.task);
 	if(!this.autoStart) this.error(this,taskError.error); else {
-		Log.posInfo = { fileName : "TaskGroup.hx", lineNumber : 80, className : "bpmjs.TaskGroup", methodName : "handleTaskError"};
+		Log.posInfo = { fileName : "TaskGroup.hx", lineNumber : 99, className : "bpmjs.TaskGroup", methodName : "handleTaskError"};
 		if(Log.filter(LogLevel.WARN)) {
 			Log.fetchInput(taskError.error,null,null,null,null,null,null);
 			console.warn(Log.createMessage());
@@ -4065,7 +4001,7 @@ GLDisplayList.prototype.handleMouseUp = function(position) {
 }
 GLDisplayList.prototype.handleMouseMove = function(position) {
 	var result = this.hitareaPicker.pick(this.stage,position);
-	if(result != null) this.cursorClient.handCursor(); else this.cursorClient.defaultCursor();
+	if(result != null && result.handCursor) this.cursorClient.handCursor(); else this.cursorClient.defaultCursor();
 }
 GLDisplayList.prototype.__class__ = GLDisplayList;
 GLAnimationFrame = function() { }
@@ -4111,28 +4047,27 @@ GLAnimationFrame.run = function(method,ms) {
 	}
 }
 GLAnimationFrame.prototype.__class__ = GLAnimationFrame;
-reflect.Binding = function(object,property) {
-	if( object === $_ ) return;
-	this.object = object;
-	this.property = property;
+reflect.Binding = function(instance,fieldName) {
+	if( instance === $_ ) return;
+	this.instance = instance;
+	this.fieldName = fieldName;
 	this.change = new hsl.haxe.DirectSignaler(this);
 }
 reflect.Binding.__name__ = ["reflect","Binding"];
-reflect.Binding.createForInstanceAndName = function(instance,name) {
-	var classInfo = reflect.ClassInfo.forInstance(instance);
-	return new reflect.Binding(instance,classInfo.getProperty(name));
+reflect.Binding.createForInstanceAndName = function(instance,fieldName) {
+	return new reflect.Binding(instance,fieldName);
 }
-reflect.Binding.prototype.object = null;
-reflect.Binding.prototype.property = null;
+reflect.Binding.prototype.instance = null;
+reflect.Binding.prototype.fieldName = null;
 reflect.Binding.prototype.change = null;
 reflect.Binding.prototype.getValue = function() {
-	return Reflect.field(this.object,this.property.field.name);
+	return Reflect.field(this.instance,this.fieldName);
 }
 reflect.Binding.prototype.setValue = function(value) {
-	this.object[this.property.field.name] = value;
+	this.instance[this.fieldName] = value;
 }
 reflect.Binding.prototype.watch = function() {
-	this.change.dispatch(this,null,{ fileName : "Binding.hx", lineNumber : 39, className : "reflect.Binding", methodName : "watch"});
+	this.change.dispatch(this,null,{ fileName : "Binding.hx", lineNumber : 38, className : "reflect.Binding", methodName : "watch"});
 }
 reflect.Binding.prototype.__class__ = reflect.Binding;
 reflect.NullBinding = function(p) {
@@ -4180,6 +4115,106 @@ kumite.musicdraw.BandsReader.prototype.handleHTTPComplete = function(task) {
 }
 kumite.musicdraw.BandsReader.prototype.__class__ = kumite.musicdraw.BandsReader;
 kumite.musicdraw.BandsReader.__interfaces__ = [haxe.rtti.Infos];
+kumite.blobs.BlobReaderWS = function(host) {
+	if( host === $_ ) return;
+	this.host = host;
+	this.lastParse = 0;
+}
+kumite.blobs.BlobReaderWS.__name__ = ["kumite","blobs","BlobReaderWS"];
+kumite.blobs.BlobReaderWS.prototype.blobs = null;
+kumite.blobs.BlobReaderWS.prototype.time = null;
+kumite.blobs.BlobReaderWS.prototype.host = null;
+kumite.blobs.BlobReaderWS.prototype.socket = null;
+kumite.blobs.BlobReaderWS.prototype.lastParse = null;
+kumite.blobs.BlobReaderWS.prototype.start = function() {
+	this.socket = new WebSocket(this.host);
+	this.socket.onopen = $closure(this,"handleOpen");
+	this.socket.onmessage = $closure(this,"handleMessage");
+	this.socket.onclose = $closure(this,"handleClose");
+}
+kumite.blobs.BlobReaderWS.prototype.handleOpen = function(event) {
+	{
+		Log.posInfo = { fileName : "BlobReaderWS.hx", lineNumber : 37, className : "kumite.blobs.BlobReaderWS", methodName : "handleOpen"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput("open",null,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
+}
+kumite.blobs.BlobReaderWS.prototype.handleMessage = function(event) {
+	this.onData(event.data);
+}
+kumite.blobs.BlobReaderWS.prototype.handleClose = function(event) {
+	{
+		Log.posInfo = { fileName : "BlobReaderWS.hx", lineNumber : 47, className : "kumite.blobs.BlobReaderWS", methodName : "handleClose"};
+		if(Log.filter(LogLevel.WARN)) {
+			Log.fetchInput("close",null,null,null,null,null,null);
+			console.warn(Log.createMessage());
+		}
+	}
+	Timeout.execute(1000,$closure(this,"start"));
+}
+kumite.blobs.BlobReaderWS.prototype.onData = function(r) {
+	this.lastParse = this.time.ms;
+	var xml = Xml.parse(r);
+	var newBlobs = new Array();
+	try {
+		var $it0 = xml.elements();
+		while( $it0.hasNext() ) {
+			var p = $it0.next();
+			var fast = new haxe.xml.Fast(p);
+			var blob = new kumite.blobs.Blob();
+			blob.x = Std.parseFloat(fast.att.resolve("x"));
+			blob.y = Std.parseFloat(fast.att.resolve("y"));
+			blob.z = Clamp["float"](Map.linear(Std.parseFloat(fast.att.resolve("z")),1700,4000,0,1),0,1);
+			blob.area = Std.parseFloat(fast.att.resolve("area"));
+			newBlobs.push(blob);
+		}
+	} catch( e ) {
+	}
+	this.mergeBlobs(newBlobs);
+}
+kumite.blobs.BlobReaderWS.prototype.mergeBlobs = function(newBlobs) {
+	var result = new Array();
+	var _g = 0;
+	while(_g < newBlobs.length) {
+		var newBlob = newBlobs[_g];
+		++_g;
+		var equalOldBlob = null;
+		var _g1 = 0, _g2 = this.blobs.blobs;
+		while(_g1 < _g2.length) {
+			var oldBlob = _g2[_g1];
+			++_g1;
+			if(this.getDist(newBlob,oldBlob) < 0.3) {
+				equalOldBlob = oldBlob;
+				break;
+			}
+		}
+		if(equalOldBlob == null) {
+			kumite.blobs.BlobReaderWS.BLOB_ID++;
+			newBlob.speed = 0;
+			newBlob.blobId = kumite.blobs.BlobReaderWS.BLOB_ID;
+		} else {
+			newBlob.blobId = equalOldBlob.blobId;
+			var newSpeed = this.getDist(equalOldBlob,newBlob) * (1 / 0.01);
+			newBlob.speed = equalOldBlob.speed;
+			newBlob.speed += (newSpeed - newBlob.speed) * 0.2;
+			newBlob.speed = Clamp["float"](newBlob.speed,0,1);
+			this.blobs.blobs.remove(equalOldBlob);
+		}
+		result.push(newBlob);
+	}
+	this.blobs.blobs = result;
+}
+kumite.blobs.BlobReaderWS.prototype.getDist = function(newBlob,oldBlob) {
+	var dx = newBlob.x - oldBlob.x;
+	var dy = newBlob.y - oldBlob.y;
+	var dz = 0;
+	var dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+	return dist;
+}
+kumite.blobs.BlobReaderWS.prototype.__class__ = kumite.blobs.BlobReaderWS;
+kumite.blobs.BlobReaderWS.__interfaces__ = [haxe.rtti.Infos];
 if(!kumite.projection) kumite.projection = {}
 kumite.projection.ProjectionController = function(p) {
 }
@@ -4349,12 +4384,20 @@ bpmjs.WorkerService = function(p) {
 bpmjs.WorkerService.__name__ = ["bpmjs","WorkerService"];
 bpmjs.WorkerService.prototype.debug = null;
 bpmjs.WorkerService.prototype.receiver = null;
+bpmjs.WorkerService.prototype.paused = null;
 bpmjs.WorkerService.prototype.worker = null;
 bpmjs.WorkerService.prototype.queue = null;
 bpmjs.WorkerService.prototype.pendingCall = null;
 bpmjs.WorkerService.prototype.init = function(workerScript) {
 	this.worker = new Worker(workerScript + "?cache=" + Date.now().getTime());
 	this.worker.onmessage = $closure(this,"onMessage");
+}
+bpmjs.WorkerService.prototype.pause = function() {
+	this.paused = true;
+}
+bpmjs.WorkerService.prototype.resume = function() {
+	this.paused = false;
+	this.checkQueue();
 }
 bpmjs.WorkerService.prototype.terminate = function() {
 	this.worker.terminate();
@@ -4373,7 +4416,7 @@ bpmjs.WorkerService.prototype.callTransfer = function(method,buffer,completeCall
 }
 bpmjs.WorkerService.prototype.addQueue = function(call) {
 	if(this.debug) {
-		Log.posInfo = { fileName : "WorkerService.hx", lineNumber : 53, className : "bpmjs.WorkerService", methodName : "addQueue"};
+		Log.posInfo = { fileName : "WorkerService.hx", lineNumber : 65, className : "bpmjs.WorkerService", methodName : "addQueue"};
 		if(Log.filter(LogLevel.INFO)) {
 			Log.fetchInput(call,null,null,null,null,null,null);
 			console.info(Log.createMessage());
@@ -4383,8 +4426,9 @@ bpmjs.WorkerService.prototype.addQueue = function(call) {
 	this.checkQueue();
 }
 bpmjs.WorkerService.prototype.checkQueue = function() {
+	if(this.paused) return;
 	if(this.debug) {
-		Log.posInfo = { fileName : "WorkerService.hx", lineNumber : 61, className : "bpmjs.WorkerService", methodName : "checkQueue"};
+		Log.posInfo = { fileName : "WorkerService.hx", lineNumber : 76, className : "bpmjs.WorkerService", methodName : "checkQueue"};
 		if(Log.filter(LogLevel.INFO)) {
 			Log.fetchInput(this.queue.length,null,null,null,null,null,null);
 			console.info(Log.createMessage());
@@ -4397,7 +4441,7 @@ bpmjs.WorkerService.prototype.checkQueue = function() {
 }
 bpmjs.WorkerService.prototype.executeCall = function(call) {
 	if(this.debug) {
-		Log.posInfo = { fileName : "WorkerService.hx", lineNumber : 73, className : "bpmjs.WorkerService", methodName : "executeCall"};
+		Log.posInfo = { fileName : "WorkerService.hx", lineNumber : 88, className : "bpmjs.WorkerService", methodName : "executeCall"};
 		if(Log.filter(LogLevel.INFO)) {
 			Log.fetchInput(call,null,null,null,null,null,null);
 			console.info(Log.createMessage());
@@ -4408,7 +4452,7 @@ bpmjs.WorkerService.prototype.executeCall = function(call) {
 }
 bpmjs.WorkerService.prototype.onMessage = function(event) {
 	if(this.debug) {
-		Log.posInfo = { fileName : "WorkerService.hx", lineNumber : 85, className : "bpmjs.WorkerService", methodName : "onMessage"};
+		Log.posInfo = { fileName : "WorkerService.hx", lineNumber : 100, className : "bpmjs.WorkerService", methodName : "onMessage"};
 		if(Log.filter(LogLevel.INFO)) {
 			Log.fetchInput("Result: " + this.pendingCall + " -> " + Std.string(event.data),null,null,null,null,null,null);
 			console.info(Log.createMessage());
@@ -4421,25 +4465,20 @@ bpmjs.WorkerService.prototype.onMessage = function(event) {
 	}
 }
 bpmjs.WorkerService.prototype.handlePipedMethod = function(event) {
-	if(this.receiver == null) try {
+	if(this.receiver != null) try {
+		var method = Reflect.field(this.receiver,event.data.method);
+		method.apply(this.receiver,event.data.args);
+		return;
+	} catch( e ) {
+	}
+	try {
 		var method = js.Lib.eval(event.data.method);
 		method.apply(null,event.data.args);
 	} catch( e ) {
 		{
-			Log.posInfo = { fileName : "WorkerService.hx", lineNumber : 114, className : "bpmjs.WorkerService", methodName : "handlePipedMethod"};
+			Log.posInfo = { fileName : "WorkerService.hx", lineNumber : 140, className : "bpmjs.WorkerService", methodName : "handlePipedMethod"};
 			if(Log.filter(LogLevel.WARN)) {
 				Log.fetchInput("Could not execute piped method without receiver: " + event.data.method,null,null,null,null,null,null);
-				console.warn(Log.createMessage());
-			}
-		}
-	} else try {
-		var method = Reflect.field(this.receiver,event.data.method);
-		method.apply(this.receiver,event.data.args);
-	} catch( e ) {
-		{
-			Log.posInfo = { fileName : "WorkerService.hx", lineNumber : 126, className : "bpmjs.WorkerService", methodName : "handlePipedMethod"};
-			if(Log.filter(LogLevel.WARN)) {
-				Log.fetchInput("Could not execute piped method with receiver: " + event.data.method,null,null,null,null,null,null);
 				console.warn(Log.createMessage());
 			}
 		}
@@ -4727,6 +4766,7 @@ kumite.scene.TransitionState.prototype.render = function() {
 	this.transitionContext.setTransition(Map.linear(this.time.ms,this.enterTime,this.exitTime,0,1));
 	if(this.transitionContext.getTransition() >= 1) {
 		this.transitionContext.setTransition(1);
+		this.navigator.messenger.send(new kumite.scene.SceneExit(this.navigator.lastScene,this.navigator.currentScene));
 		this.navigator.setState(this.navigator.idleState);
 	}
 	this.navigator.renderTransition();
@@ -5232,10 +5272,10 @@ kumite.vjinterface.VJLayers.prototype.createInspectionPanel = function(layer) {
 			this.layerContainer.addChild(paramLabel);
 			var colorClass = reflect.ClassInfo.forClass(Color);
 			var color = Reflect.field(param.object,param.property.field.name);
-			var rBinding = new reflect.Binding(color,colorClass.getProperty("r"));
-			var gBinding = new reflect.Binding(color,colorClass.getProperty("g"));
-			var bBinding = new reflect.Binding(color,colorClass.getProperty("b"));
-			var aBinding = new reflect.Binding(color,colorClass.getProperty("a"));
+			var rBinding = new reflect.Binding(color,"r");
+			var gBinding = new reflect.Binding(color,"g");
+			var bBinding = new reflect.Binding(color,"b");
+			var aBinding = new reflect.Binding(color,"a");
 			this.bindings.push(rBinding);
 			var sliderH = new GLSliderH();
 			sliderH.setMin(0);
@@ -5574,9 +5614,32 @@ GLMouseRegistry.prototype.getMousePosition = function(e) {
 	return new Vec2(mouseX / this.canvas.clientWidth,mouseY / this.canvas.clientHeight);
 }
 GLMouseRegistry.prototype.__class__ = GLMouseRegistry;
+kumite.musicdraw.SaveRequest = function(taskGroup) {
+	if( taskGroup === $_ ) return;
+	this.taskGroup = taskGroup;
+}
+kumite.musicdraw.SaveRequest.__name__ = ["kumite","musicdraw","SaveRequest"];
+kumite.musicdraw.SaveRequest.prototype.taskGroup = null;
+kumite.musicdraw.SaveRequest.prototype.add = function(task) {
+	this.taskGroup.add(task);
+}
+kumite.musicdraw.SaveRequest.prototype.__class__ = kumite.musicdraw.SaveRequest;
+Clamp = function() { }
+Clamp.__name__ = ["Clamp"];
+Clamp["float"] = function(value,from,to) {
+	if(value < from) value = from;
+	if(value > to) value = to;
+	return value;
+}
+Clamp["int"] = function(value,from,to) {
+	if(value < from) value = from;
+	if(value > to) value = to;
+	return value;
+}
+Clamp.prototype.__class__ = Clamp;
 kumite.scene.LayerParam = function(p) {
 	if( p === $_ ) return;
-	this.name = "Otto";
+	this.name = "";
 }
 kumite.scene.LayerParam.__name__ = ["kumite","scene","LayerParam"];
 kumite.scene.LayerParam.prototype.name = null;
@@ -5586,7 +5649,7 @@ kumite.scene.LayerParam.prototype.getName = function() {
 	return this.property.field.name;
 }
 kumite.scene.LayerParam.prototype.getBinding = function() {
-	return new reflect.Binding(this.object,this.property);
+	return new reflect.Binding(this.object,this.getName());
 }
 kumite.scene.LayerParam.prototype.__class__ = kumite.scene.LayerParam;
 Lambda = function() { }
@@ -5817,22 +5880,28 @@ CanvasGraphic.prototype.setHeight = function(height) {
 CanvasGraphic.prototype.__class__ = CanvasGraphic;
 bpmjs.ProgressMonitor = function(p) {
 	if( p === $_ ) return;
-	this.children = new Array();
-	this.setCurrent(0);
-	this.weight = 1;
 	this.name = "";
+	this.reset();
 }
 bpmjs.ProgressMonitor.__name__ = ["bpmjs","ProgressMonitor"];
 bpmjs.ProgressMonitor.prototype.name = null;
 bpmjs.ProgressMonitor.prototype.weight = null;
 bpmjs.ProgressMonitor.prototype.current = null;
 bpmjs.ProgressMonitor.prototype.children = null;
+bpmjs.ProgressMonitor.prototype.reset = function() {
+	this.children = new Array();
+	this.setCurrent(0);
+	this.weight = 1;
+}
 bpmjs.ProgressMonitor.prototype.append = function(monitor,total) {
 	var monitorAndTotal = new bpmjs._ProgressMonitor.MonitorAndTotal();
 	monitorAndTotal.total = total;
 	monitorAndTotal.monitor = monitor;
 	this.children.push(monitorAndTotal);
 	return monitor;
+}
+bpmjs.ProgressMonitor.prototype.done = function() {
+	this.setCurrent(1);
 }
 bpmjs.ProgressMonitor.prototype.getCurrent = function() {
 	if(this.children.length == 0) return this.current; else {
@@ -5889,6 +5958,29 @@ kumite.camera.CameraMouseMover.prototype.updateCamera = function() {
 }
 kumite.camera.CameraMouseMover.prototype.__class__ = kumite.camera.CameraMouseMover;
 kumite.camera.CameraMouseMover.__interfaces__ = [haxe.rtti.Infos];
+kumite.musicdraw.RasterEffectConfig = function(p) {
+	if( p === $_ ) return;
+	this.effectWorkerHandler = new kumite.musicdraw.EffectWorkerHandler();
+	this.effectWorkerHandler.effectClassName = "kumite.musicdraw.RasterEffect";
+	this.effectWorkerHandler.params.addFloatParam("rx",7,1,20);
+	this.effectWorkerHandler.params.addFloatParam("ry",10,1,20);
+	this.effectWorkerHandler.params.addFloatParam("scale",7,0,10);
+	this.layer = new kumite.layer.TextureLayer();
+	this.scene = new kumite.scene.DefaultScene("RASTER");
+	this.scene.useDefaultLayers();
+	this.scene.enterSignaler.bind($closure(this.effectWorkerHandler,"enter"));
+	this.scene.transitionOutSignaler.bind($closure(this.effectWorkerHandler,"exit"));
+}
+kumite.musicdraw.RasterEffectConfig.__name__ = ["kumite","musicdraw","RasterEffectConfig"];
+kumite.musicdraw.RasterEffectConfig.prototype.scene = null;
+kumite.musicdraw.RasterEffectConfig.prototype.layer = null;
+kumite.musicdraw.RasterEffectConfig.prototype.effectWorkerHandler = null;
+kumite.musicdraw.RasterEffectConfig.prototype.init = function() {
+	this.scene.addLayerLifecycle(this.layer);
+	this.layer.texture = this.effectWorkerHandler.createTexture();
+}
+kumite.musicdraw.RasterEffectConfig.prototype.__class__ = kumite.musicdraw.RasterEffectConfig;
+kumite.musicdraw.RasterEffectConfig.__interfaces__ = [haxe.rtti.Infos];
 if(!kumite.webgl) kumite.webgl = {}
 kumite.webgl.Config = function(p) {
 	if( p === $_ ) return;
@@ -5899,6 +5991,15 @@ kumite.webgl.Config.__name__ = ["kumite","webgl","Config"];
 kumite.webgl.Config.prototype.initAction = null;
 kumite.webgl.Config.prototype.__class__ = kumite.webgl.Config;
 kumite.webgl.Config.__interfaces__ = [haxe.rtti.Infos];
+kumite.scene.SceneExit = function(lastScene,currentScene) {
+	if( lastScene === $_ ) return;
+	this.lastScene = lastScene;
+	this.currentScene = currentScene;
+}
+kumite.scene.SceneExit.__name__ = ["kumite","scene","SceneExit"];
+kumite.scene.SceneExit.prototype.lastScene = null;
+kumite.scene.SceneExit.prototype.currentScene = null;
+kumite.scene.SceneExit.prototype.__class__ = kumite.scene.SceneExit;
 kumite.time.TimeController = function(p) {
 }
 kumite.time.TimeController.__name__ = ["kumite","time","TimeController"];
@@ -5933,6 +6034,28 @@ haxe.TypeTools.getClassNames = function(value) {
 	return result;
 }
 haxe.TypeTools.prototype.__class__ = haxe.TypeTools;
+kumite.musicdraw.DNAEffectConfig = function(p) {
+	if( p === $_ ) return;
+	this.effectWorkerHandler = new kumite.musicdraw.EffectWorkerHandler();
+	this.effectWorkerHandler.effectClassName = "kumite.musicdraw.DNAEffect";
+	this.effectWorkerHandler.params.addFloatParam("paramLength",1,0,1);
+	this.effectWorkerHandler.params.addFloatParam("paramPosition",0,0,1);
+	this.layer = new kumite.layer.TextureLayer();
+	this.scene = new kumite.scene.DefaultScene("DNA");
+	this.scene.useDefaultLayers();
+	this.scene.enterSignaler.bind($closure(this.effectWorkerHandler,"enter"));
+	this.scene.transitionOutSignaler.bind($closure(this.effectWorkerHandler,"exit"));
+}
+kumite.musicdraw.DNAEffectConfig.__name__ = ["kumite","musicdraw","DNAEffectConfig"];
+kumite.musicdraw.DNAEffectConfig.prototype.scene = null;
+kumite.musicdraw.DNAEffectConfig.prototype.layer = null;
+kumite.musicdraw.DNAEffectConfig.prototype.effectWorkerHandler = null;
+kumite.musicdraw.DNAEffectConfig.prototype.init = function() {
+	this.scene.addLayerLifecycle(this.layer);
+	this.layer.texture = this.effectWorkerHandler.createTexture();
+}
+kumite.musicdraw.DNAEffectConfig.prototype.__class__ = kumite.musicdraw.DNAEffectConfig;
+kumite.musicdraw.DNAEffectConfig.__interfaces__ = [haxe.rtti.Infos];
 reflect.ClassInfo = function(name,type) {
 	if( name === $_ ) return;
 	this.name = name;
@@ -6245,16 +6368,11 @@ kumite.stage.StageResizeMessage.prototype.__class__ = kumite.stage.StageResizeMe
 kumite.jpegservice.JPEGService = function(p) {
 }
 kumite.jpegservice.JPEGService.__name__ = ["kumite","jpegservice","JPEGService"];
-kumite.jpegservice.JPEGService.prototype.compressAndSave = function(buffer,width,height,filename,complete) {
+kumite.jpegservice.JPEGService.prototype.compressAndSave = function(buffer,width,height,filename,complete,monitor) {
+	if(monitor == null) monitor = new bpmjs.ProgressMonitor();
 	var workerService = new bpmjs.WorkerService();
 	workerService.receiver = { setProgress : function(progress) {
-		{
-			Log.posInfo = { fileName : "JPEGService.hx", lineNumber : 19, className : "kumite.jpegservice.JPEGService", methodName : "compressAndSave"};
-			if(Log.filter(LogLevel.INFO)) {
-				Log.fetchInput(filename + " " + Math.round(progress * 100) + "%",null,null,null,null,null,null);
-				console.info(Log.createMessage());
-			}
-		}
+		monitor.setCurrent(progress);
 	}};
 	workerService.debug = false;
 	workerService.init("bin/kumite.jpegservice.JPEGWorker.js");
@@ -6264,6 +6382,7 @@ kumite.jpegservice.JPEGService.prototype.compressAndSave = function(buffer,width
 		blobBuilder.append(jpegBuffer);
 		saveAs(blobBuilder.getBlob("example/binary"),filename);
 		workerService.terminate();
+		monitor.done();
 		complete();
 	});
 }
@@ -6278,13 +6397,154 @@ bpmjs.SequencerTaskGroup.__name__ = ["bpmjs","SequencerTaskGroup"];
 bpmjs.SequencerTaskGroup.__super__ = bpmjs.TaskGroup;
 for(var k in bpmjs.TaskGroup.prototype ) bpmjs.SequencerTaskGroup.prototype[k] = bpmjs.TaskGroup.prototype[k];
 bpmjs.SequencerTaskGroup.prototype.__class__ = bpmjs.SequencerTaskGroup;
+kumite.musicdraw.EffectWorkerHandler = function(p) {
+	if( p === $_ ) return;
+	this.params = new kumite.musicdraw.Parameters();
+	this.roundtripSynchronizer = new bpmjs.RoundtripSynchronizer();
+	this.roundtripSynchronizer.targetMs = 1000 / 10;
+	this.width = Std["int"](Math.pow(2,10));
+	this.height = this.width;
+}
+kumite.musicdraw.EffectWorkerHandler.__name__ = ["kumite","musicdraw","EffectWorkerHandler"];
+kumite.musicdraw.EffectWorkerHandler.prototype.stage = null;
+kumite.musicdraw.EffectWorkerHandler.prototype.jpegService = null;
+kumite.musicdraw.EffectWorkerHandler.prototype.analyzer = null;
+kumite.musicdraw.EffectWorkerHandler.prototype.textureRegistry = null;
+kumite.musicdraw.EffectWorkerHandler.prototype.texture = null;
+kumite.musicdraw.EffectWorkerHandler.prototype.effectClassName = null;
+kumite.musicdraw.EffectWorkerHandler.prototype.params = null;
+kumite.musicdraw.EffectWorkerHandler.prototype.workerService = null;
+kumite.musicdraw.EffectWorkerHandler.prototype.roundtripSynchronizer = null;
+kumite.musicdraw.EffectWorkerHandler.prototype.width = null;
+kumite.musicdraw.EffectWorkerHandler.prototype.height = null;
+kumite.musicdraw.EffectWorkerHandler.prototype.panel = null;
+kumite.musicdraw.EffectWorkerHandler.prototype.label = null;
+kumite.musicdraw.EffectWorkerHandler.prototype.createTexture = function() {
+	this.texture = this.textureRegistry.createGLArrayTexture(this.width,this.height,9729);
+	return this.texture;
+}
+kumite.musicdraw.EffectWorkerHandler.prototype.enter = function(_) {
+	if(this.workerService == null) {
+		this.workerService = new bpmjs.WorkerService();
+		this.workerService.debug = false;
+		this.workerService.receiver = this;
+		this.workerService.init("bin/kumite.musicdraw.EffectWorker.js");
+		this.workerService.call("init",[{ effectClassName : this.effectClassName, analyzer : this.analyzer}],$closure(this,"loop"));
+		this.panel = new GLDisplayObjectContainer();
+		this.stage.addChild(this.panel);
+		this.label = new GLLabel();
+		this.label.setX(10);
+		this.label.setY(135);
+		this.label.setWidth(200);
+		this.label.setHeight(20);
+		this.panel.addChild(this.label);
+		var _g1 = 0, _g = this.params.params.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var param = this.params.params[i];
+			this.slider(param,160 + i * 20);
+		}
+	} else {
+		this.panel.visible = true;
+		this.workerService.resume();
+	}
+}
+kumite.musicdraw.EffectWorkerHandler.prototype.exit = function(_) {
+	this.panel.visible = false;
+	this.workerService.pause();
+}
+kumite.musicdraw.EffectWorkerHandler.prototype.handleSaveRequest = function(request) {
+	if(this.workerService == null || this.workerService.paused) return;
+	var task = new kumite.musicdraw.JPEGTask();
+	task.effectClassName = this.effectClassName;
+	task.width = Std["int"](Math.pow(2,13));
+	task.height = task.width;
+	task.params = this.createParams();
+	task.jpegService = this.jpegService;
+	task.analyzer = this.analyzer;
+	request.add(task);
+}
+kumite.musicdraw.EffectWorkerHandler.prototype.loop = function() {
+	this.label.setText(this.roundtripSynchronizer.getInfo());
+	this.workerService.call("config",[this.createParams()]);
+	this.roundtripSynchronizer.workStart();
+	this.workerService.callTransfer("render",this.texture.array.buffer,$closure(this,"handleRender"));
+}
+kumite.musicdraw.EffectWorkerHandler.prototype.createParams = function() {
+	var vo = { width : this.width, height : this.height};
+	var _g1 = 0, _g = this.params.params.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		var param = this.params.params[i];
+		vo[param.name] = param.value;
+	}
+	return vo;
+}
+kumite.musicdraw.EffectWorkerHandler.prototype.handleRender = function(buffer) {
+	this.roundtripSynchronizer.workComplete();
+	this.texture.array = new Uint8Array(buffer);
+	this.textureRegistry.updateGLArrayTexture(this.texture,9987);
+	this.roundtripSynchronizer.delay($closure(this,"loop"));
+}
+kumite.musicdraw.EffectWorkerHandler.prototype.slider = function(parameter,y) {
+	var binding = reflect.Binding.createForInstanceAndName(parameter,"value");
+	var sliderH = new GLSliderH();
+	sliderH.setMin(parameter.min);
+	sliderH.setMax(parameter.max);
+	sliderH.value = binding.getValue();
+	sliderH.setX(10);
+	sliderH.setY(y);
+	sliderH.setWidth(200);
+	sliderH.bind(binding);
+	this.panel.addChild(sliderH);
+}
+kumite.musicdraw.EffectWorkerHandler.prototype.setProgress = function(progress) {
+}
+kumite.musicdraw.EffectWorkerHandler.prototype.__class__ = kumite.musicdraw.EffectWorkerHandler;
+kumite.musicdraw.EffectWorkerHandler.__interfaces__ = [haxe.rtti.Infos];
+kumite.musicdraw.JPEGTask = function(p) {
+	if( p === $_ ) return;
+	bpmjs.Task.call(this);
+}
+kumite.musicdraw.JPEGTask.__name__ = ["kumite","musicdraw","JPEGTask"];
+kumite.musicdraw.JPEGTask.__super__ = bpmjs.Task;
+for(var k in bpmjs.Task.prototype ) kumite.musicdraw.JPEGTask.prototype[k] = bpmjs.Task.prototype[k];
+kumite.musicdraw.JPEGTask.prototype.effectClassName = null;
+kumite.musicdraw.JPEGTask.prototype.jpegService = null;
+kumite.musicdraw.JPEGTask.prototype.analyzer = null;
+kumite.musicdraw.JPEGTask.prototype.params = null;
+kumite.musicdraw.JPEGTask.prototype.width = null;
+kumite.musicdraw.JPEGTask.prototype.height = null;
+kumite.musicdraw.JPEGTask.prototype.doStart = function() {
+	var me = this;
+	var createMonitor = new bpmjs.ProgressMonitor();
+	var compressMonitor = new bpmjs.ProgressMonitor();
+	this.getMonitor().append(createMonitor,1);
+	this.getMonitor().append(compressMonitor,1);
+	var workerService = new bpmjs.WorkerService();
+	workerService.debug = false;
+	workerService.receiver = { setProgress : function(progress) {
+		createMonitor.setCurrent(progress);
+	}};
+	workerService.init("bin/kumite.musicdraw.EffectWorker.js");
+	workerService.call("init",[{ effectClassName : this.effectClassName, analyzer : this.analyzer}]);
+	this.params.width = this.width;
+	this.params.height = this.height;
+	workerService.call("config",[this.params]);
+	workerService.callTransfer("render",new ArrayBuffer(this.width * this.height * 4),function(jpegBuffer) {
+		createMonitor.done();
+		me.jpegService.compressAndSave(jpegBuffer,me.width,me.height,"image_" + Date.now().getTime() + ".jpg",$closure(me,"complete"),compressMonitor);
+		workerService.terminate();
+	});
+}
+kumite.musicdraw.JPEGTask.prototype.__class__ = kumite.musicdraw.JPEGTask;
 Main = function(canvas) {
 	if( canvas === $_ ) return;
 	try {
-		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.textureregistry.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.time.Config,kumite.projection.Config,kumite.camera.Config,kumite.mouse.Config,kumite.jpegservice.JPEGServiceConfig,kumite.displaylist.ConfigAsLayer,kumite.vjinterface.Config,kumite.scene.SceneConfig,kumite.musicdraw.MusicDrawConfig]);
+		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.textureregistry.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.time.Config,kumite.projection.Config,kumite.camera.Config,kumite.mouse.Config,kumite.jpegservice.JPEGServiceConfig,kumite.blobs.Config,kumite.displaylist.ConfigAsLayer,kumite.vjinterface.Config,kumite.scene.SceneConfig,kumite.musicdraw.MusicDrawConfig,kumite.musicdraw.TimeEffectConfig,kumite.musicdraw.RasterEffectConfig,kumite.musicdraw.DNAEffectConfig]);
 	} catch( e ) {
 		{
-			Log.posInfo = { fileName : "Main.hx", lineNumber : 62, className : "Main", methodName : "new"};
+			Log.posInfo = { fileName : "Main.hx", lineNumber : 64, className : "Main", methodName : "new"};
 			if(Log.filter(LogLevel.ERROR)) {
 				Log.fetchInput("Error building application!\n" + e,null,null,null,null,null,null);
 				console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
@@ -6306,7 +6566,6 @@ Main.globalErrorHandler = function(msg,stack) {
 }
 Main.main = function() {
 	Log.init();
-	console.profile("start");
 	Log.addFilter(new ERegFilter(LogLevel.INFO,new EReg(".*","")));
 	Log.addFilter(new ERegFilter(LogLevel.WARN,new EReg(".*FrontMessenger\\.handleMessage.*","")));
 	Log.addFilter(new ERegFilter(LogLevel.WARN,new EReg(".*FrontMessenger\\.Receiver\\.execute.*","")));
@@ -6660,6 +6919,22 @@ hxjson2.JSONDecoder.prototype.parseValue = function() {
 	return null;
 }
 hxjson2.JSONDecoder.prototype.__class__ = hxjson2.JSONDecoder;
+kumite.musicdraw.Parameter = function(p) {
+}
+kumite.musicdraw.Parameter.__name__ = ["kumite","musicdraw","Parameter"];
+kumite.musicdraw.Parameter.prototype.name = null;
+kumite.musicdraw.Parameter.prototype.value = null;
+kumite.musicdraw.Parameter.prototype.__class__ = kumite.musicdraw.Parameter;
+kumite.musicdraw.ParameterFloat = function(p) {
+	if( p === $_ ) return;
+	kumite.musicdraw.Parameter.call(this);
+}
+kumite.musicdraw.ParameterFloat.__name__ = ["kumite","musicdraw","ParameterFloat"];
+kumite.musicdraw.ParameterFloat.__super__ = kumite.musicdraw.Parameter;
+for(var k in kumite.musicdraw.Parameter.prototype ) kumite.musicdraw.ParameterFloat.prototype[k] = kumite.musicdraw.Parameter.prototype[k];
+kumite.musicdraw.ParameterFloat.prototype.min = null;
+kumite.musicdraw.ParameterFloat.prototype.max = null;
+kumite.musicdraw.ParameterFloat.prototype.__class__ = kumite.musicdraw.ParameterFloat;
 if(typeof ease=='undefined') ease = {}
 ease.Quad = function() { }
 ease.Quad.__name__ = ["ease","Quad"];
@@ -6971,6 +7246,33 @@ haxe.Timer.prototype.stop = function() {
 haxe.Timer.prototype.run = function() {
 }
 haxe.Timer.prototype.__class__ = haxe.Timer;
+kumite.blobs.BlobReaderMouse = function(p) {
+	if( p === $_ ) return;
+	this.mouse = new Vec2();
+}
+kumite.blobs.BlobReaderMouse.__name__ = ["kumite","blobs","BlobReaderMouse"];
+kumite.blobs.BlobReaderMouse.prototype.blobs = null;
+kumite.blobs.BlobReaderMouse.prototype.time = null;
+kumite.blobs.BlobReaderMouse.prototype.mouse = null;
+kumite.blobs.BlobReaderMouse.prototype.init = function() {
+	GLMouseRegistry.getInstance().mouseMoveSignaler.bind($closure(this,"mouseMove"));
+}
+kumite.blobs.BlobReaderMouse.prototype.tick = function(tick) {
+	this.blobs.blobs = new Array();
+	var blob = new kumite.blobs.Blob();
+	blob.x = this.mouse.x;
+	blob.y = 0;
+	blob.z = 2500;
+	blob.speed = 0.4;
+	blob.area = 0.3;
+	this.blobs.blobs.push(blob);
+}
+kumite.blobs.BlobReaderMouse.prototype.mouseMove = function(position) {
+	this.mouse.x = 1 - position.x;
+	this.mouse.y = position.y;
+}
+kumite.blobs.BlobReaderMouse.prototype.__class__ = kumite.blobs.BlobReaderMouse;
+kumite.blobs.BlobReaderMouse.__interfaces__ = [haxe.rtti.Infos];
 Vec3 = function(x,y,z) {
 	if( x === $_ ) return;
 	if(z == null) z = 0;
@@ -7614,6 +7916,7 @@ GLHitareaPicker.prototype.pickRecursive = function(displayObjectContainer,parent
 	while(_g < _g1.length) {
 		var displayObject = _g1[_g];
 		++_g;
+		if(!displayObject.visible) continue;
 		var matrix = this.pickDisplayObject(displayObject,parentMatrix);
 		if(Std["is"](displayObject,GLInteractiveObject)) {
 			var interactiveObject = (function($this) {
@@ -7692,17 +7995,40 @@ _GLTextureConfig.CropManipulation.prototype.create = function(image) {
 	return canvasGraphic.canvas;
 }
 _GLTextureConfig.CropManipulation.prototype.__class__ = _GLTextureConfig.CropManipulation;
+kumite.blobs.Config = function(p) {
+	if( p === $_ ) return;
+	this.blobs = new kumite.blobs.Blobs();
+	this.blobReaderWS = new kumite.blobs.BlobReaderWS("ws://192.168.2.201:4446");
+}
+kumite.blobs.Config.__name__ = ["kumite","blobs","Config"];
+kumite.blobs.Config.prototype.blobs = null;
+kumite.blobs.Config.prototype.blobReaderHTTP = null;
+kumite.blobs.Config.prototype.blobReaderWS = null;
+kumite.blobs.Config.prototype.blobReaderMouse = null;
+kumite.blobs.Config.prototype.__class__ = kumite.blobs.Config;
+kumite.blobs.Config.__interfaces__ = [haxe.rtti.Infos];
 shader.DisplayObjectFragment = function() { }
 shader.DisplayObjectFragment.__name__ = ["shader","DisplayObjectFragment"];
 shader.DisplayObjectFragment.prototype.__class__ = shader.DisplayObjectFragment;
 kumite.scene.DefaultScene = function(name) {
 	if( name === $_ ) return;
 	this.name = name;
+	this.enterSignaler = new hsl.haxe.DirectSignaler(this);
+	this.exitSignaler = new hsl.haxe.DirectSignaler(this);
+	this.transitionOutSignaler = new hsl.haxe.DirectSignaler(this);
 	this.preconfiguredLifecycles = new Array();
 }
 kumite.scene.DefaultScene.__name__ = ["kumite","scene","DefaultScene"];
+kumite.scene.DefaultScene.prototype.displayListLayer = null;
 kumite.scene.DefaultScene.prototype.name = null;
+kumite.scene.DefaultScene.prototype.enterSignaler = null;
+kumite.scene.DefaultScene.prototype.exitSignaler = null;
+kumite.scene.DefaultScene.prototype.transitionOutSignaler = null;
 kumite.scene.DefaultScene.prototype.preconfiguredLifecycles = null;
+kumite.scene.DefaultScene.prototype.defaultLayers = null;
+kumite.scene.DefaultScene.prototype.useDefaultLayers = function() {
+	this.defaultLayers = true;
+}
 kumite.scene.DefaultScene.prototype.addLayerLifecycle = function(lifecycle,layerId) {
 	if(lifecycle == null) throw "Lifecycle for scene: " + this.name + " is null!";
 	var lifecycleAndLayerId = new kumite.scene._DefaultScene.LifecycleAndLayerId();
@@ -7712,13 +8038,26 @@ kumite.scene.DefaultScene.prototype.addLayerLifecycle = function(lifecycle,layer
 }
 kumite.scene.DefaultScene.prototype.sceneInit = function(scene) {
 	scene.name = this.name;
+	if(this.defaultLayers) {
+		var clearLayer = new kumite.layer.ClearLayer();
+		clearLayer.color = new Color(0,0,0.0,1);
+		scene.addLayer(new kumite.scene.DelegateLayer(clearLayer,kumite.layer.LayerId.CLEAR));
+	}
 	this.addPreconfiguredLifecycles(scene);
+	if(this.defaultLayers) scene.addLayer(new kumite.scene.DelegateLayer(this.displayListLayer));
 }
 kumite.scene.DefaultScene.prototype.initTransition = function(transitionContext) {
+	if(transitionContext.direction == kumite.scene.TransitionDirection.OUT) this.transitionOutSignaler.dispatch(null,null,{ fileName : "DefaultScene.hx", lineNumber : 78, className : "kumite.scene.DefaultScene", methodName : "initTransition"});
 }
 kumite.scene.DefaultScene.prototype.renderTransition = function(transitionContext) {
 }
 kumite.scene.DefaultScene.prototype.render = function() {
+}
+kumite.scene.DefaultScene.prototype.sceneEnter = function(sceneEnter) {
+	if(sceneEnter.currentScene.lifecycle == this) this.enterSignaler.dispatch(null,null,{ fileName : "DefaultScene.hx", lineNumber : 93, className : "kumite.scene.DefaultScene", methodName : "sceneEnter"});
+}
+kumite.scene.DefaultScene.prototype.sceneExit = function(sceneExit) {
+	if(sceneExit.lastScene.lifecycle == this) this.exitSignaler.dispatch(null,null,{ fileName : "DefaultScene.hx", lineNumber : 100, className : "kumite.scene.DefaultScene", methodName : "sceneExit"});
 }
 kumite.scene.DefaultScene.prototype.addPreconfiguredLifecycles = function(scene) {
 	var _g = 0, _g1 = this.preconfiguredLifecycles;
@@ -7819,53 +8158,49 @@ kumite.musicdraw.MusicDrawConfig = function(p) {
 	this.jpegTasks.parallelTasksMax = 4;
 	this.analyzer = new kumite.musicdraw.MusicAnalyzer();
 	this.bandsReader = new kumite.musicdraw.BandsReader();
-	this.clearLayer = new kumite.layer.ClearLayer();
-	this.clearLayer.color = new Color(0,0,0.0,1);
-	this.squareEffectWorkerHandler = new kumite.musicdraw.SquareEffectWorkerHandler();
-	this.squareLayer = new kumite.layer.TextureLayer();
-	this.rasterEffectWorkerHandler = new kumite.musicdraw.RasterEffectWorkerHandler();
-	this.rasterLayer = new kumite.layer.TextureLayer();
-	this.scene = new kumite.scene.DefaultScene("MUSIC DRAW");
 }
 kumite.musicdraw.MusicDrawConfig.__name__ = ["kumite","musicdraw","MusicDrawConfig"];
-kumite.musicdraw.MusicDrawConfig.prototype.displayListLayer = null;
-kumite.musicdraw.MusicDrawConfig.prototype.textureRegistry = null;
 kumite.musicdraw.MusicDrawConfig.prototype.stage = null;
+kumite.musicdraw.MusicDrawConfig.prototype.messenger = null;
 kumite.musicdraw.MusicDrawConfig.prototype.analyzer = null;
 kumite.musicdraw.MusicDrawConfig.prototype.bandsReader = null;
-kumite.musicdraw.MusicDrawConfig.prototype.scene = null;
-kumite.musicdraw.MusicDrawConfig.prototype.clearLayer = null;
-kumite.musicdraw.MusicDrawConfig.prototype.squareLayer = null;
-kumite.musicdraw.MusicDrawConfig.prototype.squareEffectWorkerHandler = null;
-kumite.musicdraw.MusicDrawConfig.prototype.rasterLayer = null;
-kumite.musicdraw.MusicDrawConfig.prototype.rasterEffectWorkerHandler = null;
 kumite.musicdraw.MusicDrawConfig.prototype.jpegTasks = null;
+kumite.musicdraw.MusicDrawConfig.prototype.saveButton = null;
+kumite.musicdraw.MusicDrawConfig.prototype.saveProgressBar = null;
 kumite.musicdraw.MusicDrawConfig.prototype.init = function() {
-	this.scene.addLayerLifecycle(this.clearLayer,kumite.layer.LayerId.CLEAR);
-	this.scene.addLayerLifecycle(this.squareLayer);
-	this.scene.addLayerLifecycle(this.rasterLayer);
-	this.scene.addLayerLifecycle(this.displayListLayer);
-	this.squareLayer.texture = this.squareEffectWorkerHandler.createTexture();
-	this.rasterLayer.texture = this.rasterEffectWorkerHandler.createTexture();
 	var group = new bpmjs.SequencerTaskGroup();
 	group.add(this.bandsReader.read("data/bands/wonderfulWord.json"));
 	return group;
 }
 kumite.musicdraw.MusicDrawConfig.prototype.start = function() {
 	var me = this;
-	this.rasterEffectWorkerHandler.start();
-	var saveButton = new GLLabel();
-	saveButton.mouseEnabled = true;
-	saveButton.setText("Save");
-	saveButton.setX(10);
-	saveButton.setY(40);
-	saveButton.setWidth(200);
-	saveButton.setHeight(20);
-	saveButton.mouseDownSignaler.bind(function(_) {
-		me.jpegTasks.add(me.rasterEffectWorkerHandler.openImage());
+	this.saveButton = new GLLabel();
+	this.saveButton.mouseEnabled = true;
+	this.saveButton.setText("Save");
+	this.saveButton.setX(10);
+	this.saveButton.setY(40);
+	this.saveButton.setWidth(200);
+	this.saveButton.setHeight(20);
+	this.saveButton.mouseDownSignaler.bind(function(_) {
+		me.messenger.send(new kumite.musicdraw.SaveRequest(me.jpegTasks));
+		me.jpegTasks.recomputeMonitor();
 	});
-	this.stage.addChild(saveButton);
-	console.profileEnd();
+	this.stage.addChild(this.saveButton);
+	this.saveProgressBar = new GLProgressBar();
+	this.saveProgressBar.setX(10);
+	this.saveProgressBar.setY(40);
+	this.saveProgressBar.setWidth(200);
+	this.saveProgressBar.setHeight(20);
+	this.stage.addChild(this.saveProgressBar);
+}
+kumite.musicdraw.MusicDrawConfig.prototype.tick = function(tick) {
+	if(this.jpegTasks.getMonitor().getCurrent() == 1 || this.jpegTasks.getMonitor().getCurrent() == 0) {
+		this.saveProgressBar.setProgress(0);
+		this.saveButton.setText("Save");
+	} else {
+		this.saveProgressBar.setProgress(this.jpegTasks.getMonitor().getCurrent());
+		this.saveButton.setText("Save (Jobs: " + this.jpegTasks.getTotalTaskCount() + ")");
+	}
 }
 kumite.musicdraw.MusicDrawConfig.prototype.__class__ = kumite.musicdraw.MusicDrawConfig;
 kumite.musicdraw.MusicDrawConfig.__interfaces__ = [haxe.rtti.Infos];
@@ -7873,7 +8208,7 @@ kumite.scene.SceneConfig = function(p) {
 	if( p === $_ ) return;
 	this.scenes = new kumite.scene.Scenes();
 	this.sceneNavigator = new kumite.scene.SceneNavigator();
-	this.sceneNavigator.transitionTime = 500;
+	this.sceneNavigator.transitionTime = 100;
 }
 kumite.scene.SceneConfig.__name__ = ["kumite","scene","SceneConfig"];
 kumite.scene.SceneConfig.prototype.scenes = null;
@@ -8062,10 +8397,82 @@ haxe.Http.prototype.onError = function(msg) {
 haxe.Http.prototype.onStatus = function(status) {
 }
 haxe.Http.prototype.__class__ = haxe.Http;
+kumite.musicdraw.TimeEffectConfig = function(p) {
+	if( p === $_ ) return;
+	this.effectWorkerHandler = new kumite.musicdraw.EffectWorkerHandler();
+	this.effectWorkerHandler.effectClassName = "kumite.musicdraw.TimeEffect";
+	this.effectWorkerHandler.params.addFloatParam("count",5000,100,100000);
+	this.effectWorkerHandler.params.addFloatParam("radius",0.23,0,1);
+	this.effectWorkerHandler.params.addFloatParam("levelRadius",1.7,-10,10);
+	this.layer = new kumite.layer.TextureLayer();
+	this.scene = new kumite.scene.DefaultScene("Time");
+	this.scene.useDefaultLayers();
+	this.scene.enterSignaler.bind($closure(this.effectWorkerHandler,"enter"));
+	this.scene.transitionOutSignaler.bind($closure(this.effectWorkerHandler,"exit"));
+}
+kumite.musicdraw.TimeEffectConfig.__name__ = ["kumite","musicdraw","TimeEffectConfig"];
+kumite.musicdraw.TimeEffectConfig.prototype.scene = null;
+kumite.musicdraw.TimeEffectConfig.prototype.layer = null;
+kumite.musicdraw.TimeEffectConfig.prototype.effectWorkerHandler = null;
+kumite.musicdraw.TimeEffectConfig.prototype.init = function() {
+	this.scene.addLayerLifecycle(this.layer);
+	this.layer.texture = this.effectWorkerHandler.createTexture();
+}
+kumite.musicdraw.TimeEffectConfig.prototype.__class__ = kumite.musicdraw.TimeEffectConfig;
+kumite.musicdraw.TimeEffectConfig.__interfaces__ = [haxe.rtti.Infos];
 kumite.musicdraw.MusicAnalyzer = function(p) {
+	if( p === $_ ) return;
+	this.levels = new Array();
 }
 kumite.musicdraw.MusicAnalyzer.__name__ = ["kumite","musicdraw","MusicAnalyzer"];
 kumite.musicdraw.MusicAnalyzer.prototype.bands = null;
+kumite.musicdraw.MusicAnalyzer.prototype.levels = null;
+kumite.musicdraw.MusicAnalyzer.prototype.init = function() {
+	var _g = 0, _g1 = this.bands;
+	while(_g < _g1.length) {
+		var band = _g1[_g];
+		++_g;
+		var level = 0.0;
+		var _g2 = 0;
+		while(_g2 < band.length) {
+			var note = band[_g2];
+			++_g2;
+			level += note;
+		}
+		level /= band.length;
+		this.levels.push(level);
+	}
+}
+kumite.musicdraw.MusicAnalyzer.prototype.getLevel = function(from,to) {
+	var fromBand = Std["int"](from * this.bands.length);
+	var toBand = Std["int"](to * this.bands.length);
+	var level = 0.0;
+	var _g = fromBand;
+	while(_g < toBand) {
+		var band = _g++;
+		var _g1 = 0, _g2 = this.bands[band];
+		while(_g1 < _g2.length) {
+			var note = _g2[_g1];
+			++_g1;
+			level += note;
+		}
+	}
+	level /= this.bands[0].length * (toBand - fromBand);
+	return level;
+}
+kumite.musicdraw.MusicAnalyzer.prototype.getLevel2 = function(position) {
+	var positionFloor = Std["int"](position * this.levels.length);
+	return this.levels[positionFloor % this.levels.length];
+}
+kumite.musicdraw.MusicAnalyzer.prototype.getLevel3 = function(position) {
+	var positionAll = position * this.levels.length;
+	var positionFloor0 = Std["int"](positionAll);
+	var positionFloor1 = positionFloor0 + 1;
+	var fraction = positionAll - positionFloor0;
+	var l0 = this.levels[positionFloor0 % this.levels.length];
+	var l1 = this.levels[positionFloor1 % this.levels.length];
+	return l0 + (l1 - l0) * fraction;
+}
 kumite.musicdraw.MusicAnalyzer.prototype.__class__ = kumite.musicdraw.MusicAnalyzer;
 GLTweenManager = function(p) {
 	if( p === $_ ) return;
@@ -8911,6 +9318,8 @@ if(typeof(haxe_timers) == "undefined") haxe_timers = [];
 	Xml.Prolog = "prolog";
 	Xml.Document = "document";
 }
+kumite.blobs.BlobReaderHTTP.__meta__ = { fields : { blobs : { Inject : null}, start : { Sequence : ["boot","finish"]}}};
+kumite.blobs.BlobReaderHTTP.__rtti = "<class path=\"kumite.blobs.BlobReaderHTTP\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<blobs public=\"1\"><c path=\"kumite.blobs.Blobs\"/></blobs>\n\t<start public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<readBlobs set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></readBlobs>\n\t<onData set=\"method\" line=\"26\"><f a=\"r\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></onData>\n\t<onError set=\"method\" line=\"53\"><f a=\"r\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></onError>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Log.filters = new Array();
 Log.args = new Array();
 Log.errors = new Array();
@@ -8935,10 +9344,6 @@ Matrix4.i41 = 3;
 Matrix4.i42 = 7;
 Matrix4.i43 = 11;
 Matrix4.i44 = 15;
-kumite.musicdraw.SquareEffectWorkerHandler.__meta__ = { fields : { textureRegistry : { Inject : null}, analyzer : { Inject : null}, stage : { Inject : null}}};
-kumite.musicdraw.SquareEffectWorkerHandler.__rtti = "<class path=\"kumite.musicdraw.SquareEffectWorkerHandler\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<analyzer public=\"1\"><c path=\"kumite.musicdraw.MusicAnalyzer\"/></analyzer>\n\t<stage public=\"1\"><c path=\"GLStage\"/></stage>\n\t<texture public=\"1\"><c path=\"GLArrayTexture\"/></texture>\n\t<workerService><c path=\"bpmjs.WorkerService\"/></workerService>\n\t<roundtripSynchronizer><c path=\"bpmjs.RoundtripSynchronizer\"/></roundtripSynchronizer>\n\t<rasterX><c path=\"Int\"/></rasterX>\n\t<label><c path=\"GLLabel\"/></label>\n\t<createTexture public=\"1\" set=\"method\" line=\"36\"><f a=\"\"><c path=\"GLArrayTexture\"/></f></createTexture>\n\t<start public=\"1\" set=\"method\" line=\"42\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<loop set=\"method\" line=\"70\"><f a=\"\"><e path=\"Void\"/></f></loop>\n\t<handleRender set=\"method\" line=\"80\"><f a=\"buffer\">\n\t<c path=\"ArrayBuffer\"/>\n\t<e path=\"Void\"/>\n</f></handleRender>\n\t<new public=\"1\" set=\"method\" line=\"29\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.musicdraw.RasterEffectWorkerHandler.__meta__ = { fields : { stage : { Inject : null}, jpegService : { Inject : null}, analyzer : { Inject : null}, textureRegistry : { Inject : null}}};
-kumite.musicdraw.RasterEffectWorkerHandler.__rtti = "<class path=\"kumite.musicdraw.RasterEffectWorkerHandler\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"GLStage\"/></stage>\n\t<jpegService public=\"1\"><c path=\"kumite.jpegservice.JPEGService\"/></jpegService>\n\t<analyzer public=\"1\"><c path=\"kumite.musicdraw.MusicAnalyzer\"/></analyzer>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<texture public=\"1\"><c path=\"GLArrayTexture\"/></texture>\n\t<workerService><c path=\"bpmjs.WorkerService\"/></workerService>\n\t<roundtripSynchronizer><c path=\"bpmjs.RoundtripSynchronizer\"/></roundtripSynchronizer>\n\t<paramLength><c path=\"Float\"/></paramLength>\n\t<paramPosition><c path=\"Float\"/></paramPosition>\n\t<width><c path=\"Int\"/></width>\n\t<height><c path=\"Int\"/></height>\n\t<label><c path=\"GLLabel\"/></label>\n\t<createTexture public=\"1\" set=\"method\" line=\"52\"><f a=\"\"><c path=\"GLArrayTexture\"/></f></createTexture>\n\t<start public=\"1\" set=\"method\" line=\"58\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<openImage public=\"1\" set=\"method\" line=\"78\"><f a=\"\"><c path=\"kumite.musicdraw.JPEGTask\"/></f></openImage>\n\t<loop set=\"method\" line=\"91\"><f a=\"\"><e path=\"Void\"/></f></loop>\n\t<handleRender set=\"method\" line=\"108\"><f a=\"buffer\">\n\t<c path=\"ArrayBuffer\"/>\n\t<e path=\"Void\"/>\n</f></handleRender>\n\t<slider set=\"method\" line=\"118\"><f a=\"field:y\">\n\t<c path=\"String\"/>\n\t<c path=\"Float\"/>\n\t<e path=\"Void\"/>\n</f></slider>\n\t<setProgress set=\"method\" line=\"132\"><f a=\"progress\">\n\t<c path=\"Float\"/>\n\t<e path=\"Void\"/>\n</f></setProgress>\n\t<new public=\"1\" set=\"method\" line=\"40\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.scene.LayerState.OUT = new kumite.scene.LayerState("OUT");
 kumite.scene.LayerState.IN = new kumite.scene.LayerState("IN");
 kumite.scene.LayerState.KEEP = new kumite.scene.LayerState("KEEP");
@@ -8961,6 +9366,9 @@ kumite.displaylist.ConfigAsLayer.__rtti = "<class path=\"kumite.displaylist.Conf
 kumite.time.Config.__rtti = "<class path=\"kumite.time.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<timeController public=\"1\"><c path=\"kumite.time.TimeController\"/></timeController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.musicdraw.BandsReader.__meta__ = { fields : { analyzer : { Inject : null}}};
 kumite.musicdraw.BandsReader.__rtti = "<class path=\"kumite.musicdraw.BandsReader\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<analyzer public=\"1\"><c path=\"kumite.musicdraw.MusicAnalyzer\"/></analyzer>\n\t<location><c path=\"String\"/></location>\n\t<read public=\"1\" set=\"method\" line=\"18\"><f a=\"location\">\n\t<c path=\"String\"/>\n\t<c path=\"bpmjs.HTTPTask\"/>\n</f></read>\n\t<handleHTTPComplete set=\"method\" line=\"29\"><f a=\"task\">\n\t<c path=\"bpmjs.HTTPTask\"/>\n\t<e path=\"Void\"/>\n</f></handleHTTPComplete>\n\t<new public=\"1\" set=\"method\" line=\"14\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.blobs.BlobReaderWS.__meta__ = { fields : { blobs : { Inject : null}, time : { Inject : null}, start : { Sequence : ["boot","finish"]}}};
+kumite.blobs.BlobReaderWS.__rtti = "<class path=\"kumite.blobs.BlobReaderWS\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<BLOB_ID public=\"1\" line=\"8\" static=\"1\"><c path=\"Int\"/></BLOB_ID>\n\t<blobs public=\"1\"><c path=\"kumite.blobs.Blobs\"/></blobs>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<host><c path=\"String\"/></host>\n\t<socket><c path=\"WebSocket\"/></socket>\n\t<lastParse><c path=\"Float\"/></lastParse>\n\t<start public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<handleOpen set=\"method\" line=\"35\"><f a=\"event\">\n\t<unknown/>\n\t<e path=\"Void\"/>\n</f></handleOpen>\n\t<handleMessage set=\"method\" line=\"40\"><f a=\"event\">\n\t<a><data set=\"null\"><c path=\"String\"/></data></a>\n\t<e path=\"Void\"/>\n</f></handleMessage>\n\t<handleClose set=\"method\" line=\"45\"><f a=\"event\">\n\t<unknown/>\n\t<e path=\"Void\"/>\n</f></handleClose>\n\t<onData set=\"method\" line=\"51\"><f a=\"r\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></onData>\n\t<mergeBlobs set=\"method\" line=\"83\"><f a=\"newBlobs\">\n\t<c path=\"Array\"><c path=\"kumite.blobs.Blob\"/></c>\n\t<e path=\"Void\"/>\n</f></mergeBlobs>\n\t<getDist set=\"method\" line=\"122\"><f a=\"newBlob:oldBlob\">\n\t<c path=\"kumite.blobs.Blob\"/>\n\t<c path=\"kumite.blobs.Blob\"/>\n\t<c path=\"Float\"/>\n</f></getDist>\n\t<new public=\"1\" set=\"method\" line=\"20\"><f a=\"host\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></new>\n</class>";
+kumite.blobs.BlobReaderWS.BLOB_ID = 0;
 kumite.projection.ProjectionController.__meta__ = { fields : { projection : { Inject : null}, stage : { Inject : null}, init : { Sequence : ["boot","init"]}, updateProjectionSizeFromStage : { Message : null}}};
 kumite.projection.ProjectionController.__rtti = "<class path=\"kumite.projection.ProjectionController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<fov public=\"1\"><c path=\"Float\"/></fov>\n\t<near public=\"1\"><c path=\"Float\"/></near>\n\t<far public=\"1\"><c path=\"Float\"/></far>\n\t<init public=\"1\" set=\"method\" line=\"23\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateProjectionSizeFromStage public=\"1\" set=\"method\" line=\"30\"><f a=\"?message\">\n\t<c path=\"kumite.stage.StageResizeMessage\"/>\n\t<e path=\"Void\"/>\n</f></updateProjectionSizeFromStage>\n\t<new public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.vjinterface.VJStats.__meta__ = { fields : { stage : { Inject : null}, start : { Sequence : ["boot","startComplete"]}, tick : { Message : null}}};
@@ -8980,20 +9388,28 @@ kumite.layer.ClearLayer.__rtti = "<class path=\"kumite.layer.ClearLayer\" params
 kumite.textureregistry.Config.__rtti = "<class path=\"kumite.textureregistry.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.camera.CameraMouseMover.__meta__ = { fields : { camera : { Inject : null}, init : { Sequence : ["boot","init"]}}};
 kumite.camera.CameraMouseMover.__rtti = "<class path=\"kumite.camera.CameraMouseMover\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<init public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<updateCamera set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></updateCamera>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.musicdraw.RasterEffectConfig.__meta__ = { fields : { init : { Sequence : ["boot","init"]}}};
+kumite.musicdraw.RasterEffectConfig.__rtti = "<class path=\"kumite.musicdraw.RasterEffectConfig\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<scene public=\"1\"><c path=\"kumite.scene.DefaultScene\"/></scene>\n\t<layer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></layer>\n\t<effectWorkerHandler public=\"1\"><c path=\"kumite.musicdraw.EffectWorkerHandler\"/></effectWorkerHandler>\n\t<init public=\"1\" set=\"method\" line=\"36\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<new public=\"1\" set=\"method\" line=\"19\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.webgl.Config.__rtti = "<class path=\"kumite.webgl.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<initAction public=\"1\"><c path=\"kumite.webgl.InitAction\"/></initAction>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.time.TimeController.__meta__ = { fields : { time : { Inject : null}, messenger : { Messenger : null}, startComplete : { Sequence : ["boot","startComplete"]}}};
 kumite.time.TimeController.__rtti = "<class path=\"kumite.time.TimeController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<startComplete public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"24\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<new public=\"1\" set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.musicdraw.DNAEffectConfig.__meta__ = { fields : { init : { Sequence : ["boot","init"]}}};
+kumite.musicdraw.DNAEffectConfig.__rtti = "<class path=\"kumite.musicdraw.DNAEffectConfig\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<scene public=\"1\"><c path=\"kumite.scene.DefaultScene\"/></scene>\n\t<layer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></layer>\n\t<effectWorkerHandler public=\"1\"><c path=\"kumite.musicdraw.EffectWorkerHandler\"/></effectWorkerHandler>\n\t<init public=\"1\" set=\"method\" line=\"35\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<new public=\"1\" set=\"method\" line=\"19\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 reflect.ClassInfo.cache = new Hash();
 kumite.launch.PreloadDisplay.__meta__ = { fields : { complete : { Complete : null}, bootMonitor : { Sequence : ["boot","monitor"]}, bootStartComplete : { Sequence : ["boot","startComplete"]}}};
 kumite.launch.PreloadDisplay.__rtti = "<class path=\"kumite.launch.PreloadDisplay\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<preloaderDiv><t path=\"js.HtmlDom\"/></preloaderDiv>\n\t<complete public=\"1\" set=\"method\" line=\"16\"><f a=\"\"><e path=\"Void\"/></f></complete>\n\t<bootMonitor public=\"1\" set=\"method\" line=\"24\"><f a=\"monitor\">\n\t<c path=\"bpmjs.ProgressMonitor\"/>\n\t<e path=\"Void\"/>\n</f></bootMonitor>\n\t<bootStartComplete public=\"1\" set=\"method\" line=\"46\"><f a=\"\"><e path=\"Void\"/></f></bootStartComplete>\n\t<removePreloader set=\"method\" line=\"53\"><f a=\"\"><e path=\"Void\"/></f></removePreloader>\n\t<new public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.layer.LayerId.CLEAR = "CLEAR";
 kumite.webgl.InitAction.__meta__ = { fields : { canvas : { Inject : null}, init : { Sequence : ["boot","init"]}}};
 kumite.webgl.InitAction.__rtti = "<class path=\"kumite.webgl.InitAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<canvas public=\"1\"><c path=\"kumite.canvas.CanvasCase\"/></canvas>\n\t<antialias public=\"1\"><e path=\"Bool\"/></antialias>\n\t<init public=\"1\" set=\"method\" line=\"16\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<new public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.jpegservice.JPEGService.__rtti = "<class path=\"kumite.jpegservice.JPEGService\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<compressAndSave public=\"1\" set=\"method\" line=\"13\"><f a=\"buffer:width:height:filename:complete\">\n\t<c path=\"ArrayBuffer\"/>\n\t<c path=\"Int\"/>\n\t<c path=\"Int\"/>\n\t<c path=\"String\"/>\n\t<f a=\"\"><e path=\"Void\"/></f>\n\t<e path=\"Void\"/>\n</f></compressAndSave>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.jpegservice.JPEGService.__rtti = "<class path=\"kumite.jpegservice.JPEGService\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<compressAndSave public=\"1\" set=\"method\" line=\"14\"><f a=\"buffer:width:height:filename:complete:?monitor\">\n\t<c path=\"ArrayBuffer\"/>\n\t<c path=\"Int\"/>\n\t<c path=\"Int\"/>\n\t<c path=\"String\"/>\n\t<f a=\"\"><e path=\"Void\"/></f>\n\t<c path=\"bpmjs.ProgressMonitor\"/>\n\t<e path=\"Void\"/>\n</f></compressAndSave>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.musicdraw.EffectWorkerHandler.__meta__ = { fields : { stage : { Inject : null}, jpegService : { Inject : null}, analyzer : { Inject : null}, textureRegistry : { Inject : null}, handleSaveRequest : { Message : null}}};
+kumite.musicdraw.EffectWorkerHandler.__rtti = "<class path=\"kumite.musicdraw.EffectWorkerHandler\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"GLStage\"/></stage>\n\t<jpegService public=\"1\"><c path=\"kumite.jpegservice.JPEGService\"/></jpegService>\n\t<analyzer public=\"1\"><c path=\"kumite.musicdraw.MusicAnalyzer\"/></analyzer>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<texture public=\"1\"><c path=\"GLArrayTexture\"/></texture>\n\t<effectClassName public=\"1\"><c path=\"String\"/></effectClassName>\n\t<params public=\"1\"><c path=\"kumite.musicdraw.Parameters\"/></params>\n\t<workerService><c path=\"bpmjs.WorkerService\"/></workerService>\n\t<roundtripSynchronizer><c path=\"bpmjs.RoundtripSynchronizer\"/></roundtripSynchronizer>\n\t<width><c path=\"Int\"/></width>\n\t<height><c path=\"Int\"/></height>\n\t<panel><c path=\"GLDisplayObjectContainer\"/></panel>\n\t<label><c path=\"GLLabel\"/></label>\n\t<createTexture public=\"1\" set=\"method\" line=\"53\"><f a=\"\"><c path=\"GLArrayTexture\"/></f></createTexture>\n\t<enter public=\"1\" set=\"method\" line=\"59\"><f a=\"_\">\n\t<e path=\"Void\"/>\n\t<e path=\"Void\"/>\n</f></enter>\n\t<exit public=\"1\" set=\"method\" line=\"93\"><f a=\"_\">\n\t<e path=\"Void\"/>\n\t<e path=\"Void\"/>\n</f></exit>\n\t<handleSaveRequest public=\"1\" set=\"method\" line=\"100\"><f a=\"request\">\n\t<c path=\"kumite.musicdraw.SaveRequest\"/>\n\t<e path=\"Void\"/>\n</f></handleSaveRequest>\n\t<loop set=\"method\" line=\"116\"><f a=\"\"><e path=\"Void\"/></f></loop>\n\t<createParams set=\"method\" line=\"125\"><f a=\"\"><a>\n\t<width><c path=\"Int\"/></width>\n\t<height><c path=\"Int\"/></height>\n</a></f></createParams>\n\t<handleRender set=\"method\" line=\"137\"><f a=\"buffer\">\n\t<c path=\"ArrayBuffer\"/>\n\t<e path=\"Void\"/>\n</f></handleRender>\n\t<slider set=\"method\" line=\"147\"><f a=\"parameter:y\">\n\t<c path=\"kumite.musicdraw.ParameterFloat\"/>\n\t<c path=\"Float\"/>\n\t<e path=\"Void\"/>\n</f></slider>\n\t<setProgress set=\"method\" line=\"161\"><f a=\"progress\">\n\t<c path=\"Float\"/>\n\t<e path=\"Void\"/>\n</f></setProgress>\n\t<new public=\"1\" set=\"method\" line=\"43\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.projection.Config.__rtti = "<class path=\"kumite.projection.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<projection public=\"1\"><c path=\"kumite.projection.Projection\"/></projection>\n\t<projectionController public=\"1\"><c path=\"kumite.projection.ProjectionController\"/></projectionController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.vjinterface.VJInterface.__meta__ = { fields : { scenes : { Inject : null}, messenger : { Messenger : null}, start : { Sequence : ["boot","startComplete"]}, render : { Message : null}}};
 kumite.vjinterface.VJInterface.__rtti = "<class path=\"kumite.vjinterface.VJInterface\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<scenes public=\"1\"><c path=\"kumite.scene.Scenes\"/></scenes>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<timer><c path=\"haxe.Timer\"/></timer>\n\t<stage><c path=\"GLStage\"/></stage>\n\t<sceneContainer><c path=\"GLDisplayObjectContainer\"/></sceneContainer>\n\t<start public=\"1\" set=\"method\" line=\"31\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<render public=\"1\" set=\"method\" line=\"42\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<addSceneButtons set=\"method\" line=\"47\"><f a=\"\"><e path=\"Void\"/></f></addSceneButtons>\n\t<createSceneRequest set=\"method\" line=\"76\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<f a=\"button\">\n\t\t<c path=\"GLInteractiveObject\"/>\n\t\t<e path=\"Void\"/>\n\t</f>\n</f></createSceneRequest>\n\t<handleButtonClick set=\"method\" line=\"85\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></handleButtonClick>\n\t<navigateNext set=\"method\" line=\"90\"><f a=\"\"><e path=\"Void\"/></f></navigateNext>\n\t<new public=\"1\" set=\"method\" line=\"28\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.displaylist.DisplayListLayer.__rtti = "<class path=\"kumite.displaylist.DisplayListLayer\" params=\"\">\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<transition public=\"1\"><c path=\"Float\"/></transition>\n\t<renderer><c path=\"GLDisplayListRenderer\"/></renderer>\n\t<init public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"27\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"33\"><f a=\"renderContext\">\n\t<c path=\"kumite.scene.RenderContext\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"19\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.blobs.BlobReaderMouse.__meta__ = { fields : { blobs : { Inject : null}, time : { Inject : null}, init : { Sequence : ["boot","finish"]}, tick : { Message : null}}};
+kumite.blobs.BlobReaderMouse.__rtti = "<class path=\"kumite.blobs.BlobReaderMouse\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<blobs public=\"1\"><c path=\"kumite.blobs.Blobs\"/></blobs>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<mouse><c path=\"Vec2\"/></mouse>\n\t<init public=\"1\" set=\"method\" line=\"23\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<tick public=\"1\" set=\"method\" line=\"29\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></tick>\n\t<mouseMove set=\"method\" line=\"43\"><f a=\"position\">\n\t<c path=\"Vec2\"/>\n\t<e path=\"Void\"/>\n</f></mouseMove>\n\t<new public=\"1\" set=\"method\" line=\"17\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 shader.DisplayObjectVertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 objectMatrix;\n\tuniform vec2 size;\n\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * objectMatrix * (vec4(size, 1.0, 1.0) * vec4(vertexPosition, 0.0, 1.0));\n\t\ttextureCoord = vertexPosition.xy;\n\t}\n\n"]}};
 kumite.stage.StageResizeAction.__meta__ = { fields : { messenger : { Messenger : null}, stage : { Inject : null}, initPrepare : { Sequence : ["boot","initPrepare"]}, startComplete : { Sequence : ["boot","startComplete"]}}};
 kumite.stage.StageResizeAction.__rtti = "<class path=\"kumite.stage.StageResizeAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<startComplete public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<onResize set=\"method\" line=\"39\"><f a=\"?event\">\n\t<t path=\"js.Event\"/>\n\t<e path=\"Void\"/>\n</f></onResize>\n\t<updateSize set=\"method\" line=\"45\"><f a=\"\"><e path=\"Void\"/></f></updateSize>\n\t<sendResizeMessage set=\"method\" line=\"51\"><f a=\"\"><e path=\"Void\"/></f></sendResizeMessage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
@@ -9299,14 +9715,18 @@ kumite.layer.TextureLayer.__rtti = "<class path=\"kumite.layer.TextureLayer\" pa
 kumite.layer._TextureLayer.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tuniform mat4 projectionMatrix;\n\tuniform mat4 worldViewMatrix;\n\tuniform float flipY;\n\n\tvarying vec4 vertex;\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = projectionMatrix * worldViewMatrix * vec4(vertexPosition, 0.0, 1.0);\n\t\tvertex = vec4(vertexPosition, 0.0, 1.0);\n\n\t\tif (flipY == 1.0)\n\t\t{\n\t\t\ttextureCoord = vertexPosition.xy;\n\t\t\ttextureCoord.y = 1.0 - textureCoord.y;\n\t\t} \n\t\telse\n\t\t{\n\t\t\ttextureCoord = vertexPosition.xy;\n\t\t}\n\t}\n\n"]}};
 kumite.layer._TextureLayer.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform sampler2D texture;\n\tuniform float alpha;\n\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tvec4 color = texture2D(texture, vec2(textureCoord.x, textureCoord.y));\n\t\tgl_FragColor = color * vec4(1.0, 1.0, 1.0, alpha);\n\t}\n\n"]}};
 GLTextureConfig.FRAMEBUFFER_ID = 0;
+kumite.blobs.Config.__rtti = "<class path=\"kumite.blobs.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<blobs public=\"1\"><c path=\"kumite.blobs.Blobs\"/></blobs>\n\t<blobReaderHTTP public=\"1\"><c path=\"kumite.blobs.BlobReaderHTTP\"/></blobReaderHTTP>\n\t<blobReaderWS public=\"1\"><c path=\"kumite.blobs.BlobReaderWS\"/></blobReaderWS>\n\t<blobReaderMouse public=\"1\"><c path=\"kumite.blobs.BlobReaderMouse\"/></blobReaderMouse>\n\t<new public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 shader.DisplayObjectFragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\t\tprecision highp float;\n\t#endif\n\n\tuniform sampler2D texture;\n\tuniform float alpha;\n\n\tvarying vec2 textureCoord;\n\n\tvoid main(void)\n\t{\n\t\tvec4 color = texture2D(texture, textureCoord);\n\t\tgl_FragColor = color * vec4(1.0, 1.0, 1.0, alpha);\n\t}\n\n"]}};
-kumite.scene.DefaultScene.__rtti = "<class path=\"kumite.scene.DefaultScene\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.SceneLifecycle\"/>\n\t<name public=\"1\"><c path=\"String\"/></name>\n\t<preconfiguredLifecycles><c path=\"Array\"><c path=\"kumite.scene._DefaultScene.LifecycleAndLayerId\"/></c></preconfiguredLifecycles>\n\t<addLayerLifecycle public=\"1\" set=\"method\" line=\"25\"><f a=\"lifecycle:?layerId\">\n\t<c path=\"kumite.scene.LayerLifecycle\"/>\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></addLayerLifecycle>\n\t<sceneInit public=\"1\" set=\"method\" line=\"36\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></sceneInit>\n\t<initTransition public=\"1\" set=\"method\" line=\"42\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></initTransition>\n\t<renderTransition public=\"1\" set=\"method\" line=\"46\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"50\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<addPreconfiguredLifecycles set=\"method\" line=\"54\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></addPreconfiguredLifecycles>\n\t<new public=\"1\" set=\"method\" line=\"19\"><f a=\"?name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></new>\n</class>";
+kumite.scene.DefaultScene.__meta__ = { fields : { displayListLayer : { Inject : null}, sceneEnter : { Message : null}, sceneExit : { Message : null}}};
+kumite.scene.DefaultScene.__rtti = "<class path=\"kumite.scene.DefaultScene\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.SceneLifecycle\"/>\n\t<displayListLayer public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayListLayer>\n\t<name public=\"1\"><c path=\"String\"/></name>\n\t<enterSignaler public=\"1\" set=\"null\"><c path=\"hsl.haxe.Signaler\"><e path=\"Void\"/></c></enterSignaler>\n\t<exitSignaler public=\"1\" set=\"null\"><c path=\"hsl.haxe.Signaler\"><e path=\"Void\"/></c></exitSignaler>\n\t<transitionOutSignaler public=\"1\" set=\"null\"><c path=\"hsl.haxe.Signaler\"><e path=\"Void\"/></c></transitionOutSignaler>\n\t<preconfiguredLifecycles><c path=\"Array\"><c path=\"kumite.scene._DefaultScene.LifecycleAndLayerId\"/></c></preconfiguredLifecycles>\n\t<defaultLayers><e path=\"Bool\"/></defaultLayers>\n\t<useDefaultLayers public=\"1\" set=\"method\" line=\"42\"><f a=\"\"><e path=\"Void\"/></f></useDefaultLayers>\n\t<addLayerLifecycle public=\"1\" set=\"method\" line=\"47\"><f a=\"lifecycle:?layerId\">\n\t<c path=\"kumite.scene.LayerLifecycle\"/>\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></addLayerLifecycle>\n\t<sceneInit public=\"1\" set=\"method\" line=\"58\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></sceneInit>\n\t<initTransition public=\"1\" set=\"method\" line=\"75\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></initTransition>\n\t<renderTransition public=\"1\" set=\"method\" line=\"81\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"85\"><f a=\"\"><e path=\"Void\"/></f></render>\n\t<sceneEnter set=\"method\" line=\"90\"><f a=\"sceneEnter\">\n\t<c path=\"kumite.scene.SceneEnter\"/>\n\t<e path=\"Void\"/>\n</f></sceneEnter>\n\t<sceneExit set=\"method\" line=\"97\"><f a=\"sceneExit\">\n\t<c path=\"kumite.scene.SceneExit\"/>\n\t<e path=\"Void\"/>\n</f></sceneExit>\n\t<addPreconfiguredLifecycles set=\"method\" line=\"103\"><f a=\"scene\">\n\t<c path=\"kumite.scene.Scene\"/>\n\t<e path=\"Void\"/>\n</f></addPreconfiguredLifecycles>\n\t<new public=\"1\" set=\"method\" line=\"31\"><f a=\"?name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></new>\n</class>";
 kumite.camera.Config.__rtti = "<class path=\"kumite.camera.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<cameraMouseMover public=\"1\"><c path=\"kumite.camera.CameraMouseMover\"/></cameraMouseMover>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.vjinterface.Config.__rtti = "<class path=\"kumite.vjinterface.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<vjinterface public=\"1\"><c path=\"kumite.vjinterface.VJInterface\"/></vjinterface>\n\t<vjstats public=\"1\"><c path=\"kumite.vjinterface.VJStats\"/></vjstats>\n\t<vjlayers public=\"1\"><c path=\"kumite.vjinterface.VJLayers\"/></vjlayers>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.musicdraw.MusicDrawConfig.__meta__ = { fields : { displayListLayer : { Inject : null}, textureRegistry : { Inject : null}, stage : { Inject : null}, init : { Sequence : ["boot","init"]}, start : { Sequence : ["boot","start"]}}};
-kumite.musicdraw.MusicDrawConfig.__rtti = "<class path=\"kumite.musicdraw.MusicDrawConfig\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<displayListLayer public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayListLayer>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<stage public=\"1\"><c path=\"GLStage\"/></stage>\n\t<analyzer public=\"1\"><c path=\"kumite.musicdraw.MusicAnalyzer\"/></analyzer>\n\t<bandsReader public=\"1\"><c path=\"kumite.musicdraw.BandsReader\"/></bandsReader>\n\t<scene public=\"1\"><c path=\"kumite.scene.DefaultScene\"/></scene>\n\t<clearLayer public=\"1\"><c path=\"kumite.layer.ClearLayer\"/></clearLayer>\n\t<squareLayer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></squareLayer>\n\t<squareEffectWorkerHandler public=\"1\"><c path=\"kumite.musicdraw.SquareEffectWorkerHandler\"/></squareEffectWorkerHandler>\n\t<rasterLayer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></rasterLayer>\n\t<rasterEffectWorkerHandler public=\"1\"><c path=\"kumite.musicdraw.RasterEffectWorkerHandler\"/></rasterEffectWorkerHandler>\n\t<jpegTasks public=\"1\"><c path=\"bpmjs.TaskGroup\"/></jpegTasks>\n\t<init public=\"1\" set=\"method\" line=\"65\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></init>\n\t<start public=\"1\" set=\"method\" line=\"82\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<new public=\"1\" set=\"method\" line=\"43\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.musicdraw.MusicDrawConfig.__meta__ = { fields : { stage : { Inject : null}, messenger : { Messenger : null}, init : { Sequence : ["boot","init"]}, start : { Sequence : ["boot","start"]}, tick : { Message : null}}};
+kumite.musicdraw.MusicDrawConfig.__rtti = "<class path=\"kumite.musicdraw.MusicDrawConfig\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage public=\"1\"><c path=\"GLStage\"/></stage>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<analyzer public=\"1\"><c path=\"kumite.musicdraw.MusicAnalyzer\"/></analyzer>\n\t<bandsReader public=\"1\"><c path=\"kumite.musicdraw.BandsReader\"/></bandsReader>\n\t<jpegTasks public=\"1\"><c path=\"bpmjs.TaskGroup\"/></jpegTasks>\n\t<saveButton><c path=\"GLLabel\"/></saveButton>\n\t<saveProgressBar><c path=\"GLProgressBar\"/></saveProgressBar>\n\t<init public=\"1\" set=\"method\" line=\"37\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></init>\n\t<start public=\"1\" set=\"method\" line=\"47\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<tick public=\"1\" set=\"method\" line=\"72\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></tick>\n\t<new public=\"1\" set=\"method\" line=\"26\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.scene.SceneConfig.__rtti = "<class path=\"kumite.scene.SceneConfig\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<scenes public=\"1\"><c path=\"kumite.scene.Scenes\"/></scenes>\n\t<sceneNavigator public=\"1\"><c path=\"kumite.scene.SceneNavigator\"/></sceneNavigator>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.mouse.Config.__rtti = "<class path=\"kumite.mouse.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<mouseController public=\"1\"><c path=\"kumite.mouse.MouseController\"/></mouseController>\n\t<new public=\"1\" set=\"method\" line=\"8\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.musicdraw.TimeEffectConfig.__meta__ = { fields : { init : { Sequence : ["boot","init"]}}};
+kumite.musicdraw.TimeEffectConfig.__rtti = "<class path=\"kumite.musicdraw.TimeEffectConfig\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<scene public=\"1\"><c path=\"kumite.scene.DefaultScene\"/></scene>\n\t<layer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></layer>\n\t<effectWorkerHandler public=\"1\"><c path=\"kumite.musicdraw.EffectWorkerHandler\"/></effectWorkerHandler>\n\t<init public=\"1\" set=\"method\" line=\"36\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<new public=\"1\" set=\"method\" line=\"19\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs.Stats.fps = 0;
 kumite.launch.Config.__rtti = "<class path=\"kumite.launch.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<launcher public=\"1\"><c path=\"kumite.launch.Launcher\"/></launcher>\n\t<preloadDisplay public=\"1\"><c path=\"kumite.launch.PreloadDisplay\"/></preloadDisplay>\n\t<new public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Xml.enode = new EReg("^<([a-zA-Z0-9:_-]+)","");

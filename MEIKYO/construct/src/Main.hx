@@ -12,7 +12,6 @@ class Main {
 	static function main()
 	{
 		Log.init();
-		Log.profile("start");
 		Log.addFilter(new ERegFilter(LogLevel.INFO, ~/.*/));
 		Log.addFilter(new ERegFilter(LogLevel.WARN, ~/.*FrontMessenger\.handleMessage.*/));
 		Log.addFilter(new ERegFilter(LogLevel.WARN, ~/.*FrontMessenger\.Receiver\.execute.*/));
@@ -37,7 +36,7 @@ class Main {
 					kumite.camera.Config,
 					kumite.mouse.Config,
 					kumite.jpegservice.JPEGServiceConfig,
-					//kumite.blobs.Config,
+					kumite.blobs.Config,
 					//kumite.socketsound.Config,
 					//kumite.helloworldgl.Config,
 					kumite.displaylist.ConfigAsLayer,
@@ -55,6 +54,9 @@ class Main {
 					//kumite.lgl.LGLConfig,
 					//kumite.webworker.WebworkerConfig,
 					kumite.musicdraw.MusicDrawConfig,
+					kumite.musicdraw.TimeEffectConfig,
+					kumite.musicdraw.RasterEffectConfig,
+					kumite.musicdraw.DNAEffectConfig,
 				]);
 		}
 		catch(e : Dynamic)

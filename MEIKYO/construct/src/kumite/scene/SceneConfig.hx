@@ -10,6 +10,6 @@ class SceneConfig implements Infos
 	{
 		scenes = new Scenes();
 		sceneNavigator = new SceneNavigator();
-		sceneNavigator.transitionTime = 500;
+		sceneNavigator.transitionTime = 100;
 	}
 }

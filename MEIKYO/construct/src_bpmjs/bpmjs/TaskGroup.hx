@@ -38,11 +38,30 @@ class TaskGroup extends Task<TaskGroup>
 		
 		nextTask();
 	}
+	
+	public function recomputeMonitor()
+	{
+		monitor.reset();
+		
+		var totalTasks = getTotalTaskCount();
+		for(task in pendingTasks)
+		{
+			monitor.append(task.monitor, 1 / totalTasks);
+		}
+		for(task in tasks)
+		{
+			monitor.append(task.monitor, 1 / totalTasks);
+		}
+	}
+	
+	public function getTotalTaskCount()
+	{
+		return pendingTasks.count() + tasks.count();
+	}
 
 	function nextTask()
 	{
 		var pendingTaskCount = pendingTasks.count();
-		Log.info(pendingTaskCount);
 		if (pendingTaskCount >= parallelTasksMax)
 			return;
 			

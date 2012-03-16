@@ -12,6 +12,7 @@ class GLDisplayObject
 	public var stage : GLStage;
 
 	public var skipDraw : Bool;
+	public var visible : Bool;
 
 	public var alpha : Float;
 	public var x(default, setX) : Float;
@@ -29,6 +30,8 @@ class GLDisplayObject
 	public var enterFrameSignaler : Signaler<GLFrame>;
 	
 	public var graphic : CanvasGraphic;
+	
+	public var parent: GLDisplayObjectContainer;
 
 	public function new()
 	{
@@ -40,6 +43,7 @@ class GLDisplayObject
 		GLDisplayList.getDefault().initDisplayObject(this);
 
 		skipDraw = false;
+		visible = true;
 
 		alpha = 1;
 

@@ -11,10 +11,15 @@ class ProgressMonitor
 	
 	public function new()
 	{
+		name = "";
+		reset();
+	}
+	
+	public function reset()
+	{
 		children = new Array();
 		current = 0;
 		weight = 1;
-		name = "";
 	}
 	
 	public function append(monitor : ProgressMonitor, total)
@@ -26,6 +31,11 @@ class ProgressMonitor
 		children.push(monitorAndTotal);
 		
 		return monitor;
+	}
+	
+	public function done()
+	{
+		current = 1;
 	}
 	
 	function getCurrent()

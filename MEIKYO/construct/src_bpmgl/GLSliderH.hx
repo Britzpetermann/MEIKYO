@@ -34,6 +34,9 @@ class GLSliderH extends GLDisplayObjectContainer
 		label.text = "Text";
 		label.width = 100;
 		label.height = 20;
+		label.handCursor = false;
+		label.mouseEnabled = true;
+		label.mouseDownSignaler.bind(mouseDown);
 		
 		dragH.min = 0;
 		dragH.width = 10;
@@ -41,8 +44,8 @@ class GLSliderH extends GLDisplayObjectContainer
 		dragH.height = 20;
 		dragH.changeSignaler.bind(dragChanged);
 		
-		addChild(dragH);
 		addChild(label);
+		addChild(dragH);
 		
 		updateChildren();
 	}
@@ -52,6 +55,12 @@ class GLSliderH extends GLDisplayObjectContainer
 		this.binding.change.unbind(handleBindChange);
 		this.binding = binding;
 		this.binding.change.bind(handleBindChange);
+	}
+	
+	function mouseDown(_)
+	{
+		dragChanged(label.mouseX - dragH.width / 2);
+		dragH.startSlide(dragH);
 	}
 	
 	function handleBindChange(binding:Binding)

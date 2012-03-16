@@ -3,6 +3,7 @@ package kumite.jpegservice;
 import haxe.rtti.Infos;
 
 import bpmjs.WorkerService;
+import bpmjs.ProgressMonitor;
 
 class JPEGService implements Infos
 {
@@ -10,13 +11,16 @@ class JPEGService implements Infos
 	{
 	}
 
-	public function compressAndSave(buffer:ArrayBuffer, width:Int, height:Int, filename:String, complete:Void->Void)
+	public function compressAndSave(buffer:ArrayBuffer, width:Int, height:Int, filename:String, complete:Void->Void, ?monitor:ProgressMonitor)
 	{
+		if (monitor == null)
+			monitor = new ProgressMonitor();
+			
 		var workerService = new WorkerService();
 		workerService.receiver = {
 			setProgress:function(progress:Float)
 			{
-				Log.info(filename + " " + Math.round(progress * 100) + "%");
+				monitor.current = progress;
 			}
 		}
 		workerService.debug = false;
@@ -29,6 +33,7 @@ class JPEGService implements Infos
 			untyped saveAs(blobBuilder.getBlob("example/binary"), filename);
 			
 			workerService.terminate();
+			monitor.done();
 			complete();
 		});
 	}

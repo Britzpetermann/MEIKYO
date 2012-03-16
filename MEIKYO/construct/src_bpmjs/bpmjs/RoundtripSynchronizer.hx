@@ -1,5 +1,7 @@
 package bpmjs;
 
+import haxe.Timer;
+
 class RoundtripSynchronizer
 {
 	public var targetMs:Float;
@@ -8,6 +10,7 @@ class RoundtripSynchronizer
 	
 	var workStartTime:Float;
 	var lastDelayTime:Int;
+	var delayTimer:Timer;
 	
 	public function new()
 	{
@@ -33,7 +36,7 @@ class RoundtripSynchronizer
 			lastDelayTime = 0;
 			
 		if (lastDelayTime > 0)
-			haxe.Timer.delay(method, lastDelayTime);
+			delayTimer = Timer.delay(method, lastDelayTime);
 		else
 			method();
 	}
@@ -43,8 +46,14 @@ class RoundtripSynchronizer
 		return Date.now().getTime() - workStartTime;
 	}
 	
+	public function stop()
+	{
+		if (delayTimer != null)
+			delayTimer.stop();
+	}
+	
 	public function getInfo()
 	{
-		return "WRD(ms): " + workMs + ", " + roundtripMs + ", " + lastDelayTime;
+		return "Work, Round(ms): " + workMs + ", " + roundtripMs;
 	}
 }

@@ -437,15 +437,26 @@ bpmjs.TaskGroup.prototype.doStart = function() {
 	}
 	this.nextTask();
 }
+bpmjs.TaskGroup.prototype.recomputeMonitor = function() {
+	this.getMonitor().reset();
+	var totalTasks = this.getTotalTaskCount();
+	var $it0 = this.pendingTasks.iterator();
+	while( $it0.hasNext() ) {
+		var task = $it0.next();
+		this.getMonitor().append(task.getMonitor(),1 / totalTasks);
+	}
+	var _g = 0, _g1 = this.tasks;
+	while(_g < _g1.length) {
+		var task = _g1[_g];
+		++_g;
+		this.getMonitor().append(task.getMonitor(),1 / totalTasks);
+	}
+}
+bpmjs.TaskGroup.prototype.getTotalTaskCount = function() {
+	return Lambda.count(this.pendingTasks) + Lambda.count(this.tasks);
+}
 bpmjs.TaskGroup.prototype.nextTask = function() {
 	var pendingTaskCount = Lambda.count(this.pendingTasks);
-	{
-		Log.posInfo = { fileName : "TaskGroup.hx", lineNumber : 45, className : "bpmjs.TaskGroup", methodName : "nextTask"};
-		if(Log.filter(LogLevel.INFO)) {
-			Log.fetchInput(pendingTaskCount,null,null,null,null,null,null);
-			console.info(Log.createMessage());
-		}
-	}
 	if(pendingTaskCount >= this.parallelTasksMax) return;
 	if(this.tasks.length > 0) {
 		var pendingTask = this.tasks.shift();
@@ -462,7 +473,7 @@ bpmjs.TaskGroup.prototype.handleTaskComplete = function(task) {
 bpmjs.TaskGroup.prototype.handleTaskError = function(taskError) {
 	this.pendingTasks.remove(taskError.task);
 	if(!this.autoStart) this.error(this,taskError.error); else {
-		Log.posInfo = { fileName : "TaskGroup.hx", lineNumber : 80, className : "bpmjs.TaskGroup", methodName : "handleTaskError"};
+		Log.posInfo = { fileName : "TaskGroup.hx", lineNumber : 99, className : "bpmjs.TaskGroup", methodName : "handleTaskError"};
 		if(Log.filter(LogLevel.WARN)) {
 			Log.fetchInput(taskError.error,null,null,null,null,null,null);
 			console.warn(Log.createMessage());
@@ -4716,22 +4727,28 @@ Log.prototype.errorFilter = function() {
 Log.prototype.__class__ = Log;
 bpmjs.ProgressMonitor = function(p) {
 	if( p === $_ ) return;
-	this.children = new Array();
-	this.setCurrent(0);
-	this.weight = 1;
 	this.name = "";
+	this.reset();
 }
 bpmjs.ProgressMonitor.__name__ = ["bpmjs","ProgressMonitor"];
 bpmjs.ProgressMonitor.prototype.name = null;
 bpmjs.ProgressMonitor.prototype.weight = null;
 bpmjs.ProgressMonitor.prototype.current = null;
 bpmjs.ProgressMonitor.prototype.children = null;
+bpmjs.ProgressMonitor.prototype.reset = function() {
+	this.children = new Array();
+	this.setCurrent(0);
+	this.weight = 1;
+}
 bpmjs.ProgressMonitor.prototype.append = function(monitor,total) {
 	var monitorAndTotal = new bpmjs._ProgressMonitor.MonitorAndTotal();
 	monitorAndTotal.total = total;
 	monitorAndTotal.monitor = monitor;
 	this.children.push(monitorAndTotal);
 	return monitor;
+}
+bpmjs.ProgressMonitor.prototype.done = function() {
+	this.setCurrent(1);
 }
 bpmjs.ProgressMonitor.prototype.getCurrent = function() {
 	if(this.children.length == 0) return this.current; else {

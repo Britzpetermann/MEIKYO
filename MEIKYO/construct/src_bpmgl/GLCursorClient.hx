@@ -19,14 +19,12 @@ class GLCursorClient
 		}
 	}
 
-	public function handCursor(?message : String)
+	public function handCursor()
 	{
 		if (lastCursor != HAND)
 		{
 			lastCursor = HAND;
 			GLMouseRegistry.getInstance().setCursor(lastCursor);
-			if (message != null)
-				js.Lib.window.status = message;
 		}
 	}
 }

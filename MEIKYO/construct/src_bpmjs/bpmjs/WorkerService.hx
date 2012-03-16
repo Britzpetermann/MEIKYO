@@ -4,6 +4,7 @@ class WorkerService
 {
 	public var debug:Bool;
 	public var receiver:Dynamic;
+	public var paused:Bool;
 	
 	var worker:Worker;
 	var queue:Array<Call>;
@@ -20,6 +21,17 @@ class WorkerService
 	{
 		worker = new Worker(workerScript + "?cache=" + Date.now().getTime());
 		worker.onmessage = onMessage;
+	}
+	
+	public function pause()
+	{
+		paused = true;
+	}
+	
+	public function resume()
+	{
+		paused = false;
+		checkQueue();
 	}
 	
 	public function terminate()
@@ -57,6 +69,9 @@ class WorkerService
 	
 	function checkQueue()
 	{
+		if (paused)
+			return;
+			
 		if (debug)
 			Log.info(queue.length);
 		
@@ -102,29 +117,27 @@ class WorkerService
 	
 	function handlePipedMethod(event:MessageEvent)
 	{
-		if (receiver == null)
-		{
-			try
-			{
-				var method = js.Lib.eval(event.data.method);
-				method.apply(null, event.data.args);
-			}
-			catch(e:Dynamic)
-			{
-				Log.warn("Could not execute piped method without receiver: " + event.data.method);
-			}
-		}
-		else
+		if (receiver != null)
 		{
 			try
 			{
 				var method = Reflect.field(receiver, event.data.method);
 				method.apply(receiver, event.data.args);
+				return;
 			}
 			catch(e:Dynamic)
 			{
-				Log.warn("Could not execute piped method with receiver: " + event.data.method);
 			}
+		}
+		
+		try
+		{
+			var method = js.Lib.eval(event.data.method);
+			method.apply(null, event.data.args);
+		}
+		catch(e:Dynamic)
+		{
+			Log.warn("Could not execute piped method without receiver: " + event.data.method);
 		}
 	}
 }

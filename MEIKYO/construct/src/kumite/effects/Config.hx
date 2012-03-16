@@ -1,7 +1,5 @@
 package kumite.effects;
 
-import kumite.spritemesh.SpriteMeshLayer;
-
 import kumite.displaylist.DisplayListLayer;
 
 import kumite.layer.ColorLayer;
