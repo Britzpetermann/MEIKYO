@@ -54,30 +54,30 @@ class BlobReaderWS implements Infos
 		{
 			lastParse = time.ms;
 			var xml = Xml.parse(r);
-			
+			//trace(xml);
+			//trace(xml.firstElement());
 			var newBlobs = new Array<Blob>();
 			
 			try
 			{
-				for(p in xml.elements())
+				for(p in xml.firstElement())
 				{
 					var fast = new haxe.xml.Fast(p);
 		     		var blob = new Blob();
 					blob.x = Std.parseFloat(fast.att.x);
 					blob.y = Std.parseFloat(fast.att.y);
-					blob.z = Clamp.float(Map.linear(Std.parseFloat(fast.att.z), 1700, 4000, 0, 1), 0, 1);
+					blob.z = Std.parseFloat(fast.att.z);
 					blob.area = Std.parseFloat(fast.att.area);
 					newBlobs.push(blob);
 				}
 			}
 			catch(e : Dynamic)
 			{
-				
+				//trace(e);
 			}
 			
 			mergeBlobs(newBlobs);
 		}
-		
 	}
 	
 	function mergeBlobs(newBlobs : Array<Blob>)

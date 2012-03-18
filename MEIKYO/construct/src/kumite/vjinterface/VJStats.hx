@@ -15,6 +15,9 @@ class VJStats implements Infos
 	@Inject
 	var stage : Stage;
 
+	@Inject
+	public var blobs : Blobs;
+
 	var mouseLabel : GLLabel;
 	var debugLabel : GLLabel;
 
@@ -34,24 +37,24 @@ class VJStats implements Infos
 		mouseLabel.text = "1000x1000";
 		mouseLabel.width = 60;
 		mouseLabel.height = 20;
-		//stage.addChild(mouseLabel);
+//		stage.addChild(mouseLabel);
 
 		debugLabel = new GLLabel();
 		debugLabel.center = false;
-		debugLabel.x = 100;
-		debugLabel.y = 100;
+		debugLabel.x = 10;
+		debugLabel.y = 40;
 		debugLabel.text = "DEBUG";
-		debugLabel.width = 200;
-		debugLabel.height = 200;
+		debugLabel.width = 100;
+		debugLabel.height = 20;
 
-		//stage.addChild(debugLabel);
+		stage.addChild(debugLabel);
 	}
 
 	@Message
 	function tick(tick : Tick)
 	{
-		var result = new Array<String>();
-		debugLabel.text = result.join(", ");
+		//var result = new Array<String>();
+		debugLabel.text = "" + blobs.blobs.length;
 	}
 
 	function updateMouse(position : Vec2)

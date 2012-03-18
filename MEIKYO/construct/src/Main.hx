@@ -48,15 +48,15 @@ class Main {
 					//kumite.framebuffereffect.Config,
 					//kumite.spritemesh.Config,
 					//kumite.effects.Config,
-					//kumite.eyes.Config,
+					kumite.eyes.Config,
 					//kumite.windowlines.Config,
 					//kumite.touchtest.Config,
 					//kumite.lgl.LGLConfig,
 					//kumite.webworker.WebworkerConfig,
-					kumite.musicdraw.MusicDrawConfig,
-					kumite.musicdraw.TimeEffectConfig,
-					kumite.musicdraw.RasterEffectConfig,
-					kumite.musicdraw.DNAEffectConfig,
+					//kumite.musicdraw.MusicDrawConfig,
+					//kumite.musicdraw.TimeEffectConfig,
+					//kumite.musicdraw.RasterEffectConfig,
+					//kumite.musicdraw.DNAEffectConfig,
 				]);
 		}
 		catch(e : Dynamic)

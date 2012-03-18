@@ -175,6 +175,7 @@ class EyeEffect implements LayerLifecycle, implements Infos
 		 */
 
 		moveSet.move();
+		moveSet.move();
 		directionUniform.setVec2(moveSet.current);
 		
 		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
@@ -274,7 +275,7 @@ private class State
 		{
 			var a = blobs[0];
 			var sx = position.x / stage.width;
-			var adx = Math.abs(-(a.x - 0.5) - sx);
+			var adx = Math.abs((a.x - 0.5) - sx);
 			return adx;
 		}
 		catch(e : Dynamic)
@@ -342,7 +343,7 @@ private class IdleState2 extends State
 	{
 		if (Rand.bool(0.3) && getDist() > 0.2)
 		{
-			moveSet.to.y = Math.cos(ms / 100 + position.x * 0.003) * 0.2;
+			moveSet.to.y = Math.cos(ms / 100 + position.x * 0.003) * 0.5;
 		}
 		
 		if (ms - enterMs > 1500)
@@ -376,23 +377,28 @@ private class TargetState extends State
 		}
 		
 		var blob = blobs[0];
-		var s = (300000 / Math.pow(blob.z - 1000, 2));
+		for(b in blobs)
+		{
+			if (b.z > blob.z)
+				blob = b;
+		}
 		
-		var v = new Vec2((position.x / stage.width * s - ((1 - blob.x) - 0.5) * 0.3), -position.y / stage.height * s - ((1 - blob.y) - 0.7) * 0.3);
-		if (v.x < -0.2)
-			v.x = -0.2;
-		if (v.x > 0.2)
-			v.x = 0.2;
-		if (v.y < -0.2)
-			v.y = -0.2;
-		if (v.y > 0.2)
-			v.y = 0.2;
-			
-		moveSet.to.x = v.x;
-		moveSet.to.y = v.y;
+		var ex = position.x / stage.width;
+		var ey = position.y / stage.height;
 		
-		if (ms - enterMs > 5000)
+		var bx = (blob.x - 0.5) * 2.0;
+		var by = (blob.y - 0.10) * 1.0;
+		
+		//var focusX = (blob.z) * 0.3;
+		//var focusY = (blob.z) * 0.25;
+		
+		var focusX = (blob.z + 0.05) * 0.46;
+		var focusY = (blob.z + 0.05) * 0.35;
+		
+		moveSet.to.x = (ex - bx) * focusX;
+		moveSet.to.y = -(ey - by) * focusY;
+		
+		if (ms - enterMs > 20000)
 			parent.setRandomIdleState();
-		
 	}
 }

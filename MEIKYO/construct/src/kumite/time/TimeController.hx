@@ -18,7 +18,7 @@ class TimeController implements Infos
 	public function startComplete()
 	{
 		time.reset();
-		GLAnimationFrame.run(timerUpdate);		
+		GLAnimationFrame.run(timerUpdate, 30);
 	}
 	
 	private function timerUpdate()

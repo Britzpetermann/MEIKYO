@@ -85,6 +85,8 @@ class Config implements Infos
 		
 		eyeBlocks = new Array();
 		
+		/*
+		//bpm
 		createBlock(621, 283.5, 0.133);
 		createBlock(-867, -482, 0.195);
 		createBlock(-663, -109, 0.355);
@@ -101,9 +103,44 @@ class Config implements Infos
 		createBlock(-569, 255.3, 0.13);
 		createBlock(-447, 390, 0.192);
 		createBlock(215, 338.5, 0.193);
-		
-		/*
 		 */
+		
+		//1, 2, 3, 4
+		//5, 6, 7, 8
+		
+		//1
+		createBlock(376, -116.5, 0.227);
+			
+		//2
+		createBlock(108, -273, 0.097);	
+		createBlock(204, -170, 0.098);	
+		createBlock(124, -105, 0.168);	
+		
+		//3
+		createBlock(-84, -290, 0.099);	
+		createBlock(-179, -183, 0.23);	
+		createBlock(-73, -76.5, 0.130);		
+		
+		//4
+		createBlock(-418, -235.5, 0.23);
+		createBlock(-329, -103, 0.130);
+		
+		//5
+		createBlock(361, 140.5, 0.165);
+		
+		//6
+		createBlock(187, 87, 0.225);
+		createBlock(111.5, 208, 0.166);
+		
+		//7
+		createBlock(-86, 68, 0.168);
+		createBlock(-191, 104.5, 0.121);
+		createBlock(-83.5, 197, 0.119);
+		
+		//8
+		createBlock(-358.5, 82.5, 0.168);
+		createBlock(-437.5, 249, 0.119);
+		
 		
 		var colors : Array<Vec3> = new Array();
 		colors.push(new Vec3(0, 0, 0));
@@ -192,11 +229,11 @@ class Config implements Infos
 		scene1.addLayerLifecycle(displayListLayer);
 	}
 	
-	function createBlock(x : Float, y : Float, scale)
+	function createBlock(x : Float, y : Float, scale : Float)
 	{
 		var eyeBlock = new EyeBlock();
-		eyeBlock.position.x = x * -1;
-		eyeBlock.position.y = y;
+		eyeBlock.position.x = x - 0.9;
+		eyeBlock.position.y = y - 1.3;
 		eyeBlock.scale = scale;
 		
 		eyeBlocks.push(eyeBlock);
