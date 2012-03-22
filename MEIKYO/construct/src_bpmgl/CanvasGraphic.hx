@@ -13,23 +13,30 @@ class CanvasGraphic
 	public var canvas : Canvas;
 	public var context : CanvasRenderingContext2D;
 	
+	public var usePow2Size:Bool;
+	
 	public function new()
 	{
 		canvas = cast Lib.document.createElement("canvas");
 		context = canvas.getContext("2d");
-		
+		usePow2Size = true;
 		width = 0;
 		height = 0;
 	}
 	
 	public function clear(?color : Color)
 	{
-		canvas.width = Math2.nextPowerOf2(width);
-		canvas.height = Math2.nextPowerOf2(height);
+		if (usePow2Size)
+		{
+			canvas.width = Math2.nextPowerOf2(width);
+			canvas.height = Math2.nextPowerOf2(height);
+		}
+		else
+		{
+			canvas.width = Std.int(width);
+			canvas.height = Std.int(height);
+		}
 		
-		context.fillStyle = "rgba(0, 0, 255, 0)";
-		context.fillRect (0, 0, canvas.width, canvas.width);
-
 		context.fillStyle = color == null ? "rgba(0, 0, 0, 0)" : color.toContextRGBA();
 		context.fillRect (0, 0, width, height);
 

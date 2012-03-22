@@ -8,6 +8,7 @@ Rand["int"] = function(from,to) {
 	return Std["int"](from + Math.random() * (to - from));
 }
 Rand.bool = function(chance) {
+	if(chance == null) chance = 0.5;
 	return Math.random() < chance;
 }
 Rand.list = function(list) {
