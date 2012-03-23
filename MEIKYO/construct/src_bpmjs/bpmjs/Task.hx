@@ -12,6 +12,8 @@ class Task<T>
 
 	public var monitor(getMonitor, setMonitor) : ProgressMonitor;
 	
+	public var isComplete:Bool;
+	
 	public function new()
 	{
 		startSignaler = new DirectSignaler(this);
@@ -41,6 +43,7 @@ class Task<T>
 
 	public function complete()
 	{
+		isComplete = true;
 		monitor.current = 1; 
 		var t : T = cast this;
 		completeSignaler.dispatch(t);

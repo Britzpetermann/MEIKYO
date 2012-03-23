@@ -18,7 +18,7 @@ class Main {
 		Log.addFilter(new ERegFilter(LogLevel.WARN, ~/.*initAllLayers.*/));
 		//Log.addFilter(new ERegFilter(LogLevel.INFO, ~/bpmjs\.DefaultFrontController\.handle.*/));
 
-		js.Lib.setErrorHandler(globalErrorHandler);
+		//js.Lib.setErrorHandler(globalErrorHandler);
 	}
 
 	function new(canvas : Canvas)

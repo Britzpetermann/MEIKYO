@@ -87,7 +87,7 @@ class Sequence extends bpmjs.TaskGroup
 						try
 						{
 							var result = Reflect.callMethod(object, Reflect.field(object, fieldName), []);
-							if (Std.is(result, SequencerTaskGroup))
+							if (Std.is(result, Task))
 							{
 								Log.info("Adding task '", reflect.ClassInfo.forInstance(result).name);
 								loadingTaskGroup.add(result);

@@ -7,6 +7,7 @@
 -cp construct/src_reflect
 -lib hsl-1
 -lib hxjson2
+-debug
 
 
 --next

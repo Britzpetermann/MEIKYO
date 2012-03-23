@@ -11,7 +11,7 @@ import kumite.stage.Stage;
 import kumite.time.Tick;
 import kumite.time.Time;
 
-class CanvasSlider implements Infos
+class SlideNavigator implements Infos
 {
 	@Inject
 	var stage:Stage;
@@ -19,6 +19,10 @@ class CanvasSlider implements Infos
 	@Inject
 	var time:Time;
 	
+	@Inject
+	var presentation:Presentation;
+	
+	var currentHash:String;
 	var autoScroll:Bool;
 	var root:HtmlDom;
 	var speed:Float;
@@ -26,11 +30,9 @@ class CanvasSlider implements Infos
 	var targetPosition:Int;
 	var lastScrollTop:Int;
 	var lastScrollTopEqualTime:Float;
-	var canvases:Array<CanvasGraphic>;
 	
 	public function new()
 	{
-		canvases = new Array();
 		lastScrollTopEqualTime = -1;
 		autoScroll = false;
 	}
@@ -38,19 +40,24 @@ class CanvasSlider implements Infos
 	@Sequence("boot", "start")
 	function start()
 	{
-		Log.info();
-		
 		root = Lib.document.getElementById("root");
 		lastScrollTop = root.scrollTop;
-		
-		for(i in 0...5)
+
+		var row = 0;
+		for(slide in presentation.slides)
 		{
-			var canvas = new CanvasGraphic();
-			canvas.usePow2Size = false;
-			root.appendChild(cast canvas.canvas);
-			
-			canvases.push(canvas);
+			slide.row = row; 
+			slide.prepare(root);
+			row++;
 		}
+		
+		resize();
+	}
+	
+	@Sequence("boot", "start")
+	function startComplete()
+	{
+		setMementoFromUrl();		
 		
 		resize();
 	}
@@ -64,6 +71,16 @@ class CanvasSlider implements Infos
 	@Message
 	function handleTick(tick:Tick)
 	{
+		var memento = getMemento();
+		var newHash = haxe.Serializer.run(memento);
+		
+		if (currentHash != newHash)
+		{
+			currentHash = newHash;
+			var uri = "#" + currentHash;
+			Lib.window.location.replace(uri);
+		}
+		
 		if (!autoScroll)
 		{
 			if (root.scrollTop == lastScrollTop && lastScrollTopEqualTime == -1)
@@ -82,7 +99,9 @@ class CanvasSlider implements Infos
 			{
 				speed = 0;
 				scrollTop = root.scrollTop;
-				targetPosition = Math.round(root.scrollTop / stage.height) * stage.height;
+				var index = Math.round(root.scrollTop / stage.height);
+				presentation.currentSlideIndex = index;
+				targetPosition = index * stage.height;
 			}
 			
 			if (root.scrollTop != Math.round(scrollTop))
@@ -109,11 +128,37 @@ class CanvasSlider implements Infos
 		lastScrollTopEqualTime = -1;
 		autoScroll = false;
 		
-		for (canvas in canvases)
+		targetCurrentSlide();
+		
+		for(slide in presentation.slides)
+			slide.resize(stage);
+	}
+	
+	function getMemento()
+	{
+		return presentation.getMemento();
+	}
+	
+	function setMementoFromUrl()
+	{
+		try
 		{
-			canvas.width = stage.width;
-			canvas.height = stage.height;
-			canvas.clear(new Color(Math.random(), Math.random(), Math.random()));
+			var data = Lib.window.location.hash.substr(1);
+			var memento = haxe.Unserializer.run(data);
+			presentation.setMemento(memento);
+			
+			targetCurrentSlide();
 		}
+		catch (e:Dynamic)
+		{
+			Log.info("Cannot restore memento: " + e);		
+		}
+	}
+	
+	function targetCurrentSlide()
+	{
+		scrollTop = presentation.currentSlideIndex * stage.height;
+		lastScrollTop = presentation.currentSlideIndex * stage.height; 
+		root.scrollTop = presentation.currentSlideIndex * stage.height;
 	}
 }

@@ -372,14 +372,15 @@ bpmjs.Task.prototype.startSignaler = null;
 bpmjs.Task.prototype.completeSignaler = null;
 bpmjs.Task.prototype.errorSignaler = null;
 bpmjs.Task.prototype.monitor = null;
+bpmjs.Task.prototype.isComplete = null;
 bpmjs.Task.prototype.start = function() {
 	try {
 		var t = this;
-		this.startSignaler.dispatch(t,null,{ fileName : "Task.hx", lineNumber : 29, className : "bpmjs.Task", methodName : "start"});
+		this.startSignaler.dispatch(t,null,{ fileName : "Task.hx", lineNumber : 31, className : "bpmjs.Task", methodName : "start"});
 		this.doStart();
 	} catch( e ) {
 		{
-			Log.posInfo = { fileName : "Task.hx", lineNumber : 34, className : "bpmjs.Task", methodName : "start"};
+			Log.posInfo = { fileName : "Task.hx", lineNumber : 36, className : "bpmjs.Task", methodName : "start"};
 			if(Log.filter(LogLevel.ERROR)) {
 				Log.fetchInput("Error starting Task: ",e,null,null,null,null,null);
 				console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
@@ -391,15 +392,16 @@ bpmjs.Task.prototype.start = function() {
 bpmjs.Task.prototype.doStart = function() {
 }
 bpmjs.Task.prototype.complete = function() {
+	this.isComplete = true;
 	this.getMonitor().setCurrent(1);
 	var t = this;
-	this.completeSignaler.dispatch(t,null,{ fileName : "Task.hx", lineNumber : 46, className : "bpmjs.Task", methodName : "complete"});
+	this.completeSignaler.dispatch(t,null,{ fileName : "Task.hx", lineNumber : 49, className : "bpmjs.Task", methodName : "complete"});
 }
 bpmjs.Task.prototype.error = function(result,error) {
 	var taskError = new bpmjs.TaskError();
 	taskError.task = result;
 	taskError.error = error;
-	this.errorSignaler.dispatch(taskError,null,{ fileName : "Task.hx", lineNumber : 54, className : "bpmjs.Task", methodName : "error"});
+	this.errorSignaler.dispatch(taskError,null,{ fileName : "Task.hx", lineNumber : 57, className : "bpmjs.Task", methodName : "error"});
 }
 bpmjs.Task.prototype.getMonitor = function() {
 	return this.monitor;
@@ -534,7 +536,7 @@ bpmjs.Sequence.prototype.execute = function(phase) {
 					}
 					try {
 						var result = Reflect.field(object,fieldName).apply(object,[]);
-						if(Std["is"](result,bpmjs.SequencerTaskGroup)) {
+						if(Std["is"](result,bpmjs.Task)) {
 							{
 								Log.posInfo = { fileName : "Sequencer.hx", lineNumber : 92, className : "bpmjs.Sequence", methodName : "execute"};
 								if(Log.filter(LogLevel.INFO)) {
@@ -3997,15 +3999,6 @@ hsl.haxe._DirectSignaler.AdvancedBond.prototype.__class__ = hsl.haxe._DirectSign
 hsl.haxe._DirectSignaler.PropagationStatus = function() { }
 hsl.haxe._DirectSignaler.PropagationStatus.__name__ = ["hsl","haxe","_DirectSignaler","PropagationStatus"];
 hsl.haxe._DirectSignaler.PropagationStatus.prototype.__class__ = hsl.haxe._DirectSignaler.PropagationStatus;
-bpmjs.SequencerTaskGroup = function(p) {
-	if( p === $_ ) return;
-	bpmjs.TaskGroup.call(this);
-	this.getMonitor().name = "SequencerTaskGroup";
-}
-bpmjs.SequencerTaskGroup.__name__ = ["bpmjs","SequencerTaskGroup"];
-bpmjs.SequencerTaskGroup.__super__ = bpmjs.TaskGroup;
-for(var k in bpmjs.TaskGroup.prototype ) bpmjs.SequencerTaskGroup.prototype[k] = bpmjs.TaskGroup.prototype[k];
-bpmjs.SequencerTaskGroup.prototype.__class__ = bpmjs.SequencerTaskGroup;
 bpmjs.TestSequencer = function(p) {
 	if( p === $_ ) return;
 	TestCase2.call(this);
