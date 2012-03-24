@@ -46,10 +46,10 @@ class PreloadDisplay implements Infos
 	public function bootStartComplete()
 	{
 		var body = Lib.document.getElementById("root");
-		untyped body.style.opacity = 0.0;
-		untyped preloaderDiv.style.opacity = 0.8;
-		GLTween.to(preloaderDiv.style, 1000, {opacity : 0});
-		GLTween.to(body.style, 300, {opacity : 1});
+		//untyped body.style.opacity = 0.0;
+		//untyped preloaderDiv.style.opacity = 0.8;
+		//GLTween.to(preloaderDiv.style, 1000, {opacity : 0});
+		//GLTween.to(body.style, 300, {opacity : 1});
 		Timeout.execute(1000, removePreloader);
 	}
 	

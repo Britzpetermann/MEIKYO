@@ -32,6 +32,7 @@ class Main {
 					//kumite.canvas.Config,
 					//kumite.webgl.Config,
 					kumite.time.Config,
+					kumite.profiler.ProfilerConfig,
 					//kumite.projection.Config,
 					//kumite.camera.Config,
 					//kumite.mouse.Config,

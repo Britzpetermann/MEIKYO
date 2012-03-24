@@ -3,7 +3,7 @@ import js.Lib;
 
 class GLAnimationFrame
 {
-	public static function run(method : Void->Void, ?ms : Float = 0)
+	public static function run(method : Void->Void, ?fps : Float = 0)
 	{
 		function secureMethod()
 		{
@@ -16,7 +16,8 @@ class GLAnimationFrame
 				Log.error("Error executing GLAnimationFrame: " + e);
 			}
 		}
-		if (ms == 0)
+		
+		if (fps == 0)
 		{
 			var window : Dynamic = Lib.window;
 			var requestAnimationFrame : (Void->Void)->Void = untyped (
@@ -25,7 +26,7 @@ class GLAnimationFrame
 				window.oRequestAnimationFrame ||
 				window.msRequestAnimationFrame);
 
-			if (requestAnimationFrame == null)
+			if (requestAnimationFrame != null)
 			{
 				function requester()
 				{
@@ -42,7 +43,7 @@ class GLAnimationFrame
 		}
 		else
 		{
-			var timer = new Timer(Std.int(1000 / ms));
+			var timer = new Timer(Std.int(1000 / fps));
 			timer.run = secureMethod;
 		}
 	}

@@ -8,16 +8,22 @@ import js.Lib;
 import bpmjs.ContextBuilder;
 
 import kumite.stage.Stage;
+import kumite.time.Tick;
+import kumite.time.Time;
 
 class ContainerSlide extends Slide, implements Infos
 {
 	@Inject
 	var stage:Stage;
 	
+	@Inject
+	var time:Time;
+	
 	var slides:Array<SlideAndDiv>;
 	var color:Color;
 	var canvas:CanvasGraphic;
 	var slideIndex:Int;
+	var visualSlideIndex:Motion;
 	var container:HtmlDom;
 	
 	public function new()
@@ -31,6 +37,9 @@ class ContainerSlide extends Slide, implements Infos
 		
 		canvas = new CanvasGraphic();
 		canvas.usePow2Size = false;
+		
+		visualSlideIndex = new Motion();
+		visualSlideIndex.style = new MotionStyleLinear().setAcceleration(0.01);
 	}
 	
 	public function addSlide(slide:Slide)
@@ -54,7 +63,7 @@ class ContainerSlide extends Slide, implements Infos
 		super.prepare(root);
 		container = Lib.document.createElement("div");
 		root.appendChild(container);
-		
+
 		for(slideAndDiv in slides)
 		{
 			var slideContainer = Lib.document.createElement("div");
@@ -76,13 +85,23 @@ class ContainerSlide extends Slide, implements Infos
 		super.resize(stage);
 		container.setAttribute("style", "top:" + row * stage.height + "px; position:absolute; overflow-x:hidden; height:" + stage.height + "px; width:" + stage.width + "px");
 		
+		visualSlideIndex.target = slideIndex;
+		
+		for(slideAndDiv in slides)
+			slideAndDiv.slide.resize(stage);
+	}
+	
+	@Message
+	public function tick(tick:Tick)
+	{
+		visualSlideIndex.move();
+		
 		var index = 0;
 		for(slideAndDiv in slides)
 		{
-			slideAndDiv.div.style.left = (index - slideIndex) * stage.width + "px";
+			slideAndDiv.div.style.left = (index - visualSlideIndex.current) * stage.width + "px";
 			slideAndDiv.div.style.width = stage.width + "px";
 			slideAndDiv.div.style.height = stage.height + "px";
-			slideAndDiv.slide.resize(stage);
 			index++;
 		}		
 	}
@@ -95,7 +114,10 @@ class ContainerSlide extends Slide, implements Infos
 	override function setMemento(memento:Dynamic)
 	{
 		if (!Math.isNaN(memento))
+		{
+			visualSlideIndex.current = memento;
 			changeSlide(memento);
+		}
 	}
 	
 	function gotoNextSlide(_)

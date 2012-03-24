@@ -56,10 +56,6 @@ kumite.launch.PreloadDisplay.prototype.bootStartComplete = function() {
 	$s.push("kumite.launch.PreloadDisplay::bootStartComplete");
 	var $spos = $s.length;
 	var body = js.Lib.document.getElementById("root");
-	body.style.opacity = 0.0;
-	this.preloaderDiv.style.opacity = 0.8;
-	GLTween.to(this.preloaderDiv.style,1000,{ opacity : 0});
-	GLTween.to(body.style,300,{ opacity : 1});
 	Timeout.execute(1000,$closure(this,"removePreloader"));
 	$s.pop();
 }
@@ -1303,39 +1299,6 @@ bpmjs.ReflectUtil.getClassName = function(object) {
 	$s.pop();
 }
 bpmjs.ReflectUtil.prototype.__class__ = bpmjs.ReflectUtil;
-if(typeof ease=='undefined') ease = {}
-ease.Quad = function() { }
-ease.Quad.__name__ = ["ease","Quad"];
-ease.Quad.easeIn = function(t,b,c,d) {
-	$s.push("ease.Quad::easeIn");
-	var $spos = $s.length;
-	var $tmp = c * (t /= d) * t + b;
-	$s.pop();
-	return $tmp;
-	$s.pop();
-}
-ease.Quad.easeOut = function(t,b,c,d) {
-	$s.push("ease.Quad::easeOut");
-	var $spos = $s.length;
-	var $tmp = -c * (t /= d) * (t - 2) + b;
-	$s.pop();
-	return $tmp;
-	$s.pop();
-}
-ease.Quad.easeInOut = function(t,b,c,d) {
-	$s.push("ease.Quad::easeInOut");
-	var $spos = $s.length;
-	if((t /= d / 2) < 1) {
-		var $tmp = c / 2 * t * t + b;
-		$s.pop();
-		return $tmp;
-	}
-	var $tmp = -c / 2 * (--t * (t - 2) - 1) + b;
-	$s.pop();
-	return $tmp;
-	$s.pop();
-}
-ease.Quad.prototype.__class__ = ease.Quad;
 haxe.Serializer = function(p) {
 	if( p === $_ ) return;
 	$s.push("haxe.Serializer::new");
@@ -3360,10 +3323,10 @@ bpmjs.TaskError.prototype.error = null;
 bpmjs.TaskError.prototype.__class__ = bpmjs.TaskError;
 GLAnimationFrame = function() { }
 GLAnimationFrame.__name__ = ["GLAnimationFrame"];
-GLAnimationFrame.run = function(method,ms) {
+GLAnimationFrame.run = function(method,fps) {
 	$s.push("GLAnimationFrame::run");
 	var $spos = $s.length;
-	if(ms == null) ms = 0;
+	if(fps == null) fps = 0;
 	var secureMethod = function() {
 		$s.push("GLAnimationFrame::run@8");
 		var $spos = $s.length;
@@ -3384,15 +3347,15 @@ GLAnimationFrame.run = function(method,ms) {
 		}
 		$s.pop();
 	};
-	if(ms == 0) {
+	if(fps == 0) {
 		var window = js.Lib.window;
 		var requestAnimationFrame = window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame;
-		if(requestAnimationFrame == null) {
+		if(requestAnimationFrame != null) {
 			var requester = (function($this) {
 				var $r;
 				var requester = null;
 				requester = function() {
-					$s.push("GLAnimationFrame::run@30");
+					$s.push("GLAnimationFrame::run@31");
 					var $spos = $s.length;
 					requestAnimationFrame(requester);
 					secureMethod();
@@ -3407,7 +3370,7 @@ GLAnimationFrame.run = function(method,ms) {
 			timer.run = secureMethod;
 		}
 	} else {
-		var timer = new haxe.Timer(Std["int"](1000 / ms));
+		var timer = new haxe.Timer(Std["int"](1000 / fps));
 		timer.run = secureMethod;
 	}
 	$s.pop();
@@ -4402,6 +4365,43 @@ Xml.prototype.toString = function() {
 	$s.pop();
 }
 Xml.prototype.__class__ = Xml;
+Motion = function(current,target,velocity) {
+	if( current === $_ ) return;
+	$s.push("Motion::new");
+	var $spos = $s.length;
+	if(velocity == null) velocity = 0;
+	if(target == null) target = 0;
+	if(current == null) current = 0;
+	this.current = current;
+	this.target = target;
+	this.velocity = velocity;
+	this.style = new MotionStyleLinear().setAcceleration(1);
+	$s.pop();
+}
+Motion.__name__ = ["Motion"];
+Motion.prototype.current = null;
+Motion.prototype.target = null;
+Motion.prototype.velocity = null;
+Motion.prototype.finished = null;
+Motion.prototype.style = null;
+Motion.prototype.prevFinished = null;
+Motion.prototype.move = function() {
+	$s.push("Motion::move");
+	var $spos = $s.length;
+	this.style.move(this);
+	this.finished = this.prevFinished;
+	this.prevFinished = this.current == this.target && this.velocity == 0;
+	$s.pop();
+}
+Motion.prototype.toString = function() {
+	$s.push("Motion::toString");
+	var $spos = $s.length;
+	var $tmp = "[Motion: c:" + this.current + " t:" + this.target + " v:" + this.velocity + " f:" + this.finished + "]";
+	$s.pop();
+	return $tmp;
+	$s.pop();
+}
+Motion.prototype.__class__ = Motion;
 if(typeof js=='undefined') js = {}
 js.Boot = function() { }
 js.Boot.__name__ = ["js","Boot"];
@@ -6170,16 +6170,20 @@ kumite.presentation.ContainerSlide = function(p) {
 	this.color = new Color(Math.random(),Math.random(),Math.random());
 	this.canvas = new CanvasGraphic();
 	this.canvas.usePow2Size = false;
+	this.visualSlideIndex = new Motion();
+	this.visualSlideIndex.style = new MotionStyleLinear().setAcceleration(0.01);
 	$s.pop();
 }
 kumite.presentation.ContainerSlide.__name__ = ["kumite","presentation","ContainerSlide"];
 kumite.presentation.ContainerSlide.__super__ = kumite.presentation.Slide;
 for(var k in kumite.presentation.Slide.prototype ) kumite.presentation.ContainerSlide.prototype[k] = kumite.presentation.Slide.prototype[k];
 kumite.presentation.ContainerSlide.prototype.stage = null;
+kumite.presentation.ContainerSlide.prototype.time = null;
 kumite.presentation.ContainerSlide.prototype.slides = null;
 kumite.presentation.ContainerSlide.prototype.color = null;
 kumite.presentation.ContainerSlide.prototype.canvas = null;
 kumite.presentation.ContainerSlide.prototype.slideIndex = null;
+kumite.presentation.ContainerSlide.prototype.visualSlideIndex = null;
 kumite.presentation.ContainerSlide.prototype.container = null;
 kumite.presentation.ContainerSlide.prototype.addSlide = function(slide) {
 	$s.push("kumite.presentation.ContainerSlide::addSlide");
@@ -6195,7 +6199,7 @@ kumite.presentation.ContainerSlide.prototype.init = function() {
 	$s.push("kumite.presentation.ContainerSlide::init");
 	var $spos = $s.length;
 	{
-		Log.posInfo = { fileName : "ContainerSlide.hx", lineNumber : 47, className : "kumite.presentation.ContainerSlide", methodName : "init"};
+		Log.posInfo = { fileName : "ContainerSlide.hx", lineNumber : 56, className : "kumite.presentation.ContainerSlide", methodName : "init"};
 		if(Log.filter(LogLevel.INFO)) {
 			Log.fetchInput(null,null,null,null,null,null,null);
 			console.info(Log.createMessage());
@@ -6236,15 +6240,27 @@ kumite.presentation.ContainerSlide.prototype.resize = function(stage) {
 	var $spos = $s.length;
 	kumite.presentation.Slide.prototype.resize.call(this,stage);
 	this.container.setAttribute("style","top:" + this.row * stage.height + "px; position:absolute; overflow-x:hidden; height:" + stage.height + "px; width:" + stage.width + "px");
+	this.visualSlideIndex.target = this.slideIndex;
+	var _g = 0, _g1 = this.slides;
+	while(_g < _g1.length) {
+		var slideAndDiv = _g1[_g];
+		++_g;
+		slideAndDiv.slide.resize(stage);
+	}
+	$s.pop();
+}
+kumite.presentation.ContainerSlide.prototype.tick = function(tick) {
+	$s.push("kumite.presentation.ContainerSlide::tick");
+	var $spos = $s.length;
+	this.visualSlideIndex.move();
 	var index = 0;
 	var _g = 0, _g1 = this.slides;
 	while(_g < _g1.length) {
 		var slideAndDiv = _g1[_g];
 		++_g;
-		slideAndDiv.div.style.left = (index - this.slideIndex) * stage.width + "px";
-		slideAndDiv.div.style.width = stage.width + "px";
-		slideAndDiv.div.style.height = stage.height + "px";
-		slideAndDiv.slide.resize(stage);
+		slideAndDiv.div.style.left = (index - this.visualSlideIndex.current) * this.stage.width + "px";
+		slideAndDiv.div.style.width = this.stage.width + "px";
+		slideAndDiv.div.style.height = this.stage.height + "px";
 		index++;
 	}
 	$s.pop();
@@ -6260,7 +6276,10 @@ kumite.presentation.ContainerSlide.prototype.getMemento = function() {
 kumite.presentation.ContainerSlide.prototype.setMemento = function(memento) {
 	$s.push("kumite.presentation.ContainerSlide::setMemento");
 	var $spos = $s.length;
-	if(!Math.isNaN(memento)) this.changeSlide(memento);
+	if(!Math.isNaN(memento)) {
+		this.visualSlideIndex.current = memento;
+		this.changeSlide(memento);
+	}
 	$s.pop();
 }
 kumite.presentation.ContainerSlide.prototype.gotoNextSlide = function(_) {
@@ -6854,6 +6873,40 @@ Log.prototype.errorFilter = function() {
 	$s.pop();
 }
 Log.prototype.__class__ = Log;
+MotionStyle = function() { }
+MotionStyle.__name__ = ["MotionStyle"];
+MotionStyle.prototype.move = null;
+MotionStyle.prototype.__class__ = MotionStyle;
+MotionStyleLinear = function(p) {
+	$s.push("MotionStyleLinear::new");
+	var $spos = $s.length;
+	$s.pop();
+}
+MotionStyleLinear.__name__ = ["MotionStyleLinear"];
+MotionStyleLinear.prototype.acceleration = null;
+MotionStyleLinear.prototype.move = function(motion) {
+	$s.push("MotionStyleLinear::move");
+	var $spos = $s.length;
+	var diff = motion.target - motion.current;
+	if(Math.abs(diff) < this.acceleration) {
+		motion.velocity = 0;
+		motion.current = motion.target;
+	} else {
+		motion.velocity = Math2.signum(diff) * this.acceleration;
+		motion.current += motion.velocity;
+	}
+	$s.pop();
+}
+MotionStyleLinear.prototype.setAcceleration = function(value) {
+	$s.push("MotionStyleLinear::setAcceleration");
+	var $spos = $s.length;
+	this.acceleration = value;
+	$s.pop();
+	return this;
+	$s.pop();
+}
+MotionStyleLinear.prototype.__class__ = MotionStyleLinear;
+MotionStyleLinear.__interfaces__ = [MotionStyle];
 bpmjs.ProgressMonitor = function(p) {
 	if( p === $_ ) return;
 	$s.push("bpmjs.ProgressMonitor::new");
@@ -6963,108 +7016,6 @@ reflect.Property.prototype.setValue = function(instance,value) {
 	$s.pop();
 }
 reflect.Property.prototype.__class__ = reflect.Property;
-GLTween = function(o,ms,params) {
-	if( o === $_ ) return;
-	$s.push("GLTween::new");
-	var $spos = $s.length;
-	this.o = o;
-	this.ms = ms;
-	this.params = params;
-	this.isActive = true;
-	this.properties = new Array();
-	this.completeSignaler = new hsl.haxe.DirectSignaler(this);
-	$s.pop();
-}
-GLTween.__name__ = ["GLTween"];
-GLTween.to = function(o,ms,params) {
-	$s.push("GLTween::to");
-	var $spos = $s.length;
-	var result = new GLTween(o,ms,params);
-	GLTweenManager.getInstance().add(result);
-	$s.pop();
-	return result;
-	$s.pop();
-}
-GLTween.prototype.isActive = null;
-GLTween.prototype.startTime = null;
-GLTween.prototype.o = null;
-GLTween.prototype.ms = null;
-GLTween.prototype.params = null;
-GLTween.prototype.properties = null;
-GLTween.prototype.easeFunction = null;
-GLTween.prototype.completeSignaler = null;
-GLTween.prototype.complete = function(method) {
-	$s.push("GLTween::complete");
-	var $spos = $s.length;
-	this.completeSignaler.bind(method);
-	$s.pop();
-	return this;
-	$s.pop();
-}
-GLTween.prototype.init = function(time) {
-	$s.push("GLTween::init");
-	var $spos = $s.length;
-	this.startTime = time;
-	this.easeFunction = ease.Quad.easeInOut;
-	var fields = Reflect.fields(this.params);
-	var _g = 0;
-	while(_g < fields.length) {
-		var field = fields[_g];
-		++_g;
-		if(Reflect.hasField(this.o,field)) {
-			var property = new Property();
-			property.from = Std.parseFloat(Reflect.field(this.o,field));
-			property.to = Std.parseFloat(Reflect.field(this.params,field));
-			property.field = field;
-			this.properties.push(property);
-		} else {
-			Log.posInfo = { fileName : "GLTween.hx", lineNumber : 56, className : "GLTween", methodName : "init"};
-			if(Log.filter(LogLevel.WARN)) {
-				Log.fetchInput("Unkown field: " + field,null,null,null,null,null,null);
-				console.warn(Log.createMessage());
-			}
-		}
-	}
-	$s.pop();
-}
-GLTween.prototype.run = function(time) {
-	$s.push("GLTween::run");
-	var $spos = $s.length;
-	var dt = time - this.startTime;
-	if(dt > this.ms) {
-		dt = this.ms;
-		if(this.isActive) {
-			this.completeSignaler.dispatch(this,null,{ fileName : "GLTween.hx", lineNumber : 69, className : "GLTween", methodName : "run"});
-			this.isActive = false;
-		}
-	}
-	var _g = 0, _g1 = this.properties;
-	while(_g < _g1.length) {
-		var property = _g1[_g];
-		++_g;
-		property.ease(this,dt);
-	}
-	$s.pop();
-}
-GLTween.prototype.__class__ = GLTween;
-Property = function(p) {
-	$s.push("Property::new");
-	var $spos = $s.length;
-	$s.pop();
-}
-Property.__name__ = ["Property"];
-Property.prototype.from = null;
-Property.prototype.to = null;
-Property.prototype.field = null;
-Property.prototype.ease = function(tween,dt) {
-	$s.push("Property::ease");
-	var $spos = $s.length;
-	var o = tween.o;
-	var value = tween.easeFunction(dt,this.from,this.to - this.from,tween.ms);
-	o[this.field] = value;
-	$s.pop();
-}
-Property.prototype.__class__ = Property;
 haxe.Log = function() { }
 haxe.Log.__name__ = ["haxe","Log"];
 haxe.Log.trace = function(v,infos) {
@@ -7080,6 +7031,34 @@ haxe.Log.clear = function() {
 	$s.pop();
 }
 haxe.Log.prototype.__class__ = haxe.Log;
+if(!kumite.profiler) kumite.profiler = {}
+kumite.profiler.ProfilerConfig = function(p) {
+	$s.push("kumite.profiler.ProfilerConfig::new");
+	var $spos = $s.length;
+	$s.pop();
+}
+kumite.profiler.ProfilerConfig.__name__ = ["kumite","profiler","ProfilerConfig"];
+kumite.profiler.ProfilerConfig.prototype.context = null;
+kumite.profiler.ProfilerConfig.prototype.init = function() {
+	$s.push("kumite.profiler.ProfilerConfig::init");
+	var $spos = $s.length;
+	this.context.contextConfig.frontMessenger.addReceiver(this,"tick",kumite.time.Tick);
+	$s.pop();
+}
+kumite.profiler.ProfilerConfig.prototype.tick = function(tick) {
+	$s.push("kumite.profiler.ProfilerConfig::tick");
+	var $spos = $s.length;
+	{
+		Log.posInfo = { fileName : "ProfilerConfig.hx", lineNumber : 27, className : "kumite.profiler.ProfilerConfig", methodName : "tick"};
+		if(Log.filter(LogLevel.INFO)) {
+			Log.fetchInput("tick",null,null,null,null,null,null);
+			console.info(Log.createMessage());
+		}
+	}
+	$s.pop();
+}
+kumite.profiler.ProfilerConfig.prototype.__class__ = kumite.profiler.ProfilerConfig;
+kumite.profiler.ProfilerConfig.__interfaces__ = [haxe.rtti.Infos];
 Math2 = function() { }
 Math2.__name__ = ["Math2"];
 Math2.nextPowerOf2 = function(value) {
@@ -7240,49 +7219,6 @@ haxe.TypeTools.getClassNames = function(value) {
 	$s.pop();
 }
 haxe.TypeTools.prototype.__class__ = haxe.TypeTools;
-GLTweenManager = function(p) {
-	if( p === $_ ) return;
-	$s.push("GLTweenManager::new");
-	var $spos = $s.length;
-	this.time = Date.now().getTime();
-	this.tweens = new Array();
-	GLAnimationFrame.run($closure(this,"tick"));
-	$s.pop();
-}
-GLTweenManager.__name__ = ["GLTweenManager"];
-GLTweenManager.instance = null;
-GLTweenManager.getInstance = function() {
-	$s.push("GLTweenManager::getInstance");
-	var $spos = $s.length;
-	if(GLTweenManager.instance == null) GLTweenManager.instance = new GLTweenManager();
-	var $tmp = GLTweenManager.instance;
-	$s.pop();
-	return $tmp;
-	$s.pop();
-}
-GLTweenManager.prototype.tweens = null;
-GLTweenManager.prototype.time = null;
-GLTweenManager.prototype.add = function(tween) {
-	$s.push("GLTweenManager::add");
-	var $spos = $s.length;
-	tween.init(this.time);
-	this.tweens.push(tween);
-	$s.pop();
-}
-GLTweenManager.prototype.tick = function() {
-	$s.push("GLTweenManager::tick");
-	var $spos = $s.length;
-	this.time = Date.now().getTime();
-	var _g = 0, _g1 = this.tweens;
-	while(_g < _g1.length) {
-		var tween = _g1[_g];
-		++_g;
-		tween.run(this.time);
-		if(!tween.isActive) this.tweens.remove(tween);
-	}
-	$s.pop();
-}
-GLTweenManager.prototype.__class__ = GLTweenManager;
 CanvasGraphic = function(p) {
 	if( p === $_ ) return;
 	$s.push("CanvasGraphic::new");
@@ -7434,13 +7370,13 @@ Main = function(canvas) {
 	$s.push("Main::new");
 	var $spos = $s.length;
 	try {
-		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.time.Config,kumite.presentation.PresentationConfig]);
+		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.time.Config,kumite.profiler.ProfilerConfig,kumite.presentation.PresentationConfig]);
 	} catch( e ) {
 		$e = [];
 		while($s.length >= $spos) $e.unshift($s.pop());
 		$s.push($e[0]);
 		{
-			Log.posInfo = { fileName : "Main.hx", lineNumber : 65, className : "Main", methodName : "new"};
+			Log.posInfo = { fileName : "Main.hx", lineNumber : 66, className : "Main", methodName : "new"};
 			if(Log.filter(LogLevel.ERROR)) {
 				Log.fetchInput("Error building application!\n" + e,null,null,null,null,null,null);
 				console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
@@ -9471,11 +9407,13 @@ kumite.presentation.ImageSlide.__rtti = "<class path=\"kumite.presentation.Image
 kumite.time.Config.__rtti = "<class path=\"kumite.time.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<timeController public=\"1\"><c path=\"kumite.time.TimeController\"/></timeController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.time.TimeController.__meta__ = { fields : { time : { Inject : null}, messenger : { Messenger : null}, startComplete : { Sequence : ["boot","startComplete"]}}};
 kumite.time.TimeController.__rtti = "<class path=\"kumite.time.TimeController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<startComplete public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"24\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<new public=\"1\" set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.presentation.ContainerSlide.__meta__ = { fields : { stage : { Inject : null}, init : { Sequence : ["boot","init"]}}};
-kumite.presentation.ContainerSlide.__rtti = "<class path=\"kumite.presentation.ContainerSlide\" params=\"\">\n\t<extends path=\"kumite.presentation.Slide\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage><c path=\"kumite.stage.Stage\"/></stage>\n\t<slides><c path=\"Array\"><c path=\"kumite.presentation.SlideAndDiv\"/></c></slides>\n\t<color><c path=\"Color\"/></color>\n\t<canvas><c path=\"CanvasGraphic\"/></canvas>\n\t<slideIndex><c path=\"Int\"/></slideIndex>\n\t<container><t path=\"js.HtmlDom\"/></container>\n\t<addSlide public=\"1\" set=\"method\" line=\"36\"><f a=\"slide\">\n\t<c path=\"kumite.presentation.Slide\"/>\n\t<c path=\"kumite.presentation.ContainerSlide\"/>\n</f></addSlide>\n\t<init public=\"1\" set=\"method\" line=\"45\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<prepare public=\"1\" set=\"method\" line=\"52\" override=\"1\"><f a=\"root\">\n\t<t path=\"js.HtmlDom\"/>\n\t<e path=\"Void\"/>\n</f></prepare>\n\t<resize public=\"1\" set=\"method\" line=\"74\" override=\"1\"><f a=\"stage\">\n\t<c path=\"kumite.stage.Stage\"/>\n\t<e path=\"Void\"/>\n</f></resize>\n\t<getMemento public=\"1\" set=\"method\" line=\"90\" override=\"1\"><f a=\"\"><c path=\"Int\"/></f></getMemento>\n\t<setMemento public=\"1\" set=\"method\" line=\"95\" override=\"1\"><f a=\"memento\">\n\t<d/>\n\t<e path=\"Void\"/>\n</f></setMemento>\n\t<gotoNextSlide set=\"method\" line=\"101\"><f a=\"_\">\n\t<c path=\"kumite.presentation.Slide\"/>\n\t<e path=\"Void\"/>\n</f></gotoNextSlide>\n\t<changeSlide set=\"method\" line=\"106\"><f a=\"newIndex\">\n\t<c path=\"Int\"/>\n\t<e path=\"Void\"/>\n</f></changeSlide>\n\t<new public=\"1\" set=\"method\" line=\"23\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.presentation.ContainerSlide.__meta__ = { fields : { stage : { Inject : null}, time : { Inject : null}, init : { Sequence : ["boot","init"]}, tick : { Message : null}}};
+kumite.presentation.ContainerSlide.__rtti = "<class path=\"kumite.presentation.ContainerSlide\" params=\"\">\n\t<extends path=\"kumite.presentation.Slide\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage><c path=\"kumite.stage.Stage\"/></stage>\n\t<time><c path=\"kumite.time.Time\"/></time>\n\t<slides><c path=\"Array\"><c path=\"kumite.presentation.SlideAndDiv\"/></c></slides>\n\t<color><c path=\"Color\"/></color>\n\t<canvas><c path=\"CanvasGraphic\"/></canvas>\n\t<slideIndex><c path=\"Int\"/></slideIndex>\n\t<visualSlideIndex><c path=\"Motion\"/></visualSlideIndex>\n\t<container><t path=\"js.HtmlDom\"/></container>\n\t<addSlide public=\"1\" set=\"method\" line=\"45\"><f a=\"slide\">\n\t<c path=\"kumite.presentation.Slide\"/>\n\t<c path=\"kumite.presentation.ContainerSlide\"/>\n</f></addSlide>\n\t<init public=\"1\" set=\"method\" line=\"54\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<prepare public=\"1\" set=\"method\" line=\"61\" override=\"1\"><f a=\"root\">\n\t<t path=\"js.HtmlDom\"/>\n\t<e path=\"Void\"/>\n</f></prepare>\n\t<resize public=\"1\" set=\"method\" line=\"83\" override=\"1\"><f a=\"stage\">\n\t<c path=\"kumite.stage.Stage\"/>\n\t<e path=\"Void\"/>\n</f></resize>\n\t<tick public=\"1\" set=\"method\" line=\"95\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></tick>\n\t<getMemento public=\"1\" set=\"method\" line=\"109\" override=\"1\"><f a=\"\"><c path=\"Int\"/></f></getMemento>\n\t<setMemento public=\"1\" set=\"method\" line=\"114\" override=\"1\"><f a=\"memento\">\n\t<d/>\n\t<e path=\"Void\"/>\n</f></setMemento>\n\t<gotoNextSlide set=\"method\" line=\"123\"><f a=\"_\">\n\t<c path=\"kumite.presentation.Slide\"/>\n\t<e path=\"Void\"/>\n</f></gotoNextSlide>\n\t<changeSlide set=\"method\" line=\"128\"><f a=\"newIndex\">\n\t<c path=\"Int\"/>\n\t<e path=\"Void\"/>\n</f></changeSlide>\n\t<new public=\"1\" set=\"method\" line=\"29\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Log.filters = new Array();
 Log.args = new Array();
 Log.errors = new Array();
+kumite.profiler.ProfilerConfig.__meta__ = { fields : { context : { Inject : null}, init : { Sequence : ["boot","finish"]}}};
+kumite.profiler.ProfilerConfig.__rtti = "<class path=\"kumite.profiler.ProfilerConfig\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context><c path=\"bpmjs.Context\"/></context>\n\t<init public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<tick set=\"method\" line=\"25\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></tick>\n\t<new public=\"1\" set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 haxe.Unserializer.DEFAULT_RESOLVER = Type;
 haxe.Unserializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
 haxe.Unserializer.CODES = null;
