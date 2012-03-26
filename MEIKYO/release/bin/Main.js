@@ -67,6 +67,42 @@ kumite.launch.PreloadDisplay.prototype.removePreloader = function() {
 }
 kumite.launch.PreloadDisplay.prototype.__class__ = kumite.launch.PreloadDisplay;
 kumite.launch.PreloadDisplay.__interfaces__ = [haxe.rtti.Infos];
+if(!kumite.profiler) kumite.profiler = {}
+kumite.profiler.ProfilerRenderer = function(p) {
+	$s.push("kumite.profiler.ProfilerRenderer::new");
+	var $spos = $s.length;
+	$s.pop();
+}
+kumite.profiler.ProfilerRenderer.__name__ = ["kumite","profiler","ProfilerRenderer"];
+kumite.profiler.ProfilerRenderer.prototype.context = null;
+kumite.profiler.ProfilerRenderer.prototype.time = null;
+kumite.profiler.ProfilerRenderer.prototype.cg = null;
+kumite.profiler.ProfilerRenderer.prototype.root = null;
+kumite.profiler.ProfilerRenderer.prototype.init = function() {
+	$s.push("kumite.profiler.ProfilerRenderer::init");
+	var $spos = $s.length;
+	this.cg = new CanvasGraphic();
+	this.cg.usePow2Size = false;
+	this.cg.setWidth(100);
+	this.cg.setHeight(20);
+	this.cg.canvas.setAttribute("class","profiler");
+	this.root = js.Lib.document.getElementById("root");
+	this.root.appendChild(this.cg.canvas);
+	this.context.contextConfig.frontMessenger.addReceiver(this,"tick",kumite.time.Tick);
+	$s.pop();
+}
+kumite.profiler.ProfilerRenderer.prototype.tick = function(tick) {
+	$s.push("kumite.profiler.ProfilerRenderer::tick");
+	var $spos = $s.length;
+	var text = "FPS:" + Math.round(this.time.frameRate) + " TS:" + Math.round(this.time.timeScale * 100) / 100;
+	this.cg.clear(new Color(0,0.2,0));
+	this.cg.setFillStyle(new Color(1,1,1,0.8));
+	this.cg.setFont("10px Courier");
+	this.cg.fillText(text,10,13,100);
+	$s.pop();
+}
+kumite.profiler.ProfilerRenderer.prototype.__class__ = kumite.profiler.ProfilerRenderer;
+kumite.profiler.ProfilerRenderer.__interfaces__ = [haxe.rtti.Infos];
 if(typeof reflect=='undefined') reflect = {}
 reflect.MetadataAware = function() { }
 reflect.MetadataAware.__name__ = ["reflect","MetadataAware"];
@@ -1214,10 +1250,8 @@ kumite.time.Time.prototype.tick = function() {
 	if(this.lastTime == -1) this.lastTime = time - 100;
 	this.frameMs = time - this.lastTime;
 	if(Math.isNaN(this.frameMs) || !Math.isFinite(this.frameMs)) this.frameMs = 100;
-	this.timeScale += (this.frameMs / 1000 * 60 - this.timeScale) * 0.1;
-	if(this.timeScale < 0.25) this.timeScale = 0.25;
-	if(this.timeScale > 3) this.timeScale = 3;
-	if(Math.isNaN(this.timeScale) || !Math.isFinite(this.timeScale)) this.timeScale = 100 / 1000 * 30;
+	this.timeScale += this.frameMs / 1000 * 60 - this.timeScale;
+	if(Math.isNaN(this.timeScale) || !Math.isFinite(this.timeScale)) this.timeScale = 1;
 	this.ms += this.frameMs;
 	this.frameRate = 1000 / this.frameMs;
 	this.lastTime = time;
@@ -2833,11 +2867,7 @@ kumite.presentation.PresentationConfig = function(p) {
 	$s.push("kumite.presentation.PresentationConfig::new");
 	var $spos = $s.length;
 	this.presentation = new kumite.presentation.Presentation();
-	this.presentation.slides.push(new kumite.presentation.ContainerSlide().addSlide(new kumite.presentation.ImageSlide("data/presentation/Screens/1.Britzpetermann/1Britzpetermann.jpg")).addSlide(new kumite.presentation.ImageSlide("data/presentation/Screens/1.Britzpetermann/2Britzpetermann.jpg")));
-	this.presentation.slides.push(new kumite.presentation.ContainerSlide().addSlide(new kumite.presentation.ImageSlide("data/presentation/Screens/2.Schau!/2.1.Schau.jpg")).addSlide(new kumite.presentation.ImageSlide("data/presentation/Screens/2.Schau!/2.2.Schau.jpg")).addSlide(new kumite.presentation.ImageSlide("data/presentation/Screens/2.Schau!/2.3.Schau.jpg")).addSlide(new kumite.presentation.ImageSlide("data/presentation/Screens/2.Schau!/2.4.Schau.jpg")).addSlide(new kumite.presentation.ImageSlide("data/presentation/Screens/2.Schau!/2.5.Schau.jpg")).addSlide(new kumite.presentation.ImageSlide("data/presentation/Screens/2.Schau!/2.6.Schau.jpg")).addSlide(new kumite.presentation.ImageSlide("data/presentation/Screens/2.Schau!/2.7.Schau.jpg")).addSlide(new kumite.presentation.ImageSlide("data/presentation/Screens/2.Schau!/2.8.Schau.jpg").addHitArea(450,350,770,190,"http://www.flickr.com/photos/britzpetermann").addHitArea(450,545,770,200,"http://vimeo.com/britzpetermann")));
-	this.presentation.slides.push(new kumite.presentation.ContainerSlide().addSlide(new kumite.presentation.ImageSlide("data/presentation/Screens/3.Akemi/3.1.Akemi.jpg")).addSlide(new kumite.presentation.ImageSlide("data/presentation/Screens/3.Akemi/3.2.Akemi.jpg").addHitArea(680,655,300,100,"http://static.britzpetermann.com/experiments/akemi/")).addSlide(new kumite.presentation.ImageSlide("data/presentation/Screens/3.Akemi/3.3.AkemiHelsinki.jpg")).addSlide(new kumite.presentation.ImageSlide("data/presentation/Screens/3.Akemi/3.4.AkemiHelsinki.jpg")));
-	this.presentation.slides.push(new kumite.presentation.ContainerSlide().addSlide(new kumite.presentation.ImageSlide("data/presentation/Screens/4.Karlo/4.1.Karlo.jpg")).addSlide(new kumite.presentation.ImageSlide("data/presentation/Screens/4.Karlo/4.2.Karlo.jpg")).addSlide(new kumite.presentation.ImageSlide("data/presentation/Screens/4.Karlo/4.3.Karlo.jpg")).addSlide(new kumite.presentation.ImageSlide("data/presentation/Screens/4.Karlo/4.4.Karlo.jpg")).addSlide(new kumite.presentation.ImageSlide("data/presentation/Screens/4.Karlo/4.5.Karlo.jpg")).addSlide(new kumite.presentation.ImageSlide("data/presentation/Screens/4.Karlo/4.6.Karlo.jpg")));
-	this.presentation.slides.push(new kumite.presentation.ImageSlide("data/presentation/Screens/6.Fin.jpg"));
+	this.presentation.slides.push(new kumite.presentation.ContainerSlide().addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/1.Britzpetermann/1Britzpetermann.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/1.Britzpetermann/2Britzpetermann.jpg")));
 	this.slideNavigator = new kumite.presentation.SlideNavigator();
 	$s.pop();
 }
@@ -3126,6 +3156,29 @@ IntIter.prototype.next = function() {
 	$s.pop();
 }
 IntIter.prototype.__class__ = IntIter;
+MotionStyle = function() { }
+MotionStyle.__name__ = ["MotionStyle"];
+MotionStyle.prototype.move = null;
+MotionStyle.prototype.__class__ = MotionStyle;
+MotionStyleEaseInOut = function(p) {
+	$s.push("MotionStyleEaseInOut::new");
+	var $spos = $s.length;
+	$s.pop();
+}
+MotionStyleEaseInOut.__name__ = ["MotionStyleEaseInOut"];
+MotionStyleEaseInOut.prototype.move = function(motion,time) {
+	$s.push("MotionStyleEaseInOut::move");
+	var $spos = $s.length;
+	var diff = motion.target - motion.current;
+	var newVelocity = diff * 0.2;
+	motion.velocity += (newVelocity - motion.velocity) * 0.02;
+	if(newVelocity > 0 && motion.velocity > newVelocity) motion.velocity = newVelocity;
+	if(newVelocity < 0 && motion.velocity < newVelocity) motion.velocity = newVelocity;
+	motion.current += motion.velocity;
+	$s.pop();
+}
+MotionStyleEaseInOut.prototype.__class__ = MotionStyleEaseInOut;
+MotionStyleEaseInOut.__interfaces__ = [MotionStyle];
 if(!haxe.xml) haxe.xml = {}
 if(!haxe.xml._Fast) haxe.xml._Fast = {}
 haxe.xml._Fast.NodeAccess = function(x) {
@@ -4365,6 +4418,216 @@ Xml.prototype.toString = function() {
 	$s.pop();
 }
 Xml.prototype.__class__ = Xml;
+kumite.presentation.Slide = function(p) {
+	if( p === $_ ) return;
+	$s.push("kumite.presentation.Slide::new");
+	var $spos = $s.length;
+	this.isPrepared = false;
+	this.clickSignaler = new hsl.haxe.DirectSignaler(this);
+	$s.pop();
+}
+kumite.presentation.Slide.__name__ = ["kumite","presentation","Slide"];
+kumite.presentation.Slide.prototype.clickSignaler = null;
+kumite.presentation.Slide.prototype.isPrepared = null;
+kumite.presentation.Slide.prototype.row = null;
+kumite.presentation.Slide.prototype.column = null;
+kumite.presentation.Slide.prototype.prepare = function(root) {
+	$s.push("kumite.presentation.Slide::prepare");
+	var $spos = $s.length;
+	this.isPrepared = true;
+	$s.pop();
+}
+kumite.presentation.Slide.prototype.resize = function(stage) {
+	$s.push("kumite.presentation.Slide::resize");
+	var $spos = $s.length;
+	$s.pop();
+}
+kumite.presentation.Slide.prototype.removeFrom = function(root) {
+	$s.push("kumite.presentation.Slide::removeFrom");
+	var $spos = $s.length;
+	this.isPrepared = false;
+	$s.pop();
+}
+kumite.presentation.Slide.prototype.getMemento = function() {
+	$s.push("kumite.presentation.Slide::getMemento");
+	var $spos = $s.length;
+	$s.pop();
+	return null;
+	$s.pop();
+}
+kumite.presentation.Slide.prototype.setMemento = function(memento) {
+	$s.push("kumite.presentation.Slide::setMemento");
+	var $spos = $s.length;
+	$s.pop();
+}
+kumite.presentation.Slide.prototype.__class__ = kumite.presentation.Slide;
+kumite.presentation.SpriteSlide = function(location) {
+	if( location === $_ ) return;
+	$s.push("kumite.presentation.SpriteSlide::new");
+	var $spos = $s.length;
+	kumite.presentation.Slide.call(this);
+	this.location = location;
+	this.hitareas = new Array();
+	this.imageTask = new bpmjs.ImageLoaderTask(location);
+	$s.pop();
+}
+kumite.presentation.SpriteSlide.__name__ = ["kumite","presentation","SpriteSlide"];
+kumite.presentation.SpriteSlide.__super__ = kumite.presentation.Slide;
+for(var k in kumite.presentation.Slide.prototype ) kumite.presentation.SpriteSlide.prototype[k] = kumite.presentation.Slide.prototype[k];
+kumite.presentation.SpriteSlide.prototype.stage = null;
+kumite.presentation.SpriteSlide.prototype.hitareas = null;
+kumite.presentation.SpriteSlide.prototype.container = null;
+kumite.presentation.SpriteSlide.prototype.imageTask = null;
+kumite.presentation.SpriteSlide.prototype.location = null;
+kumite.presentation.SpriteSlide.prototype.addHitArea = function(x,y,width,height,location) {
+	$s.push("kumite.presentation.SpriteSlide::addHitArea");
+	var $spos = $s.length;
+	var hitarea = new kumite.presentation.Hitarea();
+	hitarea.x = x;
+	hitarea.y = y;
+	hitarea.width = width;
+	hitarea.height = height;
+	hitarea.location = location;
+	var hitareaAndDiv = new kumite.presentation._SpriteSlide.HitareaAndDiv();
+	hitareaAndDiv.hitarea = hitarea;
+	this.hitareas.push(hitareaAndDiv);
+	$s.pop();
+	return this;
+	$s.pop();
+}
+kumite.presentation.SpriteSlide.prototype.loadImage = function() {
+	$s.push("kumite.presentation.SpriteSlide::loadImage");
+	var $spos = $s.length;
+	this.container = js.Lib.document.createElement("div");
+	this.imageTask.completeSignaler.bind($closure(this,"handleImageLoaded"));
+	var $tmp = this.imageTask;
+	$s.pop();
+	return $tmp;
+	$s.pop();
+}
+kumite.presentation.SpriteSlide.prototype.prepare = function(root) {
+	$s.push("kumite.presentation.SpriteSlide::prepare");
+	var $spos = $s.length;
+	var me = this;
+	kumite.presentation.Slide.prototype.prepare.call(this,root);
+	this.container.setAttribute("style","overflow:hidden; position:absolute");
+	this.container.onclick = function(_) {
+		$s.push("kumite.presentation.SpriteSlide::prepare@63");
+		var $spos = $s.length;
+		me.clickSignaler.dispatch(me,null,{ fileName : "SpriteSlide.hx", lineNumber : 65, className : "kumite.presentation.SpriteSlide", methodName : "prepare"});
+		$s.pop();
+	};
+	root.appendChild(this.container);
+	var _g = 0, _g1 = this.hitareas;
+	while(_g < _g1.length) {
+		var hitarea = _g1[_g];
+		++_g;
+		var div = js.Lib.document.createElement("a");
+		div.href = hitarea.hitarea.location;
+		div.style.position = "absolute";
+		root.appendChild(div);
+		hitarea.div = div;
+	}
+	$s.pop();
+}
+kumite.presentation.SpriteSlide.prototype.resize = function(stage) {
+	$s.push("kumite.presentation.SpriteSlide::resize");
+	var $spos = $s.length;
+	kumite.presentation.Slide.prototype.resize.call(this,stage);
+	if(!this.imageTask.isComplete) {
+		$s.pop();
+		return;
+	}
+	var transform = this.getTransform();
+	var styles = [];
+	styles.push("position:" + "absolute");
+	styles.push("top:" + this.row * stage.height + "px");
+	styles.push("left:" + this.column * stage.width + "px");
+	styles.push("width:" + stage.width + "px");
+	styles.push("height:" + stage.height + "px");
+	styles.push("background-image: url(" + this.location + ")");
+	styles.push("background-size: " + Math.round(transform.scale * (this.imageTask.image.naturalWidth / stage.width) * 100) + "%");
+	styles.push("background-repeat: no-repeat;");
+	styles.push("background-position: " + Math.round(transform.x) + "px " + Math.round(transform.y) + "px");
+	this.container.setAttribute("style",styles.join(";"));
+	this.imageTask.image.style.position = "absolute";
+	this.imageTask.image.style.width = this.imageTask.image.naturalWidth * transform.scale + "px";
+	this.imageTask.image.style.height = this.imageTask.image.naturalHeight * transform.scale + "px";
+	this.imageTask.image.style.top = transform.y + "px";
+	this.imageTask.image.style.left = transform.x + "px";
+	var _g = 0, _g1 = this.hitareas;
+	while(_g < _g1.length) {
+		var hitarea = _g1[_g];
+		++_g;
+		var div = hitarea.div;
+		var left = hitarea.hitarea.x * transform.scale + transform.x + this.column * stage.width;
+		var top = hitarea.hitarea.y * transform.scale + transform.y;
+		var width = hitarea.hitarea.width * transform.scale;
+		var height = hitarea.hitarea.height * transform.scale;
+		div.style.left = left + "px";
+		div.style.top = top + "px";
+		div.style.width = width + "px";
+		div.style.height = height + "px";
+		hitarea.div = div;
+	}
+	$s.pop();
+}
+kumite.presentation.SpriteSlide.prototype.getTransform = function() {
+	$s.push("kumite.presentation.SpriteSlide::getTransform");
+	var $spos = $s.length;
+	var image = this.imageTask.image;
+	var imageAspect = image.naturalWidth / image.naturalHeight;
+	var aspect = this.stage.width / this.stage.height;
+	var ix;
+	var iy;
+	var iw;
+	var ih;
+	if(aspect > imageAspect) {
+		iw = this.stage.width;
+		ih = this.stage.width / imageAspect;
+		ix = 0;
+		iy = -(ih - this.stage.height) / 2;
+	} else {
+		iw = this.stage.height * imageAspect;
+		ih = this.stage.height;
+		ix = -(iw - this.stage.width) / 2;
+		iy = 0;
+	}
+	var $tmp = { scale : iw / image.naturalWidth, x : ix, y : iy};
+	$s.pop();
+	return $tmp;
+	$s.pop();
+}
+kumite.presentation.SpriteSlide.prototype.handleImageLoaded = function(_) {
+	$s.push("kumite.presentation.SpriteSlide::handleImageLoaded");
+	var $spos = $s.length;
+	$s.pop();
+}
+kumite.presentation.SpriteSlide.prototype.removeFrom = function(root) {
+	$s.push("kumite.presentation.SpriteSlide::removeFrom");
+	var $spos = $s.length;
+	kumite.presentation.Slide.prototype.removeFrom.call(this,root);
+	var _g = 0, _g1 = this.hitareas;
+	while(_g < _g1.length) {
+		var hitarea = _g1[_g];
+		++_g;
+		var div = hitarea.div;
+		root.removeChild(div);
+	}
+	$s.pop();
+}
+kumite.presentation.SpriteSlide.prototype.__class__ = kumite.presentation.SpriteSlide;
+kumite.presentation.SpriteSlide.__interfaces__ = [haxe.rtti.Infos];
+if(!kumite.presentation._SpriteSlide) kumite.presentation._SpriteSlide = {}
+kumite.presentation._SpriteSlide.HitareaAndDiv = function(p) {
+	$s.push("kumite.presentation._SpriteSlide.HitareaAndDiv::new");
+	var $spos = $s.length;
+	$s.pop();
+}
+kumite.presentation._SpriteSlide.HitareaAndDiv.__name__ = ["kumite","presentation","_SpriteSlide","HitareaAndDiv"];
+kumite.presentation._SpriteSlide.HitareaAndDiv.prototype.hitarea = null;
+kumite.presentation._SpriteSlide.HitareaAndDiv.prototype.div = null;
+kumite.presentation._SpriteSlide.HitareaAndDiv.prototype.__class__ = kumite.presentation._SpriteSlide.HitareaAndDiv;
 Motion = function(current,target,velocity) {
 	if( current === $_ ) return;
 	$s.push("Motion::new");
@@ -4376,21 +4639,50 @@ Motion = function(current,target,velocity) {
 	this.target = target;
 	this.velocity = velocity;
 	this.style = new MotionStyleLinear().setAcceleration(1);
+	this.restart();
 	$s.pop();
 }
 Motion.__name__ = ["Motion"];
 Motion.prototype.current = null;
 Motion.prototype.target = null;
 Motion.prototype.velocity = null;
+Motion.prototype.t = null;
+Motion.prototype.c0 = null;
+Motion.prototype.v0 = null;
 Motion.prototype.finished = null;
 Motion.prototype.style = null;
 Motion.prototype.prevFinished = null;
-Motion.prototype.move = function() {
+Motion.prototype.move = function(time) {
 	$s.push("Motion::move");
 	var $spos = $s.length;
-	this.style.move(this);
+	var currentOriginal = this.current;
+	var velocityOriginal = this.velocity;
+	var l0 = Math.floor(time.timeScale);
+	var l1 = Math.ceil(time.timeScale);
+	var _g = 0;
+	while(_g < l0) {
+		var i = _g++;
+		this.style.move(this,null);
+	}
+	var v0 = this.velocity;
+	var c0 = this.current;
+	this.style.move(this,null);
+	var v1 = this.velocity;
+	var c1 = this.current;
+	var part = time.timeScale - l0;
+	this.velocity = v0 + (v1 - v0) * part;
+	this.current = c0 + (c1 - c0) * part;
 	this.finished = this.prevFinished;
 	this.prevFinished = this.current == this.target && this.velocity == 0;
+	this.t++;
+	$s.pop();
+}
+Motion.prototype.restart = function() {
+	$s.push("Motion::restart");
+	var $spos = $s.length;
+	this.v0 = this.velocity;
+	this.c0 = this.current;
+	this.t = 0;
 	$s.pop();
 }
 Motion.prototype.toString = function() {
@@ -5676,206 +5968,6 @@ hsl.haxe._DirectSignaler.AdvancedBond.prototype.__class__ = hsl.haxe._DirectSign
 hsl.haxe._DirectSignaler.PropagationStatus = function() { }
 hsl.haxe._DirectSignaler.PropagationStatus.__name__ = ["hsl","haxe","_DirectSignaler","PropagationStatus"];
 hsl.haxe._DirectSignaler.PropagationStatus.prototype.__class__ = hsl.haxe._DirectSignaler.PropagationStatus;
-kumite.presentation.Slide = function(p) {
-	if( p === $_ ) return;
-	$s.push("kumite.presentation.Slide::new");
-	var $spos = $s.length;
-	this.isPrepared = false;
-	this.clickSignaler = new hsl.haxe.DirectSignaler(this);
-	$s.pop();
-}
-kumite.presentation.Slide.__name__ = ["kumite","presentation","Slide"];
-kumite.presentation.Slide.prototype.clickSignaler = null;
-kumite.presentation.Slide.prototype.isPrepared = null;
-kumite.presentation.Slide.prototype.row = null;
-kumite.presentation.Slide.prototype.prepare = function(root) {
-	$s.push("kumite.presentation.Slide::prepare");
-	var $spos = $s.length;
-	this.isPrepared = true;
-	$s.pop();
-}
-kumite.presentation.Slide.prototype.resize = function(stage) {
-	$s.push("kumite.presentation.Slide::resize");
-	var $spos = $s.length;
-	$s.pop();
-}
-kumite.presentation.Slide.prototype.removeFrom = function(root) {
-	$s.push("kumite.presentation.Slide::removeFrom");
-	var $spos = $s.length;
-	this.isPrepared = false;
-	$s.pop();
-}
-kumite.presentation.Slide.prototype.getMemento = function() {
-	$s.push("kumite.presentation.Slide::getMemento");
-	var $spos = $s.length;
-	$s.pop();
-	return null;
-	$s.pop();
-}
-kumite.presentation.Slide.prototype.setMemento = function(memento) {
-	$s.push("kumite.presentation.Slide::setMemento");
-	var $spos = $s.length;
-	$s.pop();
-}
-kumite.presentation.Slide.prototype.__class__ = kumite.presentation.Slide;
-kumite.presentation.ImageSlide = function(location) {
-	if( location === $_ ) return;
-	$s.push("kumite.presentation.ImageSlide::new");
-	var $spos = $s.length;
-	kumite.presentation.Slide.call(this);
-	this.hitareas = new Array();
-	this.imageTask = new bpmjs.ImageLoaderTask(location);
-	$s.pop();
-}
-kumite.presentation.ImageSlide.__name__ = ["kumite","presentation","ImageSlide"];
-kumite.presentation.ImageSlide.__super__ = kumite.presentation.Slide;
-for(var k in kumite.presentation.Slide.prototype ) kumite.presentation.ImageSlide.prototype[k] = kumite.presentation.Slide.prototype[k];
-kumite.presentation.ImageSlide.prototype.stage = null;
-kumite.presentation.ImageSlide.prototype.hitareas = null;
-kumite.presentation.ImageSlide.prototype.container = null;
-kumite.presentation.ImageSlide.prototype.imageTask = null;
-kumite.presentation.ImageSlide.prototype.addHitArea = function(x,y,width,height,location) {
-	$s.push("kumite.presentation.ImageSlide::addHitArea");
-	var $spos = $s.length;
-	var hitarea = new kumite.presentation.Hitarea();
-	hitarea.x = x;
-	hitarea.y = y;
-	hitarea.width = width;
-	hitarea.height = height;
-	hitarea.location = location;
-	var hitareaAndDiv = new kumite.presentation.HitareaAndDiv();
-	hitareaAndDiv.hitarea = hitarea;
-	this.hitareas.push(hitareaAndDiv);
-	$s.pop();
-	return this;
-	$s.pop();
-}
-kumite.presentation.ImageSlide.prototype.loadImage = function() {
-	$s.push("kumite.presentation.ImageSlide::loadImage");
-	var $spos = $s.length;
-	this.container = js.Lib.document.createElement("div");
-	this.imageTask.completeSignaler.bind($closure(this,"handleImageLoaded"));
-	var $tmp = this.imageTask;
-	$s.pop();
-	return $tmp;
-	$s.pop();
-}
-kumite.presentation.ImageSlide.prototype.prepare = function(root) {
-	$s.push("kumite.presentation.ImageSlide::prepare");
-	var $spos = $s.length;
-	var me = this;
-	kumite.presentation.Slide.prototype.prepare.call(this,root);
-	this.container.setAttribute("style","overflow:hidden; position:absolute");
-	this.container.onclick = function(_) {
-		$s.push("kumite.presentation.ImageSlide::prepare@59");
-		var $spos = $s.length;
-		me.clickSignaler.dispatch(me,null,{ fileName : "ImageSlide.hx", lineNumber : 61, className : "kumite.presentation.ImageSlide", methodName : "prepare"});
-		$s.pop();
-	};
-	root.appendChild(this.container);
-	var _g = 0, _g1 = this.hitareas;
-	while(_g < _g1.length) {
-		var hitarea = _g1[_g];
-		++_g;
-		var div = js.Lib.document.createElement("a");
-		div.href = hitarea.hitarea.location;
-		div.style.position = "absolute";
-		root.appendChild(div);
-		hitarea.div = div;
-	}
-	$s.pop();
-}
-kumite.presentation.ImageSlide.prototype.resize = function(stage) {
-	$s.push("kumite.presentation.ImageSlide::resize");
-	var $spos = $s.length;
-	kumite.presentation.Slide.prototype.resize.call(this,stage);
-	this.container.style.top = this.row * stage.height + "px";
-	this.container.style.width = stage.width + "px";
-	this.container.style.height = stage.height + "px";
-	if(!this.imageTask.isComplete) {
-		$s.pop();
-		return;
-	}
-	var transform = this.getTransform();
-	this.imageTask.image.style.position = "absolute";
-	this.imageTask.image.style.width = this.imageTask.image.naturalWidth * transform.scale + "px";
-	this.imageTask.image.style.height = this.imageTask.image.naturalHeight * transform.scale + "px";
-	this.imageTask.image.style.top = transform.y + "px";
-	this.imageTask.image.style.left = transform.x + "px";
-	var _g = 0, _g1 = this.hitareas;
-	while(_g < _g1.length) {
-		var hitarea = _g1[_g];
-		++_g;
-		var div = hitarea.div;
-		var left = hitarea.hitarea.x * transform.scale + transform.x;
-		var top = hitarea.hitarea.y * transform.scale + transform.y;
-		var width = hitarea.hitarea.width * transform.scale;
-		var height = hitarea.hitarea.height * transform.scale;
-		div.style.left = left + "px";
-		div.style.top = top + "px";
-		div.style.width = width + "px";
-		div.style.height = height + "px";
-		hitarea.div = div;
-	}
-	$s.pop();
-}
-kumite.presentation.ImageSlide.prototype.getTransform = function() {
-	$s.push("kumite.presentation.ImageSlide::getTransform");
-	var $spos = $s.length;
-	var image = this.imageTask.image;
-	var imageAspect = image.naturalWidth / image.naturalHeight;
-	var aspect = this.stage.width / this.stage.height;
-	var ix;
-	var iy;
-	var iw;
-	var ih;
-	if(aspect > imageAspect) {
-		iw = this.stage.width;
-		ih = this.stage.width / imageAspect;
-		ix = 0;
-		iy = -(ih - this.stage.height) / 2;
-	} else {
-		iw = this.stage.height * imageAspect;
-		ih = this.stage.height;
-		ix = -(iw - this.stage.width) / 2;
-		iy = 0;
-	}
-	var $tmp = { scale : iw / image.naturalWidth, x : ix, y : iy};
-	$s.pop();
-	return $tmp;
-	$s.pop();
-}
-kumite.presentation.ImageSlide.prototype.handleImageLoaded = function(_) {
-	$s.push("kumite.presentation.ImageSlide::handleImageLoaded");
-	var $spos = $s.length;
-	var image = this.imageTask.image;
-	this.container.appendChild(image);
-	$s.pop();
-}
-kumite.presentation.ImageSlide.prototype.removeFrom = function(root) {
-	$s.push("kumite.presentation.ImageSlide::removeFrom");
-	var $spos = $s.length;
-	kumite.presentation.Slide.prototype.removeFrom.call(this,root);
-	var _g = 0, _g1 = this.hitareas;
-	while(_g < _g1.length) {
-		var hitarea = _g1[_g];
-		++_g;
-		var div = hitarea.div;
-		root.removeChild(div);
-	}
-	$s.pop();
-}
-kumite.presentation.ImageSlide.prototype.__class__ = kumite.presentation.ImageSlide;
-kumite.presentation.ImageSlide.__interfaces__ = [haxe.rtti.Infos];
-kumite.presentation.HitareaAndDiv = function(p) {
-	$s.push("kumite.presentation.HitareaAndDiv::new");
-	var $spos = $s.length;
-	$s.pop();
-}
-kumite.presentation.HitareaAndDiv.__name__ = ["kumite","presentation","HitareaAndDiv"];
-kumite.presentation.HitareaAndDiv.prototype.hitarea = null;
-kumite.presentation.HitareaAndDiv.prototype.div = null;
-kumite.presentation.HitareaAndDiv.prototype.__class__ = kumite.presentation.HitareaAndDiv;
 StringBuf = function(p) {
 	if( p === $_ ) return;
 	$s.push("StringBuf::new");
@@ -6171,7 +6263,7 @@ kumite.presentation.ContainerSlide = function(p) {
 	this.canvas = new CanvasGraphic();
 	this.canvas.usePow2Size = false;
 	this.visualSlideIndex = new Motion();
-	this.visualSlideIndex.style = new MotionStyleLinear().setAcceleration(0.01);
+	this.visualSlideIndex.style = new MotionStyleEaseInOut();
 	$s.pop();
 }
 kumite.presentation.ContainerSlide.__name__ = ["kumite","presentation","ContainerSlide"];
@@ -6185,12 +6277,11 @@ kumite.presentation.ContainerSlide.prototype.canvas = null;
 kumite.presentation.ContainerSlide.prototype.slideIndex = null;
 kumite.presentation.ContainerSlide.prototype.visualSlideIndex = null;
 kumite.presentation.ContainerSlide.prototype.container = null;
+kumite.presentation.ContainerSlide.prototype.slidingContainer = null;
 kumite.presentation.ContainerSlide.prototype.addSlide = function(slide) {
 	$s.push("kumite.presentation.ContainerSlide::addSlide");
 	var $spos = $s.length;
-	var slideAndDiv = new kumite.presentation.SlideAndDiv();
-	slideAndDiv.slide = slide;
-	this.slides.push(slideAndDiv);
+	this.slides.push(slide);
 	$s.pop();
 	return this;
 	$s.pop();
@@ -6198,18 +6289,11 @@ kumite.presentation.ContainerSlide.prototype.addSlide = function(slide) {
 kumite.presentation.ContainerSlide.prototype.init = function() {
 	$s.push("kumite.presentation.ContainerSlide::init");
 	var $spos = $s.length;
-	{
-		Log.posInfo = { fileName : "ContainerSlide.hx", lineNumber : 56, className : "kumite.presentation.ContainerSlide", methodName : "init"};
-		if(Log.filter(LogLevel.INFO)) {
-			Log.fetchInput(null,null,null,null,null,null,null);
-			console.info(Log.createMessage());
-		}
-	}
 	var _g = 0, _g1 = this.slides;
 	while(_g < _g1.length) {
 		var slide = _g1[_g];
 		++_g;
-		bpmjs.ContextBuilder.configure(slide.slide);
+		bpmjs.ContextBuilder.configure(slide);
 	}
 	$s.pop();
 }
@@ -6219,20 +6303,20 @@ kumite.presentation.ContainerSlide.prototype.prepare = function(root) {
 	kumite.presentation.Slide.prototype.prepare.call(this,root);
 	this.container = js.Lib.document.createElement("div");
 	root.appendChild(this.container);
+	this.slidingContainer = js.Lib.document.createElement("div");
+	this.slidingContainer.style.position = "absolute";
+	this.container.appendChild(this.slidingContainer);
+	var column = 0;
 	var _g = 0, _g1 = this.slides;
 	while(_g < _g1.length) {
-		var slideAndDiv = _g1[_g];
+		var slide = _g1[_g];
 		++_g;
-		var slideContainer = js.Lib.document.createElement("div");
-		slideContainer.style.width = this.stage.width + "px";
-		slideContainer.style.height = this.stage.height + "px";
-		slideContainer.style.position = "absolute";
-		this.container.appendChild(slideContainer);
-		slideAndDiv.div = slideContainer;
-		slideAndDiv.slide.prepare(slideContainer);
-		slideAndDiv.slide.resize(this.stage);
+		slide.column = column;
+		slide.prepare(this.slidingContainer);
+		slide.resize(this.stage);
+		column++;
 	}
-	this.slides[this.slideIndex].slide.clickSignaler.bind($closure(this,"gotoNextSlide"));
+	this.slides[this.slideIndex].clickSignaler.bind($closure(this,"gotoNextSlide"));
 	$s.pop();
 }
 kumite.presentation.ContainerSlide.prototype.resize = function(stage) {
@@ -6240,29 +6324,23 @@ kumite.presentation.ContainerSlide.prototype.resize = function(stage) {
 	var $spos = $s.length;
 	kumite.presentation.Slide.prototype.resize.call(this,stage);
 	this.container.setAttribute("style","top:" + this.row * stage.height + "px; position:absolute; overflow-x:hidden; height:" + stage.height + "px; width:" + stage.width + "px");
-	this.visualSlideIndex.target = this.slideIndex;
+	if(this.visualSlideIndex.target != this.slideIndex) {
+		this.visualSlideIndex.restart();
+		this.visualSlideIndex.target = this.slideIndex;
+	}
 	var _g = 0, _g1 = this.slides;
 	while(_g < _g1.length) {
-		var slideAndDiv = _g1[_g];
+		var slide = _g1[_g];
 		++_g;
-		slideAndDiv.slide.resize(stage);
+		slide.resize(stage);
 	}
 	$s.pop();
 }
 kumite.presentation.ContainerSlide.prototype.tick = function(tick) {
 	$s.push("kumite.presentation.ContainerSlide::tick");
 	var $spos = $s.length;
-	this.visualSlideIndex.move();
-	var index = 0;
-	var _g = 0, _g1 = this.slides;
-	while(_g < _g1.length) {
-		var slideAndDiv = _g1[_g];
-		++_g;
-		slideAndDiv.div.style.left = (index - this.visualSlideIndex.current) * this.stage.width + "px";
-		slideAndDiv.div.style.width = this.stage.width + "px";
-		slideAndDiv.div.style.height = this.stage.height + "px";
-		index++;
-	}
+	this.visualSlideIndex.move(this.time);
+	this.slidingContainer.style.left = -Math.round(this.visualSlideIndex.current * this.stage.width) + "px";
 	$s.pop();
 }
 kumite.presentation.ContainerSlide.prototype.getMemento = function() {
@@ -6291,23 +6369,14 @@ kumite.presentation.ContainerSlide.prototype.gotoNextSlide = function(_) {
 kumite.presentation.ContainerSlide.prototype.changeSlide = function(newIndex) {
 	$s.push("kumite.presentation.ContainerSlide::changeSlide");
 	var $spos = $s.length;
-	this.slides[this.slideIndex].slide.clickSignaler.unbind($closure(this,"gotoNextSlide"));
+	this.slides[this.slideIndex].clickSignaler.unbind($closure(this,"gotoNextSlide"));
 	this.slideIndex = newIndex % this.slides.length;
-	this.slides[this.slideIndex].slide.clickSignaler.bind($closure(this,"gotoNextSlide"));
+	this.slides[this.slideIndex].clickSignaler.bind($closure(this,"gotoNextSlide"));
 	this.resize(this.stage);
 	$s.pop();
 }
 kumite.presentation.ContainerSlide.prototype.__class__ = kumite.presentation.ContainerSlide;
 kumite.presentation.ContainerSlide.__interfaces__ = [haxe.rtti.Infos];
-kumite.presentation.SlideAndDiv = function(p) {
-	$s.push("kumite.presentation.SlideAndDiv::new");
-	var $spos = $s.length;
-	$s.pop();
-}
-kumite.presentation.SlideAndDiv.__name__ = ["kumite","presentation","SlideAndDiv"];
-kumite.presentation.SlideAndDiv.prototype.slide = null;
-kumite.presentation.SlideAndDiv.prototype.div = null;
-kumite.presentation.SlideAndDiv.prototype.__class__ = kumite.presentation.SlideAndDiv;
 haxe.rtti.Meta = function() { }
 haxe.rtti.Meta.__name__ = ["haxe","rtti","Meta"];
 haxe.rtti.Meta.getType = function(t) {
@@ -6797,11 +6866,9 @@ Log.fetchInput = function(m0,m1,m2,m3,m4,m5,m6) {
 Log.createMessage = function() {
 	$s.push("Log::createMessage");
 	var $spos = $s.length;
-	if(Log.posInfo == null) {
-		var $tmp = Log.args.join(" ");
-		$s.pop();
-		return $tmp;
-	}
+	var $tmp = Log.args.join(" ");
+	$s.pop();
+	return $tmp;
 	var from = Log.posInfo.className + "." + Log.posInfo.methodName;
 	var $tmp = "[" + from + "] " + Log.args.join(" ");
 	$s.pop();
@@ -6873,10 +6940,6 @@ Log.prototype.errorFilter = function() {
 	$s.pop();
 }
 Log.prototype.__class__ = Log;
-MotionStyle = function() { }
-MotionStyle.__name__ = ["MotionStyle"];
-MotionStyle.prototype.move = null;
-MotionStyle.prototype.__class__ = MotionStyle;
 MotionStyleLinear = function(p) {
 	$s.push("MotionStyleLinear::new");
 	var $spos = $s.length;
@@ -6884,15 +6947,16 @@ MotionStyleLinear = function(p) {
 }
 MotionStyleLinear.__name__ = ["MotionStyleLinear"];
 MotionStyleLinear.prototype.acceleration = null;
-MotionStyleLinear.prototype.move = function(motion) {
+MotionStyleLinear.prototype.move = function(motion,time) {
 	$s.push("MotionStyleLinear::move");
 	var $spos = $s.length;
 	var diff = motion.target - motion.current;
-	if(Math.abs(diff) < this.acceleration) {
+	var tAcceleration = time.summand(this.acceleration);
+	if(Math.abs(diff) < tAcceleration) {
 		motion.velocity = 0;
 		motion.current = motion.target;
 	} else {
-		motion.velocity = Math2.signum(diff) * this.acceleration;
+		motion.velocity = Math2.signum(diff) * tAcceleration;
 		motion.current += motion.velocity;
 	}
 	$s.pop();
@@ -7031,32 +7095,15 @@ haxe.Log.clear = function() {
 	$s.pop();
 }
 haxe.Log.prototype.__class__ = haxe.Log;
-if(!kumite.profiler) kumite.profiler = {}
 kumite.profiler.ProfilerConfig = function(p) {
+	if( p === $_ ) return;
 	$s.push("kumite.profiler.ProfilerConfig::new");
 	var $spos = $s.length;
+	this.profilerRenderer = new kumite.profiler.ProfilerRenderer();
 	$s.pop();
 }
 kumite.profiler.ProfilerConfig.__name__ = ["kumite","profiler","ProfilerConfig"];
-kumite.profiler.ProfilerConfig.prototype.context = null;
-kumite.profiler.ProfilerConfig.prototype.init = function() {
-	$s.push("kumite.profiler.ProfilerConfig::init");
-	var $spos = $s.length;
-	this.context.contextConfig.frontMessenger.addReceiver(this,"tick",kumite.time.Tick);
-	$s.pop();
-}
-kumite.profiler.ProfilerConfig.prototype.tick = function(tick) {
-	$s.push("kumite.profiler.ProfilerConfig::tick");
-	var $spos = $s.length;
-	{
-		Log.posInfo = { fileName : "ProfilerConfig.hx", lineNumber : 27, className : "kumite.profiler.ProfilerConfig", methodName : "tick"};
-		if(Log.filter(LogLevel.INFO)) {
-			Log.fetchInput("tick",null,null,null,null,null,null);
-			console.info(Log.createMessage());
-		}
-	}
-	$s.pop();
-}
+kumite.profiler.ProfilerConfig.prototype.profilerRenderer = null;
 kumite.profiler.ProfilerConfig.prototype.__class__ = kumite.profiler.ProfilerConfig;
 kumite.profiler.ProfilerConfig.__interfaces__ = [haxe.rtti.Infos];
 Math2 = function() { }
@@ -9367,6 +9414,8 @@ if(typeof(haxe_timers) == "undefined") haxe_timers = [];
 }
 kumite.launch.PreloadDisplay.__meta__ = { fields : { complete : { Complete : null}, bootMonitor : { Sequence : ["boot","monitor"]}, bootStartComplete : { Sequence : ["boot","startComplete"]}}};
 kumite.launch.PreloadDisplay.__rtti = "<class path=\"kumite.launch.PreloadDisplay\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<preloaderDiv><t path=\"js.HtmlDom\"/></preloaderDiv>\n\t<complete public=\"1\" set=\"method\" line=\"16\"><f a=\"\"><e path=\"Void\"/></f></complete>\n\t<bootMonitor public=\"1\" set=\"method\" line=\"24\"><f a=\"monitor\">\n\t<c path=\"bpmjs.ProgressMonitor\"/>\n\t<e path=\"Void\"/>\n</f></bootMonitor>\n\t<bootStartComplete public=\"1\" set=\"method\" line=\"46\"><f a=\"\"><e path=\"Void\"/></f></bootStartComplete>\n\t<removePreloader set=\"method\" line=\"56\"><f a=\"\"><e path=\"Void\"/></f></removePreloader>\n\t<new public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.profiler.ProfilerRenderer.__meta__ = { fields : { context : { Inject : null}, time : { Inject : null}, init : { Sequence : ["boot","finish"]}}};
+kumite.profiler.ProfilerRenderer.__rtti = "<class path=\"kumite.profiler.ProfilerRenderer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context><c path=\"bpmjs.Context\"/></context>\n\t<time><c path=\"kumite.time.Time\"/></time>\n\t<cg><c path=\"CanvasGraphic\"/></cg>\n\t<root><t path=\"js.HtmlDom\"/></root>\n\t<init public=\"1\" set=\"method\" line=\"31\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<tick set=\"method\" line=\"44\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></tick>\n\t<new public=\"1\" set=\"method\" line=\"25\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.stage.StageResizeAction.__meta__ = { fields : { messenger : { Messenger : null}, stage : { Inject : null}, initPrepare : { Sequence : ["boot","initPrepare"]}, startComplete : { Sequence : ["boot","startComplete"]}}};
 kumite.stage.StageResizeAction.__rtti = "<class path=\"kumite.stage.StageResizeAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<startComplete public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<onResize set=\"method\" line=\"39\"><f a=\"?event\">\n\t<t path=\"js.Event\"/>\n\t<e path=\"Void\"/>\n</f></onResize>\n\t<updateSize set=\"method\" line=\"45\"><f a=\"\"><e path=\"Void\"/></f></updateSize>\n\t<sendResizeMessage set=\"method\" line=\"51\"><f a=\"\"><e path=\"Void\"/></f></sendResizeMessage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.presentation.SlideNavigator.__meta__ = { fields : { stage : { Inject : null}, time : { Inject : null}, presentation : { Inject : null}, start : { Sequence : ["boot","start"]}, startComplete : { Sequence : ["boot","start"]}, handleResize : { Message : null}, handleTick : { Message : null}}};
@@ -9398,22 +9447,21 @@ Xml.eclose = new EReg("^[ \r\n\t]*(>|(/>))","");
 Xml.ecdata_end = new EReg("\\]\\]>","");
 Xml.edoctype_elt = new EReg("[\\[|\\]>]","");
 Xml.ecomment_end = new EReg("-->","");
+kumite.presentation.SpriteSlide.__meta__ = { fields : { stage : { Inject : null}, loadImage : { Sequence : ["boot","init"]}}};
+kumite.presentation.SpriteSlide.__rtti = "<class path=\"kumite.presentation.SpriteSlide\" params=\"\">\n\t<extends path=\"kumite.presentation.Slide\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage><c path=\"kumite.stage.Stage\"/></stage>\n\t<hitareas><c path=\"Array\"><c path=\"kumite.presentation._SpriteSlide.HitareaAndDiv\"/></c></hitareas>\n\t<container><t path=\"js.HtmlDom\"/></container>\n\t<imageTask><c path=\"bpmjs.ImageLoaderTask\"/></imageTask>\n\t<location><c path=\"String\"/></location>\n\t<addHitArea public=\"1\" set=\"method\" line=\"34\"><f a=\"x:y:width:height:location\">\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"String\"/>\n\t<c path=\"kumite.presentation.SpriteSlide\"/>\n</f></addHitArea>\n\t<loadImage public=\"1\" set=\"method\" line=\"51\"><f a=\"\"><c path=\"bpmjs.ImageLoaderTask\"/></f></loadImage>\n\t<prepare public=\"1\" set=\"method\" line=\"58\" override=\"1\"><f a=\"root\">\n\t<t path=\"js.HtmlDom\"/>\n\t<e path=\"Void\"/>\n</f></prepare>\n\t<resize public=\"1\" set=\"method\" line=\"80\" override=\"1\"><f a=\"stage\">\n\t<c path=\"kumite.stage.Stage\"/>\n\t<e path=\"Void\"/>\n</f></resize>\n\t<getTransform set=\"method\" line=\"122\"><f a=\"\"><a>\n\t<y><c path=\"Float\"/></y>\n\t<x><c path=\"Float\"/></x>\n\t<scale><c path=\"Float\"/></scale>\n</a></f></getTransform>\n\t<handleImageLoaded set=\"method\" line=\"152\"><f a=\"_\">\n\t<c path=\"bpmjs.ImageLoaderTask\"/>\n\t<e path=\"Void\"/>\n</f></handleImageLoaded>\n\t<removeFrom public=\"1\" set=\"method\" line=\"158\" override=\"1\"><f a=\"root\">\n\t<t path=\"js.HtmlDom\"/>\n\t<e path=\"Void\"/>\n</f></removeFrom>\n\t<new public=\"1\" set=\"method\" line=\"24\"><f a=\"location\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></new>\n</class>";
 reflect.ClassInfo.cache = new Hash();
 hsl.haxe._DirectSignaler.PropagationStatus.IMMEDIATELY_STOPPED = 1;
 hsl.haxe._DirectSignaler.PropagationStatus.STOPPED = 2;
 hsl.haxe._DirectSignaler.PropagationStatus.UNDISTURBED = 3;
-kumite.presentation.ImageSlide.__meta__ = { fields : { stage : { Inject : null}, loadImage : { Sequence : ["boot","init"]}}};
-kumite.presentation.ImageSlide.__rtti = "<class path=\"kumite.presentation.ImageSlide\" params=\"\">\n\t<extends path=\"kumite.presentation.Slide\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage><c path=\"kumite.stage.Stage\"/></stage>\n\t<hitareas><c path=\"Array\"><c path=\"kumite.presentation.HitareaAndDiv\"/></c></hitareas>\n\t<container><t path=\"js.HtmlDom\"/></container>\n\t<imageTask><c path=\"bpmjs.ImageLoaderTask\"/></imageTask>\n\t<addHitArea public=\"1\" set=\"method\" line=\"30\"><f a=\"x:y:width:height:location\">\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"String\"/>\n\t<c path=\"kumite.presentation.ImageSlide\"/>\n</f></addHitArea>\n\t<loadImage public=\"1\" set=\"method\" line=\"47\"><f a=\"\"><c path=\"bpmjs.ImageLoaderTask\"/></f></loadImage>\n\t<prepare public=\"1\" set=\"method\" line=\"54\" override=\"1\"><f a=\"root\">\n\t<t path=\"js.HtmlDom\"/>\n\t<e path=\"Void\"/>\n</f></prepare>\n\t<resize public=\"1\" set=\"method\" line=\"76\" override=\"1\"><f a=\"stage\">\n\t<c path=\"kumite.stage.Stage\"/>\n\t<e path=\"Void\"/>\n</f></resize>\n\t<getTransform set=\"method\" line=\"110\"><f a=\"\"><a>\n\t<y><c path=\"Float\"/></y>\n\t<x><c path=\"Float\"/></x>\n\t<scale><c path=\"Float\"/></scale>\n</a></f></getTransform>\n\t<handleImageLoaded set=\"method\" line=\"140\"><f a=\"_\">\n\t<c path=\"bpmjs.ImageLoaderTask\"/>\n\t<e path=\"Void\"/>\n</f></handleImageLoaded>\n\t<removeFrom public=\"1\" set=\"method\" line=\"146\" override=\"1\"><f a=\"root\">\n\t<t path=\"js.HtmlDom\"/>\n\t<e path=\"Void\"/>\n</f></removeFrom>\n\t<new public=\"1\" set=\"method\" line=\"22\"><f a=\"location\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></new>\n</class>";
 kumite.time.Config.__rtti = "<class path=\"kumite.time.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<timeController public=\"1\"><c path=\"kumite.time.TimeController\"/></timeController>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.time.TimeController.__meta__ = { fields : { time : { Inject : null}, messenger : { Messenger : null}, startComplete : { Sequence : ["boot","startComplete"]}}};
 kumite.time.TimeController.__rtti = "<class path=\"kumite.time.TimeController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<startComplete public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"24\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<new public=\"1\" set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.presentation.ContainerSlide.__meta__ = { fields : { stage : { Inject : null}, time : { Inject : null}, init : { Sequence : ["boot","init"]}, tick : { Message : null}}};
-kumite.presentation.ContainerSlide.__rtti = "<class path=\"kumite.presentation.ContainerSlide\" params=\"\">\n\t<extends path=\"kumite.presentation.Slide\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage><c path=\"kumite.stage.Stage\"/></stage>\n\t<time><c path=\"kumite.time.Time\"/></time>\n\t<slides><c path=\"Array\"><c path=\"kumite.presentation.SlideAndDiv\"/></c></slides>\n\t<color><c path=\"Color\"/></color>\n\t<canvas><c path=\"CanvasGraphic\"/></canvas>\n\t<slideIndex><c path=\"Int\"/></slideIndex>\n\t<visualSlideIndex><c path=\"Motion\"/></visualSlideIndex>\n\t<container><t path=\"js.HtmlDom\"/></container>\n\t<addSlide public=\"1\" set=\"method\" line=\"45\"><f a=\"slide\">\n\t<c path=\"kumite.presentation.Slide\"/>\n\t<c path=\"kumite.presentation.ContainerSlide\"/>\n</f></addSlide>\n\t<init public=\"1\" set=\"method\" line=\"54\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<prepare public=\"1\" set=\"method\" line=\"61\" override=\"1\"><f a=\"root\">\n\t<t path=\"js.HtmlDom\"/>\n\t<e path=\"Void\"/>\n</f></prepare>\n\t<resize public=\"1\" set=\"method\" line=\"83\" override=\"1\"><f a=\"stage\">\n\t<c path=\"kumite.stage.Stage\"/>\n\t<e path=\"Void\"/>\n</f></resize>\n\t<tick public=\"1\" set=\"method\" line=\"95\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></tick>\n\t<getMemento public=\"1\" set=\"method\" line=\"109\" override=\"1\"><f a=\"\"><c path=\"Int\"/></f></getMemento>\n\t<setMemento public=\"1\" set=\"method\" line=\"114\" override=\"1\"><f a=\"memento\">\n\t<d/>\n\t<e path=\"Void\"/>\n</f></setMemento>\n\t<gotoNextSlide set=\"method\" line=\"123\"><f a=\"_\">\n\t<c path=\"kumite.presentation.Slide\"/>\n\t<e path=\"Void\"/>\n</f></gotoNextSlide>\n\t<changeSlide set=\"method\" line=\"128\"><f a=\"newIndex\">\n\t<c path=\"Int\"/>\n\t<e path=\"Void\"/>\n</f></changeSlide>\n\t<new public=\"1\" set=\"method\" line=\"29\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.presentation.ContainerSlide.__rtti = "<class path=\"kumite.presentation.ContainerSlide\" params=\"\">\n\t<extends path=\"kumite.presentation.Slide\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage><c path=\"kumite.stage.Stage\"/></stage>\n\t<time><c path=\"kumite.time.Time\"/></time>\n\t<slides><c path=\"Array\"><c path=\"kumite.presentation.Slide\"/></c></slides>\n\t<color><c path=\"Color\"/></color>\n\t<canvas><c path=\"CanvasGraphic\"/></canvas>\n\t<slideIndex><c path=\"Int\"/></slideIndex>\n\t<visualSlideIndex><c path=\"Motion\"/></visualSlideIndex>\n\t<container><t path=\"js.HtmlDom\"/></container>\n\t<slidingContainer><t path=\"js.HtmlDom\"/></slidingContainer>\n\t<addSlide public=\"1\" set=\"method\" line=\"49\"><f a=\"slide\">\n\t<c path=\"kumite.presentation.Slide\"/>\n\t<c path=\"kumite.presentation.ContainerSlide\"/>\n</f></addSlide>\n\t<init public=\"1\" set=\"method\" line=\"56\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<prepare public=\"1\" set=\"method\" line=\"62\" override=\"1\"><f a=\"root\">\n\t<t path=\"js.HtmlDom\"/>\n\t<e path=\"Void\"/>\n</f></prepare>\n\t<resize public=\"1\" set=\"method\" line=\"85\" override=\"1\"><f a=\"stage\">\n\t<c path=\"kumite.stage.Stage\"/>\n\t<e path=\"Void\"/>\n</f></resize>\n\t<tick public=\"1\" set=\"method\" line=\"101\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></tick>\n\t<getMemento public=\"1\" set=\"method\" line=\"107\" override=\"1\"><f a=\"\"><c path=\"Int\"/></f></getMemento>\n\t<setMemento public=\"1\" set=\"method\" line=\"112\" override=\"1\"><f a=\"memento\">\n\t<d/>\n\t<e path=\"Void\"/>\n</f></setMemento>\n\t<gotoNextSlide set=\"method\" line=\"121\"><f a=\"_\">\n\t<c path=\"kumite.presentation.Slide\"/>\n\t<e path=\"Void\"/>\n</f></gotoNextSlide>\n\t<changeSlide set=\"method\" line=\"126\"><f a=\"newIndex\">\n\t<c path=\"Int\"/>\n\t<e path=\"Void\"/>\n</f></changeSlide>\n\t<new public=\"1\" set=\"method\" line=\"30\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Log.filters = new Array();
 Log.args = new Array();
 Log.errors = new Array();
-kumite.profiler.ProfilerConfig.__meta__ = { fields : { context : { Inject : null}, init : { Sequence : ["boot","finish"]}}};
-kumite.profiler.ProfilerConfig.__rtti = "<class path=\"kumite.profiler.ProfilerConfig\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context><c path=\"bpmjs.Context\"/></context>\n\t<init public=\"1\" set=\"method\" line=\"20\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<tick set=\"method\" line=\"25\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></tick>\n\t<new public=\"1\" set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.profiler.ProfilerConfig.__rtti = "<class path=\"kumite.profiler.ProfilerConfig\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<profilerRenderer><c path=\"kumite.profiler.ProfilerRenderer\"/></profilerRenderer>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 haxe.Unserializer.DEFAULT_RESOLVER = Type;
 haxe.Unserializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
 haxe.Unserializer.CODES = null;

@@ -19,12 +19,13 @@ class ContainerSlide extends Slide, implements Infos
 	@Inject
 	var time:Time;
 	
-	var slides:Array<SlideAndDiv>;
+	var slides:Array<Slide>;
 	var color:Color;
 	var canvas:CanvasGraphic;
 	var slideIndex:Int;
 	var visualSlideIndex:Motion;
 	var container:HtmlDom;
+	var slidingContainer:HtmlDom;
 	
 	public function new()
 	{
@@ -39,45 +40,46 @@ class ContainerSlide extends Slide, implements Infos
 		canvas.usePow2Size = false;
 		
 		visualSlideIndex = new Motion();
-		visualSlideIndex.style = new MotionStyleLinear().setAcceleration(0.01);
+		//visualSlideIndex.style = new MotionStyleLinear().setAcceleration(0.03);
+		//visualSlideIndex.style = new MotionStyleEaseOut();
+		//visualSlideIndex.style = new MotionStyleSpring();
+		visualSlideIndex.style = new MotionStyleEaseInOut();
 	}
 	
 	public function addSlide(slide:Slide)
 	{
-		var slideAndDiv = new SlideAndDiv();
-		slideAndDiv.slide = slide;
-		slides.push(slideAndDiv);
+		slides.push(slide);
 		return this;
 	}
 	
 	@Sequence("boot", "init")
 	public function init()
 	{
-		Log.info();
 		for(slide in slides)
-			ContextBuilder.configure(slide.slide);
+			ContextBuilder.configure(slide);
 	}
 	
 	override function prepare(root:HtmlDom)
 	{
 		super.prepare(root);
+		
 		container = Lib.document.createElement("div");
 		root.appendChild(container);
+		
+		slidingContainer = Lib.document.createElement("div");
+		slidingContainer.style.position = "absolute";
+		container.appendChild(slidingContainer);
 
-		for(slideAndDiv in slides)
+		var column = 0;
+		for(slide in slides)
 		{
-			var slideContainer = Lib.document.createElement("div");
-			slideContainer.style.width = stage.width + "px";
-			slideContainer.style.height = stage.height + "px";
-			slideContainer.style.position = "absolute";
-			container.appendChild(slideContainer);
+			slide.column = column;
+			slide.prepare(slidingContainer);
+			slide.resize(stage);
 			
-			slideAndDiv.div = slideContainer;
-			
-			slideAndDiv.slide.prepare(slideContainer);
-			slideAndDiv.slide.resize(stage);
+			column++;
 		}
-		slides[slideIndex].slide.clickSignaler.bind(gotoNextSlide);
+		slides[slideIndex].clickSignaler.bind(gotoNextSlide);
 	}
 	
 	override function resize(stage:Stage)
@@ -85,25 +87,21 @@ class ContainerSlide extends Slide, implements Infos
 		super.resize(stage);
 		container.setAttribute("style", "top:" + row * stage.height + "px; position:absolute; overflow-x:hidden; height:" + stage.height + "px; width:" + stage.width + "px");
 		
-		visualSlideIndex.target = slideIndex;
+		if (visualSlideIndex.target != slideIndex)
+		{
+			visualSlideIndex.restart();
+			visualSlideIndex.target = slideIndex;
+		}
 		
-		for(slideAndDiv in slides)
-			slideAndDiv.slide.resize(stage);
+		for(slide in slides)
+			slide.resize(stage);
 	}
 	
 	@Message
 	public function tick(tick:Tick)
 	{
-		visualSlideIndex.move();
-		
-		var index = 0;
-		for(slideAndDiv in slides)
-		{
-			slideAndDiv.div.style.left = (index - visualSlideIndex.current) * stage.width + "px";
-			slideAndDiv.div.style.width = stage.width + "px";
-			slideAndDiv.div.style.height = stage.height + "px";
-			index++;
-		}		
+		visualSlideIndex.move(time);
+		slidingContainer.style.left = -Math.round((visualSlideIndex.current) * stage.width) + "px";
 	}
 	
 	override function getMemento()
@@ -127,20 +125,10 @@ class ContainerSlide extends Slide, implements Infos
 	
 	function changeSlide(newIndex:Int)
 	{
-		slides[slideIndex].slide.clickSignaler.unbind(gotoNextSlide);
+		slides[slideIndex].clickSignaler.unbind(gotoNextSlide);
 		slideIndex = newIndex % slides.length;
-		slides[slideIndex].slide.clickSignaler.bind(gotoNextSlide);
+		slides[slideIndex].clickSignaler.bind(gotoNextSlide);
 		
 		resize(stage);
-	}
-}
-
-class SlideAndDiv
-{
-	public var slide:Slide;	
-	public var div:HtmlDom;
-	
-	public function new()
-	{
 	}
 }

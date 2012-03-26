@@ -14,7 +14,7 @@ class CanvasSlide extends Slide
 	{
 		super();
 		
-		color = new Color(0, 0, 0);
+		color = new Color(Math.random(), Math.random(), 0);
 		
 		canvas = new CanvasGraphic();
 		canvas.usePow2Size = false;
@@ -32,8 +32,17 @@ class CanvasSlide extends Slide
 	override function resize(stage:Stage)
 	{
 		super.resize(stage);
+		var styles = [];
+		styles.push("position:" + "absolute");
+		styles.push("top:" + row * stage.height + "px");
+		styles.push("left:" + column * stage.width + "px");
+		styles.push("width:" + stage.width + "px");
+		styles.push("height:" + stage.height + "px");
+		canvas.canvas.setAttribute("style", styles.join(";"));
+		
 		canvas.width = stage.width;
 		canvas.height = stage.height;
+		canvas.clear(color);
 	}	
 	
 	override function removeFrom(root:HtmlDom)

@@ -44,16 +44,17 @@ class Time
 		if (Math.isNaN(frameMs) || !Math.isFinite(frameMs))
 			frameMs = 100;
 
-		timeScale += ((frameMs / 1000 * EXPECTED_FRAMERATE) - timeScale) * 0.1;
+		timeScale += ((frameMs / 1000 * EXPECTED_FRAMERATE) - timeScale) * 1;
 
-		if (timeScale < 0.25)
-			timeScale = 0.25;
+		//if (timeScale < 0.25)
+		//	timeScale = 0.25;
 
-		if (timeScale > 3)
-			timeScale = 3;
+		//if (timeScale > 3)
+		//	timeScale = 3;
 
 		if (Math.isNaN(timeScale) || !Math.isFinite(timeScale))
-			timeScale = 100 / 1000 * 30;
+			timeScale = 1;
+			//timeScale = 100 / 1000 * 30;
 
 		ms += frameMs;
 

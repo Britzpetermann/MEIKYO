@@ -4677,7 +4677,7 @@ Log.fetchInput = function(m0,m1,m2,m3,m4,m5,m6) {
 	if(m6 != null) Log.args.push(m6);
 }
 Log.createMessage = function() {
-	if(Log.posInfo == null) return Log.args.join(" ");
+	return Log.args.join(" ");
 	var from = Log.posInfo.className + "." + Log.posInfo.methodName;
 	return "[" + from + "] " + Log.args.join(" ");
 }

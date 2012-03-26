@@ -9,7 +9,7 @@ import kumite.stage.Stage;
 
 import bpmjs.ImageLoaderTask;
 
-class ImageSlide extends Slide, implements Infos
+class SpriteSlide extends Slide, implements Infos
 {
 	@Inject
 	var stage:Stage;
@@ -19,9 +19,13 @@ class ImageSlide extends Slide, implements Infos
 	
 	var imageTask:ImageLoaderTask;
 	
+	var location:String;
+	
 	public function new(location:String)
 	{
 		super();
+		
+		this.location = location;
 		
 		hitareas = new Array();
 		imageTask = new ImageLoaderTask(location);
@@ -77,15 +81,22 @@ class ImageSlide extends Slide, implements Infos
 	{
 		super.resize(stage);
 		
-		container.style.left = column * stage.width + "px";
-		container.style.top = row * stage.height + "px";
-		container.style.width = stage.width + "px";
-		container.style.height = stage.height + "px";
-		
 		if (!imageTask.isComplete)
 			return;
-			
+		
 		var transform = getTransform();
+		
+		var styles = [];
+		styles.push("position:" + "absolute");
+		styles.push("top:" + row * stage.height + "px");
+		styles.push("left:" + column * stage.width + "px");
+		styles.push("width:" + stage.width + "px");
+		styles.push("height:" + stage.height + "px");
+		styles.push("background-image: url(" + location + ")");
+		styles.push("background-size: " + Math.round(transform.scale * (imageTask.image.naturalWidth / stage.width) * 100) + "%");
+		styles.push("background-repeat: no-repeat;");
+		styles.push("background-position: " + Math.round(transform.x) + "px " + Math.round(transform.y) + "px");
+		container.setAttribute("style", styles.join(";"));
 		
 		imageTask.image.style.position = "absolute"; 
 		imageTask.image.style.width = imageTask.image.naturalWidth * transform.scale + "px"; 
@@ -96,7 +107,7 @@ class ImageSlide extends Slide, implements Infos
 		for(hitarea in hitareas)
 		{
 			var div = hitarea.div;
-			var left = hitarea.hitarea.x * transform.scale + transform.x;
+			var left = hitarea.hitarea.x * transform.scale + transform.x + column * stage.width;
 			var top = hitarea.hitarea.y * transform.scale + transform.y;
 			var width = hitarea.hitarea.width * transform.scale;
 			var height = hitarea.hitarea.height * transform.scale;
@@ -140,8 +151,8 @@ class ImageSlide extends Slide, implements Infos
 		
 	function handleImageLoaded(_)
 	{
-		var image:HtmlDom = untyped imageTask.image;
-		container.appendChild(image);
+		//var image:HtmlDom = untyped imageTask.image;
+		//container.appendChild(image);
 	}
 	
 	override function removeFrom(root:HtmlDom)

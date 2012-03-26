@@ -12,6 +12,7 @@ class Slide
 	public var clickSignaler:DirectSignaler<Slide>;
 	public var isPrepared:Bool;
 	public var row:Int;
+	public var column:Int;
 	
 	public function new()
 	{

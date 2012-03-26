@@ -36,6 +36,20 @@ a:hover {
     letter-spacing:20px;
 }
 
+.profiler {
+	position:fixed;
+    font-family: "Courier";
+    margin-top: 10px;
+    margin-left: 10px;
+    font-size: 10px;
+    color: #ffffff;
+    opacity:0.8;
+    white-space:pre;
+    width:100px;
+    background-color:#ff0000;
+}
+
+
 .error {
     font-family: "Courier";
     margin-top: 20px;

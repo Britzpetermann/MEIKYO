@@ -2044,10 +2044,8 @@ kumite.time.Time.prototype.tick = function() {
 	if(this.lastTime == -1) this.lastTime = time - 100;
 	this.frameMs = time - this.lastTime;
 	if(Math.isNaN(this.frameMs) || !Math.isFinite(this.frameMs)) this.frameMs = 100;
-	this.timeScale += (this.frameMs / 1000 * 60 - this.timeScale) * 0.1;
-	if(this.timeScale < 0.25) this.timeScale = 0.25;
-	if(this.timeScale > 3) this.timeScale = 3;
-	if(Math.isNaN(this.timeScale) || !Math.isFinite(this.timeScale)) this.timeScale = 100 / 1000 * 30;
+	this.timeScale += this.frameMs / 1000 * 60 - this.timeScale;
+	if(Math.isNaN(this.timeScale) || !Math.isFinite(this.timeScale)) this.timeScale = 1;
 	this.ms += this.frameMs;
 	this.frameRate = 1000 / this.frameMs;
 	this.lastTime = time;

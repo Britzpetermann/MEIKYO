@@ -121,7 +121,7 @@ class Log
 	
 	static function createMessage()
 	{
-		if (posInfo == null)
+//		if (posInfo == null)
 			return args.join(" ");
 			
 		var from = posInfo.className + "." + posInfo.methodName;
