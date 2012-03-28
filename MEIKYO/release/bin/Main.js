@@ -4925,17 +4925,19 @@ js.Boot.__instanceof = function(o,cl) {
 js.Boot.__init = function() {
 	$s.push("js.Boot::__init");
 	var $spos = $s.length;
+	try	{ document;	} catch(e) { document = {};	}
+	try { window; } catch(e) { window = {};	}
 	js.Lib.isIE = typeof document!='undefined' && document.all != null && typeof window!='undefined' && window.opera == null;
 	js.Lib.isOpera = typeof window!='undefined' && window.opera != null;
 	Array.prototype.copy = Array.prototype.slice;
 	Array.prototype.insert = function(i,x) {
-		$s.push("js.Boot::__init@205");
+		$s.push("js.Boot::__init@208");
 		var $spos = $s.length;
 		this.splice(i,0,x);
 		$s.pop();
 	};
 	Array.prototype.remove = Array.prototype.indexOf?function(obj) {
-		$s.push("js.Boot::__init@208");
+		$s.push("js.Boot::__init@211");
 		var $spos = $s.length;
 		var idx = this.indexOf(obj);
 		if(idx == -1) {
@@ -4947,7 +4949,7 @@ js.Boot.__init = function() {
 		return true;
 		$s.pop();
 	}:function(obj) {
-		$s.push("js.Boot::__init@213");
+		$s.push("js.Boot::__init@216");
 		var $spos = $s.length;
 		var i = 0;
 		var l = this.length;
@@ -4964,17 +4966,17 @@ js.Boot.__init = function() {
 		$s.pop();
 	};
 	Array.prototype.iterator = function() {
-		$s.push("js.Boot::__init@225");
+		$s.push("js.Boot::__init@228");
 		var $spos = $s.length;
 		var $tmp = { cur : 0, arr : this, hasNext : function() {
-			$s.push("js.Boot::__init@225@229");
+			$s.push("js.Boot::__init@228@232");
 			var $spos = $s.length;
 			var $tmp = this.cur < this.arr.length;
 			$s.pop();
 			return $tmp;
 			$s.pop();
 		}, next : function() {
-			$s.push("js.Boot::__init@225@232");
+			$s.push("js.Boot::__init@228@235");
 			var $spos = $s.length;
 			var $tmp = this.arr[this.cur++];
 			$s.pop();
@@ -4987,7 +4989,7 @@ js.Boot.__init = function() {
 	};
 	if(String.prototype.cca == null) String.prototype.cca = String.prototype.charCodeAt;
 	String.prototype.charCodeAt = function(i) {
-		$s.push("js.Boot::__init@239");
+		$s.push("js.Boot::__init@242");
 		var $spos = $s.length;
 		var x = this.cca(i);
 		if(x != x) {
@@ -5000,7 +5002,7 @@ js.Boot.__init = function() {
 	};
 	var oldsub = String.prototype.substr;
 	String.prototype.substr = function(pos,len) {
-		$s.push("js.Boot::__init@246");
+		$s.push("js.Boot::__init@249");
 		var $spos = $s.length;
 		if(pos != null && pos != 0 && len != null && len < 0) {
 			$s.pop();

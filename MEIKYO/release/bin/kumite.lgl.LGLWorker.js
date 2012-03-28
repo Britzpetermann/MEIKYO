@@ -1968,6 +1968,8 @@ js.Boot.__instanceof = function(o,cl) {
 	}
 }
 js.Boot.__init = function() {
+	try	{ document;	} catch(e) { document = {};	}
+	try { window; } catch(e) { window = {};	}
 	js.Lib.isIE = typeof document!='undefined' && document.all != null && typeof window!='undefined' && window.opera == null;
 	js.Lib.isOpera = typeof window!='undefined' && window.opera != null;
 	Array.prototype.copy = Array.prototype.slice;
