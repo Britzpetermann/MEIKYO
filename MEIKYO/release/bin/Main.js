@@ -7435,7 +7435,7 @@ Main.__name__ = ["Main"];
 Main.globalErrorHandler = function(msg,stack) {
 	$s.push("Main::globalErrorHandler");
 	var $spos = $s.length;
-	haxe.Log.trace("Uncaugt error?: " + msg,{ fileName : "Main.hx", lineNumber : 5, className : "Main", methodName : "globalErrorHandler"});
+	haxe.Log.trace("Uncaugt error: " + msg,{ fileName : "Main.hx", lineNumber : 5, className : "Main", methodName : "globalErrorHandler"});
 	var _g = 0;
 	while(_g < stack.length) {
 		var line = stack[_g];
