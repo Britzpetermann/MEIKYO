@@ -79,7 +79,6 @@ class ContainerSlide extends Slide, implements Infos
 			
 			column++;
 		}
-		slides[slideIndex].clickSignaler.bind(gotoNextSlide);
 	}
 	
 	override function resize(stage:Stage)
@@ -117,23 +116,28 @@ class ContainerSlide extends Slide, implements Infos
 	
 	function gotoNextSlide(_)
 	{
-		if (slideIndex + 1 > = slides.length)
-		{
-			changeSlide(0);
-			slidesFinished.dispatch(this);
-		}
-		else
-		{
-			changeSlide(slideIndex + 1);
-		}
+		goNext();
 	}
 	
 	function changeSlide(newIndex:Int)
 	{
-		slides[slideIndex].clickSignaler.unbind(gotoNextSlide);
 		slideIndex = newIndex % slides.length;
-		slides[slideIndex].clickSignaler.bind(gotoNextSlide);
-		
 		resize(stage);
+	}
+	
+	override function goNext()
+	{
+		if (slideIndex + 1 > = slides.length)
+			slidesFinishedNext.dispatch(this);
+		else
+			changeSlide(slideIndex + 1);
+	}
+	
+	override function goPrev()
+	{
+		if (slideIndex - 1 < 0)
+			slidesFinishedPrev.dispatch(this);
+		else
+			changeSlide(slideIndex - 1);
 	}
 }

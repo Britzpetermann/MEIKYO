@@ -31,26 +31,72 @@ class SlideNavigator implements Infos
 	var lastScrollTop:Int;
 	var lastScrollTopEqualTime:Float;
 	
+	var leftNav:HtmlDom;
+	var leftNavMotion:Motion;
+	var rightNav:HtmlDom;
+	var rightNavMotion:Motion;
+	
+	var mouseX:Int;
+	var mouseY:Int;
+	
 	public function new()
 	{
 		lastScrollTopEqualTime = -1;
 		autoScroll = false;
+		
+		leftNavMotion = new Motion();
+		leftNavMotion.style = new MotionStyleEaseInOut().setSmoothing(0.2);
+		rightNavMotion = new Motion();
+		rightNavMotion.style = new MotionStyleEaseInOut().setSmoothing(0.2);
 	}
 	
 	@Sequence("boot", "start")
 	function start()
 	{
 		root = Lib.document.getElementById("root");
+		root.onmousemove = onMouseMove;
+		root.onkeydown = onKeyDown;
 		lastScrollTop = root.scrollTop;
+		
 		
 		var row = 0;
 		for(slide in presentation.slides)
 		{
-			slide.slidesFinished.bind(slideRowFinished);
+			slide.slidesFinishedNext.bind(slideRowFinishedNext);
+			slide.slidesFinishedPrev.bind(slideRowFinishedPrev);
 			slide.row = row; 
 			slide.prepare(root);
 			row++;
 		}
+		
+		leftNav = Lib.document.createElement("div");
+		root.appendChild(leftNav);
+		
+		var styles = [];
+		styles.push("position:" + "fixed");
+		styles.push("top:" + 0 + "px");
+		styles.push("left:" + 0 + "px");
+		styles.push("width:" + 160 + "px");
+		styles.push("height:" + 460 + "px");
+		styles.push("background-image: url(" + "data/presentation/Back.png" + ")");
+		styles.push("background-repeat: no-repeat;");
+		leftNav.setAttribute("style", styles.join(";"));
+		
+		leftNav.onclick = handleLeftClick;
+		
+		rightNav = Lib.document.createElement("div");
+		root.appendChild(rightNav);
+		
+		var styles = [];
+		styles.push("position:" + "fixed");
+		styles.push("top:" + 0 + "px");
+		styles.push("left:" + 0 + "px");
+		styles.push("width:" + 160 + "px");
+		styles.push("height:" + 460 + "px");
+		styles.push("background-image: url(" + "data/presentation/Next.png" + ")");
+		styles.push("background-repeat: no-repeat;");
+		rightNav.setAttribute("style", styles.join(";"));
+		rightNav.onclick = handleRightClick;
 		
 		resize();
 	}
@@ -72,6 +118,16 @@ class SlideNavigator implements Infos
 	@Message
 	function handleTick(tick:Tick)
 	{
+		leftNavMotion.target = mouseX < 150 && mouseX > 1 ? 1 : 0;
+		leftNavMotion.move(time);
+		rightNavMotion.target = mouseX > stage.width - 150 ? 1 : 0;
+		rightNavMotion.move(time);
+		
+		untyped leftNav.style.opacity = leftNavMotion.current;
+		leftNav.style.left = -leftNavMotion.current * 20 + 30 + "px";
+		untyped rightNav.style.opacity = rightNavMotion.current;
+		rightNav.style.left = (stage.width - 160 + rightNavMotion.current * 20 - 30) + "px";
+		
 		var memento = getMemento();
 		var newHash = haxe.Serializer.run(memento);
 		
@@ -133,6 +189,9 @@ class SlideNavigator implements Infos
 		
 		for(slide in presentation.slides)
 			slide.resize(stage);
+			
+		leftNav.style.top = (stage.height - 450) / 2 + "px";
+		rightNav.style.top = (stage.height - 450) / 2 + "px";
 	}
 	
 	function getMemento()
@@ -163,9 +222,49 @@ class SlideNavigator implements Infos
 		root.scrollTop = presentation.currentSlideIndex * stage.height;
 	}
 	
-	function slideRowFinished(_)
+	function slideRowFinishedNext(_)
 	{
-		presentation.currentSlideIndex++;
-		targetPosition = (presentation.currentSlideIndex) * stage.height;
+		if (presentation.currentSlideIndex < presentation.slides.length - 1)
+		{
+			presentation.currentSlideIndex++;
+			targetPosition = (presentation.currentSlideIndex) * stage.height;
+		}
+	}
+	
+	function slideRowFinishedPrev(_)
+	{
+		if (presentation.currentSlideIndex > 0)
+		{
+			presentation.currentSlideIndex--;
+			targetPosition = (presentation.currentSlideIndex) * stage.height;
+		}
+	}
+	
+	function onMouseMove(e:Dynamic)
+	{
+		mouseX = untyped (e.pageX);
+		mouseY = untyped (e.pageY);
+	}
+	
+	function onKeyDown(e:Dynamic)
+	{
+		if (e.keyIdentifier == "Left")
+		{
+			presentation.goPrev();	
+		}
+		else if (e.keyIdentifier == "Right")
+		{
+			presentation.goNext();
+		}
+	}
+	
+	function handleLeftClick(_)
+	{
+		presentation.goPrev();
+	}
+	
+	function handleRightClick(_)
+	{
+		presentation.goNext();
 	}
 }

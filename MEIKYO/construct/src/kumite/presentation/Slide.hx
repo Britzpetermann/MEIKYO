@@ -10,8 +10,8 @@ import kumite.stage.Stage;
 
 class Slide
 {
-	public var slidesFinished:Signaler<Slide>;
-	public var clickSignaler:DirectSignaler<Slide>;
+	public var slidesFinishedNext:Signaler<Slide>;
+	public var slidesFinishedPrev:Signaler<Slide>;
 	public var isPrepared:Bool;
 	public var row:Int;
 	public var column:Int;
@@ -19,8 +19,8 @@ class Slide
 	public function new()
 	{
 		isPrepared = false;
-		clickSignaler = new DirectSignaler(this);
-		slidesFinished = new DirectSignaler(this);
+		slidesFinishedNext = new DirectSignaler(this);
+		slidesFinishedPrev = new DirectSignaler(this);
 	}
 	
 	public function prepare(root:HtmlDom)
@@ -38,6 +38,14 @@ class Slide
 		isPrepared = false;
 	}
 	
+	public function goNext()
+	{
+	}
+	
+	public function goPrev()
+	{
+	}
+		
 	public function getMemento()
 	{
 		return null;

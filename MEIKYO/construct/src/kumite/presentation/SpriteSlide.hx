@@ -60,10 +60,6 @@ class SpriteSlide extends Slide, implements Infos
 		super.prepare(root);
 		
 		container.setAttribute("style", "overflow:hidden; position:absolute");
-		container.onclick = function(_)
-		{
-			clickSignaler.dispatch(this);
-		}
 		root.appendChild(container);
 		
 		for(hitarea in hitareas)

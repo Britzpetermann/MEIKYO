@@ -22,6 +22,16 @@ class Presentation implements Infos
 			ContextBuilder.configure(slide);
 	}
 	
+	public function goNext()
+	{
+		slides[currentSlideIndex].goNext();
+	}
+	
+	public function goPrev()
+	{
+		slides[currentSlideIndex].goPrev();
+	}
+	
 	public function getMemento()
 	{
 		var memento = {i:currentSlideIndex, a:[]};
