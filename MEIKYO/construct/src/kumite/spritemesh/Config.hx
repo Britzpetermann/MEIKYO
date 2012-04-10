@@ -36,8 +36,6 @@ class Config implements Infos
 	public var scene1 : DefaultScene;
 	public var scene2 : DefaultScene;
 	public var scene3 : DefaultScene;
-	public var scene4 : DefaultScene;
-	public var scene5 : DefaultScene;
 	
 	public var framebufferEnableLayer1 : FramebufferEnableLayer;
 	public var framebufferDisableLayer1 : FramebufferDisableLayer;
@@ -74,8 +72,6 @@ class Config implements Infos
 		scene1 = new DefaultScene("S 1");
 		scene2 = new DefaultScene("S 2");
 		scene3 = new DefaultScene("S 3");
-		scene4 = new DefaultScene("S 3 CROSS");
-		scene5 = new DefaultScene("S 3 RG");
 		
 		framebufferEnableLayer1 = new FramebufferEnableLayer(2048, 1024);
 		framebufferDisableLayer1 = new FramebufferDisableLayer();
@@ -110,32 +106,8 @@ class Config implements Infos
 		
 		scene3.addLayerLifecycle(clearLayer, kumite.layer.LayerId.CLEAR);
 		scene3.addLayerLifecycle(colorLayer);
-		scene3.addLayerLifecycle(framebufferEnableLayer1);
-		scene3.addLayerLifecycle(clearLayer1);
 		scene3.addLayerLifecycle(layer3);
-		scene3.addLayerLifecycle(framebufferDisableLayer1);
-		scene3.addLayerLifecycle(textureLayer1);
 		scene3.addLayerLifecycle(displayListLayer);
-		
-		scene4.addLayerLifecycle(clearLayer, kumite.layer.LayerId.CLEAR);
-		scene4.addLayerLifecycle(colorLayer);
-		scene4.addLayerLifecycle(framebufferEnableLayer1);
-		scene4.addLayerLifecycle(clearLayer1);
-		scene4.addLayerLifecycle(layer3);
-		scene4.addLayerLifecycle(crosshatchFilter);
-		scene4.addLayerLifecycle(framebufferDisableLayer1);
-		scene4.addLayerLifecycle(textureLayer1);
-		scene4.addLayerLifecycle(displayListLayer);
-		
-		scene5.addLayerLifecycle(clearLayer, kumite.layer.LayerId.CLEAR);
-		scene5.addLayerLifecycle(colorLayer);
-		scene5.addLayerLifecycle(framebufferEnableLayer1);
-		scene5.addLayerLifecycle(clearLayer1);
-		scene5.addLayerLifecycle(layer3);
-		scene5.addLayerLifecycle(postproFilter);
-		scene5.addLayerLifecycle(framebufferDisableLayer1);
-		scene5.addLayerLifecycle(textureLayer1);
-		scene5.addLayerLifecycle(displayListLayer);
 	}
 	
 	@Sequence("boot", "startPrepare")

@@ -61,7 +61,7 @@ class JuliaEffect implements LayerLifecycle, implements Infos
 		vertexPositionAttribute.vertexAttribPointer();
 
 		amountUniform.setFloat(amount);
-		timeUniform.setFloat(time.ms / 10000);
+		timeUniform.setFloat(time.ms / 1000);
 		resolutionUniform.setVec2(new Vec2(renderContext.width, renderContext.height));
 		
 		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);

@@ -15,7 +15,7 @@ import haxe.rtti.Infos;
 
 class SpriteMeshLayer implements LayerLifecycle, implements Infos
 {
-	public static var max : Int = 20000;
+	public static var max : Int = 15000;
 	
 	@Inject
 	public var time : Time;

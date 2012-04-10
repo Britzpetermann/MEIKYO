@@ -13,7 +13,7 @@ class Config implements Infos
 	{
 		blobs = new Blobs();
 		//blobReaderHTTP = new BlobReaderHTTP();
-		blobReaderWS = new BlobReaderWS("ws://192.168.2.201:4446");
-		//blobReaderMouse = new BlobReaderMouse();
+		//blobReaderWS = new BlobReaderWS("ws://192.168.2.201:4446");
+		blobReaderMouse = new BlobReaderMouse();
 	}
 }

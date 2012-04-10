@@ -64,34 +64,21 @@ class Config implements Infos
 	public var framebuffer3DisableLayer : FramebufferDisableLayer;
 	public var framebuffer3RenderLayer : TextureLayer;
 	
-	public var testFilter : TestFilter;
 	public var postproFilter : PostproFilter;
 	public var postpro2Filter : PostproFilter;
-	public var crosshatchFilter : CrosshatchFilter;
 	public var plasmaEffect : PlasmaEffect;
 	public var juliaEffect : JuliaEffect;
-	public var metaTunnelEffect : MetaTunnelEffect;
 	public var nautilusEffect : NautilusEffect;
 	public var kinderpainterEffect : KinderpainterEffect;
 	public var roadOfRibbonEffect : RoadOfRibbonEffect;
-	public var roadOfRibbon2Effect : RoadOfRibbon2Effect;
 	public var e704Effect : E704Effect;
-	public var rippleFilter : RippleFilter;
-	public var radialBlurFilter : RadialBlurFilter;
 	
-	public var scene13 : DefaultScene;
-	public var scene12 : DefaultScene;
-	public var scene11 : DefaultScene;
 	public var scene10 : DefaultScene;
 	public var scene9 : DefaultScene;
 	public var scene8 : DefaultScene;
 	public var scene7 : DefaultScene;
-	public var scene6 : DefaultScene;
 	public var scene5 : DefaultScene;
 	public var scene4 : DefaultScene;
-	public var scene3 : DefaultScene;
-	public var scene2 : DefaultScene;
-	public var scene1 : DefaultScene;
 	
 	public function new()
 	{
@@ -129,46 +116,25 @@ class Config implements Infos
 		framebuffer3RenderLayer.scale = 1.0;
 		framebuffer3RenderLayer.textureConfig = framebuffer3EnableLayer.textureConfig;
 				
-		testFilter = new TestFilter();
-		testFilter.textureConfig = framebufferEnableLayer.textureConfig;
-				
 		postproFilter = new PostproFilter();
 		postproFilter.textureConfig = framebufferEnableLayer.textureConfig;
 		
 		postpro2Filter = new PostproFilter();
 		postpro2Filter.textureConfig = framebuffer3EnableLayer.textureConfig;
 		
-		crosshatchFilter = new CrosshatchFilter();
-		crosshatchFilter.textureConfig = framebufferEnableLayer.textureConfig;
-		
 		plasmaEffect = new PlasmaEffect();
 		juliaEffect = new JuliaEffect();
-		metaTunnelEffect = new MetaTunnelEffect();
 		nautilusEffect = new NautilusEffect();
 		kinderpainterEffect = new KinderpainterEffect();
 		roadOfRibbonEffect = new RoadOfRibbonEffect();
-		roadOfRibbon2Effect = new RoadOfRibbon2Effect();
 		e704Effect = new E704Effect();
 		
-		rippleFilter = new RippleFilter();
-		rippleFilter.textureConfig = framebufferEnableLayer.textureConfig;
-		
-		radialBlurFilter = new RadialBlurFilter();
-		radialBlurFilter.textureConfig = framebuffer2EnableLayer.textureConfig;
-		
-		scene1 = new DefaultScene("TEST EFFECT");
-		scene2 = new DefaultScene("POSTPRO");
-		scene3 = new DefaultScene("CROSSHATCH");
 		scene4 = new DefaultScene("PLASMA");
 		scene5 = new DefaultScene("JULIA");
-		scene6 = new DefaultScene("METATUNNEL");
 		scene7 = new DefaultScene("NAUTILUS");
 		scene8 = new DefaultScene("KINDERPAINTER");
 		scene9 = new DefaultScene("ROAD OF RIBBON");
 		scene10 = new DefaultScene("704");
-		scene11 = new DefaultScene("ROAD OF RIBBON 2");
-		scene12 = new DefaultScene("RIPPLE");
-		scene13 = new DefaultScene("RIPPLE BLUR");
 	}
 	
 	@Sequence("boot", "startPrepare")
@@ -186,19 +152,12 @@ class Config implements Infos
 	@Complete
 	public function complete()
 	{
-		addFilter(scene1, testFilter, image1Layer);
-		addFilter(scene2, postproFilter, image1Layer);
-		addFilter(scene3, crosshatchFilter, image2Layer);
 		addEffect(scene4, plasmaEffect);
 		addEffect(scene5, juliaEffect);
-		addEffect(scene6, metaTunnelEffect);
 		addEffect(scene7, nautilusEffect);
 		addEffect(scene8, kinderpainterEffect);
 		addEffect(scene9, roadOfRibbonEffect);
 		addEffect(scene10, e704Effect);
-		addEffect(scene11, roadOfRibbon2Effect);
-		addFilter2(scene12, rippleFilter, image3Layer);
-		addFilter3(scene13, rippleFilter, radialBlurFilter, image3Layer);
 	}
 	
 	function addFilter(scene : DefaultScene, layer : LayerLifecycle, textureLayer : LayerLifecycle)

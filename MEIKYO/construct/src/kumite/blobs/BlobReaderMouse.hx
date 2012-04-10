@@ -31,9 +31,9 @@ class BlobReaderMouse implements Infos
 		blobs.blobs = new Array();
 		
 		var blob = new Blob();
+		blob.blobId = 1;
 		blob.x = mouse.x;
-		blob.y = 0;
-		//blob.z = 1500 + Math.abs(Math.sin(time.ms / 2000) * 1500);
+		blob.y = mouse.y;
 		blob.z = 2500;
 		blob.speed = 0.4;
 		blob.area = 0.3;		

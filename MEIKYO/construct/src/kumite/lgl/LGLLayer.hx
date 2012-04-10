@@ -63,8 +63,6 @@ class LGLLayer implements LayerLifecycle, implements Infos
 	var worldViewMatrixUniform : GLUniformLocation;
 	var alphaUniform : GLUniformLocation;
 	
-	var label : GLLabel;
-
 	public function new()
 	{
 		viewMatrix = new Matrix4();
@@ -92,14 +90,6 @@ class LGLLayer implements LayerLifecycle, implements Infos
 		vertexBuffer = new Float32Array(lgl.edges.length * 6);
 		targetBuffer = new Float32Array(lgl.edges.length * 6);
 		vertexPositionAttribute.updateBuffer(vertexBuffer);
-		
-		label = new GLLabel();
-		label.x = 100;
-		label.y = 200;
-		label.width = 100;
-		label.height = 20;
-		label.text = "Huhu!";
-		GLDisplayList.getDefault().stage.addChild(label);
 	}
 
 	public function updateModel(targetBuffer:Float32Array)
