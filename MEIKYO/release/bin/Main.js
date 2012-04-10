@@ -316,6 +316,7 @@ kumite.presentation.SlideNavigator.prototype.start = function() {
 	while(_g < _g1.length) {
 		var slide = _g1[_g];
 		++_g;
+		slide.slidesFinished.bind($closure(this,"slideRowFinished"));
 		slide.row = row;
 		slide.prepare(this.root);
 		row++;
@@ -422,6 +423,13 @@ kumite.presentation.SlideNavigator.prototype.targetCurrentSlide = function() {
 	this.scrollTop = this.presentation.currentSlideIndex * this.stage.height;
 	this.lastScrollTop = this.presentation.currentSlideIndex * this.stage.height;
 	this.root.scrollTop = this.presentation.currentSlideIndex * this.stage.height;
+	$s.pop();
+}
+kumite.presentation.SlideNavigator.prototype.slideRowFinished = function(_) {
+	$s.push("kumite.presentation.SlideNavigator::slideRowFinished");
+	var $spos = $s.length;
+	this.presentation.currentSlideIndex++;
+	this.targetPosition = this.presentation.currentSlideIndex * this.stage.height;
 	$s.pop();
 }
 kumite.presentation.SlideNavigator.prototype.__class__ = kumite.presentation.SlideNavigator;
@@ -4428,9 +4436,11 @@ kumite.presentation.Slide = function(p) {
 	var $spos = $s.length;
 	this.isPrepared = false;
 	this.clickSignaler = new hsl.haxe.DirectSignaler(this);
+	this.slidesFinished = new hsl.haxe.DirectSignaler(this);
 	$s.pop();
 }
 kumite.presentation.Slide.__name__ = ["kumite","presentation","Slide"];
+kumite.presentation.Slide.prototype.slidesFinished = null;
 kumite.presentation.Slide.prototype.clickSignaler = null;
 kumite.presentation.Slide.prototype.isPrepared = null;
 kumite.presentation.Slide.prototype.row = null;
@@ -4643,16 +4653,12 @@ Motion = function(current,target,velocity) {
 	this.target = target;
 	this.velocity = velocity;
 	this.style = new MotionStyleLinear().setAcceleration(1);
-	this.restart();
 	$s.pop();
 }
 Motion.__name__ = ["Motion"];
 Motion.prototype.current = null;
 Motion.prototype.target = null;
 Motion.prototype.velocity = null;
-Motion.prototype.t = null;
-Motion.prototype.c0 = null;
-Motion.prototype.v0 = null;
 Motion.prototype.finished = null;
 Motion.prototype.style = null;
 Motion.prototype.prevFinished = null;
@@ -4678,15 +4684,6 @@ Motion.prototype.move = function(time) {
 	this.current = c0 + (c1 - c0) * part;
 	this.finished = this.prevFinished;
 	this.prevFinished = this.current == this.target && this.velocity == 0;
-	this.t++;
-	$s.pop();
-}
-Motion.prototype.restart = function() {
-	$s.push("Motion::restart");
-	var $spos = $s.length;
-	this.v0 = this.velocity;
-	this.c0 = this.current;
-	this.t = 0;
 	$s.pop();
 }
 Motion.prototype.toString = function() {
@@ -6261,7 +6258,6 @@ kumite.presentation.ContainerSlide = function(p) {
 	$s.push("kumite.presentation.ContainerSlide::new");
 	var $spos = $s.length;
 	kumite.presentation.Slide.call(this);
-	this.slidesFinished = new hsl.haxe.DirectSignaler(this);
 	this.slides = new Array();
 	this.slideIndex = 0;
 	this.color = new Color(Math.random(),Math.random(),Math.random());
@@ -6274,7 +6270,6 @@ kumite.presentation.ContainerSlide = function(p) {
 kumite.presentation.ContainerSlide.__name__ = ["kumite","presentation","ContainerSlide"];
 kumite.presentation.ContainerSlide.__super__ = kumite.presentation.Slide;
 for(var k in kumite.presentation.Slide.prototype ) kumite.presentation.ContainerSlide.prototype[k] = kumite.presentation.Slide.prototype[k];
-kumite.presentation.ContainerSlide.prototype.slidesFinished = null;
 kumite.presentation.ContainerSlide.prototype.stage = null;
 kumite.presentation.ContainerSlide.prototype.time = null;
 kumite.presentation.ContainerSlide.prototype.slides = null;
@@ -6330,10 +6325,7 @@ kumite.presentation.ContainerSlide.prototype.resize = function(stage) {
 	var $spos = $s.length;
 	kumite.presentation.Slide.prototype.resize.call(this,stage);
 	this.container.setAttribute("style","top:" + this.row * stage.height + "px; position:absolute; overflow-x:hidden; height:" + stage.height + "px; width:" + stage.width + "px");
-	if(this.visualSlideIndex.target != this.slideIndex) {
-		this.visualSlideIndex.restart();
-		this.visualSlideIndex.target = this.slideIndex;
-	}
+	if(this.visualSlideIndex.target != this.slideIndex) this.visualSlideIndex.target = this.slideIndex;
 	var _g = 0, _g1 = this.slides;
 	while(_g < _g1.length) {
 		var slide = _g1[_g];
@@ -6369,7 +6361,10 @@ kumite.presentation.ContainerSlide.prototype.setMemento = function(memento) {
 kumite.presentation.ContainerSlide.prototype.gotoNextSlide = function(_) {
 	$s.push("kumite.presentation.ContainerSlide::gotoNextSlide");
 	var $spos = $s.length;
-	if(this.slideIndex + 1 >= this.slides.length) this.slidesFinished.dispatch(this,null,{ fileName : "ContainerSlide.hx", lineNumber : 131, className : "kumite.presentation.ContainerSlide", methodName : "gotoNextSlide"}); else this.changeSlide(this.slideIndex + 1);
+	if(this.slideIndex + 1 >= this.slides.length) {
+		this.changeSlide(0);
+		this.slidesFinished.dispatch(this,null,{ fileName : "ContainerSlide.hx", lineNumber : 123, className : "kumite.presentation.ContainerSlide", methodName : "gotoNextSlide"});
+	} else this.changeSlide(this.slideIndex + 1);
 	$s.pop();
 }
 kumite.presentation.ContainerSlide.prototype.changeSlide = function(newIndex) {
@@ -9425,7 +9420,7 @@ kumite.profiler.ProfilerRenderer.__rtti = "<class path=\"kumite.profiler.Profile
 kumite.stage.StageResizeAction.__meta__ = { fields : { messenger : { Messenger : null}, stage : { Inject : null}, initPrepare : { Sequence : ["boot","initPrepare"]}, startComplete : { Sequence : ["boot","startComplete"]}}};
 kumite.stage.StageResizeAction.__rtti = "<class path=\"kumite.stage.StageResizeAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<startComplete public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<onResize set=\"method\" line=\"39\"><f a=\"?event\">\n\t<t path=\"js.Event\"/>\n\t<e path=\"Void\"/>\n</f></onResize>\n\t<updateSize set=\"method\" line=\"45\"><f a=\"\"><e path=\"Void\"/></f></updateSize>\n\t<sendResizeMessage set=\"method\" line=\"51\"><f a=\"\"><e path=\"Void\"/></f></sendResizeMessage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.presentation.SlideNavigator.__meta__ = { fields : { stage : { Inject : null}, time : { Inject : null}, presentation : { Inject : null}, start : { Sequence : ["boot","start"]}, startComplete : { Sequence : ["boot","start"]}, handleResize : { Message : null}, handleTick : { Message : null}}};
-kumite.presentation.SlideNavigator.__rtti = "<class path=\"kumite.presentation.SlideNavigator\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage><c path=\"kumite.stage.Stage\"/></stage>\n\t<time><c path=\"kumite.time.Time\"/></time>\n\t<presentation><c path=\"kumite.presentation.Presentation\"/></presentation>\n\t<currentHash><c path=\"String\"/></currentHash>\n\t<autoScroll><e path=\"Bool\"/></autoScroll>\n\t<root><t path=\"js.HtmlDom\"/></root>\n\t<speed><c path=\"Float\"/></speed>\n\t<scrollTop><c path=\"Float\"/></scrollTop>\n\t<targetPosition><c path=\"Int\"/></targetPosition>\n\t<lastScrollTop><c path=\"Int\"/></lastScrollTop>\n\t<lastScrollTopEqualTime><c path=\"Float\"/></lastScrollTopEqualTime>\n\t<start set=\"method\" line=\"41\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<startComplete set=\"method\" line=\"59\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<handleResize set=\"method\" line=\"67\"><f a=\"message\">\n\t<c path=\"kumite.stage.StageResizeMessage\"/>\n\t<e path=\"Void\"/>\n</f></handleResize>\n\t<handleTick set=\"method\" line=\"73\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></handleTick>\n\t<resize set=\"method\" line=\"127\"><f a=\"\"><e path=\"Void\"/></f></resize>\n\t<getMemento set=\"method\" line=\"138\"><f a=\"\"><a>\n\t<i><c path=\"Int\"/></i>\n\t<a><c path=\"Array\"><c path=\"Int\"/></c></a>\n</a></f></getMemento>\n\t<setMementoFromUrl set=\"method\" line=\"143\"><f a=\"\"><e path=\"Void\"/></f></setMementoFromUrl>\n\t<targetCurrentSlide set=\"method\" line=\"159\"><f a=\"\"><e path=\"Void\"/></f></targetCurrentSlide>\n\t<new public=\"1\" set=\"method\" line=\"34\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.presentation.SlideNavigator.__rtti = "<class path=\"kumite.presentation.SlideNavigator\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage><c path=\"kumite.stage.Stage\"/></stage>\n\t<time><c path=\"kumite.time.Time\"/></time>\n\t<presentation><c path=\"kumite.presentation.Presentation\"/></presentation>\n\t<currentHash><c path=\"String\"/></currentHash>\n\t<autoScroll><e path=\"Bool\"/></autoScroll>\n\t<root><t path=\"js.HtmlDom\"/></root>\n\t<speed><c path=\"Float\"/></speed>\n\t<scrollTop><c path=\"Float\"/></scrollTop>\n\t<targetPosition><c path=\"Int\"/></targetPosition>\n\t<lastScrollTop><c path=\"Int\"/></lastScrollTop>\n\t<lastScrollTopEqualTime><c path=\"Float\"/></lastScrollTopEqualTime>\n\t<start set=\"method\" line=\"41\"><f a=\"\"><e path=\"Void\"/></f></start>\n\t<startComplete set=\"method\" line=\"59\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<handleResize set=\"method\" line=\"67\"><f a=\"message\">\n\t<c path=\"kumite.stage.StageResizeMessage\"/>\n\t<e path=\"Void\"/>\n</f></handleResize>\n\t<handleTick set=\"method\" line=\"73\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></handleTick>\n\t<resize set=\"method\" line=\"127\"><f a=\"\"><e path=\"Void\"/></f></resize>\n\t<getMemento set=\"method\" line=\"138\"><f a=\"\"><a>\n\t<i><c path=\"Int\"/></i>\n\t<a><c path=\"Array\"><c path=\"Int\"/></c></a>\n</a></f></getMemento>\n\t<setMementoFromUrl set=\"method\" line=\"143\"><f a=\"\"><e path=\"Void\"/></f></setMementoFromUrl>\n\t<targetCurrentSlide set=\"method\" line=\"159\"><f a=\"\"><e path=\"Void\"/></f></targetCurrentSlide>\n\t<slideRowFinished set=\"method\" line=\"166\"><f a=\"_\">\n\t<c path=\"kumite.presentation.Slide\"/>\n\t<e path=\"Void\"/>\n</f></slideRowFinished>\n\t<new public=\"1\" set=\"method\" line=\"34\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs.Sequencer.__meta__ = { fields : { context : { Inject : null}}};
 bpmjs.Sequencer.__rtti = "<class path=\"bpmjs.Sequencer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context public=\"1\"><c path=\"bpmjs.Context\"/></context>\n\t<start public=\"1\" set=\"method\" line=\"14\"><f a=\"name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></start>\n\t<new public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Color.__rtti = "<class path=\"Color\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<r public=\"1\"><c path=\"Float\"/></r>\n\t<g public=\"1\"><c path=\"Float\"/></g>\n\t<b public=\"1\"><c path=\"Float\"/></b>\n\t<a public=\"1\"><c path=\"Float\"/></a>\n\t<fromHex public=\"1\" set=\"method\" line=\"18\"><f a=\"hex\">\n\t<c path=\"Int\"/>\n\t<c path=\"Color\"/>\n</f></fromHex>\n\t<scaleRGB public=\"1\" set=\"method\" line=\"28\"><f a=\"factor\">\n\t<c path=\"Float\"/>\n\t<e path=\"Void\"/>\n</f></scaleRGB>\n\t<mixFrom public=\"1\" set=\"method\" line=\"35\"><f a=\"color1:color2:color1Mix\">\n\t<c path=\"Color\"/>\n\t<c path=\"Color\"/>\n\t<c path=\"Float\"/>\n\t<e path=\"Void\"/>\n</f></mixFrom>\n\t<toContextRGB public=\"1\" set=\"method\" line=\"50\"><f a=\"\"><c path=\"String\"/></f></toContextRGB>\n\t<toContextRGBA public=\"1\" set=\"method\" line=\"55\"><f a=\"\"><c path=\"String\"/></f></toContextRGBA>\n\t<clone public=\"1\" set=\"method\" line=\"60\"><f a=\"\"><c path=\"Color\"/></f></clone>\n\t<toString public=\"1\" set=\"method\" line=\"65\"><f a=\"\"><c path=\"String\"/></f></toString>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"?r:?g:?b:?a\">\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<e path=\"Void\"/>\n</f></new>\n</class>";
@@ -9463,7 +9458,7 @@ kumite.time.Config.__rtti = "<class path=\"kumite.time.Config\" params=\"\">\n\t
 kumite.time.TimeController.__meta__ = { fields : { time : { Inject : null}, messenger : { Messenger : null}, startComplete : { Sequence : ["boot","startComplete"]}}};
 kumite.time.TimeController.__rtti = "<class path=\"kumite.time.TimeController\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<startComplete public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"24\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<new public=\"1\" set=\"method\" line=\"15\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.presentation.ContainerSlide.__meta__ = { fields : { stage : { Inject : null}, time : { Inject : null}, init : { Sequence : ["boot","init"]}, tick : { Message : null}}};
-kumite.presentation.ContainerSlide.__rtti = "<class path=\"kumite.presentation.ContainerSlide\" params=\"\">\n\t<extends path=\"kumite.presentation.Slide\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<slidesFinished public=\"1\"><c path=\"hsl.haxe.Signaler\"><c path=\"kumite.presentation.Slide\"/></c></slidesFinished>\n\t<stage><c path=\"kumite.stage.Stage\"/></stage>\n\t<time><c path=\"kumite.time.Time\"/></time>\n\t<slides><c path=\"Array\"><c path=\"kumite.presentation.Slide\"/></c></slides>\n\t<color><c path=\"Color\"/></color>\n\t<canvas><c path=\"CanvasGraphic\"/></canvas>\n\t<slideIndex><c path=\"Int\"/></slideIndex>\n\t<visualSlideIndex><c path=\"Motion\"/></visualSlideIndex>\n\t<container><t path=\"js.HtmlDom\"/></container>\n\t<slidingContainer><t path=\"js.HtmlDom\"/></slidingContainer>\n\t<addSlide public=\"1\" set=\"method\" line=\"56\"><f a=\"slide\">\n\t<c path=\"kumite.presentation.Slide\"/>\n\t<c path=\"kumite.presentation.ContainerSlide\"/>\n</f></addSlide>\n\t<init public=\"1\" set=\"method\" line=\"63\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<prepare public=\"1\" set=\"method\" line=\"69\" override=\"1\"><f a=\"root\">\n\t<t path=\"js.HtmlDom\"/>\n\t<e path=\"Void\"/>\n</f></prepare>\n\t<resize public=\"1\" set=\"method\" line=\"92\" override=\"1\"><f a=\"stage\">\n\t<c path=\"kumite.stage.Stage\"/>\n\t<e path=\"Void\"/>\n</f></resize>\n\t<tick public=\"1\" set=\"method\" line=\"108\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></tick>\n\t<getMemento public=\"1\" set=\"method\" line=\"114\" override=\"1\"><f a=\"\"><c path=\"Int\"/></f></getMemento>\n\t<setMemento public=\"1\" set=\"method\" line=\"119\" override=\"1\"><f a=\"memento\">\n\t<d/>\n\t<e path=\"Void\"/>\n</f></setMemento>\n\t<gotoNextSlide set=\"method\" line=\"128\"><f a=\"_\">\n\t<c path=\"kumite.presentation.Slide\"/>\n\t<e path=\"Void\"/>\n</f></gotoNextSlide>\n\t<changeSlide set=\"method\" line=\"136\"><f a=\"newIndex\">\n\t<c path=\"Int\"/>\n\t<e path=\"Void\"/>\n</f></changeSlide>\n\t<new public=\"1\" set=\"method\" line=\"35\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.presentation.ContainerSlide.__rtti = "<class path=\"kumite.presentation.ContainerSlide\" params=\"\">\n\t<extends path=\"kumite.presentation.Slide\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<stage><c path=\"kumite.stage.Stage\"/></stage>\n\t<time><c path=\"kumite.time.Time\"/></time>\n\t<slides><c path=\"Array\"><c path=\"kumite.presentation.Slide\"/></c></slides>\n\t<color><c path=\"Color\"/></color>\n\t<canvas><c path=\"CanvasGraphic\"/></canvas>\n\t<slideIndex><c path=\"Int\"/></slideIndex>\n\t<visualSlideIndex><c path=\"Motion\"/></visualSlideIndex>\n\t<container><t path=\"js.HtmlDom\"/></container>\n\t<slidingContainer><t path=\"js.HtmlDom\"/></slidingContainer>\n\t<addSlide public=\"1\" set=\"method\" line=\"49\"><f a=\"slide\">\n\t<c path=\"kumite.presentation.Slide\"/>\n\t<c path=\"kumite.presentation.ContainerSlide\"/>\n</f></addSlide>\n\t<init public=\"1\" set=\"method\" line=\"56\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<prepare public=\"1\" set=\"method\" line=\"62\" override=\"1\"><f a=\"root\">\n\t<t path=\"js.HtmlDom\"/>\n\t<e path=\"Void\"/>\n</f></prepare>\n\t<resize public=\"1\" set=\"method\" line=\"85\" override=\"1\"><f a=\"stage\">\n\t<c path=\"kumite.stage.Stage\"/>\n\t<e path=\"Void\"/>\n</f></resize>\n\t<tick public=\"1\" set=\"method\" line=\"98\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></tick>\n\t<getMemento public=\"1\" set=\"method\" line=\"104\" override=\"1\"><f a=\"\"><c path=\"Int\"/></f></getMemento>\n\t<setMemento public=\"1\" set=\"method\" line=\"109\" override=\"1\"><f a=\"memento\">\n\t<d/>\n\t<e path=\"Void\"/>\n</f></setMemento>\n\t<gotoNextSlide set=\"method\" line=\"118\"><f a=\"_\">\n\t<c path=\"kumite.presentation.Slide\"/>\n\t<e path=\"Void\"/>\n</f></gotoNextSlide>\n\t<changeSlide set=\"method\" line=\"131\"><f a=\"newIndex\">\n\t<c path=\"Int\"/>\n\t<e path=\"Void\"/>\n</f></changeSlide>\n\t<new public=\"1\" set=\"method\" line=\"30\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 Log.filters = new Array();
 Log.args = new Array();
 Log.errors = new Array();

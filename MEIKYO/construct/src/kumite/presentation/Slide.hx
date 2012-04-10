@@ -3,12 +3,14 @@ package kumite.presentation;
 import js.Lib;
 import js.Dom;
 
+import hsl.haxe.Signaler;
 import hsl.haxe.DirectSignaler;
 
 import kumite.stage.Stage;
 
 class Slide
 {
+	public var slidesFinished:Signaler<Slide>;
 	public var clickSignaler:DirectSignaler<Slide>;
 	public var isPrepared:Bool;
 	public var row:Int;
@@ -18,6 +20,7 @@ class Slide
 	{
 		isPrepared = false;
 		clickSignaler = new DirectSignaler(this);
+		slidesFinished = new DirectSignaler(this);
 	}
 	
 	public function prepare(root:HtmlDom)

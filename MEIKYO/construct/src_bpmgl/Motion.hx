@@ -6,10 +6,6 @@ class Motion
 	public var target:Float;
 	public var velocity:Float;
 	
-	public var t:Int;
-	public var c0:Float;
-	public var v0:Float;
-	
 	public var finished:Bool;
 	public var style:MotionStyle;
 	
@@ -21,13 +17,10 @@ class Motion
 		this.target = target;
 		this.velocity = velocity;
 		this.style = new MotionStyleLinear().setAcceleration(1);
-		restart();
 	}
 
 	public function move(?time:Time):Void
 	{
-		//style.move(this, time);
-		
 		var currentOriginal = current; 	
 		var velocityOriginal = velocity;
 		
@@ -52,23 +45,6 @@ class Motion
 
 		finished = prevFinished;
 		prevFinished = current == target && velocity == 0;
-
-		/*		
-		var args = new Array<Float>();
-		args.push(t);
-		args.push(current - c0);
-		args.push(v0);
-		args.push(target - c0);
-		Log.info(args.join("\t"));
-		*/
-		t++;
-	}
-	
-	public function restart()
-	{
-		v0 = velocity;
-		c0 = current;
-		t = 0;
 	}
 	
 	public function toString()

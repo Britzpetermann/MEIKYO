@@ -46,7 +46,7 @@ class SlideNavigator implements Infos
 		var row = 0;
 		for(slide in presentation.slides)
 		{
-				
+			slide.slidesFinished.bind(slideRowFinished);
 			slide.row = row; 
 			slide.prepare(root);
 			row++;
@@ -161,5 +161,11 @@ class SlideNavigator implements Infos
 		scrollTop = presentation.currentSlideIndex * stage.height;
 		lastScrollTop = presentation.currentSlideIndex * stage.height; 
 		root.scrollTop = presentation.currentSlideIndex * stage.height;
+	}
+	
+	function slideRowFinished(_)
+	{
+		presentation.currentSlideIndex++;
+		targetPosition = (presentation.currentSlideIndex) * stage.height;
 	}
 }
