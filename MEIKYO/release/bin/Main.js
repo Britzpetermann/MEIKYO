@@ -67,42 +67,6 @@ kumite.launch.PreloadDisplay.prototype.removePreloader = function() {
 }
 kumite.launch.PreloadDisplay.prototype.__class__ = kumite.launch.PreloadDisplay;
 kumite.launch.PreloadDisplay.__interfaces__ = [haxe.rtti.Infos];
-if(!kumite.profiler) kumite.profiler = {}
-kumite.profiler.ProfilerRenderer = function(p) {
-	$s.push("kumite.profiler.ProfilerRenderer::new");
-	var $spos = $s.length;
-	$s.pop();
-}
-kumite.profiler.ProfilerRenderer.__name__ = ["kumite","profiler","ProfilerRenderer"];
-kumite.profiler.ProfilerRenderer.prototype.context = null;
-kumite.profiler.ProfilerRenderer.prototype.time = null;
-kumite.profiler.ProfilerRenderer.prototype.cg = null;
-kumite.profiler.ProfilerRenderer.prototype.root = null;
-kumite.profiler.ProfilerRenderer.prototype.init = function() {
-	$s.push("kumite.profiler.ProfilerRenderer::init");
-	var $spos = $s.length;
-	this.cg = new CanvasGraphic();
-	this.cg.usePow2Size = false;
-	this.cg.setWidth(100);
-	this.cg.setHeight(20);
-	this.cg.canvas.setAttribute("class","profiler");
-	this.root = js.Lib.document.getElementById("root");
-	this.root.appendChild(this.cg.canvas);
-	this.context.contextConfig.frontMessenger.addReceiver(this,"tick",kumite.time.Tick);
-	$s.pop();
-}
-kumite.profiler.ProfilerRenderer.prototype.tick = function(tick) {
-	$s.push("kumite.profiler.ProfilerRenderer::tick");
-	var $spos = $s.length;
-	var text = "FPS:" + Math.round(this.time.frameRate) + " TS:" + Math.round(this.time.timeScale * 100) / 100;
-	this.cg.clear(new Color(0,0.2,0));
-	this.cg.setFillStyle(new Color(1,1,1,0.8));
-	this.cg.setFont("10px Courier");
-	this.cg.fillText(text,10,13,100);
-	$s.pop();
-}
-kumite.profiler.ProfilerRenderer.prototype.__class__ = kumite.profiler.ProfilerRenderer;
-kumite.profiler.ProfilerRenderer.__interfaces__ = [haxe.rtti.Infos];
 if(typeof reflect=='undefined') reflect = {}
 reflect.MetadataAware = function() { }
 reflect.MetadataAware.__name__ = ["reflect","MetadataAware"];
@@ -2876,10 +2840,10 @@ kumite.presentation.PresentationConfig = function(p) {
 	var $spos = $s.length;
 	this.presentation = new kumite.presentation.Presentation();
 	this.presentation.slides.push(new kumite.presentation.ContainerSlide().addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/1.Britzpetermann/1Britzpetermann.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/1.Britzpetermann/2BritzpetermannAlle.gif")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/1.Britzpetermann/5Britzpetermann.jpg")));
-	this.presentation.slides.push(new kumite.presentation.ContainerSlide().addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/2.Schau!/2.1.Schau.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/2.Schau!/2.2.Schau.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/2.Schau!/2.3.Schau.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/2.Schau!/2.4.Schau.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/2.Schau!/2.5.Schau.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/2.Schau!/2.6.Schau.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/2.Schau!/2.7.Schau.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/2.Schau!/2.8.Schau.jpg").addHitArea(450,350,770,190,"http://www.flickr.com/photos/britzpetermann").addHitArea(450,545,770,200,"http://vimeo.com/britzpetermann")));
-	this.presentation.slides.push(new kumite.presentation.ContainerSlide().addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/3.Akemi/3.1.Akemi.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/3.Akemi/3.2.Akemi.jpg").addHitArea(680,655,300,100,"http://static.britzpetermann.com/experiments/akemi/")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/3.Akemi/3.3.AkemiHelsinki.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/3.Akemi/3.4.AkemiHelsinki.jpg")));
-	this.presentation.slides.push(new kumite.presentation.ContainerSlide().addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/4.Karlo/4.1.Karlo.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/4.Karlo/4.2.Karlo.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/4.Karlo/4.3.Karlo.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/4.Karlo/4.4.Karlo.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/4.Karlo/4.5.Karlo.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/4.Karlo/4.6.Karlo.jpg")));
-	this.presentation.slides.push(new kumite.presentation.SpriteSlide("data/presentation/Screens/6.Fin.jpg"));
+	this.presentation.slides.push(new kumite.presentation.ContainerSlide().addSlide(new kumite.presentation.SpriteSlide("data/presentation/IMG_4294.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/dummy.jpg").addHitArea(100,655,300,100,"http://static.britzpetermann.com/presentation/content/preAkemi1/indexgl3.html").addHitArea(300,655,300,100,"http://static.britzpetermann.com/presentation/content/preAkemi2/WobbleBars.html").addHitArea(500,655,300,100,"http://static.britzpetermann.com/presentation/content/preAkemi2/StrangeAttractor.html")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/3.Akemi/3.1.Akemi.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/3.Akemi/3.2.Akemi.jpg").addHitArea(680,655,300,100,"http://static.britzpetermann.com/experiments/akemi/")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/dummy.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/3.Akemi/3.3.AkemiHelsinki.jpg")));
+	this.presentation.slides.push(new kumite.presentation.ContainerSlide().addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/dummy.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/2.Schau!/2.1.Schau.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/2.Schau!/2.2.Schau.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/2.Schau!/2.3.Schau.jpg").addHitArea(1000,500,250,150,"http://player.vimeo.com/video/33186969?autoplay=true")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/2.Schau!/2.4.Schau.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/2.Schau!/2.5.Schau.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/2.Schau!/2.3.Schau.jpg").addHitArea(1000,500,250,150,"http://player.vimeo.com/video/33730560?autoplay=true")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/2.Schau!/2.6.Schau.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/2.Schau!/2.7.Schau.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/2.Schau!/2.3.Schau.jpg").addHitArea(1000,500,250,150,"http://player.vimeo.com/video/34946802?autoplay=true")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/2.Schau!/2.8.Schau.jpg").addHitArea(450,350,770,190,"http://www.flickr.com/photos/britzpetermann/sets/72157628678359221/").addHitArea(450,545,770,200,"http://vimeo.com/britzpetermann")));
+	this.presentation.slides.push(new kumite.presentation.ContainerSlide().addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/dummy.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/dummy.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/dummy.jpg")));
+	this.presentation.slides.push(new kumite.presentation.ContainerSlide().addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/dummy.jpg")).addSlide(new kumite.presentation.SpriteSlide("data/presentation/Screens/6.Fin.jpg")));
 	this.slideNavigator = new kumite.presentation.SlideNavigator();
 	$s.pop();
 }
@@ -7096,17 +7060,6 @@ haxe.Log.clear = function() {
 	$s.pop();
 }
 haxe.Log.prototype.__class__ = haxe.Log;
-kumite.profiler.ProfilerConfig = function(p) {
-	if( p === $_ ) return;
-	$s.push("kumite.profiler.ProfilerConfig::new");
-	var $spos = $s.length;
-	this.profilerRenderer = new kumite.profiler.ProfilerRenderer();
-	$s.pop();
-}
-kumite.profiler.ProfilerConfig.__name__ = ["kumite","profiler","ProfilerConfig"];
-kumite.profiler.ProfilerConfig.prototype.profilerRenderer = null;
-kumite.profiler.ProfilerConfig.prototype.__class__ = kumite.profiler.ProfilerConfig;
-kumite.profiler.ProfilerConfig.__interfaces__ = [haxe.rtti.Infos];
 Math2 = function() { }
 Math2.__name__ = ["Math2"];
 Math2.nextPowerOf2 = function(value) {
@@ -7418,7 +7371,7 @@ Main = function(canvas) {
 	$s.push("Main::new");
 	var $spos = $s.length;
 	try {
-		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.time.Config,kumite.profiler.ProfilerConfig,kumite.presentation.PresentationConfig]);
+		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.stage.Config,kumite.time.Config,kumite.presentation.PresentationConfig]);
 	} catch( e ) {
 		$e = [];
 		while($s.length >= $spos) $e.unshift($s.pop());
@@ -9415,8 +9368,6 @@ if(typeof(haxe_timers) == "undefined") haxe_timers = [];
 }
 kumite.launch.PreloadDisplay.__meta__ = { fields : { complete : { Complete : null}, bootMonitor : { Sequence : ["boot","monitor"]}, bootStartComplete : { Sequence : ["boot","startComplete"]}}};
 kumite.launch.PreloadDisplay.__rtti = "<class path=\"kumite.launch.PreloadDisplay\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<preloaderDiv><t path=\"js.HtmlDom\"/></preloaderDiv>\n\t<complete public=\"1\" set=\"method\" line=\"16\"><f a=\"\"><e path=\"Void\"/></f></complete>\n\t<bootMonitor public=\"1\" set=\"method\" line=\"24\"><f a=\"monitor\">\n\t<c path=\"bpmjs.ProgressMonitor\"/>\n\t<e path=\"Void\"/>\n</f></bootMonitor>\n\t<bootStartComplete public=\"1\" set=\"method\" line=\"46\"><f a=\"\"><e path=\"Void\"/></f></bootStartComplete>\n\t<removePreloader set=\"method\" line=\"56\"><f a=\"\"><e path=\"Void\"/></f></removePreloader>\n\t<new public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.profiler.ProfilerRenderer.__meta__ = { fields : { context : { Inject : null}, time : { Inject : null}, init : { Sequence : ["boot","finish"]}}};
-kumite.profiler.ProfilerRenderer.__rtti = "<class path=\"kumite.profiler.ProfilerRenderer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context><c path=\"bpmjs.Context\"/></context>\n\t<time><c path=\"kumite.time.Time\"/></time>\n\t<cg><c path=\"CanvasGraphic\"/></cg>\n\t<root><t path=\"js.HtmlDom\"/></root>\n\t<init public=\"1\" set=\"method\" line=\"31\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<tick set=\"method\" line=\"44\"><f a=\"tick\">\n\t<c path=\"kumite.time.Tick\"/>\n\t<e path=\"Void\"/>\n</f></tick>\n\t<new public=\"1\" set=\"method\" line=\"25\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.stage.StageResizeAction.__meta__ = { fields : { messenger : { Messenger : null}, stage : { Inject : null}, initPrepare : { Sequence : ["boot","initPrepare"]}, startComplete : { Sequence : ["boot","startComplete"]}}};
 kumite.stage.StageResizeAction.__rtti = "<class path=\"kumite.stage.StageResizeAction\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<messenger public=\"1\"><c path=\"bpmjs.Messenger\"/></messenger>\n\t<stage public=\"1\"><c path=\"kumite.stage.Stage\"/></stage>\n\t<initPrepare public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></initPrepare>\n\t<startComplete public=\"1\" set=\"method\" line=\"27\"><f a=\"\"><e path=\"Void\"/></f></startComplete>\n\t<timerUpdate set=\"method\" line=\"33\"><f a=\"\"><e path=\"Void\"/></f></timerUpdate>\n\t<onResize set=\"method\" line=\"39\"><f a=\"?event\">\n\t<t path=\"js.Event\"/>\n\t<e path=\"Void\"/>\n</f></onResize>\n\t<updateSize set=\"method\" line=\"45\"><f a=\"\"><e path=\"Void\"/></f></updateSize>\n\t<sendResizeMessage set=\"method\" line=\"51\"><f a=\"\"><e path=\"Void\"/></f></sendResizeMessage>\n\t<new public=\"1\" set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.presentation.SlideNavigator.__meta__ = { fields : { stage : { Inject : null}, time : { Inject : null}, presentation : { Inject : null}, start : { Sequence : ["boot","start"]}, startComplete : { Sequence : ["boot","start"]}, handleResize : { Message : null}, handleTick : { Message : null}}};
@@ -9462,7 +9413,6 @@ kumite.presentation.ContainerSlide.__rtti = "<class path=\"kumite.presentation.C
 Log.filters = new Array();
 Log.args = new Array();
 Log.errors = new Array();
-kumite.profiler.ProfilerConfig.__rtti = "<class path=\"kumite.profiler.ProfilerConfig\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<profilerRenderer><c path=\"kumite.profiler.ProfilerRenderer\"/></profilerRenderer>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 haxe.Unserializer.DEFAULT_RESOLVER = Type;
 haxe.Unserializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
 haxe.Unserializer.CODES = null;
