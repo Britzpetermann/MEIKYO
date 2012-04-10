@@ -42,10 +42,11 @@ class SlideNavigator implements Infos
 	{
 		root = Lib.document.getElementById("root");
 		lastScrollTop = root.scrollTop;
-
+		
 		var row = 0;
 		for(slide in presentation.slides)
 		{
+				
 			slide.row = row; 
 			slide.prepare(root);
 			row++;

@@ -2,6 +2,9 @@ package kumite.presentation;
 
 import haxe.rtti.Infos;
 
+import hsl.haxe.Signaler;
+import hsl.haxe.DirectSignaler;
+
 import js.Dom;
 import js.Lib;
 
@@ -13,6 +16,8 @@ import kumite.time.Time;
 
 class ContainerSlide extends Slide, implements Infos
 {
+	public var slidesFinished:Signaler<Slide>;
+	
 	@Inject
 	var stage:Stage;
 	
@@ -30,6 +35,8 @@ class ContainerSlide extends Slide, implements Infos
 	public function new()
 	{
 		super();
+		
+		slidesFinished = new DirectSignaler(this);
 		
 		slides = new Array();
 		slideIndex = 0;
@@ -120,7 +127,10 @@ class ContainerSlide extends Slide, implements Infos
 	
 	function gotoNextSlide(_)
 	{
-		changeSlide(slideIndex + 1);
+		if (slideIndex + 1 > = slides.length)
+			slidesFinished.dispatch(this);
+		else
+			changeSlide(slideIndex + 1);
 	}
 	
 	function changeSlide(newIndex:Int)

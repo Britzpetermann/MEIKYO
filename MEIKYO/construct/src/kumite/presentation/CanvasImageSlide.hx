@@ -38,11 +38,11 @@ class CanvasImageSlide extends CanvasSlide, implements Infos
 		hitarea.width = width;
 		hitarea.height = height;
 		hitarea.location = location;
-		
+
 		var hitareaAndDiv = new HitareaAndDiv();
 		hitareaAndDiv.hitarea = hitarea;
 		hitareas.push(hitareaAndDiv);
-		
+
 		return this;
 	}	
 	

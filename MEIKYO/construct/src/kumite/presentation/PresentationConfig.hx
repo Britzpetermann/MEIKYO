@@ -10,32 +10,31 @@ class PresentationConfig implements Infos
 	public function new()
 	{
 		presentation = new Presentation();
-		/*
-		presentation.slides.push(new ContainerSlide()
-			.addSlide(new CanvasSlide())
-			.addSlide(new CanvasSlide())
-			.addSlide(new CanvasSlide())
-		);
-		presentation.slides.push(new ContainerSlide()
-			.addSlide(new CanvasSlide())
-			.addSlide(new CanvasSlide())
-			.addSlide(new CanvasSlide())
-		);
-		presentation.slides.push(new ContainerSlide()
-			.addSlide(new ImageSlide("data/presentation/Screens/1.Britzpetermann/1Britzpetermann.jpg"))
-			.addSlide(new ImageSlide("data/presentation/Screens/1.Britzpetermann/2Britzpetermann.jpg"))
-		);
-		presentation.slides.push(new ContainerSlide()
-			.addSlide(new CanvasImageSlide("data/presentation/Screens/1.Britzpetermann/1Britzpetermann.jpg"))
-			.addSlide(new CanvasImageSlide("data/presentation/Screens/1.Britzpetermann/2Britzpetermann.jpg"))
-		);
-		 */
+//		presentation.slides.push(new ContainerSlide()
+//			.addSlide(new CanvasSlide())
+//			.addSlide(new CanvasSlide())
+//			.addSlide(new CanvasSlide())
+//		);
+//		presentation.slides.push(new ContainerSlide()
+//			.addSlide(new CanvasSlide())
+//			.addSlide(new CanvasSlide())
+//			.addSlide(new CanvasSlide())
+//		);
+//		presentation.slides.push(new ContainerSlide()
+//			.addSlide(new ImageSlide("data/presentation/Screens/1.Britzpetermann/1Britzpetermann.jpg"))
+//			.addSlide(new ImageSlide("data/presentation/Screens/1.Britzpetermann/2Britzpetermann.jpg"))
+//		);
+//		presentation.slides.push(new ContainerSlide()
+//			.addSlide(new CanvasImageSlide("data/presentation/Screens/1.Britzpetermann/1Britzpetermann.jpg"))
+//			.addSlide(new CanvasImageSlide("data/presentation/Screens/1.Britzpetermann/2Britzpetermann.jpg"))
+//		);
 
 		presentation.slides.push(new ContainerSlide()
 			.addSlide(new SpriteSlide("data/presentation/Screens/1.Britzpetermann/1Britzpetermann.jpg"))
-			.addSlide(new SpriteSlide("data/presentation/Screens/1.Britzpetermann/2Britzpetermann.jpg"))
+			.addSlide(new SpriteSlide("data/presentation/Screens/1.Britzpetermann/2BritzpetermannAlle.gif"))
+			.addSlide(new SpriteSlide("data/presentation/Screens/1.Britzpetermann/5Britzpetermann.jpg"))
 		);
-		/*
+
 		presentation.slides.push(new ContainerSlide()
 			.addSlide(new SpriteSlide("data/presentation/Screens/2.Schau!/2.1.Schau.jpg"))
 			.addSlide(new SpriteSlide("data/presentation/Screens/2.Schau!/2.2.Schau.jpg"))
@@ -67,7 +66,7 @@ class PresentationConfig implements Infos
 			.addSlide(new SpriteSlide("data/presentation/Screens/4.Karlo/4.6.Karlo.jpg"))
 		);
 		presentation.slides.push(new SpriteSlide("data/presentation/Screens/6.Fin.jpg"));
-		 */
+
 		slideNavigator = new SlideNavigator();
 	}
 }
