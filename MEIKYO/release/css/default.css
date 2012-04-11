@@ -3,8 +3,10 @@ body {
 }
 
 a {
+	/*
 	background-color: #ffffff;
-    opacity: 0.1;
+    opacity: 0.2;
+    */
 }
 
 a:hover {

@@ -33,7 +33,7 @@ class PresentationConfig implements Infos
 		);
 		
 		presentation.slides.push(new ContainerSlide()
-			.addSlide(new SpriteSlide("data/presentation/Screens/6.Fin.jpg"))
+			.addSlide(new SpriteSlide("data/presentation/Screens/2.Schau!/1.Schau.jpg"))
 		);
 		
 		presentation.slides.push(new ContainerSlide()
@@ -69,7 +69,11 @@ class PresentationConfig implements Infos
 		);
 		
 		presentation.slides.push(new ContainerSlide()
-			.addSlide(new SpriteSlide("data/presentation/Screens/6.Fin.jpg"))
+			.addSlide(new SpriteSlide("data/presentation/Screens/6.Fin.png")
+				.addHitArea(400, 400, 900, 90, "http://britzpetermann.com/")
+				.addHitArea(400, 500, 900, 90, "https://github.com/Britzpetermann")
+				.addHitArea(400, 600, 900, 90, "http://britzpetermann.com/talk")
+			)
 		);
 
 		slideNavigator = new SlideNavigator();
