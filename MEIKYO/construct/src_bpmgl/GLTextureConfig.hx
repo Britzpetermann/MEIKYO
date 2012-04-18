@@ -1,3 +1,5 @@
+import UserAgentContext;
+
 class GLTextureConfig
 {
 	public static function CROP(width : Int, height : Int) : TextureManipulation
@@ -43,7 +45,7 @@ class GLTextureConfig
 
 private class TextureManipulation
 {
-	public function create(image : Image) : Canvas
+	public function create(image : HTMLImageElement) : HTMLCanvasElement
 	{
 		return null;	
 	}
@@ -60,7 +62,7 @@ private class CropManipulation extends TextureManipulation
 		this.height = height;
 	}
 	
-	override function create(image)
+	override function create(image:HTMLImageElement):HTMLCanvasElement
 	{
 		var canvasGraphic = new CanvasGraphic();
 		canvasGraphic.width = width;

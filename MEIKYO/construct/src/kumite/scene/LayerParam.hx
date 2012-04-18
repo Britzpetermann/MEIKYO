@@ -11,7 +11,7 @@ class LayerParam
 	
 	public function new()
 	{
-		name = "Otto";
+		name = "";
 	}
 	
 	public function getName()
@@ -21,6 +21,6 @@ class LayerParam
 	
 	public function getBinding()
 	{
-		return new Binding(object, property);
+		return new Binding(object, name);
 	}
 }

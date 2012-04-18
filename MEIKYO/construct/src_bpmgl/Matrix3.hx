@@ -1,3 +1,5 @@
+import UserAgentContext;
+
 class Matrix3
 {
 	public var buffer : Float32Array;

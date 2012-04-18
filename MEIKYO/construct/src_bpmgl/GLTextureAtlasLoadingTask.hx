@@ -1,3 +1,5 @@
+import UserAgentContext;
+
 import bpmjs.Task;
 import bpmjs.TaskGroup;
 import bpmjs.ObjectProxyTask;
@@ -76,7 +78,7 @@ class GLTextureAtlasLoadingTask extends bpmjs.Task<GLTextureAtlasLoadingTask>
 		graphics.drawImage(image, currentOffsetX, currentOffsetY, image.naturalWidth, image.naturalHeight);
 	}
 	
-	function advancePosition(image : Image)
+	function advancePosition(image : HTMLImageElement)
 	{
 		currentOffsetX = nextOffsetX;
 		currentOffsetY = nextOffsetY;

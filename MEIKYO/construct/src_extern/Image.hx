@@ -1,3 +1,5 @@
+import js.Dom;
+
 extern class Image implements ImageData
 {
 	var onload : Void->Void;
@@ -8,6 +10,10 @@ extern class Image implements ImageData
 
 	var naturalWidth : Int;
 	var naturalHeight : Int;
+
+	var data:Uint8Array;
+	
+	var style:Style;	
 
 	function new() : Void;
 }

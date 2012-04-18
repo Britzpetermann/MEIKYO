@@ -294,6 +294,7 @@ class TransitionState extends State
 		if (transitionContext.transition >= 1)
 		{
 			transitionContext.transition = 1;
+			navigator.messenger.send(new SceneExit(navigator.lastScene, navigator.currentScene));
 			navigator.setState(navigator.idleState);
 		}
 			

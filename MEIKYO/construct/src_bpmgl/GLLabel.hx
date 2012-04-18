@@ -1,3 +1,5 @@
+import UserAgentContext;
+
 class GLLabel extends GLInteractiveObject
 {
 	public var text(default, setText) : String;
@@ -28,9 +30,9 @@ class GLLabel extends GLInteractiveObject
 		graphic.fillStyle = new Color(1, 1, 1, 0.8);
 		graphic.font = textMetrics.font;
 		if (center)
-		graphic.fillText(textMetrics.text, (width - textMetrics.width) / 2, 14);
+			graphic.fillText(textMetrics.text, (width - textMetrics.width) / 2, 14);
 		else
-		graphic.fillText(textMetrics.text, 0, 14);
+			graphic.fillText(textMetrics.text, 5, 14);
 	}
 	
 	function setText(text : String) : String

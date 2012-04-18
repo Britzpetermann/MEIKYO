@@ -1,9 +1,11 @@
 import js.Lib;
 
+import UserAgentContext;
+
 class GLDisplayListRenderer
 {
 	var shaderProgram : WebGLProgram;
-	var vertexPositionAttribute : Float;
+	var vertexPositionAttribute : GLuint;
 	var vertexBuffer : WebGLBuffer;
 
 	var textureUniform : GLUniformLocation;
@@ -50,7 +52,7 @@ class GLDisplayListRenderer
 
 		GL.useProgram(shaderProgram);
 		
-		gl.viewport(0, 0, width, height);
+		gl.viewport(0, 0, cast width, cast height);
 
 		gl.disable(gl.DEPTH_TEST);
 		gl.enable(gl.BLEND);
@@ -77,11 +79,13 @@ class GLDisplayListRenderer
 	{
 		for (displayObject in displayObjectContainer.children)
 		{
+			if (!displayObject.visible)
+				continue;
+				
 			var matrix = renderDisplayObject(displayObject, parentMatrix, alpha);
 			if (Std.is(displayObject, GLDisplayObjectContainer))
 			{
-				alpha *= displayObject.alpha;
-				renderRecursive(cast displayObject, matrix, alpha);
+				renderRecursive(cast displayObject, matrix, alpha * displayObject.alpha);
 			}
 		}
 	}
@@ -117,7 +121,7 @@ class GLDisplayListRenderer
 		if (displayObject.graphicIsInvalid)
 		{
 			displayObject.validateGraphics();
-			gl.texImage2DCanvas(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, displayObject.graphic.canvas);
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, displayObject.graphic.canvas);
 		}
 
 		gl.uniformMatrix4fv(objectMatrixUniform.location, false, result.buffer);

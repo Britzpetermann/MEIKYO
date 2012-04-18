@@ -1,11 +1,11 @@
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
+import UserAgentContext;
+
 class GLMouseRegistry
 {
-
 	static var instance : GLMouseRegistry;
-
 	public static function getInstance()
 	{
 		if (instance == null)
@@ -18,17 +18,18 @@ class GLMouseRegistry
 	public var mouseUpSignaler(default, null):Signaler<Vec2>;
 	public var mouseMoveSignaler(default, null):Signaler<Vec2>;
 
-	var canvas : Canvas;
+	var canvas : HTMLCanvasElement;
 
-	function new() {}
-
-	public function init(canvas : Canvas)
+	function new()
 	{
-		this.canvas = canvas;
-
 		mouseDownSignaler = new DirectSignaler(this);
 		mouseUpSignaler = new DirectSignaler(this);
 		mouseMoveSignaler = new DirectSignaler(this);
+	}
+
+	public function init(canvas : HTMLCanvasElement)
+	{
+		this.canvas = canvas;
 
 		canvas.onmouseup = onMouseUp;
 		canvas.onmousedown = onMouseDown;

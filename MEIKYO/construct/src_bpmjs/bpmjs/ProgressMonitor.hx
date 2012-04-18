@@ -11,10 +11,15 @@ class ProgressMonitor
 	
 	public function new()
 	{
+		name = "";
+		reset();
+	}
+	
+	public function reset()
+	{
 		children = new Array();
 		current = 0;
 		weight = 1;
-		name = "";
 	}
 	
 	public function append(monitor : ProgressMonitor, total)
@@ -26,6 +31,11 @@ class ProgressMonitor
 		children.push(monitorAndTotal);
 		
 		return monitor;
+	}
+	
+	public function done()
+	{
+		current = 1;
 	}
 	
 	function getCurrent()
@@ -48,12 +58,6 @@ class ProgressMonitor
 				childCurrent += Map.linear(child.monitor.current, 0, 1, 0, child.monitor.weight / totalWeight);
 			}
 			return childCurrent;
-			
-			//0.5 bei 2 > 1
-			//0.25 bei 4 > 1
-			
-			//0.25 bei 4 > 0.1
-			//0.25 bei 4 > 0.9
 		}
 	}
 	

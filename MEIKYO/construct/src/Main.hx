@@ -19,9 +19,11 @@ class Main {
 		//Log.addFilter(new ERegFilter(LogLevel.INFO, ~/bpmjs\.DefaultFrontController\.handle.*/));
 
 		js.Lib.setErrorHandler(globalErrorHandler);
+		
+		new Main();
 	}
 
-	function new(canvas : Canvas)
+	function new()
 	{
 		try
 		{
@@ -47,7 +49,7 @@ class Main {
 					kumite.spritemesh.Config,
 					kumite.effects.Config,
 					kumite.framebuffereffect.Config,
-					kumite.lgl.LGLConfig,
+//					kumite.lgl.LGLConfig,
 					kumite.windowlines.Config,
 					kumite.eyes.Config,
 					//kumite.touchtest.Config,

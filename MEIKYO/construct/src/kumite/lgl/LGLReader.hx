@@ -1,6 +1,8 @@
 package kumite.lgl;
 import haxe.rtti.Infos;
 
+import bpmjs.HTTPTask;
+
 class LGLReader implements Infos
 {
 	@Inject

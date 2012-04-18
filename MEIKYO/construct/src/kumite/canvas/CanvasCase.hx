@@ -1,8 +1,10 @@
 package kumite.canvas;
 
+import UserAgentContext;
+
 class CanvasCase
 {
-	public var itself : Canvas;
+	public var itself : HTMLCanvasElement;
 	
 	public function new() {}
 }

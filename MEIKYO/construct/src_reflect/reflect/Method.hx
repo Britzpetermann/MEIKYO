@@ -31,4 +31,9 @@ class Method extends Field
 		}
 		return parameters;
 	}
+	
+	public function call(instance : Dynamic, params : Array<Dynamic>)
+	{
+		Reflect.callMethod(instance, Reflect.field(instance, getName()), params);
+	}
 }

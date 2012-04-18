@@ -1,6 +1,6 @@
 import haxe.rtti.Meta;
 
-import WebGLRenderingContext;
+import UserAgentContext;
 
 class GL
 {
@@ -387,7 +387,7 @@ class GL
 
 	public static var currentProgramm : WebGLProgram;
 
-	public static function init(canvas : Canvas, antialias : Bool) : WebGLRenderingContext
+	public static function init(canvas : HTMLCanvasElement, antialias : Bool) : WebGLRenderingContext
 	{
 		var params = {antialias : antialias};
 
@@ -463,7 +463,7 @@ class GL
 		return glsl[0];
 	}
 
-	public static function createArrayBuffer(array : ArrayBuffer, ?type : GLenum = GL.STATIC_DRAW) : WebGLBuffer
+	public static function createArrayBuffer(array : ArrayBufferView, ?type : GLenum = GL.STATIC_DRAW) : WebGLBuffer
 	{
 		var vertexBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
@@ -525,12 +525,12 @@ class GL
 		gl.blendFunc(sfactor, dfactor);
 	}
 
-	public static inline function bufferData(target : GLenum, data : ArrayBuffer , usage : GLenum) : Void
+	public static inline function bufferData(target : GLenum, data : ArrayBufferView, usage : GLenum) : Void
 	{
 		gl.bufferData(target, data, usage);
 	}
 
-	public static inline function bufferSubData(target : GLenum, offset : GLintptr, data : ArrayBuffer) : Void
+	public static inline function bufferSubData(target : GLenum, offset : GLintptr, data : ArrayBufferView) : Void
 	{
 		gl.bufferSubData(target, offset, data);
 	}
@@ -675,17 +675,17 @@ class GL
 		untyped gl.texImage2D(target, level, internalformat, format, type, pixels);
 	}
 
-	public static inline function texImage2DImage(target : GLenum, level : GLint, internalformat : GLenum, format : GLenum, type : GLenum, image : Image) : Void
+	public static inline function texImage2DImage(target : GLenum, level : GLint, internalformat : GLenum, format : GLenum, type : GLenum, image : HTMLImageElement) : Void
 	{
 		untyped gl.texImage2D(target, level, internalformat, format, type, image);
 	}
 
-	public static inline function texImage2DCanvas(target : GLenum, level : GLint, internalformat : GLenum, format : GLenum, type : GLenum, canvas : Canvas) : Void
+	public static inline function texImage2DCanvas(target : GLenum, level : GLint, internalformat : GLenum, format : GLenum, type : GLenum, canvas : HTMLCanvasElement) : Void
 	{
 		untyped gl.texImage2D(target, level, internalformat, format, type, canvas);
 	}
 
-	public static inline function texImage2DVideo(target : GLenum, level : GLint, internalformat : GLenum, format : GLenum, type : GLenum, video : Video) : Void
+	public static inline function texImage2DVideo(target : GLenum, level : GLint, internalformat : GLenum, format : GLenum, type : GLenum, video : HTMLVideoElement) : Void
 	{
 		untyped gl.texImage2D(target, level, internalformat, format, type, video);
 	}

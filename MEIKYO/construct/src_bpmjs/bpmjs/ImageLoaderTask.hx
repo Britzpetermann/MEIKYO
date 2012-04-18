@@ -1,12 +1,14 @@
 package bpmjs;
 
+import UserAgentContext;
+
 import haxe.Timer;
 
 class ImageLoaderTask extends Task<ImageLoaderTask>
 {
 	public var location : String;
 
-	public var image : Image;
+	public var image : HTMLImageElement;
 	
 	var timer : Timer;
 	
@@ -27,7 +29,7 @@ class ImageLoaderTask extends Task<ImageLoaderTask>
 		image.src = location;
 	}
 
-	function handleImageLoaded()
+	function handleImageLoaded(_)
 	{
 		//Log.info("Complete: ", location);
 		//timer = new Timer(0);

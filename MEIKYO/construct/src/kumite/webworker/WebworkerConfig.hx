@@ -1,10 +1,11 @@
 package kumite.webworker;
 
+import haxe.rtti.Infos;
+import bpmjs.WorkerService;
+
 import kumite.displaylist.DisplayListLayer;
 import kumite.scene.DefaultScene;
 import kumite.layer.ClearLayer;
-
-import haxe.rtti.Infos;
 
 class WebworkerConfig implements Infos
 {
@@ -13,6 +14,9 @@ class WebworkerConfig implements Infos
 
 	public var scene : DefaultScene;
 	public var clearLayer : ClearLayer;
+	
+	var workerService:WorkerService;
+	var megs:Uint8Array;
 
 	public function new()
 	{
@@ -20,6 +24,7 @@ class WebworkerConfig implements Infos
 		clearLayer.color = new Color(0, 0, 0.0, 1);
 
 		scene = new DefaultScene("Webworker");
+		megs = new Uint8Array(1024 * 1024 * 100);
 	}
 
 	@Complete
@@ -29,16 +34,27 @@ class WebworkerConfig implements Infos
 		scene.addLayerLifecycle(displayListLayer);
 	}
 
-	@Sequence("boot", "start")
-	public function start()
+	@Sequence("boot", "finish")
+	public function finish()
 	{
-		Log.info("start");
+		Log.info("finish");
 		
-		var worker = new Worker("bin/kumite.webworker.WorkingInstance.js");
-		worker.onmessage = function(e) {
-			Log.info(e.data);
-		};
+		workerService = new WorkerService();
+		workerService.debug = true;
+		workerService.init("bin/kumite.webworker.WorkingInstanceImpl.js");
 		
-		worker.postMessage(haxe.Serializer.run(new Vec2(1, 2)));		
+		workerService.call("init", loop);
+	}
+	
+	function loop()
+	{
+		workerService.call("configure", [1, 2, 3]);
+		workerService.callTransfer("render", megs.buffer, handleRender);
+	}
+	
+	function handleRender(buffer:ArrayBuffer)
+	{
+		megs = new Uint8Array(buffer);
+		haxe.Timer.delay(loop, 1000);
 	}
 }

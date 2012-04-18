@@ -3,6 +3,8 @@
  * The Buffer however implements GLSL standard (column-major order)
  * Best read/write order therfore is n11, n21, n31, n41, n21... due to contiguous reading and better caching
  */
+import UserAgentContext;
+ 
 class Matrix4
 {
 	private static var IDENTITY_BUFFER : Float32Array = createIdentityBuffer();

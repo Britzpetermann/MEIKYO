@@ -1,5 +1,7 @@
 package kumite.layer;
 
+import UserAgentContext;
+
 import kumite.scene.LayerLifecycle;
 import kumite.scene.Layer;
 import kumite.scene.TransitionContext;

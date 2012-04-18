@@ -1,5 +1,7 @@
 package kumite.framebuffereffect;
 
+import UserAgentContext;
+
 import kumite.spritemesh.SpriteMeshLayer;
 
 import kumite.displaylist.DisplayListLayer;

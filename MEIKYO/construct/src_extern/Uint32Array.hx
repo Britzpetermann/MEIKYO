@@ -1,4 +1,4 @@
-extern class Uint32Array extends ArrayBuffer, implements ArrayAccess<Int>
+extern class Uint32Array extends ArrayBufferView
 {
 	function new(arrayOrLength : Dynamic) : Void;
 }

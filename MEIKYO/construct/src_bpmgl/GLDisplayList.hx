@@ -92,7 +92,7 @@ class GLDisplayList
 	function handleMouseMove(position : Vec2)
 	{
 		var result = hitareaPicker.pick(stage, position);
-		if (result != null)
+		if (result != null && result.handCursor)
 			cursorClient.handCursor();
 		else
 			cursorClient.defaultCursor();

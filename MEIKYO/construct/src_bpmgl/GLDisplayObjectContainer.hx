@@ -10,6 +10,7 @@ class GLDisplayObjectContainer extends GLDisplayObject
 
 	public function addChild(child : GLDisplayObject)
 	{
+		child.parent = this;
 		children.push(child);
 	}
 

@@ -1,4 +1,4 @@
-import WebGLRenderingContext;
+import UserAgentContext;
 
 class GLUniformLocation
 {

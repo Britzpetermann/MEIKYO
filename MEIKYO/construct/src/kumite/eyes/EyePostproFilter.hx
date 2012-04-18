@@ -1,5 +1,7 @@
 package kumite.eyes;
 
+import UserAgentContext;
+
 import kumite.time.Time;
 
 import kumite.scene.LayerLifecycle;

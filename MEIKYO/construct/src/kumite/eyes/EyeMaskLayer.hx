@@ -1,5 +1,7 @@
 package kumite.eyes;
 
+import UserAgentContext;
+
 import kumite.scene.LayerLifecycle;
 import kumite.scene.Layer;
 import kumite.scene.TransitionContext;
@@ -120,6 +122,16 @@ class EyeMaskLayer implements LayerLifecycle, implements Infos
 		
 		textureUniform.setTexture(texture, 0);
 		
+		iterate();
+		iterate();
+		
+		shutUniform.setFloat(shut);
+		
+		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
+	}
+	
+	function iterate()
+	{
 		var len = Math.sqrt(position.x * position.x + position.y * position.y);
 		
 		switch (state)
@@ -144,10 +156,6 @@ class EyeMaskLayer implements LayerLifecycle, implements Infos
 					state = STATE_IDLE;
 				}
 		}
-		
-		shutUniform.setFloat(shut);
-		
-		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
 	}
 }
 

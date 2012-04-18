@@ -1,5 +1,7 @@
 package kumite.blobs;
 
+import UserAgentContext;
+
 import kumite.time.Time;
 import haxe.rtti.Infos;
 
@@ -54,39 +56,39 @@ class BlobReaderWS implements Infos
 		{
 			lastParse = time.ms;
 			var xml = Xml.parse(r);
-			
-			var newBlobs = new Array<Blob>();
+			//trace(xml);
+			//trace(xml.firstElement());
+			var newBlobs = new Array<kumite.blobs.Blob>();
 			
 			try
 			{
-				for(p in xml.elements())
+				for(p in xml.firstElement())
 				{
 					var fast = new haxe.xml.Fast(p);
-		     		var blob = new Blob();
+		     		var blob = new kumite.blobs.Blob();
 					blob.x = Std.parseFloat(fast.att.x);
 					blob.y = Std.parseFloat(fast.att.y);
-					blob.z = Clamp.float(Map.linear(Std.parseFloat(fast.att.z), 1700, 4000, 0, 1), 0, 1);
+					blob.z = Std.parseFloat(fast.att.z);
 					blob.area = Std.parseFloat(fast.att.area);
 					newBlobs.push(blob);
 				}
 			}
 			catch(e : Dynamic)
 			{
-				
+				//trace(e);
 			}
 			
 			mergeBlobs(newBlobs);
 		}
-		
 	}
 	
-	function mergeBlobs(newBlobs : Array<Blob>)
+	function mergeBlobs(newBlobs : Array<kumite.blobs.Blob>)
 	{
-		var result : Array<Blob> = new Array();
+		var result : Array<kumite.blobs.Blob> = new Array();
 		
 		for(newBlob in newBlobs)
 		{
-			var equalOldBlob : Blob = null;
+			var equalOldBlob : kumite.blobs.Blob = null;
 			
 			for(oldBlob in blobs.blobs)
 			{
@@ -119,7 +121,7 @@ class BlobReaderWS implements Infos
 		blobs.blobs = result;
 	}
 	
-	function getDist(newBlob : Blob, oldBlob : Blob)
+	function getDist(newBlob : kumite.blobs.Blob, oldBlob : kumite.blobs.Blob)
 	{
 		var dx = newBlob.x - oldBlob.x;
 		var dy = newBlob.y - oldBlob.y;

@@ -5,27 +5,32 @@ import hsl.haxe.Signaler;
 
 class Binding
 {
-	public var object : Dynamic;
-	public var property : Property;
+	public var instance:Dynamic;
+	public var fieldName:String;
 	
 	public var change:Signaler<Binding>;
 	
-	public function new(object : Dynamic, property : Property)
+	public static function createForInstanceAndName(instance:Dynamic, fieldName:String):Binding
 	{
-		this.object = object;
-		this.property = property;
+		return new Binding(instance, fieldName);
+	}
+	
+	public function new(instance : Dynamic, fieldName : String)
+	{
+		this.instance = instance;
+		this.fieldName = fieldName;
 		
 		change = new DirectSignaler(this);
 	}
 	
 	public function getValue() : Dynamic
 	{
-		return property.getValue(object);
+		return Reflect.field(instance, fieldName);
 	}
 	
 	public function setValue(value : Dynamic) : Void
 	{
-		property.setValue(object, value);
+		Reflect.setField(instance, fieldName, value);
 	}
 	
 	public function watch()

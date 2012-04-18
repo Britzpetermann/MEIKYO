@@ -1,3 +1,5 @@
+import UserAgentContext;
+
 class GLTexture
 {
 	public var width : Int;

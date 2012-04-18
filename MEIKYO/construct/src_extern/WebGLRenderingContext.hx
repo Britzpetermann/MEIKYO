@@ -67,8 +67,8 @@ extern class WebGLRenderingContext
 	function bindRenderbuffer(target : GLenum, renderbuffer : WebGLRenderbuffer) : Void;
 	function bindTexture(target:GLenum, texture:WebGLTexture) : Void;
 	function blendFunc(sfactor : GLenum, dfactor : GLenum) : Void;
-	function bufferData(target : GLenum, data : ArrayBuffer , usage : GLenum ) : Void;
-	function bufferSubData(target : GLenum, offset : GLintptr, data : ArrayBuffer) : Void;
+	function bufferData(target : GLenum, data : ArrayBufferView, usage : GLenum ) : Void;
+	function bufferSubData(target : GLenum, offset : GLintptr, data : ArrayBufferView) : Void;
 	function clear(mask : GLbitfield) : Void;
 	function clearColor(red : GLclampf, green : GLclampf, blue : GLclampf, alpha : GLclampf) : Void;
 	function clearDepth(depth : GLclampf) : Void;

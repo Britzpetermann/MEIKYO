@@ -19,6 +19,9 @@ class GLHitareaPicker
 	{
 		for (displayObject in displayObjectContainer.children)
 		{
+			if (!displayObject.visible)
+				continue;
+				
 			var matrix = pickDisplayObject(displayObject, parentMatrix);
 
 			if (Std.is(displayObject, GLInteractiveObject))

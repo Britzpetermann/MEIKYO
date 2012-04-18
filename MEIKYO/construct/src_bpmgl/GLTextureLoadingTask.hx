@@ -20,7 +20,7 @@ class GLTextureLoadingTask extends bpmjs.ImageLoaderTask
 		super.doStart();
 	}
 	
-	override function handleImageLoaded()
+	override function handleImageLoaded(_)
 	{
 		if (textureConfig.textureManipulation != null)
 		{

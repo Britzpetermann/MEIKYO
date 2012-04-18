@@ -1,5 +1,7 @@
 package kumite.spritemesh;
 
+import UserAgentContext;
+
 class Sprite
 {
 	public var matrix : Matrix4;

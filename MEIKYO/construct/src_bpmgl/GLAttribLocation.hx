@@ -1,8 +1,8 @@
-import WebGLRenderingContext;
+import UserAgentContext;
 
 class GLAttribLocation
 {
-	public var location : Float;
+	public var location : GLuint;
 	public var size : GLint;
 	public var type : GLenum;
 	public var buffer : WebGLBuffer;
@@ -10,25 +10,25 @@ class GLAttribLocation
 
 	public function new(){}
 
-	public function updateBuffer(arrayBuffer : ArrayBuffer, ?type : GLenum = GL.STATIC_DRAW)
+	public function updateBuffer(arrayBufferView : ArrayBufferView, ?type : GLenum = GL.STATIC_DRAW)
 	{
 		if (buffer != null)
 			GL.deleteBuffer(buffer);
 
-		currentLength = arrayBuffer.byteLength;
-		buffer = GL.createArrayBuffer(arrayBuffer, type);
+		currentLength = arrayBufferView.byteLength;
+		buffer = GL.createArrayBuffer(arrayBufferView, type);
 	}
 
-	public function updateBuffer2(arrayBuffer : ArrayBuffer, ?type : GLenum = GL.STATIC_DRAW)
+	public function updateBuffer2(arrayBufferView : ArrayBufferView, ?type : GLenum = GL.STATIC_DRAW)
 	{
 		GL.bindBuffer(GL.ARRAY_BUFFER, buffer);
-		GL.bufferData(GL.ARRAY_BUFFER, arrayBuffer, type);
+		GL.bufferData(GL.ARRAY_BUFFER, arrayBufferView, type);
 	}
 
-	public function updateBuffer3(arrayBuffer : ArrayBuffer)
+	public function updateBuffer3(arrayBufferView : ArrayBufferView)
 	{
 		GL.bindBuffer(GL.ARRAY_BUFFER, buffer);
-		GL.bufferSubData(GL.ARRAY_BUFFER, 0, arrayBuffer);
+		GL.bufferSubData(GL.ARRAY_BUFFER, 0, arrayBufferView);
 	}
 
 	public function vertexAttribPointer()
@@ -42,9 +42,9 @@ class GLAttribLocation
 	{
 		if (count == null)
 		{
-			count = currentLength / size;
+			count = Std.int(currentLength / size);
 			if (type == GL.FLOAT)
-				count /= 4;
+				count = Std.int(count / 4);
 		}
 		GL.drawArrays(mode, first, count);
 	}

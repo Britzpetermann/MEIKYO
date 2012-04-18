@@ -1,48 +1,12 @@
 -js release/bin/Main.js
 -main Main
 -cp construct/src
--cp construct/src_extern
+#-cp construct/src_extern
 -cp construct/src_bpmjs
 -cp construct/src_bpmgl
 -cp construct/src_reflect
 -lib hsl-1
-
---next
-
--js release/bin/kumite.webworker.WorkingInstance.js
--main kumite.webworker.WorkingInstance
--cp construct/src
--cp construct/src_extern
--cp construct/src_bpmjs
--cp construct/src_bpmgl
--cp construct/src_reflect
--lib hsl-1
-
---next
-
--js release/bin/kumite.lgl.LGLWorker.js
--main kumite.lgl.LGLWorker
--cp construct/src
--cp construct/src_extern
--cp construct/src_bpmjs
--cp construct/src_bpmgl
--cp construct/src_reflect
--lib hsl-1
-
---next
-
--js release/bin/Testrunner.js
--main TestRunner
--cp construct/src_bpmjs
--cp construct/src_test
--cp construct/src
--cp construct/src_reflect
--cp construct/src_bpmgl
--cp construct/src_extern
--lib hsl-1
-
-
-
-
-
-
+-lib hxjson2
+-lib xirsys_stdjs
+-debug
+--js-modern
