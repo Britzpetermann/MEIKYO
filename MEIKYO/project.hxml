@@ -8,3 +8,4 @@
 -lib hsl-1
 -lib hxjson2
 -debug
+--js-modern

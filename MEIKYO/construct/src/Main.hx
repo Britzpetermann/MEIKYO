@@ -5,7 +5,6 @@ class Main {
 		trace("Uncaugt error: " + msg);
 		for(line in stack)
 			trace(line);
-
 		return true;
 	}
 
@@ -19,6 +18,7 @@ class Main {
 		//Log.addFilter(new ERegFilter(LogLevel.INFO, ~/bpmjs\.DefaultFrontController\.handle.*/));
 
 		//js.Lib.setErrorHandler(globalErrorHandler);
+		new Main(null);
 	}
 
 	function new(canvas : Canvas)
