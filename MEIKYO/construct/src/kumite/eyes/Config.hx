@@ -105,41 +105,26 @@ class Config implements Infos
 		createBlock(215, 338.5, 0.193);
 		 */
 		
-		//1, 2, 3, 4
-		//5, 6, 7, 8
-		
-		//1
-		createBlock(376, -116.5, 0.227);
+		//left to right, top to bottom
+		createBlock(-686, -355, 0.18);
+		createBlock(-538, -12, 0.29);
+		createBlock(-453, -270, 0.175);
+		createBlock(-399, 224, 0.285);
+		createBlock(-325, -397, 0.175);
+		createBlock(-264, 72, 0.175);
+		createBlock(-159, -112, 0.34);
+		createBlock(-63, 209, 0.285);
+		createBlock(101, -227, 0.19);
+		createBlock(127, 310, 0.17);
+		createBlock(157, 17, 0.285);
+		createBlock(344, 220, 0.17);
+		createBlock(381, -195, 0.12);
+		createBlock(447, -2, 0.33);
+		createBlock(479, 404, 0.28);
+		createBlock(571, -433, 0.175);
+		createBlock(632.5, -188, 0.245);
+		createBlock(633, 185, 0.12);
 			
-		//2
-		createBlock(108, -273, 0.097);	
-		createBlock(204, -170, 0.098);	
-		createBlock(124, -105, 0.168);	
-		
-		//3
-		createBlock(-84, -290, 0.099);	
-		createBlock(-179, -183, 0.23);	
-		createBlock(-73, -76.5, 0.130);		
-		
-		//4
-		createBlock(-418, -235.5, 0.23);
-		createBlock(-329, -103, 0.130);
-		
-		//5
-		createBlock(361, 140.5, 0.165);
-		
-		//6
-		createBlock(187, 87, 0.225);
-		createBlock(111.5, 208, 0.166);
-		
-		//7
-		createBlock(-86, 68, 0.168);
-		createBlock(-191, 104.5, 0.121);
-		createBlock(-83.5, 197, 0.119);
-		
-		//8
-		createBlock(-358.5, 82.5, 0.168);
-		createBlock(-437.5, 249, 0.119);
 		
 		
 		var colors : Array<Vec3> = new Array();
@@ -182,7 +167,7 @@ class Config implements Infos
 			eyeEffect.position.x = eyeMaskLayer.position.x;
 			eyeEffect.position.y = eyeMaskLayer.position.y;
 			eyeEffect.offset = Rand.float(0, 6);
-			eyeEffect.textureConfig = framebufferPostproEnableLayer.textureConfig;
+			eyeEffect.textureConfig = framebuffer1EnableLayer.textureConfig;
 			eyeEffects.push(eyeEffect);
 		}
 				
@@ -212,9 +197,9 @@ class Config implements Infos
 			scene1.addLayerLifecycle(eyeLayers[i]);
 			scene1.addLayerLifecycle(framebuffer1DisableLayer);
 			
-			scene1.addLayerLifecycle(framebufferPostproEnableLayer);
-			scene1.addLayerLifecycle(postproFilters[i]);
-			scene1.addLayerLifecycle(framebufferPostproDisableLayer);
+			//scene1.addLayerLifecycle(framebufferPostproEnableLayer);
+			//scene1.addLayerLifecycle(postproFilters[i]);
+			//scene1.addLayerLifecycle(framebufferPostproDisableLayer);
 			
 			scene1.addLayerLifecycle(framebuffer2EnableLayer);
 			scene1.addLayerLifecycle(clearLayer);

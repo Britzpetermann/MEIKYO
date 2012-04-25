@@ -175,7 +175,6 @@ class EyeEffect implements LayerLifecycle, implements Infos
 		 */
 
 		moveSet.move();
-		moveSet.move();
 		directionUniform.setVec2(moveSet.current);
 		
 		vertexPositionAttribute.drawArrays(GL.TRIANGLE_STRIP);
@@ -334,6 +333,9 @@ private class IdleState1 extends State
 		
 		if (ms - enterMs > 1500)
 			parent.setState(parent.STATE_IDLE);
+            
+		if (blobs.length > 0)
+			parent.setState(parent.STATE_TARGET);
 	}
 }
 
@@ -343,11 +345,14 @@ private class IdleState2 extends State
 	{
 		if (Rand.bool(0.3) && getDist() > 0.2)
 		{
-			moveSet.to.y = Math.cos(ms / 100 + position.x * 0.003) * 0.5;
+			moveSet.to.y = Math.cos(ms / 100 + position.x * 0.003) * 0.3;
 		}
 		
 		if (ms - enterMs > 1500)
 			parent.setState(parent.STATE_IDLE);
+            
+		if (blobs.length > 0)
+			parent.setState(parent.STATE_TARGET);
 	}
 }
 
@@ -363,6 +368,9 @@ private class IdleState3 extends State
 		
 		if (ms - enterMs > 2000)
 			parent.setState(parent.STATE_IDLE);
+            
+		if (blobs.length > 0)
+			parent.setState(parent.STATE_TARGET);
 	}
 }
 
@@ -387,10 +395,7 @@ private class TargetState extends State
 		var ey = position.y / stage.height;
 		
 		var bx = (blob.x - 0.5) * 2.0;
-		var by = (blob.y - 0.10) * 1.0;
-		
-		//var focusX = (blob.z) * 0.3;
-		//var focusY = (blob.z) * 0.25;
+		var by = (blob.y - 0.4) * 2.0;
 		
 		var focusX = (blob.z + 0.05) * 0.46;
 		var focusY = (blob.z + 0.05) * 0.35;

@@ -1,243 +1,199 @@
-$estr = function() { return js.Boot.__string_rec(this,''); }
-if(typeof kumite=='undefined') kumite = {}
-if(!kumite.musicdraw) kumite.musicdraw = {}
-kumite.musicdraw.EffectWorker = function(p) {
+var $_, $hxClasses = $hxClasses || {}, $estr = function() { return js.Boot.__string_rec(this,''); }
+function $extend(from, fields) {
+	function inherit() {}; inherit.prototype = from; var proto = new inherit();
+	for (var name in fields) proto[name] = fields[name];
+	return proto;
 }
-kumite.musicdraw.EffectWorker.__name__ = ["kumite","musicdraw","EffectWorker"];
-kumite.musicdraw.EffectWorker.main = function() {
-	kumite.musicdraw.RasterEffect;
-	kumite.musicdraw.DNAEffect;
-	kumite.musicdraw.TimeEffect;
-	new bpmjs.WorkingInstance(new kumite.musicdraw.EffectWorker());
+var GLTexture = $hxClasses["GLTexture"] = function() {
+};
+GLTexture.__name__ = ["GLTexture"];
+GLTexture.prototype = {
+	width: null
+	,height: null
+	,texture: null
+	,__class__: GLTexture
 }
-kumite.musicdraw.EffectWorker.prototype.effect = null;
-kumite.musicdraw.EffectWorker.prototype.init = function(data) {
-	var clazz = Type.resolveClass(data.effectClassName);
-	this.effect = Type.createInstance(clazz,[]);
-	this.effect.setProgress = function(progress) {
-		bpmjs.WorkingInstance.pipeMethod("setProgress",[progress]);
-	};
-	this.effect.analyzer = new kumite.musicdraw.MusicAnalyzer();
-	this.effect.analyzer.bands = data.analyzer.bands;
-	this.effect.analyzer.init();
-	this.effect.init();
-}
-kumite.musicdraw.EffectWorker.prototype.config = function(params) {
-	this.effect.setParams(params);
-}
-kumite.musicdraw.EffectWorker.prototype.render = function(buffer) {
-	this.effect.render(buffer);
-}
-kumite.musicdraw.EffectWorker.prototype.__class__ = kumite.musicdraw.EffectWorker;
-kumite.musicdraw.MusicAnalyzer = function(p) {
-	if( p === $_ ) return;
-	this.levels = new Array();
-}
-kumite.musicdraw.MusicAnalyzer.__name__ = ["kumite","musicdraw","MusicAnalyzer"];
-kumite.musicdraw.MusicAnalyzer.prototype.bands = null;
-kumite.musicdraw.MusicAnalyzer.prototype.levels = null;
-kumite.musicdraw.MusicAnalyzer.prototype.init = function() {
-	var _g = 0, _g1 = this.bands;
-	while(_g < _g1.length) {
-		var band = _g1[_g];
-		++_g;
-		var level = 0.0;
-		var _g2 = 0;
-		while(_g2 < band.length) {
-			var note = band[_g2];
-			++_g2;
-			level += note;
-		}
-		level /= band.length;
-		this.levels.push(level);
+var GLArrayTexture = $hxClasses["GLArrayTexture"] = function() {
+	GLTexture.call(this);
+};
+GLArrayTexture.__name__ = ["GLArrayTexture"];
+GLArrayTexture.__super__ = GLTexture;
+GLArrayTexture.prototype = $extend(GLTexture.prototype,{
+	array: null
+	,setPixel: function(x,y,r,g,b,a) {
+		var index = (y * this.width + x) * 4;
+		this.array[index] = r;
+		this.array[index + 1] = g;
+		this.array[index + 2] = b;
+		this.array[index + 3] = a;
 	}
-}
-kumite.musicdraw.MusicAnalyzer.prototype.getLevel = function(from,to) {
-	var fromBand = Std["int"](from * this.bands.length);
-	var toBand = Std["int"](to * this.bands.length);
-	var level = 0.0;
-	var _g = fromBand;
-	while(_g < toBand) {
-		var band = _g++;
-		var _g1 = 0, _g2 = this.bands[band];
-		while(_g1 < _g2.length) {
-			var note = _g2[_g1];
-			++_g1;
-			level += note;
-		}
+	,__class__: GLArrayTexture
+});
+var IntIter = $hxClasses["IntIter"] = function(min,max) {
+	this.min = min;
+	this.max = max;
+};
+IntIter.__name__ = ["IntIter"];
+IntIter.prototype = {
+	min: null
+	,max: null
+	,hasNext: function() {
+		return this.min < this.max;
 	}
-	level /= this.bands[0].length * (toBand - fromBand);
-	return level;
+	,next: function() {
+		return this.min++;
+	}
+	,__class__: IntIter
 }
-kumite.musicdraw.MusicAnalyzer.prototype.getLevel2 = function(position) {
-	var positionFloor = Std["int"](position * this.levels.length);
-	return this.levels[positionFloor % this.levels.length];
-}
-kumite.musicdraw.MusicAnalyzer.prototype.getLevel3 = function(position) {
-	var positionAll = position * this.levels.length;
-	var positionFloor0 = Std["int"](positionAll);
-	var positionFloor1 = positionFloor0 + 1;
-	var fraction = positionAll - positionFloor0;
-	var l0 = this.levels[positionFloor0 % this.levels.length];
-	var l1 = this.levels[positionFloor1 % this.levels.length];
-	return l0 + (l1 - l0) * fraction;
-}
-kumite.musicdraw.MusicAnalyzer.prototype.__class__ = kumite.musicdraw.MusicAnalyzer;
-RasterGraphic = function(p) {
-	if( p === $_ ) return;
+var RasterGraphic = $hxClasses["RasterGraphic"] = function() {
 	this.noSmooth();
-}
+};
 RasterGraphic.__name__ = ["RasterGraphic"];
-RasterGraphic.prototype.raster = null;
-RasterGraphic.prototype.rasterWidth = null;
-RasterGraphic.prototype.rasterHeight = null;
-RasterGraphic.prototype.r = null;
-RasterGraphic.prototype.g = null;
-RasterGraphic.prototype.b = null;
-RasterGraphic.prototype.a = null;
-RasterGraphic.prototype.line = null;
-RasterGraphic.prototype.smooth = function() {
-	this.line = $closure(this,"lineXiaolinWu");
-}
-RasterGraphic.prototype.noSmooth = function() {
-	this.line = $closure(this,"lineBresenham");
-}
-RasterGraphic.prototype.setColor = function(r,g,b,a) {
-	this.r = r;
-	this.g = g;
-	this.b = b;
-	this.a = a;
-}
-RasterGraphic.prototype.setPixel = function(x,y) {
-	var index = (y * this.rasterWidth + x) * 4;
-	this.raster[index] = this.r;
-	this.raster[index + 1] = this.g;
-	this.raster[index + 2] = this.b;
-	this.raster[index + 3] = this.a;
-}
-RasterGraphic.prototype.drawAlphaPixel = function(x,y,alpha) {
-	var index = (y * this.rasterWidth + x) * 4;
-	this.raster[index] = this.r;
-	this.raster[index + 1] = this.g;
-	this.raster[index + 2] = this.b;
-	this.raster[index + 3] = this.a;
-}
-RasterGraphic.prototype.clear = function() {
-	var _g1 = 0, _g = this.raster.length;
-	while(_g1 < _g) {
-		var i = _g1++;
-		this.raster[i] = 0;
+RasterGraphic.prototype = {
+	raster: null
+	,rasterWidth: null
+	,rasterHeight: null
+	,r: null
+	,g: null
+	,b: null
+	,a: null
+	,line: null
+	,smooth: function() {
+		this.line = this.lineXiaolinWu.$bind(this);
 	}
-}
-RasterGraphic.prototype.fillRect = function(x,y,width,height) {
-	var _g1 = x, _g = x + width;
-	while(_g1 < _g) {
-		var xi = _g1++;
-		var _g3 = y, _g2 = y + height;
-		while(_g3 < _g2) {
-			var yi = _g3++;
-			this.setPixel(xi,yi);
+	,noSmooth: function() {
+		this.line = this.lineBresenham.$bind(this);
+	}
+	,setColor: function(r,g,b,a) {
+		this.r = r;
+		this.g = g;
+		this.b = b;
+		this.a = a;
+	}
+	,setPixel: function(x,y) {
+		var index = (y * this.rasterWidth + x) * 4;
+		this.raster[index] = this.r;
+		this.raster[index + 1] = this.g;
+		this.raster[index + 2] = this.b;
+		this.raster[index + 3] = this.a;
+	}
+	,drawAlphaPixel: function(x,y,alpha) {
+		var index = (y * this.rasterWidth + x) * 4;
+		this.raster[index] = this.r;
+		this.raster[index + 1] = this.g;
+		this.raster[index + 2] = this.b;
+		this.raster[index + 3] = this.a;
+	}
+	,clear: function() {
+		var _g1 = 0, _g = this.raster.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			this.raster[i] = 0;
 		}
 	}
-}
-RasterGraphic.prototype.lineBresenham = function(x0,y0,x1,y1) {
-	var x = x0;
-	var y = y0;
-	var dx = x1 - x0;
-	var dy = y1 - y0;
-	var xinc = dx > 0?1:-1;
-	var yinc = dy > 0?1:-1;
-	dx = dx < 0?-dx:dx;
-	dy = dy < 0?-dy:dy;
-	this.setPixel(x,y);
-	if(dx > dy) {
-		var cumul = dx >> 1;
-		var i = 1;
-		while(i <= dx) {
-			x += xinc;
-			cumul += dy;
-			if(cumul >= dx) {
-				cumul -= dx;
-				y += yinc;
+	,fillRect: function(x,y,width,height) {
+		var _g1 = x, _g = x + width;
+		while(_g1 < _g) {
+			var xi = _g1++;
+			var _g3 = y, _g2 = y + height;
+			while(_g3 < _g2) {
+				var yi = _g3++;
+				this.setPixel(xi,yi);
 			}
-			this.setPixel(x,y);
-			i++;
 		}
-	} else {
-		var cumul = dy >> 1;
-		var i = 1;
-		while(i <= dy) {
-			y += yinc;
-			cumul += dx;
-			if(cumul >= dy) {
-				cumul -= dy;
+	}
+	,lineBresenham: function(x0,y0,x1,y1) {
+		var x = x0;
+		var y = y0;
+		var dx = x1 - x0;
+		var dy = y1 - y0;
+		var xinc = dx > 0?1:-1;
+		var yinc = dy > 0?1:-1;
+		dx = dx < 0?-dx:dx;
+		dy = dy < 0?-dy:dy;
+		this.setPixel(x,y);
+		if(dx > dy) {
+			var cumul = dx >> 1;
+			var i = 1;
+			while(i <= dx) {
 				x += xinc;
+				cumul += dy;
+				if(cumul >= dx) {
+					cumul -= dx;
+					y += yinc;
+				}
+				this.setPixel(x,y);
+				i++;
 			}
-			this.setPixel(x,y);
-			i++;
+		} else {
+			var cumul = dy >> 1;
+			var i = 1;
+			while(i <= dy) {
+				y += yinc;
+				cumul += dx;
+				if(cumul >= dy) {
+					cumul -= dy;
+					x += xinc;
+				}
+				this.setPixel(x,y);
+				i++;
+			}
 		}
 	}
+	,lineXiaolinWu: function(x1,y1,x2,y2) {
+		var steep = (y2 - y1 < 0?-(y2 - y1):y2 - y1 > x2 - x1?-(x2 - x1):x2 - x1) <= 0?false:true;
+		var swap;
+		if(steep) {
+			swap = x1;
+			x1 = y1;
+			y1 = swap;
+			swap = x2;
+			x2 = y2;
+			y2 = swap;
+		}
+		if(x1 > x2) {
+			swap = x1;
+			x1 = x2;
+			x2 = swap;
+			swap = y1;
+			y1 = y2;
+			y2 = swap;
+		}
+		var dx = x2 - x1;
+		var dy = y2 - y1;
+		var gradient = dy / dx;
+		var xend = x1;
+		var yend = y1 + gradient * (xend - x1);
+		var xgap = 1 - (x1 + 0.5) % 1;
+		var xpx1 = xend;
+		var ypx1 = yend | 0;
+		var alpha;
+		alpha = yend % 1 * xgap;
+		var intery = yend + gradient;
+		xend = x2;
+		yend = y2 + gradient * (xend - x2);
+		xgap = (x2 + 0.5) % 1;
+		var xpx2 = xend;
+		var ypx2 = yend | 0;
+		alpha = (1 - yend % 1) * xgap;
+		if(steep) this.drawAlphaPixel(ypx2,xpx2,alpha); else this.drawAlphaPixel(xpx2,ypx2,alpha);
+		alpha = yend % 1 * xgap;
+		if(steep) this.drawAlphaPixel(ypx2 + 1,xpx2,alpha); else this.drawAlphaPixel(xpx2,ypx2 + 1,alpha);
+		var x = xpx1;
+		while(x++ < xpx2) {
+			alpha = 1 - intery % 1;
+			if(steep) this.drawAlphaPixel(intery | 0,x,alpha); else this.drawAlphaPixel(x,intery | 0,alpha);
+			alpha = intery % 1;
+			if(steep) this.drawAlphaPixel((intery | 0) + 1,x,alpha); else this.drawAlphaPixel(x,(intery | 0) + 1,alpha);
+			intery = intery + gradient;
+		}
+	}
+	,__class__: RasterGraphic
 }
-RasterGraphic.prototype.lineXiaolinWu = function(x1,y1,x2,y2) {
-	var steep = (y2 - y1 < 0?-(y2 - y1):y2 - y1 > x2 - x1?-(x2 - x1):x2 - x1) <= 0?false:true;
-	var swap;
-	if(steep) {
-		swap = x1;
-		x1 = y1;
-		y1 = swap;
-		swap = x2;
-		x2 = y2;
-		y2 = swap;
-	}
-	if(x1 > x2) {
-		swap = x1;
-		x1 = x2;
-		x2 = swap;
-		swap = y1;
-		y1 = y2;
-		y2 = swap;
-	}
-	var dx = x2 - x1;
-	var dy = y2 - y1;
-	var gradient = dy / dx;
-	var xend = x1;
-	var yend = y1 + gradient * (xend - x1);
-	var xgap = 1 - (x1 + 0.5) % 1;
-	var xpx1 = xend;
-	var ypx1 = Std["int"](yend);
-	var alpha;
-	alpha = yend % 1 * xgap;
-	var intery = yend + gradient;
-	xend = x2;
-	yend = y2 + gradient * (xend - x2);
-	xgap = (x2 + 0.5) % 1;
-	var xpx2 = xend;
-	var ypx2 = Std["int"](yend);
-	alpha = (1 - yend % 1) * xgap;
-	if(steep) this.drawAlphaPixel(ypx2,xpx2,alpha); else this.drawAlphaPixel(xpx2,ypx2,alpha);
-	alpha = yend % 1 * xgap;
-	if(steep) this.drawAlphaPixel(ypx2 + 1,xpx2,alpha); else this.drawAlphaPixel(xpx2,ypx2 + 1,alpha);
-	var x = xpx1;
-	while(x++ < xpx2) {
-		alpha = 1 - intery % 1;
-		if(steep) this.drawAlphaPixel(Std["int"](intery),x,alpha); else this.drawAlphaPixel(x,Std["int"](intery),alpha);
-		alpha = intery % 1;
-		if(steep) this.drawAlphaPixel(Std["int"](intery) + 1,x,alpha); else this.drawAlphaPixel(x,Std["int"](intery) + 1,alpha);
-		intery = intery + gradient;
-	}
-}
-RasterGraphic.prototype.__class__ = RasterGraphic;
-Reflect = function() { }
+var Reflect = $hxClasses["Reflect"] = function() { }
 Reflect.__name__ = ["Reflect"];
 Reflect.hasField = function(o,field) {
-	if(o.hasOwnProperty != null) return o.hasOwnProperty(field);
-	var arr = Reflect.fields(o);
-	var $it0 = arr.iterator();
-	while( $it0.hasNext() ) {
-		var t = $it0.next();
-		if(t == field) return true;
-	}
-	return false;
+	return Object.prototype.hasOwnProperty.call(o,field);
 }
 Reflect.field = function(o,field) {
 	var v = null;
@@ -250,24 +206,24 @@ Reflect.field = function(o,field) {
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
 }
+Reflect.getProperty = function(o,field) {
+	var tmp;
+	return o == null?null:o.__properties__ && (tmp = o.__properties__["get_" + field])?o[tmp]():o[field];
+}
+Reflect.setProperty = function(o,field,value) {
+	var tmp;
+	if(o.__properties__ && (tmp = o.__properties__["set_" + field])) o[tmp](value); else o[field] = value;
+}
 Reflect.callMethod = function(o,func,args) {
 	return func.apply(o,args);
 }
 Reflect.fields = function(o) {
-	if(o == null) return new Array();
-	var a = new Array();
-	if(o.hasOwnProperty) {
-		for(var i in o) if( o.hasOwnProperty(i) ) a.push(i);
-	} else {
-		var t;
-		try {
-			t = o.__proto__;
-		} catch( e ) {
-			t = null;
+	var a = [];
+	if(o != null) {
+		var hasOwnProperty = Object.prototype.hasOwnProperty;
+		for( var f in o ) {
+		if(hasOwnProperty.call(o,f)) a.push(f);
 		}
-		if(t != null) o.__proto__ = null;
-		for(var i in o) if( i != "__proto__" ) a.push(i);
-		if(t != null) o.__proto__ = t;
 	}
 	return a;
 }
@@ -304,282 +260,14 @@ Reflect.copy = function(o) {
 }
 Reflect.makeVarArgs = function(f) {
 	return function() {
-		var a = new Array();
-		var _g1 = 0, _g = arguments.length;
-		while(_g1 < _g) {
-			var i = _g1++;
-			a.push(arguments[i]);
-		}
+		var a = Array.prototype.slice.call(arguments);
 		return f(a);
 	};
 }
-Reflect.prototype.__class__ = Reflect;
-if(typeof bpmjs=='undefined') bpmjs = {}
-bpmjs.WorkingInstance = function(receiver) {
-	if( receiver === $_ ) return;
-	Reflect;
-	this.initConsole();
-	var instance = this;
-	
-			var transferMethod = null;
-
-			onmessage = function(event)
-			{
-				bpmjs.WorkingInstance.postMessage = function(data)
-				{
-					postMessage(data)
-				}
-				
-				if (transferMethod != null)
-				{
-					var buffer = event.data;
-					var resultBuffer = Reflect.callMethod(receiver, transferMethod, [buffer]);
-					if (resultBuffer == null)
-						resultBuffer = buffer;
-					transferMethod = null;
-					
-					if (resultBuffer.byteLength == 0)
-						throw 'WorkingInstance: Buffer length is zero!';
-						
-					webkitPostMessage(resultBuffer, [resultBuffer]);
-					
-					if (resultBuffer.byteLength != 0)
-						throw 'WorkingInstance: Buffer length is not zero!';
-						
-				}
-				else
-				{
-					var methodName = event.data.method;
-					
-					if (methodName == '__prepareTransfer__')
-					{
-						var transferMethodName = event.data.args[0];
-						transferMethod = Reflect.field(receiver, transferMethodName);
-						if (transferMethod == null)
-							throw 'WorkingInstance: Method ' + transferMethodName + ' is null!';
-						webkitPostMessage({result:null});
-					}
-					else
-					{
-						var args = event.data.args;
-						var method = Reflect.field(receiver, methodName);
-						if (method == null)
-							throw 'WorkingInstance: Method ' + methodName + ' is null!';
-							
-						var result = Reflect.callMethod(receiver, method, args);
-						webkitPostMessage({result:result});
-					}
-				}
-			}
-		;
+Reflect.prototype = {
+	__class__: Reflect
 }
-bpmjs.WorkingInstance.__name__ = ["bpmjs","WorkingInstance"];
-bpmjs.WorkingInstance.postMessage = null;
-bpmjs.WorkingInstance.pipeMethod = function(methodName,args) {
-	bpmjs.WorkingInstance.postMessage({ type : "pipeMethod", method : methodName, args : args});
-}
-bpmjs.WorkingInstance.prototype.initConsole = function() {
-	console = { };
-	console.info = function(message) {
-		bpmjs.WorkingInstance.pipeMethod("Log.info",[message]);
-	};
-	console.warn = function(message) {
-		bpmjs.WorkingInstance.pipeMethod("Log.warn",[message]);
-	};
-	console.error = function(message) {
-		bpmjs.WorkingInstance.pipeMethod("Log.error",[message]);
-	};
-	console.log = function(message) {
-		bpmjs.WorkingInstance.pipeMethod("Log.info",[message]);
-	};
-}
-bpmjs.WorkingInstance.prototype.__class__ = bpmjs.WorkingInstance;
-GLTexture = function(p) {
-}
-GLTexture.__name__ = ["GLTexture"];
-GLTexture.prototype.width = null;
-GLTexture.prototype.height = null;
-GLTexture.prototype.texture = null;
-GLTexture.prototype.__class__ = GLTexture;
-kumite.musicdraw.TimeEffect = function(p) {
-	if( p === $_ ) return;
-	this.setProgress = function(_) {
-	};
-	this.texture = new GLArrayTexture();
-	this.index = 0;
-}
-kumite.musicdraw.TimeEffect.__name__ = ["kumite","musicdraw","TimeEffect"];
-kumite.musicdraw.TimeEffect.prototype.analyzer = null;
-kumite.musicdraw.TimeEffect.prototype.texture = null;
-kumite.musicdraw.TimeEffect.prototype.params = null;
-kumite.musicdraw.TimeEffect.prototype.setProgress = null;
-kumite.musicdraw.TimeEffect.prototype.index = null;
-kumite.musicdraw.TimeEffect.prototype.init = function() {
-}
-kumite.musicdraw.TimeEffect.prototype.setParams = function(params) {
-	this.params = params;
-	this.texture.width = params.width;
-	this.texture.height = params.height;
-}
-kumite.musicdraw.TimeEffect.prototype.render = function(buffer) {
-	this.texture.array = new Uint8Array(buffer);
-	var g = new RasterGraphic();
-	g.smooth();
-	g.rasterWidth = this.texture.width;
-	g.rasterHeight = this.texture.height;
-	g.raster = this.texture.array;
-	g.clear();
-	var height = this.texture.height;
-	var width = Std["int"](height / 1.414);
-	var offsetX = Std["int"]((this.texture.width - width) / 2);
-	var offsetY = Std["int"]((this.texture.height - height) / 2);
-	g.setColor(0,255,0,255);
-	g.fillRect(0,0,10,10);
-	g.fillRect(100,100,10,10);
-	g.line(0,0,100,100);
-	g.setColor(255,0,0,255);
-	var originX = Std["int"](width / 2) + offsetX;
-	var originY = Std["int"](height / 2) + offsetY;
-	var count = this.params.count;
-	var oldX = 0;
-	var oldY = 0;
-	var _g1 = 0, _g = count + 1;
-	while(_g1 < _g) {
-		var t = _g1++;
-		var level = this.analyzer.getLevel3(t / count);
-		var r = width * this.params.radius + level * width * this.params.levelRadius;
-		var x = Std["int"](Math.sin(t * Math.PI / (count / 2)) * r + width / 2) + offsetX;
-		var y = Std["int"](Math.cos(t * Math.PI / (count / 2)) * r + height / 2) + offsetY;
-		if(t > 0) g.line(oldX,oldY,x,y);
-		g.line(originX,originY,x,y);
-		oldX = x;
-		oldY = y;
-	}
-}
-kumite.musicdraw.TimeEffect.prototype.__class__ = kumite.musicdraw.TimeEffect;
-if(typeof haxe=='undefined') haxe = {}
-haxe.Log = function() { }
-haxe.Log.__name__ = ["haxe","Log"];
-haxe.Log.trace = function(v,infos) {
-	js.Boot.__trace(v,infos);
-}
-haxe.Log.clear = function() {
-	js.Boot.__clear_trace();
-}
-haxe.Log.prototype.__class__ = haxe.Log;
-kumite.musicdraw.DNAEffect = function(p) {
-	if( p === $_ ) return;
-	this.setProgress = function(_) {
-	};
-	this.texture = new GLArrayTexture();
-}
-kumite.musicdraw.DNAEffect.__name__ = ["kumite","musicdraw","DNAEffect"];
-kumite.musicdraw.DNAEffect.prototype.analyzer = null;
-kumite.musicdraw.DNAEffect.prototype.texture = null;
-kumite.musicdraw.DNAEffect.prototype.paramLength = null;
-kumite.musicdraw.DNAEffect.prototype.paramPosition = null;
-kumite.musicdraw.DNAEffect.prototype.setProgress = null;
-kumite.musicdraw.DNAEffect.prototype.init = function() {
-}
-kumite.musicdraw.DNAEffect.prototype.setParams = function(params) {
-	this.paramLength = params.paramLength;
-	this.paramPosition = params.paramPosition;
-	this.texture.width = params.width;
-	this.texture.height = params.height;
-}
-kumite.musicdraw.DNAEffect.prototype.render = function(buffer) {
-	this.texture.array = new Uint8Array(buffer);
-	var height = this.texture.height;
-	var width = Std["int"](height / 1.414);
-	var bandsLength = this.analyzer.bands.length * this.paramLength;
-	var bandsPosition = this.analyzer.bands.length * this.paramPosition;
-	var offsetX = Std["int"]((this.texture.width - width) / 2);
-	var offsetY = Std["int"]((this.texture.height - height) / 2);
-	var bandIndexLength = Std["int"](bandsLength / height);
-	if(bandIndexLength < 1) bandIndexLength = 1;
-	var noteCount = this.analyzer.bands[0].length;
-	var _g = 0;
-	while(_g < height) {
-		var y = _g++;
-		var bandIndexFrom = Math.floor(bandsLength / height * y + bandsPosition);
-		if(y % 100 == 0) this.setProgress(y / height);
-		var _g1 = 0;
-		while(_g1 < width) {
-			var x = _g1++;
-			var noteIndex = Math.round(noteCount / width * x);
-			var note = 0.0;
-			var _g2 = 0;
-			while(_g2 < bandIndexLength) {
-				var bandIndex = _g2++;
-				var band = this.analyzer.bands[(bandIndexFrom + bandIndex) % this.analyzer.bands.length];
-				note += band[noteIndex];
-			}
-			note /= bandIndexLength;
-			note *= 3;
-			if(note > 1) note = 1;
-			this.texture.setPixel(x + offsetX,y + offsetY,Std["int"](255 - note * note * 100),Std["int"](255 - note * note * 255),Std["int"](255 - note * 200),255);
-		}
-	}
-}
-kumite.musicdraw.DNAEffect.prototype.__class__ = kumite.musicdraw.DNAEffect;
-IntIter = function(min,max) {
-	if( min === $_ ) return;
-	this.min = min;
-	this.max = max;
-}
-IntIter.__name__ = ["IntIter"];
-IntIter.prototype.min = null;
-IntIter.prototype.max = null;
-IntIter.prototype.hasNext = function() {
-	return this.min < this.max;
-}
-IntIter.prototype.next = function() {
-	return this.min++;
-}
-IntIter.prototype.__class__ = IntIter;
-haxe.Timer = function(time_ms) {
-	if( time_ms === $_ ) return;
-	var arr = haxe_timers;
-	this.id = arr.length;
-	arr[this.id] = this;
-	this.timerId = window.setInterval("haxe_timers[" + this.id + "].run();",time_ms);
-}
-haxe.Timer.__name__ = ["haxe","Timer"];
-haxe.Timer.delay = function(f,time_ms) {
-	var t = new haxe.Timer(time_ms);
-	t.run = function() {
-		t.stop();
-		f();
-	};
-	return t;
-}
-haxe.Timer.measure = function(f,pos) {
-	var t0 = haxe.Timer.stamp();
-	var r = f();
-	haxe.Log.trace(haxe.Timer.stamp() - t0 + "s",pos);
-	return r;
-}
-haxe.Timer.stamp = function() {
-	return Date.now().getTime() / 1000;
-}
-haxe.Timer.prototype.id = null;
-haxe.Timer.prototype.timerId = null;
-haxe.Timer.prototype.stop = function() {
-	if(this.id == null) return;
-	window.clearInterval(this.timerId);
-	var arr = haxe_timers;
-	arr[this.id] = null;
-	if(this.id > 100 && this.id == arr.length - 1) {
-		var p = this.id - 1;
-		while(p >= 0 && arr[p] == null) p--;
-		arr = arr.slice(0,p + 1);
-	}
-	this.id = null;
-}
-haxe.Timer.prototype.run = function() {
-}
-haxe.Timer.prototype.__class__ = haxe.Timer;
-Std = function() { }
+var Std = $hxClasses["Std"] = function() { }
 Std.__name__ = ["Std"];
 Std["is"] = function(v,t) {
 	return js.Boot.__instanceof(v,t);
@@ -588,8 +276,7 @@ Std.string = function(s) {
 	return js.Boot.__string_rec(s,"");
 }
 Std["int"] = function(x) {
-	if(x < 0) return Math.ceil(x);
-	return Math.floor(x);
+	return x | 0;
 }
 Std.parseInt = function(x) {
 	var v = parseInt(x,10);
@@ -603,16 +290,10 @@ Std.parseFloat = function(x) {
 Std.random = function(x) {
 	return Math.floor(Math.random() * x);
 }
-Std.prototype.__class__ = Std;
-kumite.musicdraw.MusicDrawEffect = function() { }
-kumite.musicdraw.MusicDrawEffect.__name__ = ["kumite","musicdraw","MusicDrawEffect"];
-kumite.musicdraw.MusicDrawEffect.prototype.setProgress = null;
-kumite.musicdraw.MusicDrawEffect.prototype.analyzer = null;
-kumite.musicdraw.MusicDrawEffect.prototype.init = null;
-kumite.musicdraw.MusicDrawEffect.prototype.setParams = null;
-kumite.musicdraw.MusicDrawEffect.prototype.render = null;
-kumite.musicdraw.MusicDrawEffect.prototype.__class__ = kumite.musicdraw.MusicDrawEffect;
-ValueType = { __ename__ : ["ValueType"], __constructs__ : ["TNull","TInt","TFloat","TBool","TObject","TFunction","TClass","TEnum","TUnknown"] }
+Std.prototype = {
+	__class__: Std
+}
+var ValueType = $hxClasses["ValueType"] = { __ename__ : ["ValueType"], __constructs__ : ["TNull","TInt","TFloat","TBool","TObject","TFunction","TClass","TEnum","TUnknown"] }
 ValueType.TNull = ["TNull",0];
 ValueType.TNull.toString = $estr;
 ValueType.TNull.__enum__ = ValueType;
@@ -636,7 +317,7 @@ ValueType.TEnum = function(e) { var $x = ["TEnum",7,e]; $x.__enum__ = ValueType;
 ValueType.TUnknown = ["TUnknown",8];
 ValueType.TUnknown.toString = $estr;
 ValueType.TUnknown.__enum__ = ValueType;
-Type = function() { }
+var Type = $hxClasses["Type"] = function() { }
 Type.__name__ = ["Type"];
 Type.getClass = function(o) {
 	if(o == null) return null;
@@ -659,32 +340,43 @@ Type.getEnumName = function(e) {
 	return a.join(".");
 }
 Type.resolveClass = function(name) {
-	var cl;
-	try {
-		cl = eval(name);
-	} catch( e ) {
-		cl = null;
-	}
+	var cl = $hxClasses[name];
 	if(cl == null || cl.__name__ == null) return null;
 	return cl;
 }
 Type.resolveEnum = function(name) {
-	var e;
-	try {
-		e = eval(name);
-	} catch( err ) {
-		e = null;
-	}
+	var e = $hxClasses[name];
 	if(e == null || e.__ename__ == null) return null;
 	return e;
 }
 Type.createInstance = function(cl,args) {
-	if(args.length <= 3) return new cl(args[0],args[1],args[2]);
-	if(args.length > 8) throw "Too many arguments";
-	return new cl(args[0],args[1],args[2],args[3],args[4],args[5],args[6],args[7]);
+	switch(args.length) {
+	case 0:
+		return new cl();
+	case 1:
+		return new cl(args[0]);
+	case 2:
+		return new cl(args[0],args[1]);
+	case 3:
+		return new cl(args[0],args[1],args[2]);
+	case 4:
+		return new cl(args[0],args[1],args[2],args[3]);
+	case 5:
+		return new cl(args[0],args[1],args[2],args[3],args[4]);
+	case 6:
+		return new cl(args[0],args[1],args[2],args[3],args[4],args[5]);
+	case 7:
+		return new cl(args[0],args[1],args[2],args[3],args[4],args[5],args[6]);
+	case 8:
+		return new cl(args[0],args[1],args[2],args[3],args[4],args[5],args[6],args[7]);
+	default:
+		throw "Too many arguments";
+	}
+	return null;
 }
 Type.createEmptyInstance = function(cl) {
-	return new cl($_);
+	function empty() {}; empty.prototype = cl.prototype;
+	return new empty();
 }
 Type.createEnum = function(e,constr,params) {
 	var f = Reflect.field(e,constr);
@@ -702,14 +394,17 @@ Type.createEnumIndex = function(e,index,params) {
 	return Type.createEnum(e,c,params);
 }
 Type.getInstanceFields = function(c) {
-	var a = Reflect.fields(c.prototype);
+	var a = [];
+	for(var i in c.prototype) a.push(i);
 	a.remove("__class__");
+	a.remove("__properties__");
 	return a;
 }
 Type.getClassFields = function(c) {
 	var a = Reflect.fields(c);
 	a.remove("__name__");
 	a.remove("__interfaces__");
+	a.remove("__properties__");
 	a.remove("__super__");
 	a.remove("prototype");
 	return a;
@@ -768,118 +463,164 @@ Type.enumParameters = function(e) {
 Type.enumIndex = function(e) {
 	return e[1];
 }
-Type.prototype.__class__ = Type;
-if(typeof js=='undefined') js = {}
-js.Lib = function() { }
-js.Lib.__name__ = ["js","Lib"];
-js.Lib.isIE = null;
-js.Lib.isOpera = null;
-js.Lib.document = null;
-js.Lib.window = null;
-js.Lib.alert = function(v) {
-	alert(js.Boot.__string_rec(v,""));
-}
-js.Lib.eval = function(code) {
-	return eval(code);
-}
-js.Lib.setErrorHandler = function(f) {
-	js.Lib.onerror = f;
-}
-js.Lib.prototype.__class__ = js.Lib;
-kumite.musicdraw.RasterEffect = function(p) {
-	if( p === $_ ) return;
-	this.setProgress = function(_) {
-	};
-	this.texture = new GLArrayTexture();
-}
-kumite.musicdraw.RasterEffect.__name__ = ["kumite","musicdraw","RasterEffect"];
-kumite.musicdraw.RasterEffect.prototype.analyzer = null;
-kumite.musicdraw.RasterEffect.prototype.texture = null;
-kumite.musicdraw.RasterEffect.prototype.params = null;
-kumite.musicdraw.RasterEffect.prototype.setProgress = null;
-kumite.musicdraw.RasterEffect.prototype.init = function() {
-}
-kumite.musicdraw.RasterEffect.prototype.setParams = function(params) {
-	this.params = params;
-	this.texture.width = params.width;
-	this.texture.height = params.height;
-}
-kumite.musicdraw.RasterEffect.prototype.render = function(buffer) {
-	this.texture.array = new Uint8Array(buffer);
-	var height = this.texture.height;
-	var width = Std["int"](height / 1.414);
-	var offsetX = Std["int"]((this.texture.width - width) / 2);
-	var offsetY = Std["int"]((this.texture.height - height) / 2);
-	var rx = Std["int"](this.params.rx);
-	var ry = Std["int"](this.params.ry);
-	var tileWidth = width / rx;
-	var tileHeight = height / ry;
+Type.allEnums = function(e) {
+	var all = [];
+	var cst = e.__constructs__;
 	var _g = 0;
-	while(_g < ry) {
-		var ty = _g++;
-		var _g1 = 0;
-		while(_g1 < rx) {
-			var tx = _g1++;
-			var x0 = Std["int"](tx * tileWidth);
-			var y0 = Std["int"](ty * tileHeight);
-			var songPositionFrom = (ty * rx + tx) / (rx * ry);
-			var songPositionTo = songPositionFrom + 1 / (rx * ry);
-			var level = this.analyzer.getLevel(songPositionFrom,songPositionTo);
-			var r = level * this.params.scale * 255;
-			if(r > 255) r = 255;
-			var _g3 = x0, _g2 = Std["int"](x0 + tileWidth) + 1;
-			while(_g3 < _g2) {
-				var x = _g3++;
-				var _g5 = y0, _g4 = Std["int"](y0 + tileHeight) + 1;
-				while(_g5 < _g4) {
-					var y = _g5++;
-					this.texture.setPixel(x + offsetX,y + offsetY,Std["int"](r),128,30,255);
+	while(_g < cst.length) {
+		var c = cst[_g];
+		++_g;
+		var v = Reflect.field(e,c);
+		if(!Reflect.isFunction(v)) all.push(v);
+	}
+	return all;
+}
+Type.prototype = {
+	__class__: Type
+}
+var bpmjs = bpmjs || {}
+bpmjs.WorkingInstance = $hxClasses["bpmjs.WorkingInstance"] = function(receiver) {
+	Reflect;
+	this.initConsole();
+	var instance = this;
+	
+			var transferMethod = null;
+
+			onmessage = function(event)
+			{
+				bpmjs.WorkingInstance.postMessage = function(data)
+				{
+					postMessage(data)
+				}
+				
+				if (transferMethod != null)
+				{
+					var buffer = event.data;
+					var resultBuffer = Reflect.callMethod(receiver, transferMethod, [buffer]);
+					if (resultBuffer == null)
+						resultBuffer = buffer;
+					transferMethod = null;
+					
+					if (resultBuffer.byteLength == 0)
+						throw 'WorkingInstance: Buffer length is zero!';
+						
+					webkitPostMessage(resultBuffer, [resultBuffer]);
+					
+					if (resultBuffer.byteLength != 0)
+						throw 'WorkingInstance: Buffer length is not zero!';
+						
+				}
+				else
+				{
+					var methodName = event.data.method;
+					
+					if (methodName == '__prepareTransfer__')
+					{
+						var transferMethodName = event.data.args[0];
+						transferMethod = Reflect.field(receiver, transferMethodName);
+						if (transferMethod == null)
+							throw 'WorkingInstance: Method ' + transferMethodName + ' is null!';
+						webkitPostMessage({result:null});
+					}
+					else
+					{
+						var args = event.data.args;
+						var method = Reflect.field(receiver, methodName);
+						if (method == null)
+							throw 'WorkingInstance: Method ' + methodName + ' is null!';
+							
+						var result = Reflect.callMethod(receiver, method, args);
+						webkitPostMessage({result:result});
+					}
 				}
 			}
-		}
+		;
+};
+bpmjs.WorkingInstance.__name__ = ["bpmjs","WorkingInstance"];
+bpmjs.WorkingInstance.postMessage = null;
+bpmjs.WorkingInstance.pipeMethod = function(methodName,args) {
+	bpmjs.WorkingInstance.postMessage({ type : "pipeMethod", method : methodName, args : args});
+}
+bpmjs.WorkingInstance.prototype = {
+	initConsole: function() {
+		console = { };
+		console.info = function(message) {
+			bpmjs.WorkingInstance.pipeMethod("Log.info",[message]);
+		};
+		console.warn = function(message) {
+			bpmjs.WorkingInstance.pipeMethod("Log.warn",[message]);
+		};
+		console.error = function(message) {
+			bpmjs.WorkingInstance.pipeMethod("Log.error",[message]);
+		};
+		console.log = function(message) {
+			bpmjs.WorkingInstance.pipeMethod("Log.info",[message]);
+		};
 	}
+	,__class__: bpmjs.WorkingInstance
 }
-kumite.musicdraw.RasterEffect.prototype.__class__ = kumite.musicdraw.RasterEffect;
-GLArrayTexture = function(p) {
-	if( p === $_ ) return;
-	GLTexture.call(this);
+var haxe = haxe || {}
+haxe.Log = $hxClasses["haxe.Log"] = function() { }
+haxe.Log.__name__ = ["haxe","Log"];
+haxe.Log.trace = function(v,infos) {
+	js.Boot.__trace(v,infos);
 }
-GLArrayTexture.__name__ = ["GLArrayTexture"];
-GLArrayTexture.__super__ = GLTexture;
-for(var k in GLTexture.prototype ) GLArrayTexture.prototype[k] = GLTexture.prototype[k];
-GLArrayTexture.prototype.array = null;
-GLArrayTexture.prototype.setPixel = function(x,y,r,g,b,a) {
-	var index = (y * this.width + x) * 4;
-	this.array[index] = r;
-	this.array[index + 1] = g;
-	this.array[index + 2] = b;
-	this.array[index + 3] = a;
+haxe.Log.clear = function() {
+	js.Boot.__clear_trace();
 }
-GLArrayTexture.prototype.__class__ = GLArrayTexture;
-js.Boot = function() { }
+haxe.Log.prototype = {
+	__class__: haxe.Log
+}
+haxe.Timer = $hxClasses["haxe.Timer"] = function(time_ms) {
+	var me = this;
+	this.id = window.setInterval(function() {
+		me.run();
+	},time_ms);
+};
+haxe.Timer.__name__ = ["haxe","Timer"];
+haxe.Timer.delay = function(f,time_ms) {
+	var t = new haxe.Timer(time_ms);
+	t.run = function() {
+		t.stop();
+		f();
+	};
+	return t;
+}
+haxe.Timer.measure = function(f,pos) {
+	var t0 = haxe.Timer.stamp();
+	var r = f();
+	haxe.Log.trace(haxe.Timer.stamp() - t0 + "s",pos);
+	return r;
+}
+haxe.Timer.stamp = function() {
+	return Date.now().getTime() / 1000;
+}
+haxe.Timer.prototype = {
+	id: null
+	,stop: function() {
+		if(this.id == null) return;
+		window.clearInterval(this.id);
+		this.id = null;
+	}
+	,run: function() {
+	}
+	,__class__: haxe.Timer
+}
+var js = js || {}
+js.Boot = $hxClasses["js.Boot"] = function() { }
 js.Boot.__name__ = ["js","Boot"];
 js.Boot.__unhtml = function(s) {
 	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
 }
 js.Boot.__trace = function(v,i) {
 	var msg = i != null?i.fileName + ":" + i.lineNumber + ": ":"";
-	msg += js.Boot.__unhtml(js.Boot.__string_rec(v,"")) + "<br/>";
+	msg += js.Boot.__string_rec(v,"");
 	var d = document.getElementById("haxe:trace");
-	if(d == null) alert("No haxe:trace element defined\n" + msg); else d.innerHTML += msg;
+	if(d != null) d.innerHTML += js.Boot.__unhtml(msg) + "<br/>"; else if(typeof(console) != "undefined" && console.log != null) console.log(msg);
 }
 js.Boot.__clear_trace = function() {
 	var d = document.getElementById("haxe:trace");
 	if(d != null) d.innerHTML = "";
-}
-js.Boot.__closure = function(o,f) {
-	var m = o[f];
-	if(m == null) return null;
-	var f1 = function() {
-		return m.apply(o,arguments);
-	};
-	f1.scope = o;
-	f1.method = m;
-	return f1;
 }
 js.Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
@@ -930,7 +671,7 @@ js.Boot.__string_rec = function(o,s) {
 		if(hasp && !o.hasOwnProperty(k)) {
 			continue;
 		}
-		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__") {
+		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
 			continue;
 		}
 		if(str.length != 2) str += ", \n";
@@ -988,8 +729,6 @@ js.Boot.__instanceof = function(o,cl) {
 	}
 }
 js.Boot.__init = function() {
-	try	{ document;	} catch(e) { document = {};	}
-	try { window; } catch(e) { window = {};	}
 	js.Lib.isIE = typeof document!='undefined' && document.all != null && typeof window!='undefined' && window.opera == null;
 	js.Lib.isOpera = typeof window!='undefined' && window.opera != null;
 	Array.prototype.copy = Array.prototype.slice;
@@ -1023,7 +762,7 @@ js.Boot.__init = function() {
 	if(String.prototype.cca == null) String.prototype.cca = String.prototype.charCodeAt;
 	String.prototype.charCodeAt = function(i) {
 		var x = this.cca(i);
-		if(x != x) return null;
+		if(x != x) return undefined;
 		return x;
 	};
 	var oldsub = String.prototype.substr;
@@ -1036,10 +775,301 @@ js.Boot.__init = function() {
 		} else if(len < 0) len = this.length + len - pos;
 		return oldsub.apply(this,[pos,len]);
 	};
-	$closure = js.Boot.__closure;
+	Function.prototype["$bind"] = function(o) {
+		var f = function() {
+			return f.method.apply(f.scope,arguments);
+		};
+		f.scope = o;
+		f.method = this;
+		return f;
+	};
 }
-js.Boot.prototype.__class__ = js.Boot;
-$_ = {}
+js.Boot.prototype = {
+	__class__: js.Boot
+}
+js.Lib = $hxClasses["js.Lib"] = function() { }
+js.Lib.__name__ = ["js","Lib"];
+js.Lib.isIE = null;
+js.Lib.isOpera = null;
+js.Lib.document = null;
+js.Lib.window = null;
+js.Lib.alert = function(v) {
+	alert(js.Boot.__string_rec(v,""));
+}
+js.Lib.eval = function(code) {
+	return eval(code);
+}
+js.Lib.setErrorHandler = function(f) {
+	js.Lib.onerror = f;
+}
+js.Lib.prototype = {
+	__class__: js.Lib
+}
+var kumite = kumite || {}
+if(!kumite.musicdraw) kumite.musicdraw = {}
+kumite.musicdraw.DNAEffect = $hxClasses["kumite.musicdraw.DNAEffect"] = function() {
+	this.setProgress = function(_) {
+	};
+	this.texture = new GLArrayTexture();
+};
+kumite.musicdraw.DNAEffect.__name__ = ["kumite","musicdraw","DNAEffect"];
+kumite.musicdraw.DNAEffect.prototype = {
+	analyzer: null
+	,texture: null
+	,paramLength: null
+	,paramPosition: null
+	,setProgress: null
+	,init: function() {
+	}
+	,setParams: function(params) {
+		this.paramLength = params.paramLength;
+		this.paramPosition = params.paramPosition;
+		this.texture.width = params.width;
+		this.texture.height = params.height;
+	}
+	,render: function(buffer) {
+		this.texture.array = new Uint8Array(buffer);
+		var height = this.texture.height;
+		var width = height / 1.414 | 0;
+		var bandsLength = this.analyzer.bands.length * this.paramLength;
+		var bandsPosition = this.analyzer.bands.length * this.paramPosition;
+		var offsetX = (this.texture.width - width) / 2 | 0;
+		var offsetY = (this.texture.height - height) / 2 | 0;
+		var bandIndexLength = bandsLength / height | 0;
+		if(bandIndexLength < 1) bandIndexLength = 1;
+		var noteCount = this.analyzer.bands[0].length;
+		var _g = 0;
+		while(_g < height) {
+			var y = _g++;
+			var bandIndexFrom = Math.floor(bandsLength / height * y + bandsPosition);
+			if(y % 100 == 0) this.setProgress(y / height);
+			var _g1 = 0;
+			while(_g1 < width) {
+				var x = _g1++;
+				var noteIndex = Math.round(noteCount / width * x);
+				var note = 0.0;
+				var _g2 = 0;
+				while(_g2 < bandIndexLength) {
+					var bandIndex = _g2++;
+					var band = this.analyzer.bands[(bandIndexFrom + bandIndex) % this.analyzer.bands.length];
+					note += band[noteIndex];
+				}
+				note /= bandIndexLength;
+				note *= 3;
+				if(note > 1) note = 1;
+				this.texture.setPixel(x + offsetX,y + offsetY,255 - note * note * 100 | 0,255 - note * note * 255 | 0,255 - note * 200 | 0,255);
+			}
+		}
+	}
+	,__class__: kumite.musicdraw.DNAEffect
+}
+kumite.musicdraw.EffectWorker = $hxClasses["kumite.musicdraw.EffectWorker"] = function() {
+};
+kumite.musicdraw.EffectWorker.__name__ = ["kumite","musicdraw","EffectWorker"];
+kumite.musicdraw.EffectWorker.main = function() {
+	kumite.musicdraw.RasterEffect;
+	kumite.musicdraw.DNAEffect;
+	kumite.musicdraw.TimeEffect;
+	new bpmjs.WorkingInstance(new kumite.musicdraw.EffectWorker());
+}
+kumite.musicdraw.EffectWorker.prototype = {
+	effect: null
+	,init: function(data) {
+		var clazz = Type.resolveClass(data.effectClassName);
+		this.effect = Type.createInstance(clazz,[]);
+		this.effect.setProgress = function(progress) {
+			bpmjs.WorkingInstance.pipeMethod("setProgress",[progress]);
+		};
+		this.effect.analyzer = new kumite.musicdraw.MusicAnalyzer();
+		this.effect.analyzer.bands = data.analyzer.bands;
+		this.effect.analyzer.init();
+		this.effect.init();
+	}
+	,config: function(params) {
+		this.effect.setParams(params);
+	}
+	,render: function(buffer) {
+		this.effect.render(buffer);
+	}
+	,__class__: kumite.musicdraw.EffectWorker
+}
+kumite.musicdraw.MusicAnalyzer = $hxClasses["kumite.musicdraw.MusicAnalyzer"] = function() {
+	this.levels = new Array();
+};
+kumite.musicdraw.MusicAnalyzer.__name__ = ["kumite","musicdraw","MusicAnalyzer"];
+kumite.musicdraw.MusicAnalyzer.prototype = {
+	bands: null
+	,levels: null
+	,init: function() {
+		var _g = 0, _g1 = this.bands;
+		while(_g < _g1.length) {
+			var band = _g1[_g];
+			++_g;
+			var level = 0.0;
+			var _g2 = 0;
+			while(_g2 < band.length) {
+				var note = band[_g2];
+				++_g2;
+				level += note;
+			}
+			level /= band.length;
+			this.levels.push(level);
+		}
+	}
+	,getLevel: function(from,to) {
+		var fromBand = from * this.bands.length | 0;
+		var toBand = to * this.bands.length | 0;
+		var level = 0.0;
+		var _g = fromBand;
+		while(_g < toBand) {
+			var band = _g++;
+			var _g1 = 0, _g2 = this.bands[band];
+			while(_g1 < _g2.length) {
+				var note = _g2[_g1];
+				++_g1;
+				level += note;
+			}
+		}
+		level /= this.bands[0].length * (toBand - fromBand);
+		return level;
+	}
+	,getLevel2: function(position) {
+		var positionFloor = position * this.levels.length | 0;
+		return this.levels[positionFloor % this.levels.length];
+	}
+	,getLevel3: function(position) {
+		var positionAll = position * this.levels.length;
+		var positionFloor0 = positionAll | 0;
+		var positionFloor1 = positionFloor0 + 1;
+		var fraction = positionAll - positionFloor0;
+		var l0 = this.levels[positionFloor0 % this.levels.length];
+		var l1 = this.levels[positionFloor1 % this.levels.length];
+		return l0 + (l1 - l0) * fraction;
+	}
+	,__class__: kumite.musicdraw.MusicAnalyzer
+}
+kumite.musicdraw.MusicDrawEffect = $hxClasses["kumite.musicdraw.MusicDrawEffect"] = function() { }
+kumite.musicdraw.MusicDrawEffect.__name__ = ["kumite","musicdraw","MusicDrawEffect"];
+kumite.musicdraw.MusicDrawEffect.prototype = {
+	setProgress: null
+	,analyzer: null
+	,init: null
+	,setParams: null
+	,render: null
+	,__class__: kumite.musicdraw.MusicDrawEffect
+}
+kumite.musicdraw.RasterEffect = $hxClasses["kumite.musicdraw.RasterEffect"] = function() {
+	this.setProgress = function(_) {
+	};
+	this.texture = new GLArrayTexture();
+};
+kumite.musicdraw.RasterEffect.__name__ = ["kumite","musicdraw","RasterEffect"];
+kumite.musicdraw.RasterEffect.prototype = {
+	analyzer: null
+	,texture: null
+	,params: null
+	,setProgress: null
+	,init: function() {
+	}
+	,setParams: function(params) {
+		this.params = params;
+		this.texture.width = params.width;
+		this.texture.height = params.height;
+	}
+	,render: function(buffer) {
+		this.texture.array = new Uint8Array(buffer);
+		var height = this.texture.height;
+		var width = height / 1.414 | 0;
+		var offsetX = (this.texture.width - width) / 2 | 0;
+		var offsetY = (this.texture.height - height) / 2 | 0;
+		var rx = this.params.rx | 0;
+		var ry = this.params.ry | 0;
+		var tileWidth = width / rx;
+		var tileHeight = height / ry;
+		var _g = 0;
+		while(_g < ry) {
+			var ty = _g++;
+			var _g1 = 0;
+			while(_g1 < rx) {
+				var tx = _g1++;
+				var x0 = tx * tileWidth | 0;
+				var y0 = ty * tileHeight | 0;
+				var songPositionFrom = (ty * rx + tx) / (rx * ry);
+				var songPositionTo = songPositionFrom + 1 / (rx * ry);
+				var level = this.analyzer.getLevel(songPositionFrom,songPositionTo);
+				var r = level * this.params.scale * 255;
+				if(r > 255) r = 255;
+				var _g3 = x0, _g2 = (x0 + tileWidth | 0) + 1;
+				while(_g3 < _g2) {
+					var x = _g3++;
+					var _g5 = y0, _g4 = (y0 + tileHeight | 0) + 1;
+					while(_g5 < _g4) {
+						var y = _g5++;
+						this.texture.setPixel(x + offsetX,y + offsetY,r | 0,128,30,255);
+					}
+				}
+			}
+		}
+	}
+	,__class__: kumite.musicdraw.RasterEffect
+}
+kumite.musicdraw.TimeEffect = $hxClasses["kumite.musicdraw.TimeEffect"] = function() {
+	this.setProgress = function(_) {
+	};
+	this.texture = new GLArrayTexture();
+	this.index = 0;
+};
+kumite.musicdraw.TimeEffect.__name__ = ["kumite","musicdraw","TimeEffect"];
+kumite.musicdraw.TimeEffect.prototype = {
+	analyzer: null
+	,texture: null
+	,params: null
+	,setProgress: null
+	,index: null
+	,init: function() {
+	}
+	,setParams: function(params) {
+		this.params = params;
+		this.texture.width = params.width;
+		this.texture.height = params.height;
+	}
+	,render: function(buffer) {
+		this.texture.array = new Uint8Array(buffer);
+		var g = new RasterGraphic();
+		g.smooth();
+		g.rasterWidth = this.texture.width;
+		g.rasterHeight = this.texture.height;
+		g.raster = this.texture.array;
+		g.clear();
+		var height = this.texture.height;
+		var width = height / 1.414 | 0;
+		var offsetX = (this.texture.width - width) / 2 | 0;
+		var offsetY = (this.texture.height - height) / 2 | 0;
+		g.setColor(0,255,0,255);
+		g.fillRect(0,0,10,10);
+		g.fillRect(100,100,10,10);
+		g.line(0,0,100,100);
+		g.setColor(255,0,0,255);
+		var originX = (width / 2 | 0) + offsetX;
+		var originY = (height / 2 | 0) + offsetY;
+		var count = this.params.count;
+		var oldX = 0;
+		var oldY = 0;
+		var _g1 = 0, _g = count + 1;
+		while(_g1 < _g) {
+			var t = _g1++;
+			var level = this.analyzer.getLevel3(t / count);
+			var r = width * this.params.radius + level * width * this.params.levelRadius;
+			var x = (Math.sin(t * Math.PI / (count / 2)) * r + width / 2 | 0) + offsetX;
+			var y = (Math.cos(t * Math.PI / (count / 2)) * r + height / 2 | 0) + offsetY;
+			if(t > 0) g.line(oldX,oldY,x,y);
+			g.line(originX,originY,x,y);
+			oldX = x;
+			oldY = y;
+		}
+	}
+	,__class__: kumite.musicdraw.TimeEffect
+}
 js.Boot.__res = {}
 js.Boot.__init();
 {
@@ -1083,29 +1113,15 @@ js.Boot.__init();
 		var s = date.getSeconds();
 		return date.getFullYear() + "-" + (m < 10?"0" + m:"" + m) + "-" + (d1 < 10?"0" + d1:"" + d1) + " " + (h < 10?"0" + h:"" + h) + ":" + (mi < 10?"0" + mi:"" + mi) + ":" + (s < 10?"0" + s:"" + s);
 	};
-	d.prototype.__class__ = d;
+	d.prototype.__class__ = $hxClasses["Date"] = d;
 	d.__name__ = ["Date"];
-}
-if(typeof(haxe_timers) == "undefined") haxe_timers = [];
-{
-	String.prototype.__class__ = String;
-	String.__name__ = ["String"];
-	Array.prototype.__class__ = Array;
-	Array.__name__ = ["Array"];
-	Int = { __name__ : ["Int"]};
-	Dynamic = { __name__ : ["Dynamic"]};
-	Float = Number;
-	Float.__name__ = ["Float"];
-	Bool = { __ename__ : ["Bool"]};
-	Class = { __name__ : ["Class"]};
-	Enum = { };
-	Void = { __ename__ : ["Void"]};
 }
 {
 	Math.__name__ = ["Math"];
 	Math.NaN = Number["NaN"];
 	Math.NEGATIVE_INFINITY = Number["NEGATIVE_INFINITY"];
 	Math.POSITIVE_INFINITY = Number["POSITIVE_INFINITY"];
+	$hxClasses["Math"] = Math;
 	Math.isFinite = function(i) {
 		return isFinite(i);
 	};
@@ -1114,13 +1130,29 @@ if(typeof(haxe_timers) == "undefined") haxe_timers = [];
 	};
 }
 {
-	js.Lib.document = document;
-	js.Lib.window = window;
-	onerror = function(msg,url,line) {
-		var f = js.Lib.onerror;
-		if( f == null )
-			return false;
-		return f(msg,[url+":"+line]);
+	String.prototype.__class__ = $hxClasses["String"] = String;
+	String.__name__ = ["String"];
+	Array.prototype.__class__ = $hxClasses["Array"] = Array;
+	Array.__name__ = ["Array"];
+	var Int = $hxClasses["Int"] = { __name__ : ["Int"]};
+	var Dynamic = $hxClasses["Dynamic"] = { __name__ : ["Dynamic"]};
+	var Float = $hxClasses["Float"] = Number;
+	Float.__name__ = ["Float"];
+	var Bool = $hxClasses["Bool"] = Boolean;
+	Bool.__ename__ = ["Bool"];
+	var Class = $hxClasses["Class"] = { __name__ : ["Class"]};
+	var Enum = { };
+	var Void = $hxClasses["Void"] = { __ename__ : ["Void"]};
+}
+{
+	if(typeof document != "undefined") js.Lib.document = document;
+	if(typeof window != "undefined") {
+		js.Lib.window = window;
+		js.Lib.window.onerror = function(msg,url,line) {
+			var f = js.Lib.onerror;
+			if(f == null) return false;
+			return f(msg,[url + ":" + line]);
+		};
 	}
 }
 js.Lib.onerror = null;

@@ -121,7 +121,6 @@ class EyeMaskLayer implements LayerLifecycle, implements Infos
 		textureUniform.setTexture(texture, 0);
 		
 		iterate();
-		iterate();
 		
 		shutUniform.setFloat(shut);
 		
