@@ -35,7 +35,7 @@ class Main {
 					kumite.projection.Config,
 					kumite.camera.Config,
 					kumite.mouse.Config,
-					kumite.jpegservice.JPEGServiceConfig,
+					//kumite.jpegservice.JPEGServiceConfig,
 					kumite.blobs.Config,
 					//kumite.socketsound.Config,
 					//kumite.helloworldgl.Config,

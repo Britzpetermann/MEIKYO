@@ -2172,7 +2172,7 @@ LogLevel.prototype = {
 }
 var Main = $hxClasses["Main"] = function(canvas) {
 	try {
-		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.textureregistry.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.time.Config,kumite.projection.Config,kumite.camera.Config,kumite.mouse.Config,kumite.jpegservice.JPEGServiceConfig,kumite.blobs.Config,kumite.displaylist.ConfigAsLayer,kumite.scene.SceneConfig,kumite.eyes.Config]);
+		var context = bpmjs.ContextBuilder.buildAll([kumite.launch.Config,kumite.textureregistry.Config,kumite.stage.Config,kumite.canvas.Config,kumite.webgl.Config,kumite.time.Config,kumite.projection.Config,kumite.camera.Config,kumite.mouse.Config,kumite.blobs.Config,kumite.displaylist.ConfigAsLayer,kumite.scene.SceneConfig,kumite.eyes.Config]);
 	} catch( e ) {
 		{
 			Log.posInfo = { fileName : "Main.hx", lineNumber : 64, className : "Main", methodName : "new"};
@@ -4467,143 +4467,6 @@ bpmjs.TaskError.prototype = {
 	,error: null
 	,__class__: bpmjs.TaskError
 }
-bpmjs.WorkerService = $hxClasses["bpmjs.WorkerService"] = function() {
-	this.debug = false;
-	this.queue = new Array();
-	this.pendingCall = null;
-};
-bpmjs.WorkerService.__name__ = ["bpmjs","WorkerService"];
-bpmjs.WorkerService.prototype = {
-	debug: null
-	,receiver: null
-	,paused: null
-	,worker: null
-	,queue: null
-	,pendingCall: null
-	,init: function(workerScript) {
-		this.worker = new Worker(workerScript + "?cache=" + Date.now().getTime());
-		this.worker.onmessage = this.onMessage.$bind(this);
-	}
-	,pause: function() {
-		this.paused = true;
-	}
-	,resume: function() {
-		this.paused = false;
-		this.checkQueue();
-	}
-	,terminate: function() {
-		this.worker.terminate();
-	}
-	,call: function(method,args,completeCallback) {
-		if(args == null) args = [];
-		if(completeCallback == null) completeCallback = function() {
-		};
-		this.addQueue(new bpmjs.Call(method,args,completeCallback));
-	}
-	,callTransfer: function(method,buffer,completeCallback) {
-		if(buffer == null) buffer = new ArrayBuffer(0);
-		this.addQueue(new bpmjs.Call("__prepareTransfer__",[method],function() {
-		}));
-		this.addQueue(new bpmjs.TransferCall(method,[buffer],completeCallback));
-	}
-	,addQueue: function(call) {
-		if(this.debug) {
-			Log.posInfo = { fileName : "WorkerService.hx", lineNumber : 65, className : "bpmjs.WorkerService", methodName : "addQueue"};
-			if(Log.filter(LogLevel.INFO)) {
-				Log.fetchInput(call,null,null,null,null,null,null);
-				console.info(Log.createMessage());
-			}
-		}
-		this.queue.push(call);
-		this.checkQueue();
-	}
-	,checkQueue: function() {
-		if(this.paused) return;
-		if(this.debug) {
-			Log.posInfo = { fileName : "WorkerService.hx", lineNumber : 76, className : "bpmjs.WorkerService", methodName : "checkQueue"};
-			if(Log.filter(LogLevel.INFO)) {
-				Log.fetchInput(this.queue.length,null,null,null,null,null,null);
-				console.info(Log.createMessage());
-			}
-		}
-		if(this.pendingCall == null && this.queue.length > 0) {
-			var call = this.queue.shift();
-			this.executeCall(call);
-		}
-	}
-	,executeCall: function(call) {
-		if(this.debug) {
-			Log.posInfo = { fileName : "WorkerService.hx", lineNumber : 88, className : "bpmjs.WorkerService", methodName : "executeCall"};
-			if(Log.filter(LogLevel.INFO)) {
-				Log.fetchInput(call,null,null,null,null,null,null);
-				console.info(Log.createMessage());
-			}
-		}
-		this.pendingCall = call;
-		if(this.pendingCall.transfer) this.worker.webkitPostMessage(call.args[0],[call.args[0]]); else this.worker.webkitPostMessage({ method : call.method, args : call.args});
-	}
-	,onMessage: function(event) {
-		if(this.debug) {
-			Log.posInfo = { fileName : "WorkerService.hx", lineNumber : 100, className : "bpmjs.WorkerService", methodName : "onMessage"};
-			if(Log.filter(LogLevel.INFO)) {
-				Log.fetchInput("Result: " + this.pendingCall + " -> " + Std.string(event.data),null,null,null,null,null,null);
-				console.info(Log.createMessage());
-			}
-		}
-		if(event.data.type == "pipeMethod") this.handlePipedMethod(event); else {
-			if(this.pendingCall.transfer) this.pendingCall.completeCallback(event.data); else this.pendingCall.completeCallback(event.data.result);
-			this.pendingCall = null;
-			this.checkQueue();
-		}
-	}
-	,handlePipedMethod: function(event) {
-		if(this.receiver != null) try {
-			var method = Reflect.field(this.receiver,event.data.method);
-			method.apply(this.receiver,event.data.args);
-			return;
-		} catch( e ) {
-		}
-		try {
-			var method = eval(event.data.method);
-			method.apply(null,event.data.args);
-		} catch( e ) {
-			{
-				Log.posInfo = { fileName : "WorkerService.hx", lineNumber : 140, className : "bpmjs.WorkerService", methodName : "handlePipedMethod"};
-				if(Log.filter(LogLevel.WARN)) {
-					Log.fetchInput("Could not execute piped method without receiver: " + event.data.method,null,null,null,null,null,null);
-					console.warn(Log.createMessage());
-				}
-			}
-		}
-	}
-	,__class__: bpmjs.WorkerService
-}
-bpmjs.Call = $hxClasses["bpmjs.Call"] = function(method,args,completeCallback) {
-	this.method = method;
-	this.args = args;
-	this.completeCallback = completeCallback;
-	this.transfer = false;
-};
-bpmjs.Call.__name__ = ["bpmjs","Call"];
-bpmjs.Call.prototype = {
-	method: null
-	,args: null
-	,completeCallback: null
-	,transfer: null
-	,toString: function() {
-		return "[Call: " + this.method + " transfer:" + this.transfer + "]";
-	}
-	,__class__: bpmjs.Call
-}
-bpmjs.TransferCall = $hxClasses["bpmjs.TransferCall"] = function(method,args,completeCallback) {
-	bpmjs.Call.call(this,method,args,completeCallback);
-	this.transfer = true;
-};
-bpmjs.TransferCall.__name__ = ["bpmjs","TransferCall"];
-bpmjs.TransferCall.__super__ = bpmjs.Call;
-bpmjs.TransferCall.prototype = $extend(bpmjs.Call.prototype,{
-	__class__: bpmjs.TransferCall
-});
 var ease = ease || {}
 ease.Quad = $hxClasses["ease.Quad"] = function() { }
 ease.Quad.__name__ = ["ease","Quad"];
@@ -6671,24 +6534,18 @@ kumite.eyes.Config = $hxClasses["kumite.eyes.Config"] = function() {
 	this.eyeEffects = new Array();
 	this.postproFilters = new Array();
 	this.eyeBlocks = new Array();
-	this.createBlock(-686,-355,0.18);
 	this.createBlock(-538,-12,0.29);
 	this.createBlock(-453,-270,0.175);
 	this.createBlock(-399,224,0.285);
-	this.createBlock(-325,-397,0.175);
 	this.createBlock(-264,72,0.175);
 	this.createBlock(-159,-112,0.34);
 	this.createBlock(-63,209,0.285);
 	this.createBlock(101,-227,0.19);
-	this.createBlock(127,310,0.17);
 	this.createBlock(157,17,0.285);
 	this.createBlock(344,220,0.17);
-	this.createBlock(381,-195,0.12);
 	this.createBlock(447,-2,0.33);
 	this.createBlock(479,404,0.28);
-	this.createBlock(571,-433,0.175);
 	this.createBlock(632.5,-188,0.245);
-	this.createBlock(633,185,0.12);
 	var colors = new Array();
 	colors.push(new Vec3(0,0,0));
 	colors.push(new Vec3(0,-10,0));
@@ -6779,8 +6636,8 @@ kumite.eyes.Config.prototype = {
 	}
 	,createBlock: function(x,y,scale) {
 		var eyeBlock = new kumite.eyes.EyeBlock();
-		eyeBlock.position.x = x - 0.9;
-		eyeBlock.position.y = y - 1.3;
+		eyeBlock.position.x = x + 2;
+		eyeBlock.position.y = y - 6;
 		eyeBlock.scale = scale;
 		this.eyeBlocks.push(eyeBlock);
 	}
@@ -6953,41 +6810,6 @@ kumite.eyes._EyePostproFilter.Fragment = $hxClasses["kumite.eyes._EyePostproFilt
 kumite.eyes._EyePostproFilter.Fragment.__name__ = ["kumite","eyes","_EyePostproFilter","Fragment"];
 kumite.eyes._EyePostproFilter.Fragment.prototype = {
 	__class__: kumite.eyes._EyePostproFilter.Fragment
-}
-if(!kumite.jpegservice) kumite.jpegservice = {}
-kumite.jpegservice.JPEGService = $hxClasses["kumite.jpegservice.JPEGService"] = function() {
-};
-kumite.jpegservice.JPEGService.__name__ = ["kumite","jpegservice","JPEGService"];
-kumite.jpegservice.JPEGService.__interfaces__ = [haxe.rtti.Infos];
-kumite.jpegservice.JPEGService.prototype = {
-	compressAndSave: function(buffer,width,height,filename,complete,monitor) {
-		if(monitor == null) monitor = new bpmjs.ProgressMonitor();
-		var workerService = new bpmjs.WorkerService();
-		workerService.receiver = { setProgress : function(progress) {
-			monitor.setCurrent(progress);
-		}};
-		workerService.debug = false;
-		workerService.init("bin/kumite.jpegservice.JPEGWorker.js");
-		workerService.call("config",[width,height]);
-		workerService.callTransfer("compress",buffer,function(jpegBuffer) {
-			var blobBuilder = new WebKitBlobBuilder();
-			blobBuilder.append(jpegBuffer);
-			saveAs(blobBuilder.getBlob("example/binary"),filename);
-			workerService.terminate();
-			monitor.done();
-			complete();
-		});
-	}
-	,__class__: kumite.jpegservice.JPEGService
-}
-kumite.jpegservice.JPEGServiceConfig = $hxClasses["kumite.jpegservice.JPEGServiceConfig"] = function() {
-	this.service = new kumite.jpegservice.JPEGService();
-};
-kumite.jpegservice.JPEGServiceConfig.__name__ = ["kumite","jpegservice","JPEGServiceConfig"];
-kumite.jpegservice.JPEGServiceConfig.__interfaces__ = [haxe.rtti.Infos];
-kumite.jpegservice.JPEGServiceConfig.prototype = {
-	service: null
-	,__class__: kumite.jpegservice.JPEGServiceConfig
 }
 if(!kumite.launch) kumite.launch = {}
 kumite.launch.Config = $hxClasses["kumite.launch.Config"] = function() {
@@ -8420,7 +8242,7 @@ kumite.scene.SceneChangeRequest.prototype = {
 kumite.scene.SceneConfig = $hxClasses["kumite.scene.SceneConfig"] = function() {
 	this.scenes = new kumite.scene.Scenes();
 	this.sceneNavigator = new kumite.scene.SceneNavigator();
-	this.sceneNavigator.transitionTime = 100;
+	this.sceneNavigator.transitionTime = 1000;
 };
 kumite.scene.SceneConfig.__name__ = ["kumite","scene","SceneConfig"];
 kumite.scene.SceneConfig.__interfaces__ = [haxe.rtti.Infos];
@@ -10263,7 +10085,7 @@ kumite.canvas.Config.__rtti = "<class path=\"kumite.canvas.Config\" params=\"\">
 kumite.displaylist.ConfigAsLayer.__rtti = "<class path=\"kumite.displaylist.ConfigAsLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<displayListLayer public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayListLayer>\n\t<stage public=\"1\"><c path=\"GLStage\"/></stage>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.displaylist.DisplayListLayer.__rtti = "<class path=\"kumite.displaylist.DisplayListLayer\" params=\"\">\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<transition public=\"1\"><c path=\"Float\"/></transition>\n\t<renderer><c path=\"GLDisplayListRenderer\"/></renderer>\n\t<init public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"27\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"33\"><f a=\"renderContext\">\n\t<c path=\"kumite.scene.RenderContext\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"19\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.eyes.Config.__meta__ = { fields : { textureRegistry : { Inject : null}, displayListLayer : { Inject : null}, startPrepare : { Sequence : ["boot","startPrepare"]}, complete : { Complete : null}}};
-kumite.eyes.Config.__rtti = "<class path=\"kumite.eyes.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<EYE public=\"1\" line=\"27\" static=\"1\"><c path=\"GLTextureConfig\"/></EYE>\n\t<SHADOW public=\"1\" line=\"28\" static=\"1\"><c path=\"GLTextureConfig\"/></SHADOW>\n\t<REFLECTION public=\"1\" line=\"29\" static=\"1\"><c path=\"GLTextureConfig\"/></REFLECTION>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<displayListLayer public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayListLayer>\n\t<clearLayer public=\"1\"><c path=\"kumite.layer.ClearLayer\"/></clearLayer>\n\t<eyeLayers public=\"1\"><c path=\"Array\"><c path=\"kumite.layer.TextureHSLLayer\"/></c></eyeLayers>\n\t<shadowLayer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></shadowLayer>\n\t<reflectionLayer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></reflectionLayer>\n\t<framebuffer1EnableLayer public=\"1\"><c path=\"kumite.layer.FramebufferEnableLayer\"/></framebuffer1EnableLayer>\n\t<framebuffer1DisableLayer public=\"1\"><c path=\"kumite.layer.FramebufferDisableLayer\"/></framebuffer1DisableLayer>\n\t<framebufferPostproEnableLayer public=\"1\"><c path=\"kumite.layer.FramebufferEnableLayer\"/></framebufferPostproEnableLayer>\n\t<framebufferPostproDisableLayer public=\"1\"><c path=\"kumite.layer.FramebufferDisableLayer\"/></framebufferPostproDisableLayer>\n\t<postproFilters public=\"1\"><c path=\"Array\"><c path=\"kumite.eyes.EyePostproFilter\"/></c></postproFilters>\n\t<framebuffer2EnableLayer public=\"1\"><c path=\"kumite.layer.FramebufferEnableLayer\"/></framebuffer2EnableLayer>\n\t<framebuffer2DisableLayer public=\"1\"><c path=\"kumite.layer.FramebufferDisableLayer\"/></framebuffer2DisableLayer>\n\t<eyeMaskLayers public=\"1\"><c path=\"Array\"><c path=\"kumite.eyes.EyeMaskLayer\"/></c></eyeMaskLayers>\n\t<eyeEffects public=\"1\"><c path=\"Array\"><c path=\"kumite.layer.effect.EyeEffect\"/></c></eyeEffects>\n\t<eyeBlocks public=\"1\"><c path=\"Array\"><c path=\"kumite.eyes.EyeBlock\"/></c></eyeBlocks>\n\t<scene1 public=\"1\"><c path=\"kumite.scene.DefaultScene\"/></scene1>\n\t<startPrepare public=\"1\" set=\"method\" line=\"178\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></startPrepare>\n\t<complete public=\"1\" set=\"method\" line=\"190\"><f a=\"\"><e path=\"Void\"/></f></complete>\n\t<createBlock set=\"method\" line=\"217\"><f a=\"x:y:scale\">\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<e path=\"Void\"/>\n</f></createBlock>\n\t<new public=\"1\" set=\"method\" line=\"59\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.eyes.Config.__rtti = "<class path=\"kumite.eyes.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<EYE public=\"1\" line=\"27\" static=\"1\"><c path=\"GLTextureConfig\"/></EYE>\n\t<SHADOW public=\"1\" line=\"28\" static=\"1\"><c path=\"GLTextureConfig\"/></SHADOW>\n\t<REFLECTION public=\"1\" line=\"29\" static=\"1\"><c path=\"GLTextureConfig\"/></REFLECTION>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<displayListLayer public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayListLayer>\n\t<clearLayer public=\"1\"><c path=\"kumite.layer.ClearLayer\"/></clearLayer>\n\t<eyeLayers public=\"1\"><c path=\"Array\"><c path=\"kumite.layer.TextureHSLLayer\"/></c></eyeLayers>\n\t<shadowLayer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></shadowLayer>\n\t<reflectionLayer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></reflectionLayer>\n\t<framebuffer1EnableLayer public=\"1\"><c path=\"kumite.layer.FramebufferEnableLayer\"/></framebuffer1EnableLayer>\n\t<framebuffer1DisableLayer public=\"1\"><c path=\"kumite.layer.FramebufferDisableLayer\"/></framebuffer1DisableLayer>\n\t<framebufferPostproEnableLayer public=\"1\"><c path=\"kumite.layer.FramebufferEnableLayer\"/></framebufferPostproEnableLayer>\n\t<framebufferPostproDisableLayer public=\"1\"><c path=\"kumite.layer.FramebufferDisableLayer\"/></framebufferPostproDisableLayer>\n\t<postproFilters public=\"1\"><c path=\"Array\"><c path=\"kumite.eyes.EyePostproFilter\"/></c></postproFilters>\n\t<framebuffer2EnableLayer public=\"1\"><c path=\"kumite.layer.FramebufferEnableLayer\"/></framebuffer2EnableLayer>\n\t<framebuffer2DisableLayer public=\"1\"><c path=\"kumite.layer.FramebufferDisableLayer\"/></framebuffer2DisableLayer>\n\t<eyeMaskLayers public=\"1\"><c path=\"Array\"><c path=\"kumite.eyes.EyeMaskLayer\"/></c></eyeMaskLayers>\n\t<eyeEffects public=\"1\"><c path=\"Array\"><c path=\"kumite.layer.effect.EyeEffect\"/></c></eyeEffects>\n\t<eyeBlocks public=\"1\"><c path=\"Array\"><c path=\"kumite.eyes.EyeBlock\"/></c></eyeBlocks>\n\t<scene1 public=\"1\"><c path=\"kumite.scene.DefaultScene\"/></scene1>\n\t<startPrepare public=\"1\" set=\"method\" line=\"171\"><f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f></startPrepare>\n\t<complete public=\"1\" set=\"method\" line=\"183\"><f a=\"\"><e path=\"Void\"/></f></complete>\n\t<createBlock set=\"method\" line=\"210\"><f a=\"x:y:scale\">\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<e path=\"Void\"/>\n</f></createBlock>\n\t<new public=\"1\" set=\"method\" line=\"59\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.eyes.Config.EYE = GLTextureConfig.create("data/image/eyes/EyesBG.png",9729);
 kumite.eyes.Config.SHADOW = GLTextureConfig.create("data/image/eyes/EyesShadow.png",9729);
 kumite.eyes.Config.REFLECTION = GLTextureConfig.create("data/image/eyes/Reflection.png",9729);
@@ -10281,8 +10103,6 @@ kumite.eyes.EyePostproFilter.__meta__ = { fields : { textureRegistry : { Inject 
 kumite.eyes.EyePostproFilter.__rtti = "<class path=\"kumite.eyes.EyePostproFilter\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<textureRegistry public=\"1\"><c path=\"GLTextureRegistry\"/></textureRegistry>\n\t<time public=\"1\"><c path=\"kumite.time.Time\"/></time>\n\t<textureConfig public=\"1\"><c path=\"GLTextureConfig\"/></textureConfig>\n\t<eyePosition public=\"1\"><c path=\"Vec2\"/></eyePosition>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<textureUniform><c path=\"GLUniformLocation\"/></textureUniform>\n\t<resolutionUniform><c path=\"GLUniformLocation\"/></resolutionUniform>\n\t<timeUniform><c path=\"GLUniformLocation\"/></timeUniform>\n\t<amountUniform><c path=\"GLUniformLocation\"/></amountUniform>\n\t<init public=\"1\" set=\"method\" line=\"39\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"58\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"63\"><f a=\"renderContext\">\n\t<c path=\"kumite.scene.RenderContext\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"34\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.eyes._EyePostproFilter.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = vec4(vertexPosition.x, vertexPosition.y, 0.0, 1.0);\n\t}\n\n"]}};
 kumite.eyes._EyePostproFilter.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\tprecision highp float;\n\t#endif\n\t\n\tuniform vec2 resolution;\n\tuniform float time;\n\tuniform float amount;\n\tuniform sampler2D texture;\n\t\n\tvoid main(void)\n\t{\n\t    vec2 q = gl_FragCoord.xy / resolution;\n\t\tq.y = 1.0-q.y;\n\t    vec3 oricol = texture2D(texture, vec2(q.x,1.0 - q.y)).xyz;\n\n\t\tif (amount >= 1.0)\n\t\t{\n\t\t\tgl_FragColor = vec4(oricol, 1.0);\n\t\t}\n\t\telse\n\t\t{\n\t\t\tvec2 uv = q;\n\t\n\t\t    vec3 col;\n\t\n\t\t\tfloat camount = pow(clamp(amount, 0.0, 1.0), 0.5);\n\t\n\t\t\t//aberation\n\t\t\tfloat cax = 30.0 + camount * 5.0;\n\t\t\tfloat cay = -cax;\n\t\t    col.r = texture2D(texture,vec2(uv.x+cax / resolution.x,-uv.y)).x;\n\t\t    col.g = texture2D(texture,vec2(uv.x+0.000,-uv.y)).y;\n\t\t    col.b = texture2D(texture,vec2(uv.x+cay / resolution.x,-uv.y)).z;\n\t\t\n\t\t    col = clamp(col*0.5+0.5*col*col*1.2,0.0,1.0);\n\t\t\n\t\t\t//vignette\n\t\t    col *= 0.3 + 0.7*16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y);\n\t\t\n\t\t\t//color\n\t\t    //col *= vec3(0.8,1.0,0.7);\n\t\t\n\t\t\t//v lines\n\t\t    col *= (1.0 - camount * 0.5)+(0.3 + camount * 0.5)*sin(0.01*time+gl_FragCoord.y*2.5);\n\t\t\n\t\t\t//flicker\n\t\t    col *= 0.97+0.03*sin(0.11*time);\n\t\t\n\t\t    gl_FragColor = vec4(mix(col, oricol, camount), 1.0);\n\t\t}\n\t}\n\n"]}};
-kumite.jpegservice.JPEGService.__rtti = "<class path=\"kumite.jpegservice.JPEGService\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<compressAndSave public=\"1\" set=\"method\" line=\"14\"><f a=\"buffer:width:height:filename:complete:?monitor\">\n\t<c path=\"ArrayBuffer\"/>\n\t<c path=\"Int\"/>\n\t<c path=\"Int\"/>\n\t<c path=\"String\"/>\n\t<f a=\"\"><e path=\"Void\"/></f>\n\t<c path=\"bpmjs.ProgressMonitor\"/>\n\t<e path=\"Void\"/>\n</f></compressAndSave>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
-kumite.jpegservice.JPEGServiceConfig.__rtti = "<class path=\"kumite.jpegservice.JPEGServiceConfig\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<service><c path=\"kumite.jpegservice.JPEGService\"/></service>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.launch.Config.__rtti = "<class path=\"kumite.launch.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<launcher public=\"1\"><c path=\"kumite.launch.Launcher\"/></launcher>\n\t<preloadDisplay public=\"1\"><c path=\"kumite.launch.PreloadDisplay\"/></preloadDisplay>\n\t<new public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.launch.Launcher.__meta__ = { fields : { sequencer : { Inject : null}, handlePostComplete : { PostComplete : null}, showError : { Sequence : ["boot","error"]}, handleFinish : { Sequence : ["boot","finish"]}}};
 kumite.launch.Launcher.__rtti = "<class path=\"kumite.launch.Launcher\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<handlePostComplete public=\"1\" set=\"method\" line=\"17\"><f a=\"\"><e path=\"Void\"/></f></handlePostComplete>\n\t<showError public=\"1\" set=\"method\" line=\"24\"><f a=\"message\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></showError>\n\t<handleFinish public=\"1\" set=\"method\" line=\"30\"><f a=\"\"><e path=\"Void\"/></f></handleFinish>\n\t<new public=\"1\" set=\"method\" line=\"14\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";

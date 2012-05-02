@@ -106,26 +106,19 @@ class Config implements Infos
 		 */
 		
 		//left to right, top to bottom
-		createBlock(-686, -355, 0.18);
+		
 		createBlock(-538, -12, 0.29);
 		createBlock(-453, -270, 0.175);
 		createBlock(-399, 224, 0.285);
-		createBlock(-325, -397, 0.175);
 		createBlock(-264, 72, 0.175);
 		createBlock(-159, -112, 0.34);
 		createBlock(-63, 209, 0.285);
 		createBlock(101, -227, 0.19);
-		createBlock(127, 310, 0.17);
 		createBlock(157, 17, 0.285);
 		createBlock(344, 220, 0.17);
-		createBlock(381, -195, 0.12);
 		createBlock(447, -2, 0.33);
 		createBlock(479, 404, 0.28);
-		createBlock(571, -433, 0.175);
 		createBlock(632.5, -188, 0.245);
-		createBlock(633, 185, 0.12);
-			
-		
 		
 		var colors : Array<Vec3> = new Array();
 		colors.push(new Vec3(0, 0, 0));
@@ -217,8 +210,8 @@ class Config implements Infos
 	function createBlock(x : Float, y : Float, scale : Float)
 	{
 		var eyeBlock = new EyeBlock();
-		eyeBlock.position.x = x - 0.9;
-		eyeBlock.position.y = y - 1.3;
+		eyeBlock.position.x = x + 2;
+		eyeBlock.position.y = y - 6;
 		eyeBlock.scale = scale;
 		
 		eyeBlocks.push(eyeBlock);

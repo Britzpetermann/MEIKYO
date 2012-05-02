@@ -10,8 +10,8 @@ class Config implements Infos
 	public function new()
 	{
 		vjstats = new VJStats();
-		//vjinterface = new VJInterface();
-		//vjlayers = new VJLayers();
+		vjinterface = new VJInterface();
+		vjlayers = new VJLayers();
 	}
 	
 }
