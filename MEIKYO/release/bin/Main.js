@@ -424,7 +424,6 @@ GLAnimationFrame.run = function(method,ms) {
 			if(Log.filter(LogLevel.ERROR)) {
 				Log.fetchInput("Error executing GLAnimationFrame: " + Std.string(e),null,null,null,null,null,null);
 				console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
-				Log.displayError(Log.createErrorMessage());
 			}
 		}
 	};
@@ -1112,7 +1111,6 @@ bpmjs.Task.prototype = {
 			if(Log.filter(LogLevel.ERROR)) {
 				Log.fetchInput("Error starting Task: ",e,null,null,null,null,null);
 				console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
-				Log.displayError(Log.createErrorMessage());
 			}
 		}
 	}
@@ -1158,7 +1156,6 @@ GLTextureAtlasLoadingTask.prototype = $extend(bpmjs.Task.prototype,{
 				if(Log.filter(LogLevel.ERROR)) {
 					Log.fetchInput("Atlas",this.atlas.toString(),"is too small!",null,null,null,null);
 					console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
-					Log.displayError(Log.createErrorMessage());
 				}
 			}
 		}
@@ -2062,7 +2059,6 @@ List.prototype = {
 var Log = $hxClasses["Log"] = function() { }
 Log.__name__ = ["Log"];
 Log.posInfo = null;
-Log.errorDiv = null;
 Log["debugger"] = function() {
 	debugger;
 }
@@ -2106,7 +2102,6 @@ Log.error = function(m0,m1,m2,m3,m4,m5,m6,i) {
 	if(Log.filter(LogLevel.ERROR)) {
 		Log.fetchInput(m0,m1,m2,m3,m4,m5,m6);
 		console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
-		Log.displayError(Log.createErrorMessage());
 	}
 }
 Log.infoEnabled = function(i) {
@@ -2166,19 +2161,6 @@ Log.infoConsole = function(v,i) {
 	Log.fetchInput(v);
 	console.log("" + Log.createMessage() + " (trace)");
 }
-Log.displayError = function(message) {
-	if(($_=js.Lib.document,$bind($_,$_.createElement)) == null) return;
-	if(Log.errorDiv == null) {
-		Log.errorDiv = js.Lib.document.createElement("div");
-		Log.errorDiv.className = "Error";
-		js.Lib.document.body.appendChild(Log.errorDiv);
-		Log.errorDiv.innerHTML = "<h1>Ups!</h1>I could not start!\nPlease use up-to-date hardware and an up-to-date browser for this experience.\n\n\nTechnical Details:\n";
-	}
-	if(!Lambda.has(Log.errors,message)) {
-		Log.errors.push(message);
-		Log.errorDiv.innerHTML += message + "\n";
-	}
-}
 Log.prototype = {
 	errorFilter: function() {
 	}
@@ -2203,7 +2185,6 @@ var Main = $hxClasses["Main"] = function(canvas) {
 		if(Log.filter(LogLevel.ERROR)) {
 			Log.fetchInput("Error building application!\n" + Std.string(e),null,null,null,null,null,null);
 			console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
-			Log.displayError(Log.createErrorMessage());
 		}
 	}
 };
@@ -3791,6 +3772,339 @@ bpmjs.ContextConfig.prototype = {
 	frontMessenger: null
 	,__class__: bpmjs.ContextConfig
 }
+var js = js || {}
+js.Boot = $hxClasses["js.Boot"] = function() { }
+js.Boot.__name__ = ["js","Boot"];
+js.Boot.__unhtml = function(s) {
+	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+}
+js.Boot.__trace = function(v,i) {
+	var msg = i != null?i.fileName + ":" + i.lineNumber + ": ":"";
+	msg += js.Boot.__string_rec(v,"");
+	var d;
+	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js.Boot.__unhtml(msg) + "<br/>"; else if(typeof(console) != "undefined" && console.log != null) console.log(msg);
+}
+js.Boot.__clear_trace = function() {
+	var d = document.getElementById("haxe:trace");
+	if(d != null) d.innerHTML = "";
+}
+js.Boot.isClass = function(o) {
+	return o.__name__;
+}
+js.Boot.isEnum = function(e) {
+	return e.__ename__;
+}
+js.Boot.getClass = function(o) {
+	return o.__class__;
+}
+js.Boot.__string_rec = function(o,s) {
+	if(o == null) return "null";
+	if(s.length >= 5) return "<...>";
+	var t = typeof(o);
+	if(t == "function" && (o.__name__ || o.__ename__)) t = "object";
+	switch(t) {
+	case "object":
+		if(o instanceof Array) {
+			if(o.__enum__) {
+				if(o.length == 2) return o[0];
+				var str = o[0] + "(";
+				s += "\t";
+				var _g1 = 2, _g = o.length;
+				while(_g1 < _g) {
+					var i = _g1++;
+					if(i != 2) str += "," + js.Boot.__string_rec(o[i],s); else str += js.Boot.__string_rec(o[i],s);
+				}
+				return str + ")";
+			}
+			var l = o.length;
+			var i;
+			var str = "[";
+			s += "\t";
+			var _g = 0;
+			while(_g < l) {
+				var i1 = _g++;
+				str += (i1 > 0?",":"") + js.Boot.__string_rec(o[i1],s);
+			}
+			str += "]";
+			return str;
+		}
+		var tostr;
+		try {
+			tostr = o.toString;
+		} catch( e ) {
+			return "???";
+		}
+		if(tostr != null && tostr != Object.toString) {
+			var s2 = o.toString();
+			if(s2 != "[object Object]") return s2;
+		}
+		var k = null;
+		var str = "{\n";
+		s += "\t";
+		var hasp = o.hasOwnProperty != null;
+		for( var k in o ) { ;
+		if(hasp && !o.hasOwnProperty(k)) {
+			continue;
+		}
+		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
+			continue;
+		}
+		if(str.length != 2) str += ", \n";
+		str += s + k + " : " + js.Boot.__string_rec(o[k],s);
+		}
+		s = s.substring(1);
+		str += "\n" + s + "}";
+		return str;
+	case "function":
+		return "<function>";
+	case "string":
+		return o;
+	default:
+		return String(o);
+	}
+}
+js.Boot.__interfLoop = function(cc,cl) {
+	if(cc == null) return false;
+	if(cc == cl) return true;
+	var intf = cc.__interfaces__;
+	if(intf != null) {
+		var _g1 = 0, _g = intf.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var i1 = intf[i];
+			if(i1 == cl || js.Boot.__interfLoop(i1,cl)) return true;
+		}
+	}
+	return js.Boot.__interfLoop(cc.__super__,cl);
+}
+js.Boot.__instanceof = function(o,cl) {
+	try {
+		if(o instanceof cl) {
+			if(cl == Array) return o.__enum__ == null;
+			return true;
+		}
+		if(js.Boot.__interfLoop(o.__class__,cl)) return true;
+	} catch( e ) {
+		if(cl == null) return false;
+	}
+	switch(cl) {
+	case Int:
+		return Math.ceil(o%2147483648.0) === o;
+	case Float:
+		return typeof(o) == "number";
+	case Bool:
+		return o === true || o === false;
+	case String:
+		return typeof(o) == "string";
+	case Dynamic:
+		return true;
+	default:
+		if(o == null) return false;
+		if(cl == Class && o.__name__ != null) return true; else null;
+		if(cl == Enum && o.__ename__ != null) return true; else null;
+		return o.__enum__ == cl;
+	}
+}
+js.Boot.__cast = function(o,t) {
+	if(js.Boot.__instanceof(o,t)) return o; else throw "Cannot cast " + Std.string(o) + " to " + Std.string(t);
+}
+haxe.Stack = $hxClasses["haxe.Stack"] = function() { }
+haxe.Stack.__name__ = ["haxe","Stack"];
+haxe.Stack.callStack = function() {
+	var oldValue = Error.prepareStackTrace;
+	Error.prepareStackTrace = function(error,callsites) {
+		var stack = [];
+		var _g = 0;
+		while(_g < callsites.length) {
+			var site = callsites[_g];
+			++_g;
+			var method = null;
+			var fullName = site.getFunctionName();
+			if(fullName != null) {
+				var idx = fullName.lastIndexOf(".");
+				if(idx >= 0) {
+					var className = HxOverrides.substr(fullName,0,idx);
+					var methodName = HxOverrides.substr(fullName,idx + 1,null);
+					method = haxe.StackItem.Method(className,methodName);
+				}
+			}
+			stack.push(haxe.StackItem.FilePos(method,site.getFileName(),site.getLineNumber()));
+		}
+		return stack;
+	};
+	var a = haxe.Stack.makeStack(new Error().stack);
+	a.shift();
+	Error.prepareStackTrace = oldValue;
+	return a;
+}
+haxe.Stack.exceptionStack = function() {
+	return [];
+}
+haxe.Stack.toString = function(stack) {
+	var b = new StringBuf();
+	var _g = 0;
+	while(_g < stack.length) {
+		var s = stack[_g];
+		++_g;
+		b.b += Std.string("\nCalled from ");
+		haxe.Stack.itemToString(b,s);
+	}
+	return b.b;
+}
+haxe.Stack.itemToString = function(b,s) {
+	var $e = (s);
+	switch( $e[1] ) {
+	case 0:
+		b.b += Std.string("a C function");
+		break;
+	case 1:
+		var m = $e[2];
+		b.b += Std.string("module ");
+		b.b += Std.string(m);
+		break;
+	case 2:
+		var line = $e[4], file = $e[3], s1 = $e[2];
+		if(s1 != null) {
+			haxe.Stack.itemToString(b,s1);
+			b.b += Std.string(" (");
+		}
+		b.b += Std.string(file);
+		b.b += Std.string(" line ");
+		b.b += Std.string(line);
+		if(s1 != null) b.b += Std.string(")");
+		break;
+	case 3:
+		var meth = $e[3], cname = $e[2];
+		b.b += Std.string(cname);
+		b.b += Std.string(".");
+		b.b += Std.string(meth);
+		break;
+	case 4:
+		var n = $e[2];
+		b.b += Std.string("local function #");
+		b.b += Std.string(n);
+		break;
+	}
+}
+haxe.Stack.makeStack = function(s) {
+	if(typeof(s) == "string") {
+		var stack = s.split("\n");
+		var m = [];
+		var _g = 0;
+		while(_g < stack.length) {
+			var line = stack[_g];
+			++_g;
+			m.push(haxe.StackItem.Module(line));
+		}
+		return m;
+	} else return s;
+}
+js.Lib = $hxClasses["js.Lib"] = function() { }
+js.Lib.__name__ = ["js","Lib"];
+js.Lib.document = null;
+js.Lib.window = null;
+js.Lib.debug = function() {
+	debugger;
+}
+js.Lib.alert = function(v) {
+	alert(js.Boot.__string_rec(v,""));
+}
+js.Lib.eval = function(code) {
+	return eval(code);
+}
+js.Lib.setErrorHandler = function(f) {
+	js.Lib.onerror = f;
+}
+haxe.Timer = $hxClasses["haxe.Timer"] = function(time_ms) {
+	var me = this;
+	this.id = window.setInterval(function() {
+		me.run();
+	},time_ms);
+};
+haxe.Timer.__name__ = ["haxe","Timer"];
+haxe.Timer.delay = function(f,time_ms) {
+	var t = new haxe.Timer(time_ms);
+	t.run = function() {
+		t.stop();
+		f();
+	};
+	return t;
+}
+haxe.Timer.measure = function(f,pos) {
+	var t0 = haxe.Timer.stamp();
+	var r = f();
+	haxe.Log.trace(haxe.Timer.stamp() - t0 + "s",pos);
+	return r;
+}
+haxe.Timer.stamp = function() {
+	return new Date().getTime() / 1000;
+}
+haxe.Timer.prototype = {
+	run: function() {
+	}
+	,stop: function() {
+		if(this.id == null) return;
+		window.clearInterval(this.id);
+		this.id = null;
+	}
+	,id: null
+	,__class__: haxe.Timer
+}
+bpmjs.FrameTimer = $hxClasses["bpmjs.FrameTimer"] = function(maxIntervalMs) {
+	if(maxIntervalMs == null) maxIntervalMs = 0;
+	this.maxIntervalMs = maxIntervalMs;
+};
+bpmjs.FrameTimer.__name__ = ["bpmjs","FrameTimer"];
+bpmjs.FrameTimer.profileStart = null;
+bpmjs.FrameTimer.profileEnd = null;
+bpmjs.FrameTimer.frameTimerLoop = function() {
+	if(bpmjs.FrameTimer.profileStart != null) bpmjs.FrameTimer.profileStart();
+	var time = new Date().getTime();
+	var _g = 0, _g1 = bpmjs.FrameTimer.listeners2;
+	while(_g < _g1.length) {
+		var listener = _g1[_g];
+		++_g;
+		if(listener.run != null) {
+			if(time - listener.time > listener.maxIntervalMs) {
+				listener.time = time;
+				listener.run(listener);
+			}
+		}
+	}
+	var _g = 0, _g1 = bpmjs.FrameTimer.listeners;
+	while(_g < _g1.length) {
+		var listener = _g1[_g];
+		++_g;
+		if(listener.run != null) {
+			if(time - listener.time > listener.maxIntervalMs) {
+				listener.time = time;
+				listener.run(listener);
+			}
+		}
+	}
+	if(bpmjs.FrameTimer.profileEnd != null) bpmjs.FrameTimer.profileEnd();
+}
+bpmjs.FrameTimer.prototype = {
+	stop: function() {
+		HxOverrides.remove(bpmjs.FrameTimer.listeners,this);
+		HxOverrides.remove(bpmjs.FrameTimer.listeners2,this);
+	}
+	,start2: function() {
+		this.time = new Date().getTime();
+		this.stop();
+		bpmjs.FrameTimer.listeners2.push(this);
+		bpmjs.FrameTimer.listeners.push(this);
+	}
+	,start: function() {
+		this.time = new Date().getTime();
+		this.stop();
+		bpmjs.FrameTimer.listeners.push(this);
+	}
+	,maxIntervalMs: null
+	,time: null
+	,run: null
+	,__class__: bpmjs.FrameTimer
+}
 bpmjs.FrontMessenger = $hxClasses["bpmjs.FrontMessenger"] = function() { }
 bpmjs.FrontMessenger.__name__ = ["bpmjs","FrontMessenger"];
 bpmjs.FrontMessenger.prototype = {
@@ -4532,132 +4846,6 @@ haxe.StackItem.Module = function(m) { var $x = ["Module",1,m]; $x.__enum__ = hax
 haxe.StackItem.FilePos = function(s,file,line) { var $x = ["FilePos",2,s,file,line]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; }
 haxe.StackItem.Method = function(classname,method) { var $x = ["Method",3,classname,method]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; }
 haxe.StackItem.Lambda = function(v) { var $x = ["Lambda",4,v]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; }
-haxe.Stack = $hxClasses["haxe.Stack"] = function() { }
-haxe.Stack.__name__ = ["haxe","Stack"];
-haxe.Stack.callStack = function() {
-	var oldValue = Error.prepareStackTrace;
-	Error.prepareStackTrace = function(error,callsites) {
-		var stack = [];
-		var _g = 0;
-		while(_g < callsites.length) {
-			var site = callsites[_g];
-			++_g;
-			var method = null;
-			var fullName = site.getFunctionName();
-			if(fullName != null) {
-				var idx = fullName.lastIndexOf(".");
-				if(idx >= 0) {
-					var className = HxOverrides.substr(fullName,0,idx);
-					var methodName = HxOverrides.substr(fullName,idx + 1,null);
-					method = haxe.StackItem.Method(className,methodName);
-				}
-			}
-			stack.push(haxe.StackItem.FilePos(method,site.getFileName(),site.getLineNumber()));
-		}
-		return stack;
-	};
-	var a = haxe.Stack.makeStack(new Error().stack);
-	a.shift();
-	Error.prepareStackTrace = oldValue;
-	return a;
-}
-haxe.Stack.exceptionStack = function() {
-	return [];
-}
-haxe.Stack.toString = function(stack) {
-	var b = new StringBuf();
-	var _g = 0;
-	while(_g < stack.length) {
-		var s = stack[_g];
-		++_g;
-		b.b += Std.string("\nCalled from ");
-		haxe.Stack.itemToString(b,s);
-	}
-	return b.b;
-}
-haxe.Stack.itemToString = function(b,s) {
-	var $e = (s);
-	switch( $e[1] ) {
-	case 0:
-		b.b += Std.string("a C function");
-		break;
-	case 1:
-		var m = $e[2];
-		b.b += Std.string("module ");
-		b.b += Std.string(m);
-		break;
-	case 2:
-		var line = $e[4], file = $e[3], s1 = $e[2];
-		if(s1 != null) {
-			haxe.Stack.itemToString(b,s1);
-			b.b += Std.string(" (");
-		}
-		b.b += Std.string(file);
-		b.b += Std.string(" line ");
-		b.b += Std.string(line);
-		if(s1 != null) b.b += Std.string(")");
-		break;
-	case 3:
-		var meth = $e[3], cname = $e[2];
-		b.b += Std.string(cname);
-		b.b += Std.string(".");
-		b.b += Std.string(meth);
-		break;
-	case 4:
-		var n = $e[2];
-		b.b += Std.string("local function #");
-		b.b += Std.string(n);
-		break;
-	}
-}
-haxe.Stack.makeStack = function(s) {
-	if(typeof(s) == "string") {
-		var stack = s.split("\n");
-		var m = [];
-		var _g = 0;
-		while(_g < stack.length) {
-			var line = stack[_g];
-			++_g;
-			m.push(haxe.StackItem.Module(line));
-		}
-		return m;
-	} else return s;
-}
-haxe.Timer = $hxClasses["haxe.Timer"] = function(time_ms) {
-	var me = this;
-	this.id = window.setInterval(function() {
-		me.run();
-	},time_ms);
-};
-haxe.Timer.__name__ = ["haxe","Timer"];
-haxe.Timer.delay = function(f,time_ms) {
-	var t = new haxe.Timer(time_ms);
-	t.run = function() {
-		t.stop();
-		f();
-	};
-	return t;
-}
-haxe.Timer.measure = function(f,pos) {
-	var t0 = haxe.Timer.stamp();
-	var r = f();
-	haxe.Log.trace(haxe.Timer.stamp() - t0 + "s",pos);
-	return r;
-}
-haxe.Timer.stamp = function() {
-	return new Date().getTime() / 1000;
-}
-haxe.Timer.prototype = {
-	run: function() {
-	}
-	,stop: function() {
-		if(this.id == null) return;
-		window.clearInterval(this.id);
-		this.id = null;
-	}
-	,id: null
-	,__class__: haxe.Timer
-}
 haxe.TypeTools = $hxClasses["haxe.TypeTools"] = function() { }
 haxe.TypeTools.__name__ = ["haxe","TypeTools"];
 haxe.TypeTools.getClassNames = function(value) {
@@ -6129,158 +6317,6 @@ hsl.haxe.Signal.prototype = {
 	,__class__: hsl.haxe.Signal
 	,__properties__: {get_data1:"getData"}
 }
-var js = js || {}
-js.Boot = $hxClasses["js.Boot"] = function() { }
-js.Boot.__name__ = ["js","Boot"];
-js.Boot.__unhtml = function(s) {
-	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
-}
-js.Boot.__trace = function(v,i) {
-	var msg = i != null?i.fileName + ":" + i.lineNumber + ": ":"";
-	msg += js.Boot.__string_rec(v,"");
-	var d;
-	if(typeof(document) != "undefined" && (d = document.getElementById("haxe:trace")) != null) d.innerHTML += js.Boot.__unhtml(msg) + "<br/>"; else if(typeof(console) != "undefined" && console.log != null) console.log(msg);
-}
-js.Boot.__clear_trace = function() {
-	var d = document.getElementById("haxe:trace");
-	if(d != null) d.innerHTML = "";
-}
-js.Boot.isClass = function(o) {
-	return o.__name__;
-}
-js.Boot.isEnum = function(e) {
-	return e.__ename__;
-}
-js.Boot.getClass = function(o) {
-	return o.__class__;
-}
-js.Boot.__string_rec = function(o,s) {
-	if(o == null) return "null";
-	if(s.length >= 5) return "<...>";
-	var t = typeof(o);
-	if(t == "function" && (o.__name__ || o.__ename__)) t = "object";
-	switch(t) {
-	case "object":
-		if(o instanceof Array) {
-			if(o.__enum__) {
-				if(o.length == 2) return o[0];
-				var str = o[0] + "(";
-				s += "\t";
-				var _g1 = 2, _g = o.length;
-				while(_g1 < _g) {
-					var i = _g1++;
-					if(i != 2) str += "," + js.Boot.__string_rec(o[i],s); else str += js.Boot.__string_rec(o[i],s);
-				}
-				return str + ")";
-			}
-			var l = o.length;
-			var i;
-			var str = "[";
-			s += "\t";
-			var _g = 0;
-			while(_g < l) {
-				var i1 = _g++;
-				str += (i1 > 0?",":"") + js.Boot.__string_rec(o[i1],s);
-			}
-			str += "]";
-			return str;
-		}
-		var tostr;
-		try {
-			tostr = o.toString;
-		} catch( e ) {
-			return "???";
-		}
-		if(tostr != null && tostr != Object.toString) {
-			var s2 = o.toString();
-			if(s2 != "[object Object]") return s2;
-		}
-		var k = null;
-		var str = "{\n";
-		s += "\t";
-		var hasp = o.hasOwnProperty != null;
-		for( var k in o ) { ;
-		if(hasp && !o.hasOwnProperty(k)) {
-			continue;
-		}
-		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
-			continue;
-		}
-		if(str.length != 2) str += ", \n";
-		str += s + k + " : " + js.Boot.__string_rec(o[k],s);
-		}
-		s = s.substring(1);
-		str += "\n" + s + "}";
-		return str;
-	case "function":
-		return "<function>";
-	case "string":
-		return o;
-	default:
-		return String(o);
-	}
-}
-js.Boot.__interfLoop = function(cc,cl) {
-	if(cc == null) return false;
-	if(cc == cl) return true;
-	var intf = cc.__interfaces__;
-	if(intf != null) {
-		var _g1 = 0, _g = intf.length;
-		while(_g1 < _g) {
-			var i = _g1++;
-			var i1 = intf[i];
-			if(i1 == cl || js.Boot.__interfLoop(i1,cl)) return true;
-		}
-	}
-	return js.Boot.__interfLoop(cc.__super__,cl);
-}
-js.Boot.__instanceof = function(o,cl) {
-	try {
-		if(o instanceof cl) {
-			if(cl == Array) return o.__enum__ == null;
-			return true;
-		}
-		if(js.Boot.__interfLoop(o.__class__,cl)) return true;
-	} catch( e ) {
-		if(cl == null) return false;
-	}
-	switch(cl) {
-	case Int:
-		return Math.ceil(o%2147483648.0) === o;
-	case Float:
-		return typeof(o) == "number";
-	case Bool:
-		return o === true || o === false;
-	case String:
-		return typeof(o) == "string";
-	case Dynamic:
-		return true;
-	default:
-		if(o == null) return false;
-		if(cl == Class && o.__name__ != null) return true; else null;
-		if(cl == Enum && o.__ename__ != null) return true; else null;
-		return o.__enum__ == cl;
-	}
-}
-js.Boot.__cast = function(o,t) {
-	if(js.Boot.__instanceof(o,t)) return o; else throw "Cannot cast " + Std.string(o) + " to " + Std.string(t);
-}
-js.Lib = $hxClasses["js.Lib"] = function() { }
-js.Lib.__name__ = ["js","Lib"];
-js.Lib.document = null;
-js.Lib.window = null;
-js.Lib.debug = function() {
-	debugger;
-}
-js.Lib.alert = function(v) {
-	alert(js.Boot.__string_rec(v,""));
-}
-js.Lib.eval = function(code) {
-	return eval(code);
-}
-js.Lib.setErrorHandler = function(f) {
-	js.Lib.onerror = f;
-}
 var kumite = kumite || {}
 if(!kumite.blobs) kumite.blobs = {}
 kumite.blobs.Blob = $hxClasses["kumite.blobs.Blob"] = function() {
@@ -6294,6 +6330,109 @@ kumite.blobs.Blob.prototype = {
 	,x: null
 	,blobId: null
 	,__class__: kumite.blobs.Blob
+}
+kumite.blobs.BlobReaderFusionWS = $hxClasses["kumite.blobs.BlobReaderFusionWS"] = function() {
+	kumite.fusion.FusionConnection.host = "ws://192.168.2.50:12010";
+	this.lastParse = 0;
+};
+kumite.blobs.BlobReaderFusionWS.__name__ = ["kumite","blobs","BlobReaderFusionWS"];
+kumite.blobs.BlobReaderFusionWS.__interfaces__ = [haxe.rtti.Infos];
+kumite.blobs.BlobReaderFusionWS.prototype = {
+	getDist: function(newBlob,oldBlob) {
+		var dx = newBlob.x - oldBlob.x;
+		var dy = newBlob.y - oldBlob.y;
+		var dz = 0;
+		var dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+		return dist;
+	}
+	,mergeBlobs: function(newBlobs) {
+		var result = new Array();
+		var _g = 0;
+		while(_g < newBlobs.length) {
+			var newBlob = newBlobs[_g];
+			++_g;
+			var equalOldBlob = null;
+			var _g1 = 0, _g2 = this.blobs.blobs;
+			while(_g1 < _g2.length) {
+				var oldBlob = _g2[_g1];
+				++_g1;
+				if(this.getDist(newBlob,oldBlob) < 0.3) {
+					equalOldBlob = oldBlob;
+					break;
+				}
+			}
+			if(equalOldBlob == null) {
+				kumite.blobs.BlobReaderFusionWS.BLOB_ID++;
+				newBlob.speed = 0;
+				newBlob.blobId = kumite.blobs.BlobReaderFusionWS.BLOB_ID;
+			} else {
+				newBlob.blobId = equalOldBlob.blobId;
+				var newSpeed = this.getDist(equalOldBlob,newBlob) * 100.;
+				newBlob.speed = equalOldBlob.speed;
+				newBlob.speed += (newSpeed - newBlob.speed) * 0.2;
+				newBlob.speed = Clamp["float"](newBlob.speed,0,1);
+				HxOverrides.remove(this.blobs.blobs,equalOldBlob);
+			}
+			result.push(newBlob);
+		}
+		this.blobs.blobs = result;
+	}
+	,onData: function(r) {
+		this.lastParse = this.time.ms;
+		var xml = Xml.parse(r);
+		var newBlobs = new Array();
+		try {
+			var $it0 = xml.firstElement().iterator();
+			while( $it0.hasNext() ) {
+				var p = $it0.next();
+				var fast = new haxe.xml.Fast(p);
+				var blob = new kumite.blobs.Blob();
+				blob.x = Std.parseFloat(fast.att.resolve("x"));
+				blob.y = Std.parseFloat(fast.att.resolve("y"));
+				blob.z = Std.parseFloat(fast.att.resolve("z"));
+				blob.area = Std.parseFloat(fast.att.resolve("area"));
+				newBlobs.push(blob);
+			}
+		} catch( e ) {
+		}
+		this.mergeBlobs(newBlobs);
+	}
+	,handleFusionData: function(data) {
+		var newBlobs = new Array();
+		var floats = new Float32Array(data);
+		var blobCount = floats.length / 3 | 0;
+		var clipping = this.config.clipping[0];
+		var _g = 0;
+		while(_g < blobCount) {
+			var i = _g++;
+			var blob = new kumite.blobs.Blob();
+			blob.x = floats[i * 3] / (clipping.xMax - clipping.xMin);
+			blob.y = floats[i * 3 + 1] / (clipping.yMax - clipping.yMin);
+			blob.z = floats[i * 3 + 2] / (clipping.zMax - clipping.zMin);
+			newBlobs.push(blob);
+			haxe.Log.trace(blob.x + ", " + blob.y + ", " + blob.z,{ fileName : "BlobReaderFusionWS.hx", lineNumber : 79, className : "kumite.blobs.BlobReaderFusionWS", methodName : "handleFusionData"});
+		}
+		this.mergeBlobs(newBlobs);
+	}
+	,run: function() {
+		this.fusion.get();
+	}
+	,start: function() {
+		this.config = { name : "Eyes", clipping : [{ type : "include", xMin : -3000, xMax : 3000, yMin : -1500, yMax : 500, zMin : 0, zMax : 1600}], blobs : { enabled : true, minPointsPerCell : 1, smoothing : 0.1, width : 100, depth : 50}};
+		this.fusion = new kumite.fusion.FusionConnection();
+		this.fusion.dataSignaler.bind($bind(this,this.handleFusionData));
+		this.fusion.setConfig(this.config);
+		this.fusion.init();
+		var timer = new bpmjs.FrameTimer();
+		timer.run = $bind(this,this.run);
+		timer.start();
+	}
+	,fusion: null
+	,config: null
+	,lastParse: null
+	,time: null
+	,blobs: null
+	,__class__: kumite.blobs.BlobReaderFusionWS
 }
 kumite.blobs.BlobReaderHTTP = $hxClasses["kumite.blobs.BlobReaderHTTP"] = function() {
 };
@@ -6469,12 +6608,13 @@ kumite.blobs.Blobs.prototype = {
 }
 kumite.blobs.Config = $hxClasses["kumite.blobs.Config"] = function() {
 	this.blobs = new kumite.blobs.Blobs();
-	this.blobReaderWS = new kumite.blobs.BlobReaderWS("ws://192.168.2.201:4446");
+	this.blobReaderFusion = new kumite.blobs.BlobReaderFusionWS();
 };
 kumite.blobs.Config.__name__ = ["kumite","blobs","Config"];
 kumite.blobs.Config.__interfaces__ = [haxe.rtti.Infos];
 kumite.blobs.Config.prototype = {
-	blobReaderMouse: null
+	blobReaderFusion: null
+	,blobReaderMouse: null
 	,blobReaderWS: null
 	,blobReaderHTTP: null
 	,blobs: null
@@ -6880,6 +7020,110 @@ kumite.eyes._EyePostproFilter.Vertex = $hxClasses["kumite.eyes._EyePostproFilter
 kumite.eyes._EyePostproFilter.Vertex.__name__ = ["kumite","eyes","_EyePostproFilter","Vertex"];
 kumite.eyes._EyePostproFilter.Fragment = $hxClasses["kumite.eyes._EyePostproFilter.Fragment"] = function() { }
 kumite.eyes._EyePostproFilter.Fragment.__name__ = ["kumite","eyes","_EyePostproFilter","Fragment"];
+if(!kumite.fusion) kumite.fusion = {}
+kumite.fusion.FusionConnection = $hxClasses["kumite.fusion.FusionConnection"] = function() {
+	this.requestNewData = false;
+	this.state = kumite.fusion.FusionConnection.STATE_DISCONNECTED;
+	this.dataSignaler = new hsl.haxe.DirectSignaler(this);
+	this.idleTimer = new bpmjs.FrameTimer(1000);
+	this.idleTimer.run = $bind(this,this.handleIdleTimer);
+};
+kumite.fusion.FusionConnection.__name__ = ["kumite","fusion","FusionConnection"];
+kumite.fusion.FusionConnection.prototype = {
+	disconnect: function() {
+		this.idleTimer.stop();
+		this.state = kumite.fusion.FusionConnection.STATE_DISCONNECTED;
+		try {
+			this.socket.close();
+		} catch( e ) {
+		}
+	}
+	,handleIdleTimer: function() {
+		if(this.state == kumite.fusion.FusionConnection.STATE_DISCONNECTED) return;
+		if(this.state == kumite.fusion.FusionConnection.STATE_PRE_INIT) return;
+		if(this.state == kumite.fusion.FusionConnection.STATE_CONNECTING) return;
+		var dt = new Date().getTime() - this.lastMessage;
+		if(dt > 10000 && this.requestNewData) {
+			haxe.Log.trace("handleIdleTimer: " + dt + " disconnect...",{ fileName : "FusionConnection.hx", lineNumber : 147, className : "kumite.fusion.FusionConnection", methodName : "handleIdleTimer"});
+			this.disconnect();
+		}
+	}
+	,sendDataRequest: function() {
+		this.requestNewData = false;
+		this.state = kumite.fusion.FusionConnection.STATE_WAIT_GET;
+		this.socket.send(JSON.stringify({ method : "get"}));
+	}
+	,reconnect: function() {
+		haxe.Log.trace("reconnect: " + this.state,{ fileName : "FusionConnection.hx", lineNumber : 115, className : "kumite.fusion.FusionConnection", methodName : "reconnect"});
+		if(this.state == kumite.fusion.FusionConnection.STATE_PRE_INIT) return;
+		this.disconnect();
+		this.state = kumite.fusion.FusionConnection.STATE_PRE_INIT;
+		Timeout.execute(1000,$bind(this,this.init));
+	}
+	,get: function() {
+		this.requestNewData = true;
+		if(this.state == kumite.fusion.FusionConnection.STATE_DISCONNECTED) this.init(); else if(this.state == kumite.fusion.FusionConnection.STATE_IDLE) this.sendDataRequest();
+	}
+	,init: function() {
+		var _g = this;
+		this.disconnect();
+		this.idleTimer.start();
+		haxe.Log.trace("init",{ fileName : "FusionConnection.hx", lineNumber : 49, className : "kumite.fusion.FusionConnection", methodName : "init"});
+		this.lastMessage = new Date().getTime();
+		this.state = kumite.fusion.FusionConnection.STATE_CONNECTING;
+		this.socket = new WebSocket(kumite.fusion.FusionConnection.host);
+		this.socket.onopen = function(event) {
+			Log.posInfo = { fileName : "FusionConnection.hx", lineNumber : 57, className : "kumite.fusion.FusionConnection", methodName : "init"};
+			if(Log.filter(LogLevel.INFO)) {
+				Log.fetchInput("onOpen",null,null,null,null,null,null);
+				console.info(Log.createMessage());
+			}
+			_g.state = kumite.fusion.FusionConnection.STATE_WAIT_CONFIG_ACCEPT;
+			_g.socket.send(JSON.stringify({ method : "setConfig", params : [JSON.stringify(_g.config)]}));
+		};
+		this.socket.onerror = function(event) {
+			Log.posInfo = { fileName : "FusionConnection.hx", lineNumber : 64, className : "kumite.fusion.FusionConnection", methodName : "init"};
+			if(Log.filter(LogLevel.ERROR)) {
+				Log.fetchInput("onError: ",event,null,null,null,null,null);
+				console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
+			}
+			_g.reconnect();
+		};
+		this.socket.onclose = function(event) {
+			Log.posInfo = { fileName : "FusionConnection.hx", lineNumber : 70, className : "kumite.fusion.FusionConnection", methodName : "init"};
+			if(Log.filter(LogLevel.ERROR)) {
+				Log.fetchInput("onclose: ",event,null,null,null,null,null);
+				console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
+			}
+			_g.reconnect();
+		};
+		this.socket.onmessage = function(event) {
+			_g.lastMessage = new Date().getTime();
+			if(_g.state == kumite.fusion.FusionConnection.STATE_WAIT_GET) {
+				var blob = event.data;
+				var reader = new FileReader();
+				reader.addEventListener("loadend",function() {
+					var result = reader.result;
+					_g.dataSignaler.dispatch(result,null,{ fileName : "FusionConnection.hx", lineNumber : 85, className : "kumite.fusion.FusionConnection", methodName : "init"});
+				});
+				reader.readAsArrayBuffer(blob);
+			}
+			_g.state = kumite.fusion.FusionConnection.STATE_IDLE;
+			if(_g.requestNewData) _g.sendDataRequest();
+		};
+	}
+	,setConfig: function(config) {
+		this.config = config;
+	}
+	,lastMessage: null
+	,idleTimer: null
+	,state: null
+	,requestNewData: null
+	,socket: null
+	,config: null
+	,dataSignaler: null
+	,__class__: kumite.fusion.FusionConnection
+}
 if(!kumite.launch) kumite.launch = {}
 kumite.launch.Config = $hxClasses["kumite.launch.Config"] = function() {
 	this.launcher = new kumite.launch.Launcher();
@@ -6906,7 +7150,6 @@ kumite.launch.Launcher.prototype = {
 		if(Log.filter(LogLevel.ERROR)) {
 			Log.fetchInput(message,null,null,null,null,null,null);
 			console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
-			Log.displayError(Log.createErrorMessage());
 		}
 	}
 	,handlePostComplete: function() {
@@ -7546,9 +7789,9 @@ kumite.layer.effect.EyeEffect.prototype = {
 	}
 	,sortfunction: function(a,b) {
 		var sx = this.position.x / this.stage.width;
-		var adx = Math.abs(a.x - 0.5 - sx);
-		var bdx = Math.abs(b.x - 0.5 - sx);
-		if(adx < bdx) return 1; else if(adx > bdx) return -1; else return 0;
+		var adx = Math.abs(a.x - sx);
+		var bdx = Math.abs(b.x - sx);
+		if(adx < bdx) return -1; else if(adx > bdx) return 1; else return 0;
 	}
 	,render: function(renderContext) {
 		GL.useProgram(this.shaderProgram);
@@ -7732,18 +7975,12 @@ kumite.layer.effect._EyeEffect.TargetState.prototype = $extend(kumite.layer.effe
 			return;
 		}
 		var blob = this.blobs[0];
-		var _g = 0, _g1 = this.blobs;
-		while(_g < _g1.length) {
-			var b = _g1[_g];
-			++_g;
-			if(b.z > blob.z) blob = b;
-		}
 		var ex = this.position.x / this.stage.width;
 		var ey = this.position.y / this.stage.height;
-		var bx = (blob.x - 0.5) * 2.0;
-		var by = (blob.y - 0.4) * 2.0;
-		var focusX = (blob.z + 0.05) * 0.46;
-		var focusY = (blob.z + 0.05) * 0.35;
+		var bx = blob.x * 2.0;
+		var by = -blob.y * 2.0;
+		var focusX = (1 - blob.z) * 0.35;
+		var focusY = (1 - blob.z) * 0.2;
 		this.moveSet.to.x = (ex - bx) * focusX;
 		this.moveSet.to.y = -(ey - by) * focusY;
 		if(this.ms - this.enterMs > 20000) this.parent.setRandomIdleState();
@@ -8075,7 +8312,6 @@ kumite.scene.DelegateLayer.prototype = $extend(kumite.scene.Layer.prototype,{
 			if(Log.filter(LogLevel.ERROR)) {
 				Log.fetchInput("Error rendering layer:\n" + this.layerId,e,null,null,null,null,null);
 				console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
-				Log.displayError(Log.createErrorMessage());
 			}
 		}
 	}
@@ -8087,7 +8323,6 @@ kumite.scene.DelegateLayer.prototype = $extend(kumite.scene.Layer.prototype,{
 			if(Log.filter(LogLevel.ERROR)) {
 				Log.fetchInput("Error rendering layer:\n" + this.layerId,e,null,null,null,null,null);
 				console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
-				Log.displayError(Log.createErrorMessage());
 			}
 		}
 	}
@@ -8099,7 +8334,6 @@ kumite.scene.DelegateLayer.prototype = $extend(kumite.scene.Layer.prototype,{
 			if(Log.filter(LogLevel.ERROR)) {
 				Log.fetchInput("Error initializing layer:\n" + this.layerId,e,null,null,null,null,null);
 				console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
-				Log.displayError(Log.createErrorMessage());
 			}
 		}
 	}
@@ -9926,7 +10160,6 @@ GLTextureConfig.FRAMEBUFFER_ID = 0;
 GLTextureAtlasConfig.instanceCount = 0;
 Log.filters = new Array();
 Log.args = new Array();
-Log.errors = new Array();
 LogLevel.INFO = new LogLevel(1);
 LogLevel.WARN = new LogLevel(2);
 LogLevel.ERROR = new LogLevel(3);
@@ -9950,13 +10183,24 @@ Matrix4.i41 = 3;
 Matrix4.i42 = 7;
 Matrix4.i43 = 11;
 Matrix4.i44 = 15;
+js.Lib.onerror = null;
+bpmjs.FrameTimer.init = (function($this) {
+	var $r;
+	var ms = 0.0;
+	$r = GLAnimationFrame.run(bpmjs.FrameTimer.frameTimerLoop,ms);
+	return $r;
+}(this));
+bpmjs.FrameTimer.listeners = new Array();
+bpmjs.FrameTimer.listeners2 = new Array();
 bpmjs.Sequencer.__meta__ = { fields : { context : { Inject : null}}};
 bpmjs.Sequencer.__rtti = "<class path=\"bpmjs.Sequencer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<context public=\"1\">\n\t\t<c path=\"bpmjs.Context\"/>\n\t\t<meta><m n=\"Inject\"/></meta>\n\t</context>\n\t<start public=\"1\" set=\"method\" line=\"14\"><f a=\"name\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></start>\n\t<new public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 bpmjs.Stats.fps = 0;
 hsl.haxe._DirectSignaler.PropagationStatus.IMMEDIATELY_STOPPED = 1;
 hsl.haxe._DirectSignaler.PropagationStatus.STOPPED = 2;
 hsl.haxe._DirectSignaler.PropagationStatus.UNDISTURBED = 3;
-js.Lib.onerror = null;
+kumite.blobs.BlobReaderFusionWS.__meta__ = { fields : { start : { Sequence : ["boot","finish"]}, time : { Inject : null}, blobs : { Inject : null}}};
+kumite.blobs.BlobReaderFusionWS.__rtti = "<class path=\"kumite.blobs.BlobReaderFusionWS\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<BLOB_ID public=\"1\" line=\"11\" static=\"1\"><c path=\"Int\"/></BLOB_ID>\n\t<blobs public=\"1\">\n\t\t<c path=\"kumite.blobs.Blobs\"/>\n\t\t<meta><m n=\"Inject\"/></meta>\n\t</blobs>\n\t<time public=\"1\">\n\t\t<c path=\"kumite.time.Time\"/>\n\t\t<meta><m n=\"Inject\"/></meta>\n\t</time>\n\t<lastParse><c path=\"Float\"/></lastParse>\n\t<config><t path=\"kumite.fusion.FusionConfig\"/></config>\n\t<fusion><c path=\"kumite.fusion.FusionConnection\"/></fusion>\n\t<start public=\"1\" set=\"method\" line=\"31\">\n\t\t<f a=\"\"><e path=\"Void\"/></f>\n\t\t<meta><m n=\"Sequence\">\n\t<e>boot</e>\n\t<e>finish</e>\n</m></meta>\n\t</start>\n\t<run set=\"method\" line=\"56\"><f a=\"\"><e path=\"Void\"/></f></run>\n\t<handleFusionData set=\"method\" line=\"61\"><f a=\"data\">\n\t<c path=\"ArrayBuffer\"/>\n\t<e path=\"Void\"/>\n</f></handleFusionData>\n\t<onData set=\"method\" line=\"85\"><f a=\"r\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></onData>\n\t<mergeBlobs set=\"method\" line=\"117\"><f a=\"newBlobs\">\n\t<c path=\"Array\"><c path=\"kumite.blobs.Blob\"/></c>\n\t<e path=\"Void\"/>\n</f></mergeBlobs>\n\t<getDist set=\"method\" line=\"156\"><f a=\"newBlob:oldBlob\">\n\t<c path=\"kumite.blobs.Blob\"/>\n\t<c path=\"kumite.blobs.Blob\"/>\n\t<c path=\"Float\"/>\n</f></getDist>\n\t<new public=\"1\" set=\"method\" line=\"24\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.blobs.BlobReaderFusionWS.BLOB_ID = 0;
 kumite.blobs.BlobReaderHTTP.__meta__ = { fields : { start : { Sequence : ["boot","finish"]}, blobs : { Inject : null}}};
 kumite.blobs.BlobReaderHTTP.__rtti = "<class path=\"kumite.blobs.BlobReaderHTTP\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<blobs public=\"1\">\n\t\t<c path=\"kumite.blobs.Blobs\"/>\n\t\t<meta><m n=\"Inject\"/></meta>\n\t</blobs>\n\t<start public=\"1\" set=\"method\" line=\"13\">\n\t\t<f a=\"\"><e path=\"Void\"/></f>\n\t\t<meta><m n=\"Sequence\">\n\t<e>boot</e>\n\t<e>finish</e>\n</m></meta>\n\t</start>\n\t<readBlobs set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></readBlobs>\n\t<onData set=\"method\" line=\"26\"><f a=\"r\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></onData>\n\t<onError set=\"method\" line=\"53\"><f a=\"r\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></onError>\n\t<new public=\"1\" set=\"method\" line=\"10\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.blobs.BlobReaderMouse.__meta__ = { fields : { tick : { Message : null}, init : { Sequence : ["boot","finish"]}, time : { Inject : null}, blobs : { Inject : null}}};
@@ -9964,7 +10208,7 @@ kumite.blobs.BlobReaderMouse.__rtti = "<class path=\"kumite.blobs.BlobReaderMous
 kumite.blobs.BlobReaderWS.__meta__ = { fields : { start : { Sequence : ["boot","finish"]}, time : { Inject : null}, blobs : { Inject : null}}};
 kumite.blobs.BlobReaderWS.__rtti = "<class path=\"kumite.blobs.BlobReaderWS\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<BLOB_ID public=\"1\" line=\"8\" static=\"1\"><c path=\"Int\"/></BLOB_ID>\n\t<blobs public=\"1\">\n\t\t<c path=\"kumite.blobs.Blobs\"/>\n\t\t<meta><m n=\"Inject\"/></meta>\n\t</blobs>\n\t<time public=\"1\">\n\t\t<c path=\"kumite.time.Time\"/>\n\t\t<meta><m n=\"Inject\"/></meta>\n\t</time>\n\t<host><c path=\"String\"/></host>\n\t<socket><c path=\"WebSocket\"/></socket>\n\t<lastParse><c path=\"Float\"/></lastParse>\n\t<start public=\"1\" set=\"method\" line=\"27\">\n\t\t<f a=\"\"><e path=\"Void\"/></f>\n\t\t<meta><m n=\"Sequence\">\n\t<e>boot</e>\n\t<e>finish</e>\n</m></meta>\n\t</start>\n\t<handleOpen set=\"method\" line=\"35\"><f a=\"event\">\n\t<unknown/>\n\t<e path=\"Void\"/>\n</f></handleOpen>\n\t<handleMessage set=\"method\" line=\"40\"><f a=\"event\">\n\t<a><data set=\"null\"><c path=\"String\"/></data></a>\n\t<e path=\"Void\"/>\n</f></handleMessage>\n\t<handleClose set=\"method\" line=\"45\"><f a=\"event\">\n\t<unknown/>\n\t<e path=\"Void\"/>\n</f></handleClose>\n\t<onData set=\"method\" line=\"51\"><f a=\"r\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></onData>\n\t<mergeBlobs set=\"method\" line=\"83\"><f a=\"newBlobs\">\n\t<c path=\"Array\"><c path=\"kumite.blobs.Blob\"/></c>\n\t<e path=\"Void\"/>\n</f></mergeBlobs>\n\t<getDist set=\"method\" line=\"122\"><f a=\"newBlob:oldBlob\">\n\t<c path=\"kumite.blobs.Blob\"/>\n\t<c path=\"kumite.blobs.Blob\"/>\n\t<c path=\"Float\"/>\n</f></getDist>\n\t<new public=\"1\" set=\"method\" line=\"20\"><f a=\"host\">\n\t<c path=\"String\"/>\n\t<e path=\"Void\"/>\n</f></new>\n</class>";
 kumite.blobs.BlobReaderWS.BLOB_ID = 0;
-kumite.blobs.Config.__rtti = "<class path=\"kumite.blobs.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<blobs public=\"1\"><c path=\"kumite.blobs.Blobs\"/></blobs>\n\t<blobReaderHTTP public=\"1\"><c path=\"kumite.blobs.BlobReaderHTTP\"/></blobReaderHTTP>\n\t<blobReaderWS public=\"1\"><c path=\"kumite.blobs.BlobReaderWS\"/></blobReaderWS>\n\t<blobReaderMouse public=\"1\"><c path=\"kumite.blobs.BlobReaderMouse\"/></blobReaderMouse>\n\t<new public=\"1\" set=\"method\" line=\"12\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.blobs.Config.__rtti = "<class path=\"kumite.blobs.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<blobs public=\"1\"><c path=\"kumite.blobs.Blobs\"/></blobs>\n\t<blobReaderHTTP public=\"1\"><c path=\"kumite.blobs.BlobReaderHTTP\"/></blobReaderHTTP>\n\t<blobReaderWS public=\"1\"><c path=\"kumite.blobs.BlobReaderWS\"/></blobReaderWS>\n\t<blobReaderMouse public=\"1\"><c path=\"kumite.blobs.BlobReaderMouse\"/></blobReaderMouse>\n\t<blobReaderFusion public=\"1\"><c path=\"kumite.blobs.BlobReaderFusionWS\"/></blobReaderFusion>\n\t<new public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.camera.CameraMouseMover.__meta__ = { fields : { init : { Sequence : ["boot","init"]}, camera : { Inject : null}}};
 kumite.camera.CameraMouseMover.__rtti = "<class path=\"kumite.camera.CameraMouseMover\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<camera public=\"1\">\n\t\t<c path=\"kumite.camera.Camera\"/>\n\t\t<meta><m n=\"Inject\"/></meta>\n\t</camera>\n\t<init public=\"1\" set=\"method\" line=\"12\">\n\t\t<f a=\"\"><e path=\"Void\"/></f>\n\t\t<meta><m n=\"Sequence\">\n\t<e>boot</e>\n\t<e>init</e>\n</m></meta>\n\t</init>\n\t<updateCamera set=\"method\" line=\"18\"><f a=\"\"><e path=\"Void\"/></f></updateCamera>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.camera.Config.__rtti = "<class path=\"kumite.camera.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<camera public=\"1\"><c path=\"kumite.camera.Camera\"/></camera>\n\t<cameraMouseMover public=\"1\"><c path=\"kumite.camera.CameraMouseMover\"/></cameraMouseMover>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
@@ -9992,6 +10236,13 @@ kumite.eyes.EyePostproFilter.__meta__ = { fields : { eyePosition : { Param : nul
 kumite.eyes.EyePostproFilter.__rtti = "<class path=\"kumite.eyes.EyePostproFilter\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<textureRegistry public=\"1\">\n\t\t<c path=\"GLTextureRegistry\"/>\n\t\t<meta><m n=\"Inject\"/></meta>\n\t</textureRegistry>\n\t<time public=\"1\">\n\t\t<c path=\"kumite.time.Time\"/>\n\t\t<meta><m n=\"Inject\"/></meta>\n\t</time>\n\t<textureConfig public=\"1\">\n\t\t<c path=\"GLTextureConfig\"/>\n\t\t<meta><m n=\"Param\"/></meta>\n\t</textureConfig>\n\t<eyePosition public=\"1\">\n\t\t<c path=\"Vec2\"/>\n\t\t<meta><m n=\"Param\"/></meta>\n\t</eyePosition>\n\t<shaderProgram><c path=\"WebGLProgram\"/></shaderProgram>\n\t<vertexPositionAttribute><c path=\"GLAttribLocation\"/></vertexPositionAttribute>\n\t<vertexBuffer><c path=\"WebGLBuffer\"/></vertexBuffer>\n\t<textureUniform><c path=\"GLUniformLocation\"/></textureUniform>\n\t<resolutionUniform><c path=\"GLUniformLocation\"/></resolutionUniform>\n\t<timeUniform><c path=\"GLUniformLocation\"/></timeUniform>\n\t<amountUniform><c path=\"GLUniformLocation\"/></amountUniform>\n\t<init public=\"1\" set=\"method\" line=\"39\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"58\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"63\"><f a=\"renderContext\">\n\t<c path=\"kumite.scene.RenderContext\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"34\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.eyes._EyePostproFilter.Vertex.__meta__ = { obj : { GLSL : ["\n\n\tattribute vec2 vertexPosition;\n\n\tvoid main(void)\n\t{\n\t\tgl_Position = vec4(vertexPosition.x, vertexPosition.y, 0.0, 1.0);\n\t}\n\n"]}};
 kumite.eyes._EyePostproFilter.Fragment.__meta__ = { obj : { GLSL : ["\n\n\t#ifdef GL_ES\n\tprecision highp float;\n\t#endif\n\t\n\tuniform vec2 resolution;\n\tuniform float time;\n\tuniform float amount;\n\tuniform sampler2D texture;\n\t\n\tvoid main(void)\n\t{\n\t    vec2 q = gl_FragCoord.xy / resolution;\n\t\tq.y = 1.0-q.y;\n\t    vec3 oricol = texture2D(texture, vec2(q.x,1.0 - q.y)).xyz;\n\n\t\tif (amount >= 1.0)\n\t\t{\n\t\t\tgl_FragColor = vec4(oricol, 1.0);\n\t\t}\n\t\telse\n\t\t{\n\t\t\tvec2 uv = q;\n\t\n\t\t    vec3 col;\n\t\n\t\t\tfloat camount = pow(clamp(amount, 0.0, 1.0), 0.5);\n\t\n\t\t\t//aberation\n\t\t\tfloat cax = 30.0 + camount * 5.0;\n\t\t\tfloat cay = -cax;\n\t\t    col.r = texture2D(texture,vec2(uv.x+cax / resolution.x,-uv.y)).x;\n\t\t    col.g = texture2D(texture,vec2(uv.x+0.000,-uv.y)).y;\n\t\t    col.b = texture2D(texture,vec2(uv.x+cay / resolution.x,-uv.y)).z;\n\t\t\n\t\t    col = clamp(col*0.5+0.5*col*col*1.2,0.0,1.0);\n\t\t\n\t\t\t//vignette\n\t\t    col *= 0.3 + 0.7*16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y);\n\t\t\n\t\t\t//color\n\t\t    //col *= vec3(0.8,1.0,0.7);\n\t\t\n\t\t\t//v lines\n\t\t    col *= (1.0 - camount * 0.5)+(0.3 + camount * 0.5)*sin(0.01*time+gl_FragCoord.y*2.5);\n\t\t\n\t\t\t//flicker\n\t\t    col *= 0.97+0.03*sin(0.11*time);\n\t\t\n\t\t    gl_FragColor = vec4(mix(col, oricol, camount), 1.0);\n\t\t}\n\t}\n\n"]}};
+kumite.fusion.FusionConnection.STATE_DISCONNECTED = "STATE_DISCONNECTED";
+kumite.fusion.FusionConnection.STATE_CONNECTING = "STATE_CONNECTING";
+kumite.fusion.FusionConnection.STATE_WAIT_CONFIG_ACCEPT = "STATE_WAIT_CONFIG_ACCEPT";
+kumite.fusion.FusionConnection.STATE_WAIT_GET = "STATE_WAIT_GET";
+kumite.fusion.FusionConnection.STATE_IDLE = "STATE_IDLE";
+kumite.fusion.FusionConnection.STATE_PRE_INIT = "STATE_PRE_INIT";
+kumite.fusion.FusionConnection.host = "ws://192.168.1.22:12010";
 kumite.launch.Config.__rtti = "<class path=\"kumite.launch.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\"><c path=\"bpmjs.Sequencer\"/></sequencer>\n\t<launcher public=\"1\"><c path=\"kumite.launch.Launcher\"/></launcher>\n\t<preloadDisplay public=\"1\"><c path=\"kumite.launch.PreloadDisplay\"/></preloadDisplay>\n\t<new public=\"1\" set=\"method\" line=\"13\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.launch.Launcher.__meta__ = { fields : { handleFinish : { Sequence : ["boot","finish"]}, showError : { Sequence : ["boot","error"]}, handlePostComplete : { PostComplete : null}, sequencer : { Inject : null}}};
 kumite.launch.Launcher.__rtti = "<class path=\"kumite.launch.Launcher\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<sequencer public=\"1\">\n\t\t<c path=\"bpmjs.Sequencer\"/>\n\t\t<meta><m n=\"Inject\"/></meta>\n\t</sequencer>\n\t<handlePostComplete public=\"1\" set=\"method\" line=\"17\">\n\t\t<f a=\"\"><e path=\"Void\"/></f>\n\t\t<meta><m n=\"PostComplete\"/></meta>\n\t</handlePostComplete>\n\t<showError public=\"1\" set=\"method\" line=\"24\">\n\t\t<f a=\"message\">\n\t\t\t<c path=\"String\"/>\n\t\t\t<e path=\"Void\"/>\n\t\t</f>\n\t\t<meta><m n=\"Sequence\">\n\t<e>boot</e>\n\t<e>error</e>\n</m></meta>\n\t</showError>\n\t<handleFinish public=\"1\" set=\"method\" line=\"30\">\n\t\t<f a=\"\"><e path=\"Void\"/></f>\n\t\t<meta><m n=\"Sequence\">\n\t<e>boot</e>\n\t<e>finish</e>\n</m></meta>\n\t</handleFinish>\n\t<new public=\"1\" set=\"method\" line=\"14\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";

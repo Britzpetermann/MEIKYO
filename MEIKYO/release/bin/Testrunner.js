@@ -476,7 +476,6 @@ List.prototype = {
 var Log = $hxClasses["Log"] = function() { }
 Log.__name__ = ["Log"];
 Log.posInfo = null;
-Log.errorDiv = null;
 Log["debugger"] = function() {
 	debugger;
 }
@@ -520,7 +519,6 @@ Log.error = function(m0,m1,m2,m3,m4,m5,m6,i) {
 	if(Log.filter(LogLevel.ERROR)) {
 		Log.fetchInput(m0,m1,m2,m3,m4,m5,m6);
 		console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
-		Log.displayError(Log.createErrorMessage());
 	}
 }
 Log.infoEnabled = function(i) {
@@ -579,19 +577,6 @@ Log.infoConsole = function(v,i) {
 	Log.posInfo = i;
 	Log.fetchInput(v);
 	console.log("" + Log.createMessage() + " (trace)");
-}
-Log.displayError = function(message) {
-	if(($_=js.Lib.document,$bind($_,$_.createElement)) == null) return;
-	if(Log.errorDiv == null) {
-		Log.errorDiv = js.Lib.document.createElement("div");
-		Log.errorDiv.className = "Error";
-		js.Lib.document.body.appendChild(Log.errorDiv);
-		Log.errorDiv.innerHTML = "<h1>Ups!</h1>I could not start!\nPlease use up-to-date hardware and an up-to-date browser for this experience.\n\n\nTechnical Details:\n";
-	}
-	if(!Lambda.has(Log.errors,message)) {
-		Log.errors.push(message);
-		Log.errorDiv.innerHTML += message + "\n";
-	}
 }
 Log.prototype = {
 	errorFilter: function() {
@@ -2515,7 +2500,6 @@ bpmjs.Task.prototype = {
 			if(Log.filter(LogLevel.ERROR)) {
 				Log.fetchInput("Error starting Task: ",e,null,null,null,null,null);
 				console.error(Log.createErrorMessage() + "\n\tStack:\n\t\t" + haxe.Stack.exceptionStack().join("\n\t\t"));
-				Log.displayError(Log.createErrorMessage());
 			}
 		}
 	}
@@ -6376,7 +6360,6 @@ if(typeof window != "undefined") {
 }
 Log.filters = new Array();
 Log.args = new Array();
-Log.errors = new Array();
 LogLevel.INFO = new LogLevel(1);
 LogLevel.WARN = new LogLevel(2);
 LogLevel.ERROR = new LogLevel(3);

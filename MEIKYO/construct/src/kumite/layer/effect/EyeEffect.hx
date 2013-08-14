@@ -184,13 +184,13 @@ class EyeEffect implements LayerLifecycle, implements Infos
 	{
 		var sx = position.x / stage.width;
 		
-		var adx = Math.abs(a.x - 0.5 - sx);
-		var bdx = Math.abs(b.x - 0.5 - sx);
+		var adx = Math.abs(a.x - sx);
+		var bdx = Math.abs(b.x - sx);
 		
 		if (adx < bdx)
-			return 1;
-		else if (adx > bdx)
 			return -1;
+		else if (adx > bdx)
+			return 1;
 		else
 			return 0;
 	}	
@@ -385,20 +385,20 @@ private class TargetState extends State
 		}
 		
 		var blob = blobs[0];
-		for(b in blobs)
-		{
-			if (b.z > blob.z)
-				blob = b;
-		}
+//		for(b in blobs)
+//		{
+//			if (b.z > blob.z)
+//				blob = b;
+//		}
 		
 		var ex = position.x / stage.width;
 		var ey = position.y / stage.height;
 		
-		var bx = (blob.x - 0.5) * 2.0;
-		var by = (blob.y - 0.4) * 2.0;
+		var bx = (blob.x - 0.0) * 2.0;
+		var by = (-blob.y - 0.0) * 2.0;
 		
-		var focusX = (blob.z + 0.05) * 0.46;
-		var focusY = (blob.z + 0.05) * 0.35;
+		var focusX = (1 - blob.z) * 0.35;
+		var focusY = (1 - blob.z) * 0.2;
 		
 		moveSet.to.x = (ex - bx) * focusX;
 		moveSet.to.y = -(ey - by) * focusY;

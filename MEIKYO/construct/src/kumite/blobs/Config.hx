@@ -8,12 +8,15 @@ class Config implements Infos
 	public var blobReaderHTTP : BlobReaderHTTP;
 	public var blobReaderWS : BlobReaderWS;
 	public var blobReaderMouse : BlobReaderMouse;
+	public var blobReaderFusion : BlobReaderFusionWS;
 
 	public function new()
 	{
 		blobs = new Blobs();
 		//blobReaderHTTP = new BlobReaderHTTP();
-		blobReaderWS = new BlobReaderWS("ws://192.168.2.201:4446");
-		//blobReaderMouse = new BlobReaderMouse();
+//		blobReaderWS = new BlobReaderWS("ws://192.168.2.201:4446");
+//		blobReaderMouse = new BlobReaderMouse();
+		
+		blobReaderFusion = new BlobReaderFusionWS();
 	}
 }
