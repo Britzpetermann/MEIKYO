@@ -6332,7 +6332,7 @@ kumite.blobs.Blob.prototype = {
 	,__class__: kumite.blobs.Blob
 }
 kumite.blobs.BlobReaderFusionWS = $hxClasses["kumite.blobs.BlobReaderFusionWS"] = function() {
-	kumite.fusion.FusionConnection.host = "ws://192.168.2.50:12010";
+	kumite.fusion.FusionConnection.host = "ws://192.168.1.232:12010";
 	this.lastParse = 0;
 };
 kumite.blobs.BlobReaderFusionWS.__name__ = ["kumite","blobs","BlobReaderFusionWS"];
@@ -6418,7 +6418,7 @@ kumite.blobs.BlobReaderFusionWS.prototype = {
 		this.fusion.get();
 	}
 	,start: function() {
-		this.config = { name : "Eyes", clipping : [{ type : "include", xMin : -3000, xMax : 3000, yMin : -1500, yMax : 500, zMin : 0, zMax : 1600}], blobs : { enabled : true, minPointsPerCell : 1, smoothing : 0.1, width : 100, depth : 50}};
+		this.config = { name : "Eyes", clipping : [{ type : "include", xMin : -3000, xMax : 3000, yMin : -1500, yMax : 200, zMin : 200, zMax : 1600}], blobs : { enabled : true, minPointsPerCell : 1, smoothing : 0.1, width : 100, depth : 50}};
 		this.fusion = new kumite.fusion.FusionConnection();
 		this.fusion.dataSignaler.bind($bind(this,this.handleFusionData));
 		this.fusion.setConfig(this.config);
