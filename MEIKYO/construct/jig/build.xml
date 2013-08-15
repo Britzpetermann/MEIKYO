@@ -1,71 +1,25 @@
 <project name="MEIKYO" basedir="../../">
 
-	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
-		<classpath>
-			<pathelement location="ant_lib/ant-contrib-0.3.jar" />
-		</classpath>
-	</taskdef>
-	
-	<property name="webroot" value="/Volumes/Webroot-2" />
+	<property name="ant_lib_dir" value="construct/jig/ant_lib" />
+	<property name="lib_jsch" value="jsch-0.1.49.jar" />
 
-	<target name="publish_code">
-		<foreach target="upload_file" param="file">
-			<path>
-				<fileset dir="release">
-					<include name="*.*" />
-					<include name="css/*.*" />
-					<include name="bin/*.*" />
-				</fileset>
-			</path>
-		</foreach>
-	</target>
+	<property name="bpm_ftp_host" value="192.168.2.50" />
+	<property name="bpm_ftp_user" value="vodafone" />
+	<property name="bpm_ftp_pass" value="vodafone" />
 
-	<target name="publish js code to bpm">
-		<copy todir="${webroot}/release/bin" overwrite="true">
-			<fileset dir="release/bin" />
-		</copy>
-	</target>
-
-	<target name="publish nodejs code to bpm">
-		<copy todir="${webroot}/NodeJS" overwrite="true">
-			<fileset dir="/Users/nz/Workspaces/BPM_2011/NodeJSTest/">
-				<include name="*.js"/>
+	<target name="Deploy BPM">
+		<load_jsch />
+		<scp todir="${bpm_ftp_user}:${bpm_ftp_pass}@${bpm_ftp_host}:Desktop/Installation/htdocs" sftp="true" trust="true" verbose="true">
+			<fileset dir="release">
+				<include name="**/*" />
 			</fileset>
-		</copy>
+		</scp>
 	</target>
 
-	<target name="publish flash to karo and bpm">
-		<copy todir="${webroot}/flash" overwrite="true">
-			<fileset dir="/Users/nz/Workspaces/BPM_2011/TestHitareaClient/bin" />
-		</copy>
-	</target>
-
-	<target name="publish xcode to bpm">
-		<exec command="cp -r /Users/nz/Workspaces/Xcode/of_preRelease_v007_osx/addons/ofxKinect/KinectServer5/bin/KinectServer5.app/ ${webroot}/KinectServer5.app/" />
-	</target>
-
-	<target name="upload_file">
-		<upload file="${file}" />
-	</target>
-
-	<macrodef name="upload">
-		<attribute name="file" />
+	<macrodef name="load_jsch">
 		<sequential>
-
-			<path id="temp.path">
-				<pathelement location="@{file}" />
-			</path>
-
-			<pathconvert property="file.rel" refid="temp.path">
-				<globmapper from="${basedir}/release/*" to="*" />
-			</pathconvert>
-
-			<ftp password="${bpm_pass}" server="britzpetermann.com" userid="${bpm_user}" verbose="true" remotedir="/subdomains/home/httpdocs/nico/experiments/flyingman" passive="false">
-				<fileset dir="release">
-					<include name="${file.rel}" />
-				</fileset>
-			</ftp>
+			<taskdef resource="net/jtools/classloadertask/antlib.xml" classpath="${ant_lib_dir}/ant-classloadertask.jar" />
+			<classloader loader="system" classpath="${ant_lib_dir}/${lib_jsch}" />
 		</sequential>
 	</macrodef>
-
 </project>
