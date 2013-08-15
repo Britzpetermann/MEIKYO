@@ -23,7 +23,7 @@ class BlobReaderFusionWS implements Infos
 	
 	public function new()
 	{
-		FusionConnection.host = "ws://192.168.1.232:12010";
+		FusionConnection.host = "ws://192.168.1.50:12010";
 		lastParse = 0;
 	}
 	
@@ -33,7 +33,7 @@ class BlobReaderFusionWS implements Infos
 		config = {
 				name: "Eyes",
 				clipping: [
-					{type:"include", xMin:-3000, xMax:3000, yMin:-1500, yMax:200, zMin:200, zMax:1600},
+					{type:"include", xMin:-2500, xMax:2500, yMin:-1000, yMax:200, zMin:200, zMax:1600},
 				],
 				blobs: {
 					enabled : true,
@@ -76,7 +76,7 @@ class BlobReaderFusionWS implements Infos
 			blob.y = floats[i * 3 + 1] / (clipping.yMax - clipping.yMin);
 			blob.z = floats[i * 3 + 2] / (clipping.zMax - clipping.zMin);
 			newBlobs.push(blob);
-			trace(blob.x + ", " + blob.y + ", " + blob.z);
+//			trace(blob.x + ", " + blob.y + ", " + blob.z);
 		}
 		
 		mergeBlobs(newBlobs);		

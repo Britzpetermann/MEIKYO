@@ -395,13 +395,15 @@ private class TargetState extends State
 		var ey = position.y / stage.height;
 		
 		var bx = (blob.x - 0.0) * 2.0;
-		var by = (-blob.y - 0.0) * 2.0;
+		var by = (-blob.y - 0.1) * 2.0;
 		
-		var focusX = (1 - blob.z) * 0.35;
+		var focusX = (1 - blob.z) * 0.4;
 		var focusY = (1 - blob.z) * 0.2;
 		
-		moveSet.to.x = (ex - bx) * focusX;
-		moveSet.to.y = -(ey - by) * focusY;
+		var newX = (ex - bx) * focusX;
+		var newY = -(ey - by) * focusY;
+		moveSet.to.x += (newX - moveSet.to.x) * 0.3;
+		moveSet.to.y += (newY - moveSet.to.y) * 0.3;
 		
 		if (ms - enterMs > 20000)
 			parent.setRandomIdleState();

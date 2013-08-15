@@ -105,20 +105,45 @@ class Config implements Infos
 		createBlock(215, 338.5, 0.193);
 		 */
 		
-		//left to right, top to bottom
+		//rechts		
+		createBlock(480-3, -108+5, 0.24);
+		createBlock(323+2, -165+3, 0.098);
+		createBlock(357-1, 26+4, 0.16);
+		createBlock(859 + 1, -56+6, 0.16);
+		createBlock(886-1+0.5, 228+7, 0.207);
+		createBlock(674-1, 9 + 3, 0.28);
+//		createBlock(501-2, 62 + 7-0.5, 0.161);
+		createBlock(805-4, 110+4+1, 0.098);
 		
-		createBlock(-538, -12, 0.29);
-		createBlock(-453, -270, 0.175);
-		createBlock(-399, 224, 0.285);
-		createBlock(-264, 72, 0.175);
-		createBlock(-159, -112, 0.34);
-		createBlock(-63, 209, 0.285);
-		createBlock(101, -227, 0.19);
-		createBlock(157, 17, 0.285);
-		createBlock(344, 220, 0.17);
-		createBlock(447, -2, 0.33);
-		createBlock(479, 404, 0.28);
-		createBlock(632.5, -188, 0.245);
+		//tuer
+		createBlock(-18-2, -78+3, 0.28);
+//		createBlock(75-4, 88+5+0.9, 0.161);
+		createBlock(98+1-0.5, -158+6+0.5, 0.099);
+		createBlock(-73-4, 84+8+0.5, 0.21);
+		createBlock(-9-4, 199+8, 0.099);
+		
+		//links
+		createBlock(-778-4, 88+5+0.5, 0.24);
+		createBlock(-388+3-1-1+0.5, -191+3+1, 0.207);
+		createBlock(-489-2, -26+3, 0.278);
+		createBlock(-352-2-1, -54+3+0.5, 0.098);
+		createBlock(-643-2+0.5, -101+6-0.5, 0.159);
+		createBlock(-906-1-0.5, -65+4+0.5, 0.159);
+//		createBlock(-603-5, 62+4, 0.097);
+		createBlock(-384, 74+3, 0.159);
+		createBlock(-71-2, -225, 0.21);
+		
+//		createBlock(-453, -270, 0.175);
+//		createBlock(-399, 224, 0.285);
+//		createBlock(-264, 72, 0.175);
+//		createBlock(-159, -112, 0.34);
+//		createBlock(-63, 209, 0.285);
+//		createBlock(101, -227, 0.19);
+//		createBlock(157, 17, 0.285);
+//		createBlock(344, 220, 0.17);
+//		createBlock(447, -2, 0.33);
+//		createBlock(479, 404, 0.28);
+//		createBlock(632.5, -188, 0.245);
 		
 		var colors : Array<Vec3> = new Array();
 		colors.push(new Vec3(0, 0, 0));
@@ -210,8 +235,8 @@ class Config implements Infos
 	function createBlock(x : Float, y : Float, scale : Float)
 	{
 		var eyeBlock = new EyeBlock();
-		eyeBlock.position.x = x + 2;
-		eyeBlock.position.y = y - 6;
+		eyeBlock.position.x = x + 1;
+		eyeBlock.position.y = y - 8;
 		eyeBlock.scale = scale;
 		
 		eyeBlocks.push(eyeBlock);

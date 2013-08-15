@@ -40,7 +40,7 @@ class Main {
 					//kumite.socketsound.Config,
 					//kumite.helloworldgl.Config,
 					kumite.displaylist.ConfigAsLayer,
-					//kumite.vjinterface.Config,
+//					kumite.vjinterface.Config,
 					//kumite.uicomponents.Config,
 					kumite.scene.SceneConfig,
 					//kumite.testscene.Config,

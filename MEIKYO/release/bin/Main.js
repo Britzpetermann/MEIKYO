@@ -6332,7 +6332,7 @@ kumite.blobs.Blob.prototype = {
 	,__class__: kumite.blobs.Blob
 }
 kumite.blobs.BlobReaderFusionWS = $hxClasses["kumite.blobs.BlobReaderFusionWS"] = function() {
-	kumite.fusion.FusionConnection.host = "ws://192.168.1.232:12010";
+	kumite.fusion.FusionConnection.host = "ws://192.168.1.50:12010";
 	this.lastParse = 0;
 };
 kumite.blobs.BlobReaderFusionWS.__name__ = ["kumite","blobs","BlobReaderFusionWS"];
@@ -6410,7 +6410,6 @@ kumite.blobs.BlobReaderFusionWS.prototype = {
 			blob.y = floats[i * 3 + 1] / (clipping.yMax - clipping.yMin);
 			blob.z = floats[i * 3 + 2] / (clipping.zMax - clipping.zMin);
 			newBlobs.push(blob);
-			haxe.Log.trace(blob.x + ", " + blob.y + ", " + blob.z,{ fileName : "BlobReaderFusionWS.hx", lineNumber : 79, className : "kumite.blobs.BlobReaderFusionWS", methodName : "handleFusionData"});
 		}
 		this.mergeBlobs(newBlobs);
 	}
@@ -6418,7 +6417,7 @@ kumite.blobs.BlobReaderFusionWS.prototype = {
 		this.fusion.get();
 	}
 	,start: function() {
-		this.config = { name : "Eyes", clipping : [{ type : "include", xMin : -3000, xMax : 3000, yMin : -1500, yMax : 200, zMin : 200, zMax : 1600}], blobs : { enabled : true, minPointsPerCell : 1, smoothing : 0.1, width : 100, depth : 50}};
+		this.config = { name : "Eyes", clipping : [{ type : "include", xMin : -2500, xMax : 2500, yMin : -1000, yMax : 200, zMin : 200, zMax : 1600}], blobs : { enabled : true, minPointsPerCell : 1, smoothing : 0.1, width : 100, depth : 50}};
 		this.fusion = new kumite.fusion.FusionConnection();
 		this.fusion.dataSignaler.bind($bind(this,this.handleFusionData));
 		this.fusion.setConfig(this.config);
@@ -6759,18 +6758,25 @@ kumite.eyes.Config = $hxClasses["kumite.eyes.Config"] = function() {
 	this.eyeEffects = new Array();
 	this.postproFilters = new Array();
 	this.eyeBlocks = new Array();
-	this.createBlock(-538,-12,0.29);
-	this.createBlock(-453,-270,0.175);
-	this.createBlock(-399,224,0.285);
-	this.createBlock(-264,72,0.175);
-	this.createBlock(-159,-112,0.34);
-	this.createBlock(-63,209,0.285);
-	this.createBlock(101,-227,0.19);
-	this.createBlock(157,17,0.285);
-	this.createBlock(344,220,0.17);
-	this.createBlock(447,-2,0.33);
-	this.createBlock(479,404,0.28);
-	this.createBlock(632.5,-188,0.245);
+	this.createBlock(477,-103,0.24);
+	this.createBlock(325,-162,0.098);
+	this.createBlock(356,30,0.16);
+	this.createBlock(860,-50,0.16);
+	this.createBlock(885.5,235,0.207);
+	this.createBlock(673,12,0.28);
+	this.createBlock(801,115,0.098);
+	this.createBlock(-20,-75,0.28);
+	this.createBlock(98.5,-151.5,0.099);
+	this.createBlock(-77,92.5,0.21);
+	this.createBlock(-13,207,0.099);
+	this.createBlock(-782,93.5,0.24);
+	this.createBlock(-386.5,-187,0.207);
+	this.createBlock(-491,-23,0.278);
+	this.createBlock(-355,-50.5,0.098);
+	this.createBlock(-644.5,-95.5,0.159);
+	this.createBlock(-907.5,-60.5,0.159);
+	this.createBlock(-384,77,0.159);
+	this.createBlock(-73,-225,0.21);
 	var colors = new Array();
 	colors.push(new Vec3(0,0,0));
 	colors.push(new Vec3(0,-10,0));
@@ -6819,8 +6825,8 @@ kumite.eyes.Config.__interfaces__ = [haxe.rtti.Infos];
 kumite.eyes.Config.prototype = {
 	createBlock: function(x,y,scale) {
 		var eyeBlock = new kumite.eyes.EyeBlock();
-		eyeBlock.position.x = x + 2;
-		eyeBlock.position.y = y - 6;
+		eyeBlock.position.x = x + 1;
+		eyeBlock.position.y = y - 8;
 		eyeBlock.scale = scale;
 		this.eyeBlocks.push(eyeBlock);
 	}
@@ -7978,11 +7984,13 @@ kumite.layer.effect._EyeEffect.TargetState.prototype = $extend(kumite.layer.effe
 		var ex = this.position.x / this.stage.width;
 		var ey = this.position.y / this.stage.height;
 		var bx = blob.x * 2.0;
-		var by = -blob.y * 2.0;
-		var focusX = (1 - blob.z) * 0.35;
+		var by = (-blob.y - 0.1) * 2.0;
+		var focusX = (1 - blob.z) * 0.4;
 		var focusY = (1 - blob.z) * 0.2;
-		this.moveSet.to.x = (ex - bx) * focusX;
-		this.moveSet.to.y = -(ey - by) * focusY;
+		var newX = (ex - bx) * focusX;
+		var newY = -(ey - by) * focusY;
+		this.moveSet.to.x += (newX - this.moveSet.to.x) * 0.3;
+		this.moveSet.to.y += (newY - this.moveSet.to.y) * 0.3;
 		if(this.ms - this.enterMs > 20000) this.parent.setRandomIdleState();
 	}
 	,__class__: kumite.layer.effect._EyeEffect.TargetState
@@ -10218,7 +10226,7 @@ kumite.canvas.Config.__rtti = "<class path=\"kumite.canvas.Config\" params=\"\">
 kumite.displaylist.ConfigAsLayer.__rtti = "<class path=\"kumite.displaylist.ConfigAsLayer\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<displayListLayer public=\"1\"><c path=\"kumite.displaylist.DisplayListLayer\"/></displayListLayer>\n\t<stage public=\"1\"><c path=\"GLStage\"/></stage>\n\t<new public=\"1\" set=\"method\" line=\"9\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.displaylist.DisplayListLayer.__rtti = "<class path=\"kumite.displaylist.DisplayListLayer\" params=\"\">\n\t<implements path=\"kumite.scene.LayerLifecycle\"/>\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<transition public=\"1\"><c path=\"Float\"/></transition>\n\t<renderer><c path=\"GLDisplayListRenderer\"/></renderer>\n\t<init public=\"1\" set=\"method\" line=\"21\"><f a=\"\"><e path=\"Void\"/></f></init>\n\t<renderTransition public=\"1\" set=\"method\" line=\"27\"><f a=\"transitionContext\">\n\t<c path=\"kumite.scene.TransitionContext\"/>\n\t<e path=\"Void\"/>\n</f></renderTransition>\n\t<render public=\"1\" set=\"method\" line=\"33\"><f a=\"renderContext\">\n\t<c path=\"kumite.scene.RenderContext\"/>\n\t<e path=\"Void\"/>\n</f></render>\n\t<new public=\"1\" set=\"method\" line=\"19\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.eyes.Config.__meta__ = { fields : { complete : { Complete : null}, startPrepare : { Sequence : ["boot","startPrepare"]}, displayListLayer : { Inject : null}, textureRegistry : { Inject : null}}};
-kumite.eyes.Config.__rtti = "<class path=\"kumite.eyes.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<EYE public=\"1\" line=\"27\" static=\"1\"><c path=\"GLTextureConfig\"/></EYE>\n\t<SHADOW public=\"1\" line=\"28\" static=\"1\"><c path=\"GLTextureConfig\"/></SHADOW>\n\t<REFLECTION public=\"1\" line=\"29\" static=\"1\"><c path=\"GLTextureConfig\"/></REFLECTION>\n\t<textureRegistry public=\"1\">\n\t\t<c path=\"GLTextureRegistry\"/>\n\t\t<meta><m n=\"Inject\"/></meta>\n\t</textureRegistry>\n\t<displayListLayer public=\"1\">\n\t\t<c path=\"kumite.displaylist.DisplayListLayer\"/>\n\t\t<meta><m n=\"Inject\"/></meta>\n\t</displayListLayer>\n\t<clearLayer public=\"1\"><c path=\"kumite.layer.ClearLayer\"/></clearLayer>\n\t<eyeLayers public=\"1\"><c path=\"Array\"><c path=\"kumite.layer.TextureHSLLayer\"/></c></eyeLayers>\n\t<shadowLayer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></shadowLayer>\n\t<reflectionLayer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></reflectionLayer>\n\t<framebuffer1EnableLayer public=\"1\"><c path=\"kumite.layer.FramebufferEnableLayer\"/></framebuffer1EnableLayer>\n\t<framebuffer1DisableLayer public=\"1\"><c path=\"kumite.layer.FramebufferDisableLayer\"/></framebuffer1DisableLayer>\n\t<framebufferPostproEnableLayer public=\"1\"><c path=\"kumite.layer.FramebufferEnableLayer\"/></framebufferPostproEnableLayer>\n\t<framebufferPostproDisableLayer public=\"1\"><c path=\"kumite.layer.FramebufferDisableLayer\"/></framebufferPostproDisableLayer>\n\t<postproFilters public=\"1\"><c path=\"Array\"><c path=\"kumite.eyes.EyePostproFilter\"/></c></postproFilters>\n\t<framebuffer2EnableLayer public=\"1\"><c path=\"kumite.layer.FramebufferEnableLayer\"/></framebuffer2EnableLayer>\n\t<framebuffer2DisableLayer public=\"1\"><c path=\"kumite.layer.FramebufferDisableLayer\"/></framebuffer2DisableLayer>\n\t<eyeMaskLayers public=\"1\"><c path=\"Array\"><c path=\"kumite.eyes.EyeMaskLayer\"/></c></eyeMaskLayers>\n\t<eyeEffects public=\"1\"><c path=\"Array\"><c path=\"kumite.layer.effect.EyeEffect\"/></c></eyeEffects>\n\t<eyeBlocks public=\"1\"><c path=\"Array\"><c path=\"kumite.eyes.EyeBlock\"/></c></eyeBlocks>\n\t<scene1 public=\"1\"><c path=\"kumite.scene.DefaultScene\"/></scene1>\n\t<startPrepare public=\"1\" set=\"method\" line=\"171\">\n\t\t<f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f>\n\t\t<meta><m n=\"Sequence\">\n\t<e>boot</e>\n\t<e>startPrepare</e>\n</m></meta>\n\t</startPrepare>\n\t<complete public=\"1\" set=\"method\" line=\"183\">\n\t\t<f a=\"\"><e path=\"Void\"/></f>\n\t\t<meta><m n=\"Complete\"/></meta>\n\t</complete>\n\t<createBlock set=\"method\" line=\"210\"><f a=\"x:y:scale\">\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<e path=\"Void\"/>\n</f></createBlock>\n\t<new public=\"1\" set=\"method\" line=\"59\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
+kumite.eyes.Config.__rtti = "<class path=\"kumite.eyes.Config\" params=\"\">\n\t<implements path=\"haxe.rtti.Infos\"/>\n\t<EYE public=\"1\" line=\"27\" static=\"1\"><c path=\"GLTextureConfig\"/></EYE>\n\t<SHADOW public=\"1\" line=\"28\" static=\"1\"><c path=\"GLTextureConfig\"/></SHADOW>\n\t<REFLECTION public=\"1\" line=\"29\" static=\"1\"><c path=\"GLTextureConfig\"/></REFLECTION>\n\t<textureRegistry public=\"1\">\n\t\t<c path=\"GLTextureRegistry\"/>\n\t\t<meta><m n=\"Inject\"/></meta>\n\t</textureRegistry>\n\t<displayListLayer public=\"1\">\n\t\t<c path=\"kumite.displaylist.DisplayListLayer\"/>\n\t\t<meta><m n=\"Inject\"/></meta>\n\t</displayListLayer>\n\t<clearLayer public=\"1\"><c path=\"kumite.layer.ClearLayer\"/></clearLayer>\n\t<eyeLayers public=\"1\"><c path=\"Array\"><c path=\"kumite.layer.TextureHSLLayer\"/></c></eyeLayers>\n\t<shadowLayer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></shadowLayer>\n\t<reflectionLayer public=\"1\"><c path=\"kumite.layer.TextureLayer\"/></reflectionLayer>\n\t<framebuffer1EnableLayer public=\"1\"><c path=\"kumite.layer.FramebufferEnableLayer\"/></framebuffer1EnableLayer>\n\t<framebuffer1DisableLayer public=\"1\"><c path=\"kumite.layer.FramebufferDisableLayer\"/></framebuffer1DisableLayer>\n\t<framebufferPostproEnableLayer public=\"1\"><c path=\"kumite.layer.FramebufferEnableLayer\"/></framebufferPostproEnableLayer>\n\t<framebufferPostproDisableLayer public=\"1\"><c path=\"kumite.layer.FramebufferDisableLayer\"/></framebufferPostproDisableLayer>\n\t<postproFilters public=\"1\"><c path=\"Array\"><c path=\"kumite.eyes.EyePostproFilter\"/></c></postproFilters>\n\t<framebuffer2EnableLayer public=\"1\"><c path=\"kumite.layer.FramebufferEnableLayer\"/></framebuffer2EnableLayer>\n\t<framebuffer2DisableLayer public=\"1\"><c path=\"kumite.layer.FramebufferDisableLayer\"/></framebuffer2DisableLayer>\n\t<eyeMaskLayers public=\"1\"><c path=\"Array\"><c path=\"kumite.eyes.EyeMaskLayer\"/></c></eyeMaskLayers>\n\t<eyeEffects public=\"1\"><c path=\"Array\"><c path=\"kumite.layer.effect.EyeEffect\"/></c></eyeEffects>\n\t<eyeBlocks public=\"1\"><c path=\"Array\"><c path=\"kumite.eyes.EyeBlock\"/></c></eyeBlocks>\n\t<scene1 public=\"1\"><c path=\"kumite.scene.DefaultScene\"/></scene1>\n\t<startPrepare public=\"1\" set=\"method\" line=\"196\">\n\t\t<f a=\"\"><c path=\"bpmjs.SequencerTaskGroup\"/></f>\n\t\t<meta><m n=\"Sequence\">\n\t<e>boot</e>\n\t<e>startPrepare</e>\n</m></meta>\n\t</startPrepare>\n\t<complete public=\"1\" set=\"method\" line=\"208\">\n\t\t<f a=\"\"><e path=\"Void\"/></f>\n\t\t<meta><m n=\"Complete\"/></meta>\n\t</complete>\n\t<createBlock set=\"method\" line=\"235\"><f a=\"x:y:scale\">\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<c path=\"Float\"/>\n\t<e path=\"Void\"/>\n</f></createBlock>\n\t<new public=\"1\" set=\"method\" line=\"59\"><f a=\"\"><e path=\"Void\"/></f></new>\n</class>";
 kumite.eyes.Config.EYE = GLTextureConfig.create("data/image/eyes/EyesBG.png",9729);
 kumite.eyes.Config.SHADOW = GLTextureConfig.create("data/image/eyes/EyesShadow.png",9729);
 kumite.eyes.Config.REFLECTION = GLTextureConfig.create("data/image/eyes/Reflection.png",9729);

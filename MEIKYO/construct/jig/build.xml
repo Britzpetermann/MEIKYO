@@ -3,7 +3,7 @@
 	<property name="ant_lib_dir" value="construct/jig/ant_lib" />
 	<property name="lib_jsch" value="jsch-0.1.49.jar" />
 
-	<property name="bpm_ftp_host" value="192.168.2.50" />
+	<property name="bpm_ftp_host" value="192.168.1.50" />
 	<property name="bpm_ftp_user" value="vodafone" />
 	<property name="bpm_ftp_pass" value="vodafone" />
 
@@ -12,6 +12,15 @@
 		<scp todir="${bpm_ftp_user}:${bpm_ftp_pass}@${bpm_ftp_host}:Desktop/Installation/htdocs" sftp="true" trust="true" verbose="true">
 			<fileset dir="release">
 				<include name="**/*" />
+			</fileset>
+		</scp>
+	</target>
+
+	<target name="Deploy BPM Code">
+		<load_jsch />
+		<scp todir="${bpm_ftp_user}:${bpm_ftp_pass}@${bpm_ftp_host}:Desktop/Installation/htdocs" sftp="true" trust="true" verbose="true">
+			<fileset dir="release">
+				<include name="**/*.js" />
 			</fileset>
 		</scp>
 	</target>
