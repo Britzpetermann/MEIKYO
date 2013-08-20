@@ -55,6 +55,8 @@ class Config implements Infos
 	public var eyeBlocks : Array<EyeBlock>;
 	
 	public var scene1 : DefaultScene;
+    
+    public var eyesDisplay : EyesDisplay;
 	
 	public function new()
 	{
@@ -190,6 +192,8 @@ class Config implements Infos
 		}
 				
 		scene1 = new DefaultScene("EYES");
+        
+        eyesDisplay = new EyesDisplay();
 	}
 	
 	@Sequence("boot", "startPrepare")
